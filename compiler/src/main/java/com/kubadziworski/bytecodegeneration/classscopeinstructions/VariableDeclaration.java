@@ -1,4 +1,4 @@
-package com.kubadziworski.bytecodegeneration.instructions;
+package com.kubadziworski.bytecodegeneration.classscopeinstructions;
 
 import com.kubadziworski.antlr.EnkelLexer;
 import org.objectweb.asm.MethodVisitor;
@@ -8,7 +8,7 @@ import com.kubadziworski.parsing.domain.Variable;
 /**
  * Created by kuba on 15.03.16.
  */
-public class VariableDeclaration implements Instruction,Opcodes {
+public class VariableDeclaration implements ClassScopeInstruction,Opcodes {
     Variable variable;
 
     public VariableDeclaration(Variable variable) {
@@ -19,7 +19,7 @@ public class VariableDeclaration implements Instruction,Opcodes {
     public void apply(MethodVisitor mv) {
         final int type = variable.getType();
         if(type == EnkelLexer.NUMBER) {
-            int val = Integer.valueOf(variable.getValue());
+            int val = Integer.parseInt(variable.getValue());
             mv.visitIntInsn(BIPUSH,val);
             mv.visitVarInsn(ISTORE,variable.getId());
         } else if(type == EnkelLexer.STRING) {

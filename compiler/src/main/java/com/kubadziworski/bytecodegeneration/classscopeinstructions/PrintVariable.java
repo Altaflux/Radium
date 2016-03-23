@@ -1,4 +1,4 @@
-package com.kubadziworski.bytecodegeneration.instructions;
+package com.kubadziworski.bytecodegeneration.classscopeinstructions;
 
 import com.kubadziworski.antlr.EnkelLexer;
 import org.objectweb.asm.MethodVisitor;
@@ -8,7 +8,7 @@ import com.kubadziworski.parsing.domain.Variable;
 /**
  * Created by kuba on 15.03.16.
  */
-public class PrintVariable implements Instruction, Opcodes {
+public class PrintVariable implements ClassScopeInstruction, Opcodes {
 
     private Variable variable;
 

@@ -2,9 +2,11 @@ package com.kubadziworski.parsing;
 
 import com.kubadziworski.antlr.EnkelBaseListener;
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.bytecodegeneration.instructions.Instruction;
-import com.kubadziworski.bytecodegeneration.instructions.PrintVariable;
-import com.kubadziworski.bytecodegeneration.instructions.VariableDeclaration;
+import com.kubadziworski.bytecodegeneration.CompilationUnit;
+import com.kubadziworski.bytecodegeneration.ClassDeclaration;
+import com.kubadziworski.bytecodegeneration.classscopeinstructions.ClassScopeInstruction;
+import com.kubadziworski.bytecodegeneration.classscopeinstructions.PrintVariable;
+import com.kubadziworski.bytecodegeneration.classscopeinstructions.VariableDeclaration;
 import com.kubadziworski.parsing.domain.Variable;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -19,11 +21,12 @@ import java.util.Queue;
  */
 public class EnkelTreeWalkListener extends EnkelBaseListener {
 
-    Queue<Instruction> instructionsQueue = new ArrayDeque<>();
+    Queue<ClassScopeInstruction> classScopeInstructions = new ArrayDeque<>();
     Map<String, Variable> variables = new HashMap<>();
-
-    public Queue<Instruction> getInstructionsQueue() {
-        return instructionsQueue;
+    private CompilationUnit compilationUnit;
+    private ClassDeclaration classDeclaration;
+    public Queue<ClassScopeInstruction> getClassScopeInstructions() {
+        return classScopeInstructions;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class EnkelTreeWalkListener extends EnkelBaseListener {
         final String varTextValue = varValue.getText();
         Variable var = new Variable(varIndex, varType, varTextValue);
         variables.put(varName.getText(), var);
-        instructionsQueue.add(new VariableDeclaration(var));
+        classScopeInstructions.add(new VariableDeclaration(var));
         logVariableDeclarationStatementFound(varName, varValue);
     }
 
@@ -49,19 +52,36 @@ public class EnkelTreeWalkListener extends EnkelBaseListener {
             return;
         }
         final Variable variable = variables.get(varName.getText());
-        instructionsQueue.add(new PrintVariable(variable));
+        classScopeInstructions.add(new PrintVariable(variable));
         logPrintStatementFound(varName, variable);
+    }
+
+    @Override
+    public void exitCompilationUnit(@NotNull EnkelParser.CompilationUnitContext ctx) {
+        super.enterCompilationUnit(ctx);
+        compilationUnit = new CompilationUnit(classDeclaration);
+    }
+
+    @Override
+    public void exitClassDeclaration(@NotNull EnkelParser.ClassDeclarationContext ctx) {
+        super.enterClassDeclaration(ctx);
+        final String className = ctx.className().getText();
+        classDeclaration = new ClassDeclaration(classScopeInstructions,className);
     }
 
     private void logVariableDeclarationStatementFound(TerminalNode varName, EnkelParser.ValueContext varValue) {
         final int line = varName.getSymbol().getLine();
-        final String format = "OK: You declared variable named '%s' with value of '%s' at line '%s'.\n";
+        final String format = "OK: You declared variable named '%s' with value of '%s' at line '%s'.%n";
         System.out.printf(format, varName, varValue.getText(), line);
     }
 
     private void logPrintStatementFound(TerminalNode varName, Variable variable) {
         final int line = varName.getSymbol().getLine();
-        final String format = "OK: You instructed to print variable '%s' which has value of '%s' at line '%s'.'\n";
+        final String format = "OK: You instructed to print variable '%s' which has value of '%s' at line '%s'.'%n";
         System.out.printf(format,variable.getId(),variable.getValue(),line);
+    }
+
+    public CompilationUnit getCompilationUnit() {
+        return compilationUnit;
     }
 }

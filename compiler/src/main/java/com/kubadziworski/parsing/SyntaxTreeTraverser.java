@@ -2,20 +2,19 @@ package com.kubadziworski.parsing;
 
 import com.kubadziworski.antlr.EnkelLexer;
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.bytecodegeneration.instructions.Instruction;
+import com.kubadziworski.bytecodegeneration.CompilationUnit;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.IOException;
-import java.util.Queue;
 
 /**
  * Created by kuba on 16.03.16.
  */
 public class SyntaxTreeTraverser {
-    public Queue<Instruction> getInstructions(String fileAbsolutePath) throws IOException {
+    public CompilationUnit getCompilationUnit(String fileAbsolutePath) throws IOException {
         CharStream charStream = new ANTLRFileStream(fileAbsolutePath); //fileAbolutePath - file containing first enk code file
         EnkelLexer lexer = new EnkelLexer(charStream);  //create lexer (pass enk file to it)
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -26,6 +25,6 @@ public class SyntaxTreeTraverser {
         parser.addErrorListener(errorListener);
         parser.addParseListener(listener);
         parser.compilationUnit(); //compilation unit is root parser rule - start from it!
-        return listener.getInstructionsQueue();
+        return listener.getCompilationUnit();
     }
 }
