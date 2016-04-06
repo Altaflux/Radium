@@ -1,4 +1,4 @@
-package com.kubadziworski;
+package com.kubadziworski.validation;
 
 /**
  * Created by kuba on 16.03.16.

@@ -2,21 +2,49 @@
 grammar Enkel;
 
 //RULES
-compilationUnit : classDeclaration EOF ; //root rule - our code consist consist only of variables and prints (see definition below)
-classDeclaration : className superClassName* '{' classBody '}' ;
+compilationUnit : classDeclaration EOF ;
+classDeclaration : className '{' classBody '}' ;
 className : ID ;
-superClassName : ':' ID ;
-classBody :  ( variable | print )* ;
-variable : VARIABLE ID EQUALS value; //requires VAR token followed by ID token followed by EQUALS TOKEN ...
-print : PRINT ID ; //print statement must consist of 'print' keyword and ID
-value : op=NUMBER
-      | op=STRING ; //must be NUMBER or STRING value (defined below)
+classBody :  function* ;
+function : functionDeclaration '{' (blockStatement)* '}' ;
+functionDeclaration locals [ int paramIndex ] : (type)? functionName '('(functionArgument[ $paramIndex++ ])*')' ;
+functionName : ID ;
+functionArgument [ int index ] : type ID functionParamdefaultValue? ;
+functionParamdefaultValue : '=' expression ;
+type : primitiveType
+     | classType ;
 
+primitiveType :  'boolean' ('[' ']')*
+                |   'string' ('[' ']')*
+                |   'char' ('[' ']')*
+                |   'byte' ('[' ']')*
+                |   'short' ('[' ']')*
+                |   'int' ('[' ']')*
+                |   'long' ('[' ']')*
+                |   'float' ('[' ']')*
+                |   'double' ('[' ']')*
+                | 'void' ('[' ']')* ;
+classType : QUALIFIED_NAME ('[' ']')* ;
+
+blockStatement locals [ int lastVarIndex ]: variableDeclaration[ $lastVarIndex++ ]
+               | printStatement
+               | functionCall ;
+variableDeclaration [ int index ] : VARIABLE identifier EQUALS expression;
+printStatement : PRINT expression ;
+functionCall : functionName '('expressionList ')';
+identifier : ID ;
+expressionList : expression (',' expression)* ;
+expression : identifier
+           | value
+           | functionCall ;
+value : NUMBER
+      | STRING ;
 //TOKENS
-VARIABLE : 'var' ; //VARIABLE TOKEN must match exactly 'var'
+VARIABLE : 'var' ;
 PRINT : 'print' ;
-EQUALS : '=' ; //must be '='
-NUMBER : [0-9]+ ; //must consist only of digits
-STRING : '"'.*'"' ; //must be anything in qutoes
-ID : [a-zA-Z0-9]+ ; //must be any alphanumeric value
-WS: [ \t\n\r]+ -> skip ; //special TOKEN for skipping whitespaces
+EQUALS : '=' ;
+NUMBER : [0-9]+ ;
+STRING : '"'.*'"' ;
+ID : [a-zA-Z0-9]+ ;
+QUALIFIED_NAME : ID ('.' ID)+;
+WS: [ \t\n\r]+ -> skip ;

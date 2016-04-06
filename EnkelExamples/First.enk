@@ -1,0 +1,10 @@
+First {
+        void main (string[] args) {
+            var x = 25
+            metoda(x)
+        }
+
+        void metoda (int param) {
+            print param
+        }
+}
