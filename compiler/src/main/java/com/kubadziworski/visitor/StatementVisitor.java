@@ -3,10 +3,9 @@ package com.kubadziworski.visitor;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
+import com.kubadziworski.antlr.domain.scope.LocalVariable;
 import com.kubadziworski.antlr.domain.scope.Scope;
 import com.kubadziworski.antlr.domain.expression.Expression;
-import com.kubadziworski.antlr.domain.expression.Identifier;
-import com.kubadziworski.antlr.domain.type.Type;
 import com.kubadziworski.antlr.domain.statement.PrintStatement;
 import com.kubadziworski.antlr.domain.statement.Statement;
 import com.kubadziworski.antlr.domain.statement.VariableDeclarationStatement;
@@ -33,13 +32,11 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
 
     @Override
     public Statement visitVariableDeclaration(@NotNull EnkelParser.VariableDeclarationContext ctx) {
-        String identifierText = ctx.identifier().getText();
-        int index = ctx.index;
+        String varName = ctx.name().getText();
         ExpressionContext expressionCtx = ctx.expression();
         ExpressionVisitor expressionVisitor = new ExpressionVisitor(scope);
         Expression expression = expressionCtx.accept(expressionVisitor);
-        Identifier identifier = new Identifier(identifierText,expression);
-        scope.addIdentifier(identifier);
-        return new VariableDeclarationStatement(identifier.getName(), expression,index);
+        scope.addLocalVariable(new LocalVariable(varName,expression.getType()));
+        return new VariableDeclarationStatement(varName,expression);
     }
 }

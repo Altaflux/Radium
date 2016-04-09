@@ -1,8 +1,8 @@
 package com.kubadziworski.bytecodegenerator;
 
+import com.kubadziworski.antlr.domain.scope.LocalVariable;
 import com.kubadziworski.antlr.domain.scope.Scope;
 import com.kubadziworski.antlr.domain.expression.Expression;
-import com.kubadziworski.antlr.domain.expression.Identifier;
 import com.kubadziworski.antlr.domain.expression.Value;
 import com.kubadziworski.antlr.domain.type.ClassType;
 import com.kubadziworski.antlr.domain.type.BultInType;
@@ -10,12 +10,10 @@ import com.kubadziworski.antlr.domain.statement.PrintStatement;
 import com.kubadziworski.antlr.domain.statement.Statement;
 import com.kubadziworski.antlr.domain.statement.VariableDeclarationStatement;
 import com.kubadziworski.antlr.domain.type.Type;
-import com.kubadziworski.bytecodegenerator.domain.Variable;
+import org.abego.treelayout.internal.util.java.lang.string.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by kuba on 29.03.16.
@@ -57,6 +55,7 @@ public class StatementGenerator {
     public void generate(VariableDeclarationStatement variableDeclarationStatement, Scope scope) {
         Expression expression = variableDeclarationStatement.getExpression();
         String name = variableDeclarationStatement.getName();
+        int index = scope.getLocalVariableIndex(name);
         if (expression instanceof Value) {
             Value value = (Value) expression;
             Type type = value.getType();
@@ -64,12 +63,14 @@ public class StatementGenerator {
             if (type == BultInType.INT) {
                 int val = Integer.parseInt(stringValue);
                 methodVisitor.visitIntInsn(Opcodes.BIPUSH, val);
-                methodVisitor.visitVarInsn(Opcodes.ISTORE, 0);
+                methodVisitor.visitVarInsn(Opcodes.ISTORE, index);
             } else if (type == BultInType.STRING) {
-                methodVisitor.visitLdcInsn(value);
-                methodVisitor.visitVarInsn(Opcodes.ASTORE, 0);
+                stringValue = StringUtils.removeStart(stringValue,"\"");
+                stringValue = StringUtils.removeEnd(stringValue,"\"");
+                methodVisitor.visitLdcInsn(stringValue);
+                methodVisitor.visitVarInsn(Opcodes.ASTORE, index);
             }
         }
-        scope.addIdentifier(new Identifier(name,expression));
+        scope.addLocalVariable(new LocalVariable(name,expression.getType()));
     }
 }

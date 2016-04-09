@@ -7,9 +7,9 @@ classDeclaration : className '{' classBody '}' ;
 className : ID ;
 classBody :  function* ;
 function : functionDeclaration '{' (blockStatement)* '}' ;
-functionDeclaration locals [ int paramIndex ] : (type)? functionName '('(functionArgument[ $paramIndex++ ])*')' ;
+functionDeclaration : (type)? functionName '('(functionArgument)*')' ;
 functionName : ID ;
-functionArgument [ int index ] : type ID functionParamdefaultValue? ;
+functionArgument : type ID functionParamdefaultValue? ;
 functionParamdefaultValue : '=' expression ;
 type : primitiveType
      | classType ;
@@ -26,17 +26,19 @@ primitiveType :  'boolean' ('[' ']')*
                 | 'void' ('[' ']')* ;
 classType : QUALIFIED_NAME ('[' ']')* ;
 
-blockStatement locals [ int lastVarIndex ]: variableDeclaration[ $lastVarIndex++ ]
+blockStatement : variableDeclaration
                | printStatement
                | functionCall ;
-variableDeclaration [ int index ] : VARIABLE identifier EQUALS expression;
+variableDeclaration : VARIABLE name EQUALS expression;
 printStatement : PRINT expression ;
 functionCall : functionName '('expressionList ')';
-identifier : ID ;
+name : ID ;
 expressionList : expression (',' expression)* ;
-expression : identifier
+expression : varReference
            | value
            | functionCall ;
+
+varReference : ID ;
 value : NUMBER
       | STRING ;
 //TOKENS

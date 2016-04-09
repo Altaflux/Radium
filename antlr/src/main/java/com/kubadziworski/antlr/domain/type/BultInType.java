@@ -38,14 +38,6 @@ public enum BultInType implements Type {
         this.descriptor = descriptor;
     }
 
-    public static BultInType fromString(String value) {
-        return Arrays.stream(BultInType.values())
-                .filter(type -> type != NONE)
-                .filter(type -> type.name.equals(value))
-                .findFirst()
-                .orElse(NONE);
-    }
-
     @Override
     public String getName() {
         return name;

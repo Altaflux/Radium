@@ -18,11 +18,6 @@ import java.util.stream.Collectors;
 //According to https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.3
 public class DescriptorFactory {
 
-    private static final Map<BultInType,String> fieldDescriptorMapping = ImmutableMap.of(
-            BultInType.VOID,"V",
-            BultInType.INT, "I"
-    );
-
     public static String getMethodDescriptor(Function function) {
         Collection<FunctionParameter> arguments = function.getArguments();
         Type returnType = function.getType();

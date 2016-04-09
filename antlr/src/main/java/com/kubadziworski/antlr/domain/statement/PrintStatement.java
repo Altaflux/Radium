@@ -1,7 +1,6 @@
 package com.kubadziworski.antlr.domain.statement;
 
 import com.kubadziworski.antlr.domain.expression.Expression;
-import com.kubadziworski.antlr.domain.expression.Identifier;
 
 /**
  * Created by kuba on 28.03.16.

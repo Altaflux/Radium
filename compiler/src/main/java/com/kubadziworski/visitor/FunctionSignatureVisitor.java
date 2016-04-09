@@ -6,8 +6,10 @@ import com.kubadziworski.antlr.EnkelParser.FunctionArgumentContext;
 import com.kubadziworski.antlr.domain.expression.FunctionParameter;
 import com.kubadziworski.antlr.domain.type.Type;
 import com.kubadziworski.antlr.domain.scope.FunctionSignature;
+import com.kubadziworski.antlr.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import javax.lang.model.type.TypeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,17 +19,17 @@ import java.util.List;
 public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature> {
     @Override
     public FunctionSignature visitFunctionDeclaration(@NotNull EnkelParser.FunctionDeclarationContext ctx) {
-        TypeVisitor typeVisitor = new TypeVisitor();
         String functionName = ctx.functionName().getText();
-
-        List<EnkelParser.FunctionArgumentContext> argsCtx = ctx.functionArgument();
+        List<FunctionArgumentContext> argsCtx = ctx.functionArgument();
         List<FunctionParameter> parameters = new ArrayList<>();
         for(int i=0;i<argsCtx.size();i++) {
             FunctionArgumentContext argCtx = argsCtx.get(i);
-            FunctionParameter functionParameters = new FunctionParameter(argCtx.ID().getText(), argCtx.type().accept(new TypeVisitor()), i);
+            String name = argCtx.ID().getText();
+            Type type = TypeResolver.getFromTypeName(argCtx.type());
+            FunctionParameter functionParameters = new FunctionParameter(name, type);
             parameters.add(functionParameters);
         }
-        Type returnType = ctx.type().accept(typeVisitor);
+        Type returnType = TypeResolver.getFromTypeName(ctx.type());
         return new FunctionSignature(functionName, parameters, returnType);
     }
 }

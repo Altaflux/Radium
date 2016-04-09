@@ -1,6 +1,9 @@
 package com.kubadziworski.bytecodegenerator;
 
 import java.util.Optional;
+
+import com.kubadziworski.antlr.domain.expression.VarReference;
+import com.kubadziworski.antlr.domain.scope.LocalVariable;
 import com.kubadziworski.antlr.domain.scope.Scope;
 import com.kubadziworski.antlr.domain.expression.*;
 import com.kubadziworski.antlr.domain.type.ClassType;
@@ -28,9 +31,9 @@ public class ExpressionGenrator {
     }
 
     public void generate(Expression expression, Scope scope) {
-        if (expression instanceof Identifier) {
-            Identifier identifier = (Identifier) expression;
-            generate(identifier,scope);
+        if (expression instanceof VarReference) {
+            VarReference varReference = (VarReference) expression;
+            generate(varReference,scope);
         }
         if(expression instanceof Value) {
             Value value = (Value) expression;
@@ -44,15 +47,25 @@ public class ExpressionGenrator {
         }
     }
 
-    public void generate(Identifier identifier,Scope scope) {
-        Expression expression = scope.getIdentifier(identifier.getName()).getExpression();
-        generate(expression,scope);
+    public void generate(VarReference varReference, Scope scope) {
+        String varName = varReference.getVarName();
+        int index = scope.getLocalVariableIndex(varName);
+        LocalVariable localVariable = scope.getLocalVariable(varName);
+        Type type = localVariable.getType();
+        if(type == BultInType.INT) {
+            methodVisitor.visitVarInsn(Opcodes.ILOAD,index);
+        } else if(type == BultInType.STRING) {
+            methodVisitor.visitVarInsn(Opcodes.ALOAD,index);
+        }
     }
 
     public void generate(FunctionParameter parameter, Scope scope) {
         Type type = parameter.getType();
+        int index = scope.getLocalVariableIndex(parameter.getName());
         if(type == BultInType.INT) {
-            methodVisitor.visitVarInsn(Opcodes.ILOAD,parameter.getIndex());
+            methodVisitor.visitVarInsn(Opcodes.ILOAD,index);
+        } else if(type == BultInType.STRING) {
+            methodVisitor.visitVarInsn(Opcodes.ALOAD,index);
         }
     }
 

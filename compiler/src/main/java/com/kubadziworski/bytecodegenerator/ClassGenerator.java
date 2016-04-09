@@ -1,12 +1,10 @@
 package com.kubadziworski.bytecodegenerator;
 
 import com.kubadziworski.antlr.domain.classs.Function;
-import com.kubadziworski.antlr.domain.expression.Identifier;
 import com.kubadziworski.antlr.domain.global.ClassDeclaration;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,12 +23,6 @@ public class ClassGenerator {
         String name = classDeclaration.getName();
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER,name,null,"java/lang/Object",null);
         List<Function> methods = classDeclaration.getMethods();
-        List<Identifier> identifiers = new ArrayList<>();
-        methods.forEach((method) -> {
-            String methodName = method.getName();
-            Identifier identifier = new Identifier(methodName, method);
-            identifiers.add(identifier);
-        });
         methods.forEach(function -> new MethodGenerator(classWriter).generate(function));
         classWriter.visitEnd();
         return classWriter;

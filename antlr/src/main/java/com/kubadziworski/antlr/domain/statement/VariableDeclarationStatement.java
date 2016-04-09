@@ -2,7 +2,6 @@ package com.kubadziworski.antlr.domain.statement;
 
 
 import com.kubadziworski.antlr.domain.expression.Expression;
-import com.kubadziworski.antlr.domain.expression.Identifier;
 
 /**
  * Created by kuba on 28.03.16.
@@ -10,12 +9,10 @@ import com.kubadziworski.antlr.domain.expression.Identifier;
 public class VariableDeclarationStatement implements Statement {
     private final String name;
     private final Expression expression;
-    private final int index;
 
-    public VariableDeclarationStatement(String name, Expression expression, int index) {
+    public VariableDeclarationStatement(String name, Expression expression) {
         this.expression = expression;
         this.name = name;
-        this.index = index;
     }
 
     public String getName() {

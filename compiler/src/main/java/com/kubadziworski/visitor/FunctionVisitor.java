@@ -4,17 +4,17 @@ import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.antlr.EnkelParser.TypeContext;
+import com.kubadziworski.antlr.domain.scope.LocalVariable;
 import com.kubadziworski.antlr.domain.scope.Scope;
 import com.kubadziworski.antlr.domain.classs.Function;
-import com.kubadziworski.antlr.domain.expression.Identifier;
 import com.kubadziworski.antlr.domain.expression.FunctionParameter;
 import com.kubadziworski.antlr.domain.type.Type;
 import com.kubadziworski.antlr.domain.statement.Statement;
+import com.kubadziworski.antlr.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
-import java.util.ArrayList;
+import javax.lang.model.type.TypeVisitor;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -42,15 +42,14 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
 
     private Type getReturnType(FunctionContext functionDeclarationContext) {
         TypeContext typeCtx = functionDeclarationContext.functionDeclaration().type();
-        TypeVisitor typeVisitor = new TypeVisitor();
-        return typeCtx.accept(typeVisitor);
+        return TypeResolver.getFromTypeName(typeCtx);
     }
 
     private List<FunctionParameter> getArguments(FunctionContext functionDeclarationContext) {
         List<EnkelParser.FunctionArgumentContext> argsCtx = functionDeclarationContext.functionDeclaration().functionArgument();
         List<FunctionParameter> parameters = argsCtx.stream()
-                .map(paramCtx -> new FunctionParameter(paramCtx.ID().getText(), paramCtx.type().accept(new TypeVisitor()), paramCtx.index))
-                .peek(param -> scope.addIdentifier(new Identifier(param.getName(), param)))
+                .map(paramCtx -> new FunctionParameter(paramCtx.ID().getText(), TypeResolver.getFromTypeName(paramCtx.type())))
+                .peek(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType())))
                 .collect(Collectors.toList());
         return parameters;
     }
