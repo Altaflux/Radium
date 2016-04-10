@@ -1,7 +1,7 @@
 package com.kubadziworski.exception;
 
-import com.kubadziworski.antlr.domain.scope.Scope;
-import com.kubadziworski.antlr.domain.expression.FunctionCall;
+import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.expression.FunctionCall;
 
 /**
  * Created by kuba on 02.04.16.

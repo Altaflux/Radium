@@ -3,8 +3,8 @@ package com.kubadziworski.visitor;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ClassDeclarationContext;
-import com.kubadziworski.antlr.domain.global.CompilationUnit;
-import com.kubadziworski.antlr.domain.global.ClassDeclaration;
+import com.kubadziworski.domain.global.CompilationUnit;
+import com.kubadziworski.domain.global.ClassDeclaration;
 import org.antlr.v4.runtime.misc.NotNull;
 
 /**

@@ -4,16 +4,15 @@ import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.antlr.EnkelParser.TypeContext;
-import com.kubadziworski.antlr.domain.scope.LocalVariable;
-import com.kubadziworski.antlr.domain.scope.Scope;
-import com.kubadziworski.antlr.domain.classs.Function;
-import com.kubadziworski.antlr.domain.expression.FunctionParameter;
-import com.kubadziworski.antlr.domain.type.Type;
-import com.kubadziworski.antlr.domain.statement.Statement;
-import com.kubadziworski.antlr.util.TypeResolver;
+import com.kubadziworski.domain.classs.Function;
+import com.kubadziworski.domain.expression.FunctionParameter;
+import com.kubadziworski.domain.scope.LocalVariable;
+import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.statement.Statement;
+import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
-import javax.lang.model.type.TypeVisitor;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,10 +55,8 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
 
     private List<Statement> getStatements(@NotNull FunctionContext ctx) {
         StatementVisitor statementVisitor = new StatementVisitor(scope);
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(scope);
-        CompositeVisitor<Statement> compositeVisitor = new CompositeVisitor<>(statementVisitor, expressionVisitor);
         return ctx.blockStatement().stream()
-                    .map(compositeVisitor::accept)
+                    .map(block -> block.accept(statementVisitor))
                     .collect(Collectors.toList());
     }
 }

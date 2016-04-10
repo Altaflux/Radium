@@ -1,6 +1,6 @@
 package com.kubadziworski;
 
-import com.kubadziworski.antlr.domain.global.CompilationUnit;
+import com.kubadziworski.domain.global.CompilationUnit;
 import com.kubadziworski.bytecodegenerator.BytecodeGenerator;
 import com.kubadziworski.exception.CompilationException;
 import com.kubadziworski.validation.ARGUMENT_ERRORS;

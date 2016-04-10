@@ -3,13 +3,12 @@ package com.kubadziworski.visitor;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.FunctionArgumentContext;
-import com.kubadziworski.antlr.domain.expression.FunctionParameter;
-import com.kubadziworski.antlr.domain.type.Type;
-import com.kubadziworski.antlr.domain.scope.FunctionSignature;
-import com.kubadziworski.antlr.util.TypeResolver;
+import com.kubadziworski.domain.expression.FunctionParameter;
+import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
-import javax.lang.model.type.TypeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 

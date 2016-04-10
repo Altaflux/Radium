@@ -3,12 +3,13 @@ package com.kubadziworski.visitor;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
-import com.kubadziworski.antlr.domain.scope.LocalVariable;
-import com.kubadziworski.antlr.domain.scope.Scope;
-import com.kubadziworski.antlr.domain.expression.Expression;
-import com.kubadziworski.antlr.domain.statement.PrintStatement;
-import com.kubadziworski.antlr.domain.statement.Statement;
-import com.kubadziworski.antlr.domain.statement.VariableDeclarationStatement;
+import com.kubadziworski.domain.expression.FunctionCall;
+import com.kubadziworski.domain.scope.LocalVariable;
+import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.expression.Expression;
+import com.kubadziworski.domain.statement.PrintStatement;
+import com.kubadziworski.domain.statement.Statement;
+import com.kubadziworski.domain.statement.VariableDeclarationStatement;
 import org.antlr.v4.runtime.misc.NotNull;
 
 /**
@@ -38,5 +39,10 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
         Expression expression = expressionCtx.accept(expressionVisitor);
         scope.addLocalVariable(new LocalVariable(varName,expression.getType()));
         return new VariableDeclarationStatement(varName,expression);
+    }
+
+    @Override
+    public Statement visitFunctionCall(@NotNull EnkelParser.FunctionCallContext ctx) {
+        return (Statement) ctx.accept(new ExpressionVisitor(scope));
     }
 }

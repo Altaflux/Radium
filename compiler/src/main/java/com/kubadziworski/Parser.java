@@ -2,7 +2,7 @@ package com.kubadziworski;
 
 import com.kubadziworski.antlr.EnkelLexer;
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.antlr.domain.global.CompilationUnit;
+import com.kubadziworski.domain.global.CompilationUnit;
 import com.kubadziworski.parsing.EnkelTreeWalkErrorListener;
 import com.kubadziworski.visitor.CompilationUnitVisitor;
 import org.antlr.v4.runtime.*;

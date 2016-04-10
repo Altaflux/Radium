@@ -1,8 +1,7 @@
 package com.kubadziworski.exception;
 
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.antlr.domain.classs.Function;
-import com.kubadziworski.antlr.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.FunctionSignature;
 
 import java.util.List;
 

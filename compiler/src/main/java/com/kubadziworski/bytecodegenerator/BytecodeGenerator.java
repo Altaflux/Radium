@@ -1,7 +1,7 @@
 package com.kubadziworski.bytecodegenerator;
 
-import com.kubadziworski.antlr.domain.global.ClassDeclaration;
-import com.kubadziworski.antlr.domain.global.CompilationUnit;
+import com.kubadziworski.domain.global.ClassDeclaration;
+import com.kubadziworski.domain.global.CompilationUnit;
 
 /**
  * Created by kuba on 01.04.16.

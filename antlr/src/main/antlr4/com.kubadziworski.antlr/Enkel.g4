@@ -22,7 +22,7 @@ primitiveType :  'boolean' ('[' ']')*
                 |   'int' ('[' ']')*
                 |   'long' ('[' ']')*
                 |   'float' ('[' ']')*
-                |   'double' ('[' ']')*
+                |  'double' ('[' ']')*
                 | 'void' ('[' ']')* ;
 classType : QUALIFIED_NAME ('[' ']')* ;
 
@@ -34,10 +34,19 @@ printStatement : PRINT expression ;
 functionCall : functionName '('expressionList ')';
 name : ID ;
 expressionList : expression (',' expression)* ;
-expression : varReference
-           | value
-           | functionCall ;
-
+expression :
+            varReference #VARREFERENCE
+           | value        #VALUE
+           | functionCall #FUNCALL
+           |  '('expression '*' expression')' #MULTIPLY
+           | expression '*' expression  #MULTIPLY
+           | '(' expression '/' expression ')' #DIVIDE
+           | expression '/' expression #DIVIDE
+           | '(' expression '+' expression ')' #ADD
+           | expression '+' expression #ADD
+           | '(' expression '-' expression ')' #SUBSTRACT
+           | expression '-' expression #SUBSTRACT
+           ;
 varReference : ID ;
 value : NUMBER
       | STRING ;

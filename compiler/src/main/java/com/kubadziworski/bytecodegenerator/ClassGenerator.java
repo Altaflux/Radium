@@ -1,7 +1,7 @@
 package com.kubadziworski.bytecodegenerator;
 
-import com.kubadziworski.antlr.domain.classs.Function;
-import com.kubadziworski.antlr.domain.global.ClassDeclaration;
+import com.kubadziworski.domain.classs.Function;
+import com.kubadziworski.domain.global.ClassDeclaration;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
