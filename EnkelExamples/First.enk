@@ -1,11 +1,33 @@
 First {
-        void main (string[] args) {
-            var result = (2+3)*4+5+5*2/(5-3)
-            print "(2+3)*4+5+5*2/(5-3) = "
-            printResult(result)
+        main (string[] args) {
+            shouldPassFivePlusOneEqualsSix()
+            shouldFailFivePlusOneEqualsSeven()
         }
 
-        void printResult(int x) {
-            print x
+        shouldPassFivePlusOneEqualsSix() {
+            var expected = 6
+            var actual = sum(5,1)
+
+            if ( actual == expected ) {
+                print "shouldPassForFivePlusOneEqualsSix test passed"
+            } else {
+                print "shouldPassForFivePlusOneEqualsSix test failed"
+            }
+        }
+
+        shouldFailFivePlusOneEqualsSeven() {
+            var expected = 7
+            var actual = sum(5,1)
+
+            if ( actual != expected ) {
+                print "shouldFailForFivePlusOneEqualsSeven test passed"
+            } else {
+                print "shouldFailForFivePlusOneEqualsSeven test failed"
+            }
+        }
+
+        int sum(int x, int y) {
+            x+y
         }
 }
+

@@ -6,8 +6,8 @@ compilationUnit : classDeclaration EOF ;
 classDeclaration : className '{' classBody '}' ;
 className : ID ;
 classBody :  function* ;
-function : functionDeclaration '{' (blockStatement)* '}' ;
-functionDeclaration : (type)? functionName '('(functionArgument)*')' ;
+function : functionDeclaration block ;
+functionDeclaration : (type)? functionName '(' (functionArgument (',' functionArgument)*)?')' ;
 functionName : ID ;
 functionArgument : type ID functionParamdefaultValue? ;
 functionParamdefaultValue : '=' expression ;
@@ -26,16 +26,24 @@ primitiveType :  'boolean' ('[' ']')*
                 | 'void' ('[' ']')* ;
 classType : QUALIFIED_NAME ('[' ']')* ;
 
-blockStatement : variableDeclaration
-               | printStatement
-               | functionCall ;
+block : '{' statement* '}' ;
+
+statement : block
+           | variableDeclaration
+           | printStatement
+           | functionCall
+           | returnStatement
+           | ifStatement ;
+
 variableDeclaration : VARIABLE name EQUALS expression;
 printStatement : PRINT expression ;
+returnStatement : 'return' #RETURNVOID
+                | ('return')? expression #RETURNWITHVALUE;
 functionCall : functionName '('expressionList ')';
+ifStatement :  'if'  ('(')? expression (')')? trueStatement=statement ('else' falseStatement=statement)?;
 name : ID ;
-expressionList : expression (',' expression)* ;
-expression :
-            varReference #VARREFERENCE
+expressionList : expression? (',' expression)* ;
+expression : varReference #VARREFERENCE
            | value        #VALUE
            | functionCall #FUNCALL
            |  '('expression '*' expression')' #MULTIPLY
@@ -46,6 +54,12 @@ expression :
            | expression '+' expression #ADD
            | '(' expression '-' expression ')' #SUBSTRACT
            | expression '-' expression #SUBSTRACT
+           | expression cmp='>' expression #conditionalExpression
+             | expression cmp='<' expression #conditionalExpression
+             | expression cmp='==' expression #conditionalExpression
+             | expression cmp='!=' expression #conditionalExpression
+             | expression cmp='>=' expression #conditionalExpression
+             | expression cmp='<=' expression #conditionalExpression
            ;
 varReference : ID ;
 value : NUMBER
@@ -55,7 +69,7 @@ VARIABLE : 'var' ;
 PRINT : 'print' ;
 EQUALS : '=' ;
 NUMBER : [0-9]+ ;
-STRING : '"'.*'"' ;
+STRING : '"'~('\r' | '\n' | '"')*'"' ;
 ID : [a-zA-Z0-9]+ ;
 QUALIFIED_NAME : ID ('.' ID)+;
 WS: [ \t\n\r]+ -> skip ;

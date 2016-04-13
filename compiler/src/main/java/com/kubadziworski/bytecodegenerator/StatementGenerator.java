@@ -1,17 +1,17 @@
 package com.kubadziworski.bytecodegenerator;
 
 import com.kubadziworski.domain.expression.FunctionCall;
-import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.expression.Expression;
+import com.kubadziworski.domain.statement.*;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.statement.PrintStatement;
-import com.kubadziworski.domain.statement.Statement;
-import com.kubadziworski.domain.statement.VariableDeclarationStatement;
 import com.kubadziworski.domain.type.Type;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+
+import java.util.List;
 
 /**
  * Created by kuba on 29.03.16.
@@ -45,15 +45,48 @@ public class StatementGenerator {
         int index = scope.getLocalVariableIndex(name);
         Type type = expression.getType();
         expression.accept(expressionGenrator);
-        if (type == BultInType.INT) {
+        if (type == BultInType.INT || type == BultInType.BOOLEAN) {
             methodVisitor.visitVarInsn(Opcodes.ISTORE, index);
         } else {
             methodVisitor.visitVarInsn(Opcodes.ASTORE, index);
         }
-        scope.addLocalVariable(new LocalVariable(name, expression.getType()));
     }
 
     public void generate(FunctionCall functionCall) {
         functionCall.accept(expressionGenrator);
+    }
+
+    public void generate(ReturnStatement returnStatement) {
+        Expression expression = returnStatement.getExpression();
+        Type type = expression.getType();
+        expression.accept(expressionGenrator);
+        if(type == BultInType.VOID) {
+            methodVisitor.visitInsn(Opcodes.RETURN);
+        } else if (type == BultInType.INT) {
+            methodVisitor.visitInsn(Opcodes.IRETURN);
+        }
+    }
+
+    public void generate(IfStatement ifStatement) {
+        Expression condition = ifStatement.getCondition();
+        condition.accept(expressionGenrator);
+
+        Label trueLabel = new Label();
+        methodVisitor.visitJumpInsn(Opcodes.IFEQ,trueLabel);
+        ifStatement.getTrueStatement().accept(this);
+        Label falseLabel = new Label();
+        methodVisitor.visitJumpInsn(Opcodes.GOTO,falseLabel);
+        methodVisitor.visitLabel(trueLabel);
+        methodVisitor.visitFrame(Opcodes.F_SAME,0,null,0,null);
+        ifStatement.getFalseStatement().accept(this);
+        methodVisitor.visitLabel(falseLabel);
+        methodVisitor.visitFrame(Opcodes.F_SAME,0,null,0,null);
+    }
+
+    public void generate(Block block) {
+        Scope newScope = block.getScope();
+        List<Statement> statements = block.getStatements();
+        StatementGenerator statementGenerator = new StatementGenerator(methodVisitor, newScope);
+        statements.stream().forEach(stmt -> stmt.accept(statementGenerator));
     }
 }
