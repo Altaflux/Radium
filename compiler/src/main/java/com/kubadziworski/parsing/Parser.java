@@ -1,4 +1,4 @@
-package com.kubadziworski;
+package com.kubadziworski.parsing;
 
 import com.kubadziworski.antlr.EnkelLexer;
 import com.kubadziworski.antlr.EnkelParser;

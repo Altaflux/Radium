@@ -39,7 +39,8 @@ public class MethodGenerator {
 
     private void appendReturnIfNotExists(Function function, Block block,StatementGenerator statementScopeGenrator) {
         Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
-        if(!(lastStatement instanceof ReturnStatement)) {
+        boolean isLastStatementReturn = lastStatement instanceof ReturnStatement;
+        if(!isLastStatementReturn) {
             EmptyExpression emptyExpression = new EmptyExpression(function.getReturnType());
             ReturnStatement returnStatement = new ReturnStatement(emptyExpression);
             returnStatement.accept(statementScopeGenrator);

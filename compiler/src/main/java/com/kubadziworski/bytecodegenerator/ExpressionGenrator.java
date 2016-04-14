@@ -2,19 +2,17 @@ package com.kubadziworski.bytecodegenerator;
 
 import java.util.Optional;
 
-import com.kubadziworski.CompareSign;
+import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.expression.*;
 import com.kubadziworski.domain.math.*;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.statement.PrintStatement;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.CalledFunctionDoesNotExistException;
 import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
 import com.kubadziworski.util.DescriptorFactory;
-import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
 import org.apache.commons.lang3.StringUtils;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -131,12 +129,12 @@ public class ExpressionGenrator {
         rightExpression.accept(this);
         CompareSign compareSign = conditionalExpression.getCompareSign();
         Label endLabel = new Label();
-        Label falseLabel = new Label();
-        methodVisitor.visitJumpInsn(compareSign.getOpcode(),falseLabel);
-        methodVisitor.visitInsn(Opcodes.ICONST_1);
-        methodVisitor.visitJumpInsn(Opcodes.GOTO, endLabel);
-        methodVisitor.visitLabel(falseLabel);
+        Label trueLabel = new Label();
+        methodVisitor.visitJumpInsn(compareSign.getOpcode(),trueLabel);
         methodVisitor.visitInsn(Opcodes.ICONST_0);
+        methodVisitor.visitJumpInsn(Opcodes.GOTO, endLabel);
+        methodVisitor.visitLabel(trueLabel);
+        methodVisitor.visitInsn(Opcodes.ICONST_1);
         methodVisitor.visitLabel(endLabel);
     }
 

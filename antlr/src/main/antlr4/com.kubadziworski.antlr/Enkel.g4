@@ -7,7 +7,7 @@ classDeclaration : className '{' classBody '}' ;
 className : ID ;
 classBody :  function* ;
 function : functionDeclaration block ;
-functionDeclaration : (type)? functionName '(' (functionArgument (',' functionArgument)*)?')' ;
+functionDeclaration : (type)? functionName '('? (functionArgument (',' functionArgument)*)? ')'? ;
 functionName : ID ;
 functionArgument : type ID functionParamdefaultValue? ;
 functionParamdefaultValue : '=' expression ;
@@ -37,8 +37,8 @@ statement : block
 
 variableDeclaration : VARIABLE name EQUALS expression;
 printStatement : PRINT expression ;
-returnStatement : 'return' #RETURNVOID
-                | ('return')? expression #RETURNWITHVALUE;
+returnStatement : ('return')? expression #RETURNWITHVALUE
+                | 'return' #RETURNVOID ;
 functionCall : functionName '('expressionList ')';
 ifStatement :  'if'  ('(')? expression (')')? trueStatement=statement ('else' falseStatement=statement)?;
 name : ID ;

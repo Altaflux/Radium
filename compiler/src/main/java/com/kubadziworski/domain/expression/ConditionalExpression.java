@@ -1,6 +1,6 @@
 package com.kubadziworski.domain.expression;
 
-import com.kubadziworski.CompareSign;
+import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.bytecodegenerator.ExpressionGenrator;
 import com.kubadziworski.domain.type.BultInType;
 

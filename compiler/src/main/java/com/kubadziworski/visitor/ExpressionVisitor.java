@@ -1,6 +1,6 @@
 package com.kubadziworski.visitor;
 
-import com.kubadziworski.CompareSign;
+import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.expression.*;
@@ -10,7 +10,6 @@ import com.kubadziworski.domain.math.Multiplication;
 import com.kubadziworski.domain.math.Substraction;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.statement.Statement;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -105,9 +104,8 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     public ConditionalExpression visitConditionalExpression(@NotNull EnkelParser.ConditionalExpressionContext ctx) {
         EnkelParser.ExpressionContext leftExpressionCtx = ctx.expression(0);
         EnkelParser.ExpressionContext rightExpressionCtx = ctx.expression(1);
-        ExpressionVisitor expressionVisitor = new ExpressionVisitor(scope);
-        Expression leftExpression = leftExpressionCtx.accept(expressionVisitor);
-        Expression rightExpression = rightExpressionCtx != null ? rightExpressionCtx.accept(expressionVisitor) : new Value(BultInType.INT,"0");
+        Expression leftExpression = leftExpressionCtx.accept(this);
+        Expression rightExpression = rightExpressionCtx != null ? rightExpressionCtx.accept(this) : new Value(BultInType.INT,"0");
         CompareSign cmpSign = ctx.cmp != null ? CompareSign.fromString(ctx.cmp.getText()) : CompareSign.NOT_EQUAL;
         return new ConditionalExpression(leftExpression, rightExpression, cmpSign);
     }

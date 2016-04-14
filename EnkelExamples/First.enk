@@ -1,33 +1,10 @@
 First {
-        main (string[] args) {
-            shouldPassFivePlusOneEqualsSix()
-            shouldFailFivePlusOneEqualsSeven()
-        }
 
-        shouldPassFivePlusOneEqualsSix() {
-            var expected = 6
-            var actual = sum(5,1)
+    main(string[] args) {
+        print sum(5,2)
+    }
 
-            if ( actual == expected ) {
-                print "shouldPassForFivePlusOneEqualsSix test passed"
-            } else {
-                print "shouldPassForFivePlusOneEqualsSix test failed"
-            }
-        }
-
-        shouldFailFivePlusOneEqualsSeven() {
-            var expected = 7
-            var actual = sum(5,1)
-
-            if ( actual != expected ) {
-                print "shouldFailForFivePlusOneEqualsSeven test passed"
-            } else {
-                print "shouldFailForFivePlusOneEqualsSeven test failed"
-            }
-        }
-
-        int sum(int x, int y) {
-            x+y
-        }
+    int sum (int x ,int y) {
+        x+y
+    }
 }
-
