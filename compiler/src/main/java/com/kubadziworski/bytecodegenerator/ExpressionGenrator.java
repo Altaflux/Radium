@@ -1,15 +1,18 @@
 package com.kubadziworski.bytecodegenerator;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.expression.*;
 import com.kubadziworski.domain.math.*;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.CalledFunctionDoesNotExistException;
 import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
 import com.kubadziworski.util.DescriptorFactory;
@@ -19,7 +22,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 
 /**
  * Created by kuba on 02.04.16.
@@ -71,12 +73,22 @@ public class ExpressionGenrator {
     }
 
     public void generate(FunctionCall functionCall) {
-        Collection<Expression> parameters = functionCall.getParameters();
-        parameters.forEach(param -> param.accept(this));
+        String functionName = functionCall.getFunctionName();
+        FunctionSignature signature = scope.getSignature(functionName);
+        List<Expression> arguments = functionCall.getArguments();
+        List<FunctionParameter> parameters = signature.getParameters();
+        if(arguments.size() > parameters.size()) {
+            throw new BadArgumentsToFunctionCallException(functionCall);
+        }
+        arguments.forEach(argument -> argument.accept(this));
+        for(int i=arguments.size();i<parameters.size();i++) {
+            Expression defaultParameter = parameters.get(i).getDefaultValue()
+                    .orElseThrow(() -> new BadArgumentsToFunctionCallException(functionCall));
+            defaultParameter.accept(this);
+        }
         Type owner = functionCall.getOwner().orElse(new ClassType(scope.getClassName()));
         String methodDescriptor = getFunctionDescriptor(functionCall);
         String ownerDescriptor = owner.getInternalName();
-        String functionName = functionCall.getFunctionName();
         methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, functionName, methodDescriptor, false);
     }
 

@@ -6,8 +6,8 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.statement.Statement;
 import com.kubadziworski.domain.type.Type;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,12 +16,12 @@ import java.util.Optional;
 public class FunctionCall extends Expression implements Statement {
     private Type owner;
     private FunctionSignature signature;
-    private Collection<Expression> parameters;
+    private List<Expression> arguments;
 
-    public FunctionCall(FunctionSignature signature, Collection<Expression> parameters, Type owner) {
+    public FunctionCall(FunctionSignature signature, List<Expression> arguments, Type owner) {
         super(signature.getReturnType());
         this.signature = signature;
-        this.parameters = parameters;
+        this.arguments = arguments;
         this.owner = owner;
     }
 
@@ -29,8 +29,8 @@ public class FunctionCall extends Expression implements Statement {
         return signature.getName();
     }
 
-    public Collection<Expression> getParameters() {
-        return Collections.unmodifiableCollection(parameters);
+    public List<Expression> getArguments() {
+        return Collections.unmodifiableList(arguments);
     }
 
     public Optional<Type> getOwner() {

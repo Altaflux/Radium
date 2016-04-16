@@ -1,7 +1,7 @@
 package com.kubadziworski.domain.classs;
 
 import com.kubadziworski.domain.expression.FunctionParameter;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.statement.Statement;
 
@@ -13,24 +13,21 @@ import java.util.List;
  */
 public class Function {
 
-    private final String name;
-    private final List<FunctionParameter> arguments;
+    private final FunctionSignature functionSignature;
     private final Statement rootStatement;
-    private final Type returnType;
 
-    public Function(String name, Type returnType, List<FunctionParameter> arguments, Statement rootStatement) {
-        this.name = name;
-        this.arguments = arguments;
+
+    public Function(FunctionSignature functionSignature, Statement rootStatement) {
+        this.functionSignature = functionSignature;
         this.rootStatement = rootStatement;
-        this.returnType = returnType;
     }
 
     public String getName() {
-        return name;
+        return functionSignature.getName();
     }
 
-    public List<FunctionParameter> getArguments() {
-        return Collections.unmodifiableList(arguments);
+    public List<FunctionParameter> getParameter() {
+        return Collections.unmodifiableList(functionSignature.getParameters());
     }
 
     public Statement getRootStatement() {
@@ -38,6 +35,6 @@ public class Function {
     }
 
     public Type getReturnType() {
-        return returnType;
+        return functionSignature.getReturnType();
     }
 }

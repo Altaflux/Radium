@@ -23,7 +23,7 @@ public class Compiler implements Opcodes {
     public static void main(String[] args) throws Exception {
         try {
             new Compiler().compile(args);
-        } catch (Exception exception) {
+        } catch (IOException exception) {
             LOGGER.error("ERROR: " + exception.getMessage());
         }
     }
