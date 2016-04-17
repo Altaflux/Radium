@@ -39,10 +39,12 @@ variableDeclaration : VARIABLE name EQUALS expression;
 printStatement : PRINT expression ;
 returnStatement : ('return')? expression #RETURNWITHVALUE
                 | 'return' #RETURNVOID ;
-functionCall : functionName '('expressionList ')';
+functionCall : functionName '('argument? (',' argument)* ')';
 ifStatement :  'if'  ('(')? expression (')')? trueStatement=statement ('else' falseStatement=statement)?;
 name : ID ;
-expressionList : expression? (',' expression)* ;
+argument : expression
+         | expression '->' name ;
+
 expression : varReference #VARREFERENCE
            | value        #VALUE
            | functionCall #FUNCALL

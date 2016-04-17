@@ -1,23 +1,25 @@
 package com.kubadziworski.visitor;
 
-import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.expression.*;
+import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.math.Addition;
 import com.kubadziworski.domain.math.Division;
 import com.kubadziworski.domain.math.Multiplication;
 import com.kubadziworski.domain.math.Substraction;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by kuba on 02.04.16.
@@ -46,14 +48,20 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
     @Override
     public Expression visitFunctionCall(@NotNull EnkelParser.FunctionCallContext ctx) {
-
         String funName = ctx.functionName().getText();
         FunctionSignature signature = scope.getSignature(funName);
-        List<EnkelParser.ExpressionContext> calledParameters = ctx.expressionList().expression();
-        List<Expression> arguments = calledParameters.stream()
-                .map((expressionContext) -> expressionContext.accept(this))
-                .collect(Collectors.toList());
-        return new FunctionCall(signature, arguments,null);
+        List<EnkelParser.ArgumentContext> argumentsCtx = ctx.argument();
+        Comparator<EnkelParser.ArgumentContext> argumentComparator = (arg1, arg2) -> {
+            if(arg1.name() == null) return 0;
+            String arg1Name = arg1.name().getText();
+            String arg2Name = arg2.name().getText();
+            return signature.getIndexOfParameter(arg1Name) - signature.getIndexOfParameter(arg2Name);
+        };
+        List<Expression> arguments = argumentsCtx.stream()
+                .sorted(argumentComparator)
+                .map(argument -> argument.expression().accept(this))
+                .collect(toList());
+        return new FunctionCall(signature, arguments, null);
     }
 
     @Override
@@ -105,7 +113,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         EnkelParser.ExpressionContext leftExpressionCtx = ctx.expression(0);
         EnkelParser.ExpressionContext rightExpressionCtx = ctx.expression(1);
         Expression leftExpression = leftExpressionCtx.accept(this);
-        Expression rightExpression = rightExpressionCtx != null ? rightExpressionCtx.accept(this) : new Value(BultInType.INT,"0");
+        Expression rightExpression = rightExpressionCtx != null ? rightExpressionCtx.accept(this) : new Value(BultInType.INT, "0");
         CompareSign cmpSign = ctx.cmp != null ? CompareSign.fromString(ctx.cmp.getText()) : CompareSign.NOT_EQUAL;
         return new ConditionalExpression(leftExpression, rightExpression, cmpSign);
     }
