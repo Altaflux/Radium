@@ -5,6 +5,7 @@ import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class TypeResolver {
 
     public static Type getFromValue(String value) {
         if(StringUtils.isEmpty(value)) return BultInType.VOID;
-        if(StringUtils.isNumeric(value)) {
+        if(NumberUtils.isNumber(value)) {
             return BultInType.INT;
         }
         return BultInType.STRING;
