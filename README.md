@@ -1,7 +1,7 @@
 #Enkel
 Enkel is a simple programming language running on jvm
 
-#Blog 
+#[BLOG - Creating JVM Language] (http://jakubdziworski.github.io/categories.html#Enkel-ref)
 I describe this project on my [BLOG - Creating JVM Language] (http://jakubdziworski.github.io/categories.html#Enkel-ref).
 When in doubt reading the code take a look at the posts - all of the features are described there.
 
