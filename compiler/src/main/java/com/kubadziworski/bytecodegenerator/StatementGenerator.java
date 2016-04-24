@@ -93,33 +93,29 @@ public class StatementGenerator {
         Label endLoopSection = new Label();
         String iteratorVarName = rangedForStatement.getIteratorVarName();
         Expression endExpression = rangedForStatement.getEndExpression();
-        Expression startExpression = new VarReference(iteratorVarName, rangedForStatement.getType());
-        ConditionalExpression startEqualEndConditional = new ConditionalExpression(startExpression, endExpression, CompareSign.EQUAL);
-        ConditionalExpression startLessThanEndConditional = new ConditionalExpression(startExpression, endExpression, CompareSign.LESS);
-        ConditionalExpression startGreaterThanEndConditional = new ConditionalExpression(startExpression, endExpression, CompareSign.GREATER);
+        Expression iteratorVariable = new VarReference(iteratorVarName, rangedForStatement.getType());
+        ConditionalExpression iteratorGreaterThanEndConditional = new ConditionalExpression(iteratorVariable, endExpression, CompareSign.GREATER);
+        ConditionalExpression iteratorLessThanEndConditional = new ConditionalExpression(iteratorVariable, endExpression, CompareSign.LESS);
 
         iterator.accept(scopeGeneratorWithNewScope);
 
-        startEqualEndConditional.accept(exprGeneratorWithNewScope);
-        methodVisitor.visitJumpInsn(Opcodes.IFNE,endLoopSection);
-
-        startLessThanEndConditional.accept(exprGeneratorWithNewScope);
+        iteratorLessThanEndConditional.accept(exprGeneratorWithNewScope);
         methodVisitor.visitJumpInsn(Opcodes.IFNE,incrementationSection);
 
-        startGreaterThanEndConditional.accept(exprGeneratorWithNewScope);
+        iteratorGreaterThanEndConditional.accept(exprGeneratorWithNewScope);
         methodVisitor.visitJumpInsn(Opcodes.IFNE,decrementationSection);
 
         methodVisitor.visitLabel(incrementationSection);
         rangedForStatement.getStatement().accept(scopeGeneratorWithNewScope);
         methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName),1);
-        startGreaterThanEndConditional.accept(exprGeneratorWithNewScope);
+        iteratorGreaterThanEndConditional.accept(exprGeneratorWithNewScope);
         methodVisitor.visitJumpInsn(Opcodes.IFEQ,incrementationSection);
         methodVisitor.visitJumpInsn(Opcodes.GOTO,endLoopSection);
 
         methodVisitor.visitLabel(decrementationSection);
         rangedForStatement.getStatement().accept(scopeGeneratorWithNewScope);
         methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName),-1);
-        startLessThanEndConditional.accept(exprGeneratorWithNewScope);
+        iteratorLessThanEndConditional.accept(exprGeneratorWithNewScope);
         methodVisitor.visitJumpInsn(Opcodes.IFEQ,decrementationSection);
 
         methodVisitor.visitLabel(endLoopSection);
