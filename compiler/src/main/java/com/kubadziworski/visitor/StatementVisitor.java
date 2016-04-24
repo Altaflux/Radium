@@ -4,21 +4,14 @@ import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.domain.expression.EmptyExpression;
-import com.kubadziworski.domain.expression.Value;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.expression.Expression;
 import com.kubadziworski.domain.statement.*;
 import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.exception.LastStatementNotReturnableException;
 import org.antlr.v4.runtime.misc.NotNull;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.math3.analysis.function.Exp;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 public class StatementVisitor extends EnkelBaseVisitor<Statement> {
 
     private final Scope scope;
-    private ExpressionVisitor expressionVisitor;
+    private final ExpressionVisitor expressionVisitor;
 
     public StatementVisitor(Scope scope) {
         this.scope = scope;
@@ -85,4 +78,12 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
 
         return new IfStatement(condition, trueStatement, falseStatement);
     }
+
+    @Override
+    public Statement visitForStatement(@NotNull EnkelParser.ForStatementContext ctx) {
+        ForStatementVisitor forStatementVisitor = new ForStatementVisitor(scope);
+        return ctx.accept(forStatementVisitor);
+    }
+
+
 }

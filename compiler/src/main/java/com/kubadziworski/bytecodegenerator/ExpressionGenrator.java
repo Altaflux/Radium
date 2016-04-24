@@ -38,7 +38,7 @@ public class ExpressionGenrator {
     }
 
     public void generate(VarReference varReference) {
-        String varName = varReference.getVarName();
+        String varName = varReference.geName();
         int index = scope.getLocalVariableIndex(varName);
         LocalVariable localVariable = scope.getLocalVariable(varName);
         Type type = localVariable.getType();

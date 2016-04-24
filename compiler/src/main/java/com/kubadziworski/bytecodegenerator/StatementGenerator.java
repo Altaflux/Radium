@@ -1,8 +1,8 @@
 package com.kubadziworski.bytecodegenerator;
 
-import com.kubadziworski.domain.expression.FunctionCall;
+import com.kubadziworski.domain.expression.*;
+import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.expression.Expression;
 import com.kubadziworski.domain.statement.*;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.BultInType;
@@ -42,14 +42,10 @@ public class StatementGenerator {
     public void generate(VariableDeclarationStatement variableDeclarationStatement) {
         Expression expression = variableDeclarationStatement.getExpression();
         String name = variableDeclarationStatement.getName();
-        int index = scope.getLocalVariableIndex(name);
         Type type = expression.getType();
         expression.accept(expressionGenrator);
-        if (type == BultInType.INT || type == BultInType.BOOLEAN) {
-            methodVisitor.visitVarInsn(Opcodes.ISTORE, index);
-        } else {
-            methodVisitor.visitVarInsn(Opcodes.ASTORE, index);
-        }
+        AssignmentStatement assignmentStatement = new AssignmentStatement(variableDeclarationStatement);
+        generate(assignmentStatement);
     }
 
     public void generate(FunctionCall functionCall) {
@@ -85,5 +81,39 @@ public class StatementGenerator {
         List<Statement> statements = block.getStatements();
         StatementGenerator statementGenerator = new StatementGenerator(methodVisitor, newScope);
         statements.stream().forEach(stmt -> stmt.accept(statementGenerator));
+    }
+
+    public void generate(RangedForStatement rangedForStatement) {
+        Scope newScope = rangedForStatement.getScope();
+        StatementGenerator scopeGeneratorWithNewScope = new StatementGenerator(methodVisitor, newScope);
+        ExpressionGenrator exprGeneratorWithNewScope = new ExpressionGenrator(methodVisitor, newScope);
+        Statement iterator = rangedForStatement.getIteratorVariableStatement();
+        Label trueLabel = new Label();
+        Label endLabel = new Label();
+        String iteratorVarName = rangedForStatement.getIteratorVarName();
+        Expression rightExpression = rangedForStatement.getEndExpression();
+        VarReference leftExpression = new VarReference(iteratorVarName, rangedForStatement.getType());
+        ConditionalExpression conditionalExpression = new ConditionalExpression(leftExpression, rightExpression, CompareSign.LESS_OR_EQUAL);
+
+        iterator.accept(scopeGeneratorWithNewScope);
+        conditionalExpression.accept(exprGeneratorWithNewScope);
+        methodVisitor.visitJumpInsn(Opcodes.IFEQ,endLabel);
+        methodVisitor.visitLabel(trueLabel);
+        rangedForStatement.getStatement().accept(scopeGeneratorWithNewScope);
+        methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName),1);
+        conditionalExpression.accept(exprGeneratorWithNewScope);
+        methodVisitor.visitJumpInsn(Opcodes.IFNE,trueLabel);
+        methodVisitor.visitLabel(endLabel);
+    }
+
+    public void generate(AssignmentStatement assignmentStatement) {
+        String varName = assignmentStatement.getVarName();
+        Type type = assignmentStatement.getExpression().getType();
+        int index = scope.getLocalVariableIndex(varName);
+        if (type == BultInType.INT || type == BultInType.BOOLEAN) {
+            methodVisitor.visitVarInsn(Opcodes.ISTORE, index);
+        } else {
+            methodVisitor.visitVarInsn(Opcodes.ASTORE, index);
+        }
     }
 }

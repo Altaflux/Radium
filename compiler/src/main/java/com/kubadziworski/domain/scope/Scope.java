@@ -50,6 +50,11 @@ public class Scope {
                 .orElseThrow(() -> new LocalVariableNotFoundException(this, varName));
     }
 
+    public boolean localVariableExists(String varName) {
+        return localVariables.stream()
+                .anyMatch(variable -> variable.getName().equals(varName));
+    }
+
     public int getLocalVariableIndex(String varName) {
         LocalVariable localVariable = getLocalVariable(varName);
         return localVariables.indexOf(localVariable);
