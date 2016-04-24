@@ -42,8 +42,8 @@ returnStatement : ('return')? expression #RETURNWITHVALUE
                 | 'return' #RETURNVOID ;
 functionCall : functionName '('argument? (',' argument)* ')';
 ifStatement :  'if'  ('(')? expression (')')? trueStatement=statement ('else' falseStatement=statement)?;
-forStatement : 'for' ('(')? forExpression (')')? statement ;
-forExpression : iterator=varReference  'from' startExpr=expression range='to' endExpr=expression ;
+forStatement : 'for' ('(')? forConditions (')')? statement ;
+forConditions : iterator=varReference  'from' startExpr=expression range='to' endExpr=expression ;
 name : ID ;
 argument : expression
          | name '->' expression ;

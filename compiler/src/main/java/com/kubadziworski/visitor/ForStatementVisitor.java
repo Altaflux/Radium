@@ -1,7 +1,7 @@
 package com.kubadziworski.visitor;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser.ForExpressionContext;
+import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ForStatementContext;
 import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
 import com.kubadziworski.domain.expression.Expression;
@@ -29,7 +29,7 @@ public class ForStatementVisitor extends EnkelBaseVisitor<RangedForStatement> {
 
     @Override
     public RangedForStatement visitForStatement(@NotNull ForStatementContext ctx) {
-        ForExpressionContext forExpressionContext = ctx.forExpression();
+        EnkelParser.ForConditionsContext forExpressionContext = ctx.forConditions();
         Expression startExpression = forExpressionContext.startExpr.accept(expressionVisitor);
         Expression endExpression = forExpressionContext.endExpr.accept(expressionVisitor);
         VarReferenceContext iterator = forExpressionContext.iterator;
