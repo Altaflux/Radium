@@ -4,9 +4,7 @@ import com.kubadziworski.domain.expression.*;
 import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.statement.*;
-import com.kubadziworski.domain.type.ClassType;
-import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -25,7 +23,7 @@ public class StatementGenerator {
     public StatementGenerator(MethodVisitor methodVisitor, Scope scope) {
         this.methodVisitor = methodVisitor;
         this.scope = scope;
-        this.expressionGenrator = new ExpressionGenrator(methodVisitor,scope);
+        this.expressionGenrator = new ExpressionGenrator(methodVisitor, scope);
     }
 
     public void generate(PrintStatement printStatement) {
@@ -41,8 +39,6 @@ public class StatementGenerator {
 
     public void generate(VariableDeclarationStatement variableDeclarationStatement) {
         Expression expression = variableDeclarationStatement.getExpression();
-        String name = variableDeclarationStatement.getName();
-        Type type = expression.getType();
         expression.accept(expressionGenrator);
         AssignmentStatement assignmentStatement = new AssignmentStatement(variableDeclarationStatement);
         generate(assignmentStatement);
@@ -56,11 +52,7 @@ public class StatementGenerator {
         Expression expression = returnStatement.getExpression();
         Type type = expression.getType();
         expression.accept(expressionGenrator);
-        if(type == BultInType.VOID) {
-            methodVisitor.visitInsn(Opcodes.RETURN);
-        } else if (type == BultInType.INT) {
-            methodVisitor.visitInsn(Opcodes.IRETURN);
-        }
+        methodVisitor.visitInsn(type.getReturnOpcode());
     }
 
     public void generate(IfStatement ifStatement) {
@@ -68,9 +60,9 @@ public class StatementGenerator {
         condition.accept(expressionGenrator);
         Label trueLabel = new Label();
         Label endLabel = new Label();
-        methodVisitor.visitJumpInsn(Opcodes.IFNE,trueLabel);
+        methodVisitor.visitJumpInsn(Opcodes.IFNE, trueLabel);
         ifStatement.getFalseStatement().accept(this);
-        methodVisitor.visitJumpInsn(Opcodes.GOTO,endLabel);
+        methodVisitor.visitJumpInsn(Opcodes.GOTO, endLabel);
         methodVisitor.visitLabel(trueLabel);
         ifStatement.getTrueStatement().accept(this);
         methodVisitor.visitLabel(endLabel);
@@ -100,23 +92,23 @@ public class StatementGenerator {
         iterator.accept(scopeGeneratorWithNewScope);
 
         iteratorLessThanEndConditional.accept(exprGeneratorWithNewScope);
-        methodVisitor.visitJumpInsn(Opcodes.IFNE,incrementationSection);
+        methodVisitor.visitJumpInsn(Opcodes.IFNE, incrementationSection);
 
         iteratorGreaterThanEndConditional.accept(exprGeneratorWithNewScope);
-        methodVisitor.visitJumpInsn(Opcodes.IFNE,decrementationSection);
+        methodVisitor.visitJumpInsn(Opcodes.IFNE, decrementationSection);
 
         methodVisitor.visitLabel(incrementationSection);
         rangedForStatement.getStatement().accept(scopeGeneratorWithNewScope);
-        methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName),1);
+        methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName), 1);
         iteratorGreaterThanEndConditional.accept(exprGeneratorWithNewScope);
-        methodVisitor.visitJumpInsn(Opcodes.IFEQ,incrementationSection);
-        methodVisitor.visitJumpInsn(Opcodes.GOTO,endLoopSection);
+        methodVisitor.visitJumpInsn(Opcodes.IFEQ, incrementationSection);
+        methodVisitor.visitJumpInsn(Opcodes.GOTO, endLoopSection);
 
         methodVisitor.visitLabel(decrementationSection);
         rangedForStatement.getStatement().accept(scopeGeneratorWithNewScope);
-        methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName),-1);
+        methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName), -1);
         iteratorLessThanEndConditional.accept(exprGeneratorWithNewScope);
-        methodVisitor.visitJumpInsn(Opcodes.IFEQ,decrementationSection);
+        methodVisitor.visitJumpInsn(Opcodes.IFEQ, decrementationSection);
 
         methodVisitor.visitLabel(endLoopSection);
     }
@@ -125,10 +117,6 @@ public class StatementGenerator {
         String varName = assignmentStatement.getVarName();
         Type type = assignmentStatement.getExpression().getType();
         int index = scope.getLocalVariableIndex(varName);
-        if (type == BultInType.INT || type == BultInType.BOOLEAN) {
-            methodVisitor.visitVarInsn(Opcodes.ISTORE, index);
-        } else {
-            methodVisitor.visitVarInsn(Opcodes.ASTORE, index);
-        }
+        methodVisitor.visitVarInsn(type.getStoreVariableOpcode(), index);
     }
 }

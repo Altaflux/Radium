@@ -26,10 +26,10 @@ class DescriptorFactoryTest extends spock.lang.Specification {
             descr.equals(descriptor)
 
         where:
-            paramType | retType | descriptor
-            BultInType.INT | BultInType.INT | "(I)I"
-            BultInType.STRING | BultInType.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
-            new ClassType("java.lang.String") | BultInType.INT | "(Ljava/lang/String;)I"
+            paramType                         | retType           | descriptor
+            BultInType.INT                    | BultInType.INT    | "(I)I"
+            BultInType.STRING                 | BultInType.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
+            new ClassType("java.lang.String") | BultInType.INT    | "(Ljava/lang/String;)I"
     }
 
     def "test descriptor factory with signature"() {
@@ -48,9 +48,9 @@ class DescriptorFactoryTest extends spock.lang.Specification {
             descr.equals(descriptor)
 
         where:
-            paramType | retType | descriptor
-            BultInType.INT | BultInType.INT | "(I)I"
-            BultInType.STRING | BultInType.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
-            new ClassType("java.lang.String") | BultInType.INT | "(Ljava/lang/String;)I"
+            paramType                         | retType           | descriptor
+            BultInType.INT                    | BultInType.INT    | "(I)I"
+            BultInType.STRING                 | BultInType.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
+            new ClassType("java.lang.String") | BultInType.INT    | "(Ljava/lang/String;)I"
     }
 }

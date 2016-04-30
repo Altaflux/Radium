@@ -5,18 +5,15 @@ import java.util.Optional;
 
 import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.expression.*;
-import com.kubadziworski.domain.math.*;
+import com.kubadziworski.domain.expression.math.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.ClassType;
-import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.*;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.CalledFunctionDoesNotExistException;
-import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
 import com.kubadziworski.util.DescriptorFactory;
-import org.apache.commons.lang3.StringUtils;
+import com.kubadziworski.util.TypeResolver;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -42,34 +39,20 @@ public class ExpressionGenrator {
         int index = scope.getLocalVariableIndex(varName);
         LocalVariable localVariable = scope.getLocalVariable(varName);
         Type type = localVariable.getType();
-        if (type == BultInType.INT || type == BultInType.BOOLEAN) {
-            methodVisitor.visitVarInsn(Opcodes.ILOAD, index);
-        } else {
-            methodVisitor.visitVarInsn(Opcodes.ALOAD, index);
-        }
+        methodVisitor.visitVarInsn(type.getLoadVariableOpcode(), index);
     }
 
     public void generate(FunctionParameter parameter) {
         Type type = parameter.getType();
         int index = scope.getLocalVariableIndex(parameter.getName());
-        if (type == BultInType.INT) {
-            methodVisitor.visitVarInsn(Opcodes.ILOAD, index);
-        } else {
-            methodVisitor.visitVarInsn(Opcodes.ALOAD, index);
-        }
+        methodVisitor.visitVarInsn(type.getLoadVariableOpcode(), index);
     }
 
     public void generate(Value value) {
         Type type = value.getType();
         String stringValue = value.getValue();
-        if (type == BultInType.INT || type == BultInType.BOOLEAN) {
-            int intValue = Integer.parseInt(stringValue);
-            methodVisitor.visitIntInsn(Opcodes.BIPUSH, intValue);
-        } else if (type == BultInType.STRING) {
-            stringValue = StringUtils.removeStart(stringValue, "\"");
-            stringValue = StringUtils.removeEnd(stringValue, "\"");
-            methodVisitor.visitLdcInsn(stringValue);
-        }
+        Object transformedValue = TypeResolver.getValueFromString(stringValue, type);
+        methodVisitor.visitLdcInsn(transformedValue);
     }
 
     public void generate(FunctionCall functionCall) {
@@ -77,11 +60,11 @@ public class ExpressionGenrator {
         FunctionSignature signature = scope.getSignature(functionName);
         List<Expression> arguments = functionCall.getArguments();
         List<FunctionParameter> parameters = signature.getParameters();
-        if(arguments.size() > parameters.size()) {
+        if (arguments.size() > parameters.size()) {
             throw new BadArgumentsToFunctionCallException(functionCall);
         }
         arguments.forEach(argument -> argument.accept(this));
-        for(int i=arguments.size();i<parameters.size();i++) {
+        for (int i = arguments.size(); i < parameters.size(); i++) {
             Expression defaultParameter = parameters.get(i).getDefaultValue()
                     .orElseThrow(() -> new BadArgumentsToFunctionCallException(functionCall));
             defaultParameter.accept(this);
@@ -93,17 +76,19 @@ public class ExpressionGenrator {
     }
 
     public void generate(Addition expression) {
-        if(expression.getType().equals(BultInType.STRING)) {
+        if (expression.getType().equals(BultInType.STRING)) {
             generateStringAppend(expression);
             return;
         }
         evaluateArthimeticComponents(expression);
-        methodVisitor.visitInsn(Opcodes.IADD);
+        Type type = expression.getType();
+        methodVisitor.visitInsn(type.getAddOpcode());
     }
 
     public void generate(Substraction expression) {
+        Type type = expression.getType();
         evaluateArthimeticComponents(expression);
-        methodVisitor.visitInsn(Opcodes.ISUB);
+        methodVisitor.visitInsn(type.getSubstractOpcode());
     }
 
     private void generateStringAppend(Addition expression) {
@@ -113,24 +98,26 @@ public class ExpressionGenrator {
         Expression leftExpression = expression.getLeftExpression();
         leftExpression.accept(this);
         String leftExprDescriptor = leftExpression.getType().getDescriptor();
-        String descriptor = "("+leftExprDescriptor+ ")Ljava/lang/StringBuilder;";
+        String descriptor = "(" + leftExprDescriptor + ")Ljava/lang/StringBuilder;";
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
         Expression rightExpression = expression.getRightExpression();
         rightExpression.accept(this);
         String rightExprDescriptor = rightExpression.getType().getDescriptor();
-        descriptor = "("+rightExprDescriptor+ ")Ljava/lang/StringBuilder;";
+        descriptor = "(" + rightExprDescriptor + ")Ljava/lang/StringBuilder;";
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
     }
 
     public void generate(Multiplication expression) {
         evaluateArthimeticComponents(expression);
-        methodVisitor.visitInsn(Opcodes.IMUL);
+        Type type = expression.getType();
+        methodVisitor.visitInsn(type.getMultiplyOpcode());
     }
 
     public void generate(Division expression) {
         evaluateArthimeticComponents(expression);
-        methodVisitor.visitInsn(Opcodes.IDIV);
+        Type type = expression.getType();
+        methodVisitor.visitInsn(type.getDividOpcode());
     }
 
     private void evaluateArthimeticComponents(ArthimeticExpression expression) {
@@ -154,16 +141,12 @@ public class ExpressionGenrator {
     public void generate(ConditionalExpression conditionalExpression) {
         Expression leftExpression = conditionalExpression.getLeftExpression();
         Expression rightExpression = conditionalExpression.getRightExpression();
-        Type type = leftExpression.getType();
-        if(type != rightExpression.getType()) {
-            throw new ComparisonBetweenDiferentTypesException(leftExpression, rightExpression);
-        }
         leftExpression.accept(this);
         rightExpression.accept(this);
         CompareSign compareSign = conditionalExpression.getCompareSign();
         Label endLabel = new Label();
         Label trueLabel = new Label();
-        methodVisitor.visitJumpInsn(compareSign.getOpcode(),trueLabel);
+        methodVisitor.visitJumpInsn(compareSign.getOpcode(), trueLabel);
         methodVisitor.visitInsn(Opcodes.ICONST_0);
         methodVisitor.visitJumpInsn(Opcodes.GOTO, endLabel);
         methodVisitor.visitLabel(trueLabel);

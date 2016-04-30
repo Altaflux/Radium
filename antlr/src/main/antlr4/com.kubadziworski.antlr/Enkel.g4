@@ -68,12 +68,14 @@ expression : varReference #VARREFERENCE
            ;
 varReference : ID ;
 value : NUMBER
+      | BOOL
       | STRING ;
 //TOKENS
 VARIABLE : 'var' ;
 PRINT : 'print' ;
 EQUALS : '=' ;
-NUMBER : '-'?[0-9]+ ;
+NUMBER : '-'?[0-9.]+ ;
+BOOL : 'true' | 'false' ;
 STRING : '"'~('\r' | '\n' | '"')*'"' ;
 ID : [a-zA-Z0-9]+ ;
 QUALIFIED_NAME : ID ('.' ID)+;

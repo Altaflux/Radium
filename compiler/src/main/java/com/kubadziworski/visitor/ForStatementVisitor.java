@@ -5,7 +5,7 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ForStatementContext;
 import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
 import com.kubadziworski.domain.expression.Expression;
-import com.kubadziworski.domain.expression.RangedForStatement;
+import com.kubadziworski.domain.statement.RangedForStatement;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.statement.AssignmentStatement;

@@ -1,10 +1,10 @@
-package com.kubadziworski.domain.expression;
+package com.kubadziworski.domain.statement;
 
 import com.kubadziworski.bytecodegenerator.StatementGenerator;
+import com.kubadziworski.domain.expression.Expression;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.statement.Statement;
-import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.TypeChecker;
 import com.kubadziworski.exception.UnsupportedRangedLoopTypes;
 
 /**
@@ -20,7 +20,10 @@ public class RangedForStatement implements Statement {
 
     public RangedForStatement(Statement iteratorVariable, Expression startExpression, Expression endExpression, Statement statement, String iteratorVarName, Scope scope) {
         this.scope = scope;
-        if(startExpression.getType() != BultInType.INT || endExpression.getType() != BultInType.INT) {
+        Type startExpressionType = startExpression.getType();
+        Type endExpressionType = endExpression.getType();
+        boolean typesAreIntegers = TypeChecker.isInt(startExpressionType) || TypeChecker.isInt(endExpressionType);
+        if(!typesAreIntegers) {
             throw new UnsupportedRangedLoopTypes(startExpression,endExpression);
         }
         this.iteratorVariable = iteratorVariable;

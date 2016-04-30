@@ -1,6 +1,6 @@
 package com.kubadziworski.exception;
 
-import com.kubadziworski.domain.math.ArthimeticExpression;
+import com.kubadziworski.domain.expression.math.ArthimeticExpression;
 import com.kubadziworski.domain.expression.Expression;
 
 /**

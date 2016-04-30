@@ -1,7 +1,5 @@
 package com.kubadziworski.domain.type;
 
-import java.util.Arrays;
-
 /**
  * Created by kuba on 28.03.16.
  */
@@ -10,4 +8,11 @@ public interface Type {
     Class<?> getTypeClass();
     String getDescriptor();
     String getInternalName();
+    int getLoadVariableOpcode();
+    int getStoreVariableOpcode();
+    int getReturnOpcode();
+    int getAddOpcode();
+    int getSubstractOpcode();
+    int getMultiplyOpcode();
+    int getDividOpcode();
 }
