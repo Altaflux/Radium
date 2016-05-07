@@ -1,5 +1,7 @@
 package com.kubadziworski.domain.classs;
 
+import com.kubadziworski.bytecodegenerator.MethodGenerator;
+import com.kubadziworski.domain.expression.ConstructorCall;
 import com.kubadziworski.domain.expression.FunctionParameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
@@ -26,7 +28,7 @@ public class Function {
         return functionSignature.getName();
     }
 
-    public List<FunctionParameter> getParameter() {
+    public List<FunctionParameter> getParameters() {
         return Collections.unmodifiableList(functionSignature.getParameters());
     }
 
@@ -36,5 +38,9 @@ public class Function {
 
     public Type getReturnType() {
         return functionSignature.getReturnType();
+    }
+
+    public void accept(MethodGenerator generator) {
+        generator.generate(this);
     }
 }

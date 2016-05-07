@@ -1,9 +1,8 @@
 DefaultParamTest {
 
-    main(string[] args) {
-         greet("andrew")
-         print ""
+    start() {
          greet("kuba","enkel")
+         greet("ktos","inny")
     }
 
     greet (string name,string favouriteLanguage="java") {

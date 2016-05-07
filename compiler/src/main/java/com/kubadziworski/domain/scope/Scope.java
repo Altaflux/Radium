@@ -1,12 +1,25 @@
 package com.kubadziworski.domain.scope;
 
-import com.kubadziworski.domain.global.MetaData;
-import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.google.common.collect.Lists;
+import com.kubadziworski.domain.global.MetaData;
+import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.ClassNotFoundForNameException;
+import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
+import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by kuba on 02.04.16.
@@ -32,11 +45,18 @@ public class Scope {
         functionSignatures.add(signature);
     }
 
-    public FunctionSignature getSignature(String methodName) {
+    public FunctionSignature getMethodCallSignature(String identifier) {
+        if(identifier.equals("super")){
+            return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID);
+        }
         return functionSignatures.stream()
-                .filter(signature -> signature.getName().equals(methodName))
+                .filter(signature -> signature.getName().equals(identifier))
                 .findFirst()
-                .orElseThrow(() -> new MethodSignatureNotFoundException(this,methodName));
+                .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier));
+    }
+
+    private String getSuperClassName() {
+        return metaData.getSuperClassName();
     }
 
     public void addLocalVariable(LocalVariable localVariable) {
@@ -60,7 +80,42 @@ public class Scope {
         return localVariables.indexOf(localVariable);
     }
 
+    Optional<FunctionSignature> getSignatureOnClassPath(String fullMethodName) {
+        String methodName = StringUtils.removePattern(fullMethodName,".*\\.");
+        String className = fullMethodName; // StringUtils.difference(fullMethodName, methodName);
+        Class<?> methodOwnerClass = null;
+        try {
+            methodOwnerClass = ClassUtils.getClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new ClassNotFoundForNameException(className);
+        }
+        Method accessibleMethod = MethodUtils.getAccessibleMethod(methodOwnerClass, methodName);
+        if(accessibleMethod != null) {
+            FunctionSignature signature = ReflectionObjectToSignatureMapper.fromMethod(accessibleMethod);
+            return Optional.of(signature);
+        }
+        Constructor<?> accessibleConstructor = ConstructorUtils.getAccessibleConstructor(methodOwnerClass);
+        if(accessibleConstructor != null) {
+            FunctionSignature signature = ReflectionObjectToSignatureMapper.fromConstructor(accessibleConstructor);
+            return Optional.of(signature);
+        }
+        return Optional.empty();
+    }
+
     public String getClassName() {
         return metaData.getClassName();
+    }
+
+    public String getSuperClassInternalName() {
+        return new ClassType(getSuperClassName()).getInternalName();
+    }
+
+    public Type getClassType() {
+        String className = getClassName();
+        return new ClassType(className);
+    }
+
+    public String getClassInternalName() {
+        return getClassType().getInternalName();
     }
 }

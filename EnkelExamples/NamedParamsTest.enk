@@ -1,6 +1,6 @@
 NamedParamsTest {
 
-    main(string[] args) {
+    start {
         createRect(x1->25,x2->-25,y1->50,y2->-50)
     }
 

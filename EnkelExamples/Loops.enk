@@ -1,5 +1,5 @@
 Loops {
-    main(string[] args) {
+    start() {
         var x = 0.22 + 0.35
         print x
     }

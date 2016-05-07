@@ -1,24 +1,21 @@
 package com.kubadziworski.bytecodegenerator;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.expression.*;
 import com.kubadziworski.domain.expression.math.*;
+import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.*;
+import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
-import com.kubadziworski.exception.CalledFunctionDoesNotExistException;
 import com.kubadziworski.util.DescriptorFactory;
 import com.kubadziworski.util.TypeResolver;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Created by kuba on 02.04.16.
@@ -55,24 +52,45 @@ public class ExpressionGenrator {
         methodVisitor.visitLdcInsn(transformedValue);
     }
 
+    public void generate(ConstructorCall constructorCall) {
+        String ownerDescriptor = scope.getClassInternalName();
+        methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
+        methodVisitor.visitInsn(Opcodes.DUP);
+        FunctionSignature methodCallSignature = scope.getMethodCallSignature(constructorCall.getIdentifier());
+        String methodDescriptor = DescriptorFactory.getMethodDescriptor(methodCallSignature);
+        generateArguments(constructorCall);
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
+    }
+
+    public void generate(SuperCall superCall) {
+        methodVisitor.visitVarInsn(Opcodes.ALOAD,0);
+        generateArguments(superCall);
+        String ownerDescriptor = scope.getSuperClassInternalName();
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V" /*TODO Handle super calls with arguments*/, false);
+    }
+
     public void generate(FunctionCall functionCall) {
-        String functionName = functionCall.getFunctionName();
-        FunctionSignature signature = scope.getSignature(functionName);
-        List<Expression> arguments = functionCall.getArguments();
+        functionCall.getOwner().accept(this);
+        generateArguments(functionCall);
+        String functionName = functionCall.getIdentifier();
+        String methodDescriptor = DescriptorFactory.getMethodDescriptor(functionCall.getSignature());
+        String ownerDescriptor = functionCall.getOwnerType().getInternalName();
+        methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, functionName, methodDescriptor, false);
+    }
+
+    public void generateArguments(Call call) {
+        FunctionSignature signature = scope.getMethodCallSignature(call.getIdentifier());
+        List<Expression> arguments = call.getArguments();
         List<FunctionParameter> parameters = signature.getParameters();
         if (arguments.size() > parameters.size()) {
-            throw new BadArgumentsToFunctionCallException(functionCall);
+            throw new BadArgumentsToFunctionCallException(call);
         }
         arguments.forEach(argument -> argument.accept(this));
         for (int i = arguments.size(); i < parameters.size(); i++) {
             Expression defaultParameter = parameters.get(i).getDefaultValue()
-                    .orElseThrow(() -> new BadArgumentsToFunctionCallException(functionCall));
+                    .orElseThrow(() -> new BadArgumentsToFunctionCallException(call));
             defaultParameter.accept(this);
         }
-        Type owner = functionCall.getOwner().orElse(new ClassType(scope.getClassName()));
-        String methodDescriptor = getFunctionDescriptor(functionCall);
-        String ownerDescriptor = owner.getInternalName();
-        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, functionName, methodDescriptor, false);
     }
 
     public void generate(Addition expression) {
@@ -127,17 +145,6 @@ public class ExpressionGenrator {
         rightExpression.accept(this);
     }
 
-    private String getFunctionDescriptor(FunctionCall functionCall) {
-        return Optional.of(getDescriptorForFunctionInScope(functionCall))
-                .orElse(getDescriptorForFunctionOnClasspath(functionCall))
-                .orElseThrow(() -> new CalledFunctionDoesNotExistException(functionCall));
-    }
-
-
-    private Optional<String> getDescriptorForFunctionInScope(FunctionCall functionCall) {
-        return Optional.ofNullable(DescriptorFactory.getMethodDescriptor(functionCall.getSignature()));//TODO check errors here (not found function etc)
-    }
-
     public void generate(ConditionalExpression conditionalExpression) {
         Expression leftExpression = conditionalExpression.getLeftExpression();
         Expression rightExpression = conditionalExpression.getRightExpression();
@@ -152,20 +159,6 @@ public class ExpressionGenrator {
         methodVisitor.visitLabel(trueLabel);
         methodVisitor.visitInsn(Opcodes.ICONST_1);
         methodVisitor.visitLabel(endLabel);
-    }
-
-    private Optional<String> getDescriptorForFunctionOnClasspath(FunctionCall functionCall) {
-        try {
-            String functionName = functionCall.getFunctionName();
-            Optional<Type> owner = functionCall.getOwner();
-            String className = owner.isPresent() ? owner.get().getName() : scope.getClassName();
-            Class<?> aClass = Class.forName(className);
-            Method method = aClass.getMethod(functionName);
-            String methodDescriptor = org.objectweb.asm.Type.getMethodDescriptor(method);
-            return Optional.of(methodDescriptor);
-        } catch (ReflectiveOperationException e) {
-            return Optional.empty();
-        }
     }
 
     public void generate(EmptyExpression emptyExpression) {

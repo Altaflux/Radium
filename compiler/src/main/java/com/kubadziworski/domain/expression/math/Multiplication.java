@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.expression.math;
 
 import com.kubadziworski.bytecodegenerator.ExpressionGenrator;
+import com.kubadziworski.bytecodegenerator.StatementGenerator;
 import com.kubadziworski.domain.expression.Expression;
 
 /**
@@ -14,5 +15,10 @@ public class Multiplication extends ArthimeticExpression {
     @Override
     public void accept(ExpressionGenrator genrator) {
         genrator.generate(this);
+    }
+
+    @Override
+    public void accept(StatementGenerator generator) {
+        generator.generate(this);
     }
 }

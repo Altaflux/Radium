@@ -18,6 +18,10 @@ public class Block implements Statement {
         this.statements = statements;
     }
 
+    public static Block empty(Scope scope) {
+        return new Block(scope, Collections.emptyList());
+    }
+
     @Override
     public void accept(StatementGenerator generator) {
         generator.generate(this);

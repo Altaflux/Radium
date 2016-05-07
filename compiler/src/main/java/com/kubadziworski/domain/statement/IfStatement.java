@@ -1,12 +1,9 @@
 package com.kubadziworski.domain.statement;
 
 import com.kubadziworski.bytecodegenerator.StatementGenerator;
-import com.kubadziworski.domain.expression.ConditionalExpression;
 import com.kubadziworski.domain.expression.Expression;
-import com.kubadziworski.domain.scope.Scope;
-import com.sun.corba.se.spi.orbutil.fsm.State;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by kuba on 12.04.16.
@@ -16,13 +13,18 @@ public class IfStatement implements Statement {
 
     private final Expression condition;
     private final Statement trueStatement;
-    private final Statement falseStatement;
+    private final Optional<Statement> falseStatement;
 
     public IfStatement(Expression condition, Statement trueStatement, Statement falseStatement) {
-
         this.condition = condition;
         this.trueStatement = trueStatement;
-        this.falseStatement = falseStatement;
+        this.falseStatement = Optional.ofNullable(falseStatement);
+    }
+
+    public IfStatement(Expression condition, Statement trueStatement) {
+        this.condition = condition;
+        this.trueStatement = trueStatement;
+        this.falseStatement = Optional.empty();
     }
 
     public Expression getCondition() {
@@ -33,7 +35,7 @@ public class IfStatement implements Statement {
         return trueStatement;
     }
 
-    public Statement getFalseStatement() {
+    public Optional<Statement> getFalseStatement() {
         return falseStatement;
     }
 

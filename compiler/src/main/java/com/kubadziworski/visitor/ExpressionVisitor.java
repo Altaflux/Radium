@@ -12,7 +12,9 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.FunctionNameEqualClassException;
 import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -48,20 +50,49 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
     @Override
     public Expression visitFunctionCall(@NotNull EnkelParser.FunctionCallContext ctx) {
-        String funName = ctx.functionName().getText();
-        FunctionSignature signature = scope.getSignature(funName);
+        String functionName = ctx.functionName().getText();
+        if(functionName.equals(scope.getClassName())) {
+            throw new FunctionNameEqualClassException(functionName);
+        }
         List<EnkelParser.ArgumentContext> argumentsCtx = ctx.argument();
+        List<Expression> arguments = getArgumentsForCall(argumentsCtx, functionName);
+        FunctionSignature signature = scope.getMethodCallSignature(functionName);
+        boolean ownerIsExplicit = ctx.owner != null;
+        if(ownerIsExplicit) {
+            Expression owner = ctx.owner.accept(this);
+            return new FunctionCall(signature, arguments, owner);
+        }
+        ClassType thisType = new ClassType(scope.getClassName());
+        return new FunctionCall(signature, arguments, new VarReference("this",thisType));
+    }
+
+    @Override
+    public Expression visitConstructorCall(@NotNull EnkelParser.ConstructorCallContext ctx) {
+        String className = ctx.className().getText();
+        List<EnkelParser.ArgumentContext> argumentsCtx = ctx.argument();
+        List<Expression> arguments = getArgumentsForCall(argumentsCtx, className);
+        return new ConstructorCall(className, arguments);
+    }
+
+    @Override
+    public Expression visitSupercall(@NotNull EnkelParser.SupercallContext ctx) {
+        List<EnkelParser.ArgumentContext> argumentsCtx = ctx.argument();
+        List<Expression> arguments = getArgumentsForCall(argumentsCtx, SuperCall.SUPER_IDETIFIER);
+        return new SuperCall(arguments);
+    }
+
+    private List<Expression> getArgumentsForCall(List<EnkelParser.ArgumentContext> argumentsCtx,String identifier) {
+        FunctionSignature signature = scope.getMethodCallSignature(identifier);
         Comparator<EnkelParser.ArgumentContext> argumentComparator = (arg1, arg2) -> {
             if(arg1.name() == null) return 0;
             String arg1Name = arg1.name().getText();
             String arg2Name = arg2.name().getText();
             return signature.getIndexOfParameter(arg1Name) - signature.getIndexOfParameter(arg2Name);
         };
-        List<Expression> arguments = argumentsCtx.stream()
+        return argumentsCtx.stream()
                 .sorted(argumentComparator)
                 .map(argument -> argument.expression().accept(this))
                 .collect(toList());
-        return new FunctionCall(signature, arguments, null);
     }
 
     @Override

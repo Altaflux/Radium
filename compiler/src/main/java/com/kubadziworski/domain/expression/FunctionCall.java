@@ -3,38 +3,46 @@ package com.kubadziworski.domain.expression;
 import com.kubadziworski.bytecodegenerator.ExpressionGenrator;
 import com.kubadziworski.bytecodegenerator.StatementGenerator;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.statement.Statement;
 import com.kubadziworski.domain.type.Type;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by kuba on 02.04.16.
  */
-public class FunctionCall extends Expression implements Statement {
-    private Type owner;
+public class FunctionCall implements Call {
+    private Expression owner;
     private FunctionSignature signature;
     private List<Expression> arguments;
+    private Type type;
 
-    public FunctionCall(FunctionSignature signature, List<Expression> arguments, Type owner) {
-        super(signature.getReturnType());
+    public FunctionCall(FunctionSignature signature, List<Expression> arguments, Expression owner) {
+        this.type = signature.getReturnType();
         this.signature = signature;
         this.arguments = arguments;
         this.owner = owner;
     }
 
-    public String getFunctionName() {
-        return signature.getName();
+    public FunctionCall(FunctionSignature signature, List<Expression> arguments, Type ownerType) {
+        this(signature,arguments,new EmptyExpression(ownerType));
     }
 
     public List<Expression> getArguments() {
         return Collections.unmodifiableList(arguments);
     }
 
-    public Optional<Type> getOwner() {
-        return Optional.ofNullable(owner);
+    @Override
+    public String getIdentifier() {
+        return signature.getName();
+    }
+
+    public Type getOwnerType() {
+        return owner.getType();
+    }
+
+    public Expression getOwner() {
+        return owner;
     }
 
     public FunctionSignature getSignature() {
@@ -49,5 +57,10 @@ public class FunctionCall extends Expression implements Statement {
     @Override
     public void accept(StatementGenerator generator) {
         generator.generate(this);
+    }
+
+    @Override
+    public Type getType() {
+        return type;
     }
 }

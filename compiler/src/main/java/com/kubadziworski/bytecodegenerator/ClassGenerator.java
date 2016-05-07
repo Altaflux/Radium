@@ -2,7 +2,9 @@ package com.kubadziworski.bytecodegenerator;
 
 import com.kubadziworski.domain.classs.Function;
 import com.kubadziworski.domain.global.ClassDeclaration;
+import com.kubadziworski.domain.type.ClassType;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;
@@ -23,7 +25,8 @@ public class ClassGenerator {
         String name = classDeclaration.getName();
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER,name,null,"java/lang/Object",null);
         List<Function> methods = classDeclaration.getMethods();
-        methods.forEach(function -> new MethodGenerator(classWriter).generate(function));
+        MethodGenerator methodGenerator = new MethodGenerator(classWriter);
+        methods.forEach(f ->f.accept(methodGenerator));
         classWriter.visitEnd();
         return classWriter;
     }

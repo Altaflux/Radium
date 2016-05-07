@@ -3,6 +3,7 @@ package com.kubadziworski.visitor;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
+import com.kubadziworski.domain.classs.Constructor;
 import com.kubadziworski.domain.classs.Function;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
@@ -23,9 +24,13 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
 
     @Override
     public Function visitFunction(@NotNull EnkelParser.FunctionContext ctx) {
-        FunctionSignature signature = scope.getSignature(ctx.functionDeclaration().functionName().getText());
+        FunctionSignature signature = scope.getMethodCallSignature(ctx.functionDeclaration().functionName().getText());
+        scope.addLocalVariable(new LocalVariable("this",scope.getClassType()));
         addParametersAsLocalVariables(signature);
         Statement block = getBlock(ctx);
+        if(signature.getName().equals(scope.getClassName())) {
+            return new Constructor(signature,block);
+        }
         return new Function(signature, block);
     }
 

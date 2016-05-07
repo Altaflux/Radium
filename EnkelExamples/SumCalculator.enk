@@ -1,15 +1,16 @@
 SumCalculator {
 
-    main(string[] args) {
-        var expected = 8
-        var actual = sum(3,5)
 
-        if( actual == expected ) {
-            print "test passed"
-        } else {
-            print "test failed"
-        }
+    start() {
+       var expected = 8
+       var actual = sum(3,5)
+       if( actual == expected ) {
+           print "test passed"
+       } else {
+           print "test failed"
+       }
     }
+
 
     int sum (int x ,int y) {
         x+y
