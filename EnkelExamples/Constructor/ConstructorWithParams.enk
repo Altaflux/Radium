@@ -5,10 +5,11 @@ ConstructorWithParams {
     }
 
     start() {
-        new ConstructorWithParams(5).doStuff()
+        var instance = new ConstructorWithParams(5)
+        instance.doStuff()
     }
 
     doStuff {
-        print "doing stuff on ConstructorWithParams object"
+        print "doing stuff on ConstructorWithParams instance"
     }
 }
