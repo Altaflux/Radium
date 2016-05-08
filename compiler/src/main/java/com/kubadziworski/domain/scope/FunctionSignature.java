@@ -7,6 +7,8 @@ import com.kubadziworski.exception.ParameterForNameNotFoundException;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Created by kuba on 06.04.16.
  */
@@ -39,6 +41,14 @@ public class FunctionSignature {
     public int getIndexOfParameter(String parameterName) {
         FunctionParameter parameter = getParameterForName(parameterName);
         return parameters.indexOf(parameter);
+    }
+
+    public boolean matches(String otherSignatureName, List<Type> otherSignatureParams) {
+        boolean namesAreEqual = this.name.equals(otherSignatureName);
+        if(!namesAreEqual) return false;
+        List<Type> paramTypes = parameters.stream().map(p -> p.getType()).collect(toList());
+        boolean sameParameterTypes = paramTypes.containsAll(otherSignatureParams) && otherSignatureParams.containsAll(paramTypes);
+        return sameParameterTypes;
     }
 
     public Type getReturnType() {

@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.scope;
 
 import com.google.common.collect.Lists;
+import com.kubadziworski.domain.expression.Expression;
 import com.kubadziworski.domain.global.MetaData;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
@@ -16,10 +17,9 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by kuba on 02.04.16.
@@ -45,14 +45,33 @@ public class Scope {
         functionSignatures.add(signature);
     }
 
-    public FunctionSignature getMethodCallSignature(String identifier) {
+    public boolean parameterLessSignatureExists(String identifier) {
+        return signatureExists(identifier,Collections.emptyList());
+    }
+
+    public boolean signatureExists(String identifier, List<Type> parameters) {
+        if(identifier.equals("super")) return true;
+        return functionSignatures.stream()
+                .anyMatch(signature -> signature.matches(identifier,parameters));
+    }
+
+    public FunctionSignature getMethodCallSignatureWithoutParameters(String identifier) {
+        return getMethodCallSignature(identifier, Collections.<Type>emptyList());
+    }
+
+    public FunctionSignature getMethodCallSignature(String identifier, Collection<Expression> arguments){
+        List<Type> argumentTypes = arguments.stream().map(e -> e.getType()).collect(toList());
+        return getMethodCallSignature(identifier, argumentTypes);
+    }
+
+    public FunctionSignature getMethodCallSignature(String identifier,List<Type> parameterTypes) {
         if(identifier.equals("super")){
             return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID);
         }
         return functionSignatures.stream()
-                .filter(signature -> signature.getName().equals(identifier))
+                .filter(signature -> signature.matches(identifier,parameterTypes))
                 .findFirst()
-                .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier));
+                .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier,parameterTypes));
     }
 
     private String getSuperClassName() {

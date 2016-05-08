@@ -56,7 +56,7 @@ public class ExpressionGenrator {
         String ownerDescriptor = scope.getClassInternalName();
         methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
         methodVisitor.visitInsn(Opcodes.DUP);
-        FunctionSignature methodCallSignature = scope.getMethodCallSignature(constructorCall.getIdentifier());
+        FunctionSignature methodCallSignature = scope.getMethodCallSignature(constructorCall.getIdentifier(),constructorCall.getArguments());
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(methodCallSignature);
         generateArguments(constructorCall);
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
@@ -79,7 +79,7 @@ public class ExpressionGenrator {
     }
 
     public void generateArguments(Call call) {
-        FunctionSignature signature = scope.getMethodCallSignature(call.getIdentifier());
+        FunctionSignature signature = scope.getMethodCallSignature(call.getIdentifier(),call.getArguments());
         List<Expression> arguments = call.getArguments();
         List<FunctionParameter> parameters = signature.getParameters();
         if (arguments.size() > parameters.size()) {

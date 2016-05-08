@@ -3,11 +3,11 @@ package com.kubadziworski.visitor;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.expression.*;
-import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.expression.math.Addition;
 import com.kubadziworski.domain.expression.math.Division;
 import com.kubadziworski.domain.expression.math.Multiplication;
 import com.kubadziworski.domain.expression.math.Substraction;
+import com.kubadziworski.domain.global.CompareSign;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
@@ -56,7 +56,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         }
         List<EnkelParser.ArgumentContext> argumentsCtx = ctx.argument();
         List<Expression> arguments = getArgumentsForCall(argumentsCtx, functionName);
-        FunctionSignature signature = scope.getMethodCallSignature(functionName);
+        FunctionSignature signature = scope.getMethodCallSignature(functionName,arguments);
         boolean ownerIsExplicit = ctx.owner != null;
         if(ownerIsExplicit) {
             Expression owner = ctx.owner.accept(this);
@@ -82,7 +82,8 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     }
 
     private List<Expression> getArgumentsForCall(List<EnkelParser.ArgumentContext> argumentsCtx,String identifier) {
-        FunctionSignature signature = scope.getMethodCallSignature(identifier);
+        List<Expression> arguments = argumentsCtx.stream().map(a -> a.accept(this)).collect(toList());
+        FunctionSignature signature = scope.getMethodCallSignature(identifier,arguments);
         Comparator<EnkelParser.ArgumentContext> argumentComparator = (arg1, arg2) -> {
             if(arg1.name() == null) return 0;
             String arg1Name = arg1.name().getText();
