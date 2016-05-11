@@ -1,7 +1,5 @@
 package com.kubadziworski.domain.scope;
 
-import com.kubadziworski.bytecodegenerator.ExpressionGenrator;
-import com.kubadziworski.domain.expression.Expression;
 import com.kubadziworski.domain.type.Type;
 
 /**

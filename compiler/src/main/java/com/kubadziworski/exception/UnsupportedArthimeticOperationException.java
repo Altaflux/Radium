@@ -1,7 +1,7 @@
 package com.kubadziworski.exception;
 
-import com.kubadziworski.domain.expression.math.ArthimeticExpression;
-import com.kubadziworski.domain.expression.Expression;
+import com.kubadziworski.domain.node.expression.arthimetic.ArthimeticExpression;
+import com.kubadziworski.domain.node.expression.Expression;
 
 /**
  * Created by kuba on 10.04.16.

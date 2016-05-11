@@ -6,7 +6,7 @@ import jdk.internal.org.objectweb.asm.Opcodes;
  * Created by kuba on 02.04.16.
  */
 public class ClassType implements Type {
-    private String name;
+    private final String name;
 
     public ClassType(String name) {
         this.name = name;

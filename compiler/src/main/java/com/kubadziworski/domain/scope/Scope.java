@@ -1,14 +1,15 @@
 package com.kubadziworski.domain.scope;
 
 import com.google.common.collect.Lists;
-import com.kubadziworski.domain.expression.Expression;
-import com.kubadziworski.domain.global.MetaData;
+import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.MetaData;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ClassNotFoundForNameException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
+import com.kubadziworski.exception.MethodWithNameAlreadyDefinedException;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,14 +20,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Created by kuba on 02.04.16.
  */
 public class Scope {
-    private List<LocalVariable> localVariables;
-    private List<FunctionSignature> functionSignatures;
+    private final List<LocalVariable> localVariables;
+    private final List<FunctionSignature> functionSignatures;
     private final MetaData metaData;
 
     public Scope(MetaData metaData) {
@@ -42,36 +41,34 @@ public class Scope {
     }
 
     public void addSignature(FunctionSignature signature) {
+        if(isParameterLessSignatureExists(signature.getName())) {
+            throw new MethodWithNameAlreadyDefinedException(signature);
+        }
         functionSignatures.add(signature);
     }
 
-    public boolean parameterLessSignatureExists(String identifier) {
-        return signatureExists(identifier,Collections.emptyList());
+    public boolean isParameterLessSignatureExists(String identifier) {
+        return isSignatureExists(identifier,Collections.emptyList());
     }
 
-    public boolean signatureExists(String identifier, List<Type> parameters) {
+    public boolean isSignatureExists(String identifier, List<Argument> arguments) {
         if(identifier.equals("super")) return true;
         return functionSignatures.stream()
-                .anyMatch(signature -> signature.matches(identifier,parameters));
+                .anyMatch(signature -> signature.matches(identifier,arguments));
     }
 
     public FunctionSignature getMethodCallSignatureWithoutParameters(String identifier) {
-        return getMethodCallSignature(identifier, Collections.<Type>emptyList());
+        return getMethodCallSignature(identifier, Collections.<Argument>emptyList());
     }
 
-    public FunctionSignature getMethodCallSignature(String identifier, Collection<Expression> arguments){
-        List<Type> argumentTypes = arguments.stream().map(e -> e.getType()).collect(toList());
-        return getMethodCallSignature(identifier, argumentTypes);
-    }
-
-    public FunctionSignature getMethodCallSignature(String identifier,List<Type> parameterTypes) {
+    public FunctionSignature getMethodCallSignature(String identifier,List<Argument> arguments) {
         if(identifier.equals("super")){
             return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID);
         }
         return functionSignatures.stream()
-                .filter(signature -> signature.matches(identifier,parameterTypes))
+                .filter(signature -> signature.matches(identifier,arguments))
                 .findFirst()
-                .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier,parameterTypes));
+                .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier,arguments));
     }
 
     private String getSuperClassName() {
@@ -89,7 +86,7 @@ public class Scope {
                 .orElseThrow(() -> new LocalVariableNotFoundException(this, varName));
     }
 
-    public boolean localVariableExists(String varName) {
+    public boolean isLocalVariableExists(String varName) {
         return localVariables.stream()
                 .anyMatch(variable -> variable.getName().equals(varName));
     }

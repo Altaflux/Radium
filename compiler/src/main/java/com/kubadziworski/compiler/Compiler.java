@@ -1,8 +1,7 @@
 package com.kubadziworski.compiler;
 
-import com.kubadziworski.domain.global.CompilationUnit;
-import com.kubadziworski.bytecodegenerator.BytecodeGenerator;
-import com.kubadziworski.exception.CompilationException;
+import com.kubadziworski.domain.CompilationUnit;
+import com.kubadziworski.bytecodegeneration.BytecodeGenerator;
 import com.kubadziworski.parsing.Parser;
 import com.kubadziworski.validation.ARGUMENT_ERRORS;
 import org.apache.commons.io.IOUtils;
@@ -16,7 +15,7 @@ import java.nio.file.Paths;
 /**
  * Created by kuba on 15.03.16.
  */
-public class Compiler implements Opcodes {
+public class Compiler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
 

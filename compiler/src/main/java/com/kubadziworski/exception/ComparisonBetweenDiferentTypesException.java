@@ -1,6 +1,6 @@
 package com.kubadziworski.exception;
 
-import com.kubadziworski.domain.expression.Expression;
+import com.kubadziworski.domain.node.expression.Expression;
 
 /**
  * Created by kuba on 12.04.16.

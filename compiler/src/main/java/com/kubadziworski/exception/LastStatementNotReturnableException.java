@@ -1,6 +1,6 @@
 package com.kubadziworski.exception;
 
-import com.kubadziworski.domain.statement.Statement;
+import com.kubadziworski.domain.node.statement.Statement;
 
 /**
  * Created by kuba on 11.04.16.

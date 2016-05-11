@@ -2,9 +2,8 @@ package com.kubadziworski.parsing;
 
 import com.kubadziworski.antlr.EnkelLexer;
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.domain.global.CompilationUnit;
-import com.kubadziworski.parsing.EnkelTreeWalkErrorListener;
-import com.kubadziworski.visitor.CompilationUnitVisitor;
+import com.kubadziworski.domain.CompilationUnit;
+import com.kubadziworski.parsing.visitor.CompilationUnitVisitor;
 import org.antlr.v4.runtime.*;
 
 import java.io.IOException;

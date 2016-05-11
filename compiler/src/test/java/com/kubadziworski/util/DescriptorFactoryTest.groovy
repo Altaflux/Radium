@@ -1,7 +1,7 @@
 package com.kubadziworski.util
 
-import com.kubadziworski.domain.classs.Function
-import com.kubadziworski.domain.expression.FunctionParameter
+import com.kubadziworski.domain.Function
+import com.kubadziworski.domain.node.expression.Parameter
 import com.kubadziworski.domain.scope.FunctionSignature
 import com.kubadziworski.domain.type.BultInType
 import com.kubadziworski.domain.type.ClassType
@@ -13,7 +13,7 @@ class DescriptorFactoryTest extends spock.lang.Specification {
     def "test descriptor factory with function"() {
         given:
             Function function = Mock(Function)
-            FunctionParameter param = new FunctionParameter("param", paramType,Optional.empty())
+            Parameter param = new Parameter("param", paramType,Optional.empty())
 
         when:
             def descr = DescriptorFactory.getMethodDescriptor(function)
@@ -34,7 +34,7 @@ class DescriptorFactoryTest extends spock.lang.Specification {
 
     def "test descriptor factory with signature"() {
         given:
-            FunctionParameter param = new FunctionParameter("param", paramType,Optional.empty())
+            Parameter param = new Parameter("param", paramType,Optional.empty())
             FunctionSignature signature = Mock(FunctionSignature)
 
         when:
