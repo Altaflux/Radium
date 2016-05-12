@@ -1,6 +1,7 @@
 package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.AddContext;
 import com.kubadziworski.antlr.EnkelParser.BlockContext;
 import com.kubadziworski.antlr.EnkelParser.ConditionalExpressionContext;
@@ -36,6 +37,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     private final ReturnStatementVisitor returnStatementVisitor;
     private final BlockStatementVisitor blockStatementVisitor;
     private final IfStatementVisitor ifStatementVisitor;
+    private final ForStatementVisitor forStatementVisitor;
 
     public StatementVisitor(Scope scope) {
         expressionVisitor = new ExpressionVisitor(scope);
@@ -44,6 +46,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
         returnStatementVisitor = new ReturnStatementVisitor(expressionVisitor);
         blockStatementVisitor = new BlockStatementVisitor(scope);
         ifStatementVisitor = new IfStatementVisitor(this,expressionVisitor);
+        forStatementVisitor = new ForStatementVisitor(scope);
     }
 
     @Override
@@ -126,4 +129,8 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
         return expressionVisitor.visitConditionalExpression(ctx);
     }
 
+    @Override
+    public Statement visitForStatement(@NotNull EnkelParser.ForStatementContext ctx) {
+        return forStatementVisitor.visitForStatement(ctx);
+    }
 }

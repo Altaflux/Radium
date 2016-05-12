@@ -20,30 +20,30 @@ import org.antlr.v4.runtime.misc.NotNull;
 public class ForStatementVisitor extends EnkelBaseVisitor<RangedForStatement> {
     private final Scope scope;
     private final ExpressionVisitor expressionVisitor;
-    private final StatementVisitor statementVisitor;
 
     public ForStatementVisitor(Scope scope) {
-        this.scope = new Scope(scope);
+        this.scope = scope;
         expressionVisitor = new ExpressionVisitor(this.scope);
-        statementVisitor = new StatementVisitor(this.scope);
     }
 
     @Override
     public RangedForStatement visitForStatement(@NotNull ForStatementContext ctx) {
+        Scope newScope = new Scope(scope);
         ForConditionsContext forExpressionContext = ctx.forConditions();
         Expression startExpression = forExpressionContext.startExpr.accept(expressionVisitor);
         Expression endExpression = forExpressionContext.endExpr.accept(expressionVisitor);
         VariableReferenceContext iterator = forExpressionContext.iterator;
+        StatementVisitor statementVisitor = new StatementVisitor(newScope);
         String varName = iterator.getText();
-        if(scope.isLocalVariableExists(varName)) {
+        if(newScope.isLocalVariableExists(varName)) {
             Statement iteratorVariable = new Assignment(varName, startExpression);
             Statement statement = ctx.statement().accept(statementVisitor);
-            return new RangedForStatement(iteratorVariable, startExpression, endExpression,statement, varName, scope);
+            return new RangedForStatement(iteratorVariable, startExpression, endExpression,statement, varName, newScope);
         } else {
-            scope.addLocalVariable(new LocalVariable(varName,startExpression.getType()));
+            newScope.addLocalVariable(new LocalVariable(varName,startExpression.getType()));
             Statement iteratorVariable = new VariableDeclaration(varName,startExpression);
             Statement statement = ctx.statement().accept(statementVisitor);
-            return new RangedForStatement(iteratorVariable, startExpression, endExpression,statement, varName,scope);
+            return new RangedForStatement(iteratorVariable, startExpression, endExpression,statement, varName,newScope);
         }
     }
 
