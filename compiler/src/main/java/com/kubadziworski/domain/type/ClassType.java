@@ -1,6 +1,6 @@
 package com.kubadziworski.domain.type;
 
-import jdk.internal.org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Opcodes;
 
 /**
  * Created by kuba on 02.04.16.
