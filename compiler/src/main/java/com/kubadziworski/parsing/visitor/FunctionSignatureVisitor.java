@@ -1,7 +1,6 @@
 package com.kubadziworski.parsing.visitor;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.FunctionDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.ParametersListContext;
 import com.kubadziworski.domain.node.expression.Parameter;
@@ -30,7 +29,7 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
     @Override
     public FunctionSignature visitFunctionDeclaration(@NotNull FunctionDeclarationContext ctx) {
         String functionName = ctx.functionName().getText();
-        Type returnType = TypeResolver.getFromTypeName(ctx.type());
+        Type returnType = TypeResolver.getFromTypeContext(ctx.type());
         ParametersListContext parametersCtx = ctx.parametersList();
         if(parametersCtx != null) {
             List<Parameter> parameters = parametersCtx.accept(new ParameterExpressionListVisitor(expressionVisitor));

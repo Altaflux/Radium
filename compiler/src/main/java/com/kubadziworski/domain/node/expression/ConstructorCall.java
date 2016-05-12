@@ -4,6 +4,7 @@ import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
+import lombok.ToString;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * Created by kuba on 05.05.16.
  */
+@ToString
 public class ConstructorCall implements Call {
     private final List<Argument> arguments;
     private final Type type;

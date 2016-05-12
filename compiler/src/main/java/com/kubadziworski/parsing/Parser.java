@@ -5,6 +5,7 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.parsing.visitor.CompilationUnitVisitor;
 import org.antlr.v4.runtime.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 

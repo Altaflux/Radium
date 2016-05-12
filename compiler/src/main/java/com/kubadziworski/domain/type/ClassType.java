@@ -1,10 +1,12 @@
 package com.kubadziworski.domain.type;
 
+import lombok.ToString;
 import org.objectweb.asm.Opcodes;
 
 /**
  * Created by kuba on 02.04.16.
  */
+@ToString
 public class ClassType implements Type {
     private final String name;
 
@@ -69,5 +71,21 @@ public class ClassType implements Type {
     @Override
     public int getDividOpcode() {
         throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ClassType classType = (ClassType) o;
+
+        return !(name != null ? !name.equals(classType.name) : classType.name != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }

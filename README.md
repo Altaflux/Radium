@@ -14,7 +14,7 @@ mvn clean package
 2.Compile sample .enk file (You can find more examples in EnkelExamples directory)
 
 ```bash
-java -jar compiler/target/compiler-1.0-SNAPSHOT-jar-with-dependencies.jar  EnkelExamples/DefaultParamTest.enk
+java -classpath compiler/target/compiler-1.0-SNAPSHOT-jar-with-dependencies.jar:. com.kubadziworski.compiler.Compiler EnkelExamples/DefaultParamTest.enk
 ```
 
 3.Run compiled .enk program

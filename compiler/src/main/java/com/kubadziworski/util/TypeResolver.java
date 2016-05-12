@@ -3,7 +3,6 @@ package com.kubadziworski.util;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.TypeContext;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
@@ -19,9 +18,13 @@ import java.util.Optional;
  * Created by kuba on 02.04.16.
  */
 public final class TypeResolver {
-    public static Type getFromTypeName(TypeContext typeContext) {
+
+    public static Type getFromTypeContext(TypeContext typeContext) {
         if(typeContext == null) return BultInType.VOID;
-        String typeName = typeContext.getText();
+        return getFromTypeName(typeContext.getText());
+    }
+
+    public static Type getFromTypeName(String typeName) {
         if(typeName.equals("java.lang.String")) return BultInType.STRING;
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
         if(builtInType.isPresent()) return builtInType.get();

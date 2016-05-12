@@ -52,13 +52,12 @@ public class FunctionSignature {
         if(nonDefaultParametersCount > arguments.size()) return false;
         boolean isNamedArgList = arguments.stream().anyMatch(a -> a.getParameterName().isPresent());
         if(isNamedArgList) {
-            return arguments.stream().allMatch(a -> {
-                String paramName = a.getParameterName().get();
-                return parameters.stream()
-                        .map(Parameter::getName)
-                        .anyMatch(paramName::equals);
-            });
+            return areArgumentsAndParamsMatchedByName(arguments);
         }
+        return areArgumentsAndParamsMatchedByIndex(arguments);
+    }
+
+    private boolean areArgumentsAndParamsMatchedByIndex(List<Argument> arguments) {
         return IntStream.range(0, arguments.size())
                 .allMatch(i -> {
                     Type argumentType = arguments.get(i).getType();
@@ -67,7 +66,46 @@ public class FunctionSignature {
                 });
     }
 
+    private boolean areArgumentsAndParamsMatchedByName(List<Argument> arguments) {
+        return arguments.stream().allMatch(a -> {
+            String paramName = a.getParameterName().get();
+            return parameters.stream()
+                    .map(Parameter::getName)
+                    .anyMatch(paramName::equals);
+        });
+    }
+
     public Type getReturnType() {
         return returnType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FunctionSignature that = (FunctionSignature) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) return false;
+        return !(returnType != null ? !returnType.equals(that.returnType) : that.returnType != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+        result = 31 * result + (returnType != null ? returnType.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "FunctionSignature{" +
+                "name='" + name + '\'' +
+                ", parameters=" + parameters +
+                ", returnType=" + returnType +
+                '}';
     }
 }

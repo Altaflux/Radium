@@ -42,13 +42,16 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
                 .forEach(scope::addSignature);
         boolean defaultConstructorExists = scope.isParameterLessSignatureExists(name);
         addDefaultConstructorSignatureToScope(name, defaultConstructorExists);
-        List<Function> methods = methodsCtx.stream()///////
+        List<Function> methods = methodsCtx.stream()
                 .map(method -> method.accept(new FunctionVisitor(scope)))
                 .collect(Collectors.toList());
         if(!defaultConstructorExists) {
             methods.add(getDefaultConstructor());
         }
-        methods.add(getGeneratedMainMethod());
+        boolean startMethodDefined = scope.isParameterLessSignatureExists("start");
+        if(startMethodDefined) {
+            methods.add(getGeneratedMainMethod());
+        }
 
         return new ClassDeclaration(name, methods);
     }
@@ -73,6 +76,5 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         FunctionCall startFunctionCall = new FunctionCall(startFunSignature, Collections.emptyList(), scope.getClassType());
         Block block = new Block(new Scope(scope), Arrays.asList(constructorCall,startFunctionCall));
         return new Function(functionSignature, block);
-
     }
 }

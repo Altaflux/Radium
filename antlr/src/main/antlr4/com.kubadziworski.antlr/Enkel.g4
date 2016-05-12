@@ -4,7 +4,7 @@ grammar Enkel;
 //RULES
 compilationUnit : classDeclaration EOF ;
 classDeclaration : className '{' classBody '}' ;
-className : ID ;
+className : qualifiedName ;
 classBody :  function* ;
 function : functionDeclaration block ;
 functionDeclaration : (type)? functionName '('? parametersList? ')'? ;
@@ -78,7 +78,7 @@ variableReference : ID ;
 value : NUMBER
       | BOOL
       | STRING ;
-qualifiedName : ID ('.' ID)+;
+qualifiedName : ID ('.' ID)*;
 //TOKENS
 VARIABLE : 'var' ;
 PRINT : 'print' ;
