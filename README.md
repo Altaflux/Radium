@@ -20,5 +20,5 @@ java -jar compiler/target/compiler-1.0-SNAPSHOT-jar-with-dependencies.jar  Enkel
 3.Run compiled .enk program
 
 ```bash
-java First
+java DefaultParamTest
 ```
