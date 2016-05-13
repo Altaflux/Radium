@@ -1,16 +1,16 @@
 package com.kubadziworski.domain.scope;
 
 import com.google.common.collect.Lists;
-import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.MetaData;
-import com.kubadziworski.domain.node.expression.Call;
-import com.kubadziworski.domain.node.expression.SuperCall;
+import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
 import com.kubadziworski.exception.MethodWithNameAlreadyDefinedException;
+import org.apache.commons.collections4.map.LinkedMap;
 
 import java.util.*;
 
@@ -20,20 +20,23 @@ import static java.util.stream.Collectors.toList;
  * Created by kuba on 02.04.16.
  */
 public class Scope {
-    private final List<LocalVariable> localVariables;
     private final List<FunctionSignature> functionSignatures;
     private final MetaData metaData;
+    private final LinkedMap<String,LocalVariable> localVariables;
+    private final Map<String,Field> fields;
 
     public Scope(MetaData metaData) {
-        localVariables = new ArrayList<>();
-        functionSignatures = new ArrayList<>();
         this.metaData = metaData;
+        functionSignatures = new ArrayList<>();
+        localVariables = new LinkedMap<>();
+        fields =  new LinkedMap<>();
     }
 
     public Scope(Scope scope) {
         metaData = scope.metaData;
-        localVariables =  Lists.newArrayList(scope.localVariables);
         functionSignatures = Lists.newArrayList(scope.functionSignatures);
+        fields = new LinkedMap<>(scope.fields);
+        localVariables = new LinkedMap<>(scope.localVariables);
     }
 
     public void addSignature(FunctionSignature signature) {
@@ -95,25 +98,34 @@ public class Scope {
         return metaData.getSuperClassName();
     }
 
-    public void addLocalVariable(LocalVariable localVariable) {
-        localVariables.add(localVariable);
+    public void addLocalVariable(LocalVariable variable) {
+        localVariables.put(variable.getName(),variable);
     }
 
     public LocalVariable getLocalVariable(String varName) {
-        return localVariables.stream()
-                .filter(variable -> variable.getName().equals(varName))
-                .findFirst()
+        return Optional.ofNullable(localVariables.get(varName))
                 .orElseThrow(() -> new LocalVariableNotFoundException(this, varName));
     }
 
-    public boolean isLocalVariableExists(String varName) {
-        return localVariables.stream()
-                .anyMatch(variable -> variable.getName().equals(varName));
+    public int getLocalVariableIndex(String varName) {
+        return localVariables.indexOf(varName);
     }
 
-    public int getLocalVariableIndex(String varName) {
-        LocalVariable localVariable = getLocalVariable(varName);
-        return localVariables.indexOf(localVariable);
+    public boolean isLocalVariableExists(String varName) {
+        return localVariables.containsKey(varName);
+    }
+
+    public void addField(Field field) {
+        fields.put(field.getName(),field);
+    }
+
+    public Field getField(String fieldName) {
+        return Optional.ofNullable(fields.get(fieldName))
+                .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
+    }
+
+    public boolean isFieldExists(String varName) {
+        return fields.containsKey(varName);
     }
 
     public String getClassName() {

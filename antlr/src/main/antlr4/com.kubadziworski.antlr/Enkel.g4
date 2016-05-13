@@ -5,7 +5,8 @@ grammar Enkel;
 compilationUnit : classDeclaration EOF ;
 classDeclaration : className '{' classBody '}' ;
 className : qualifiedName ;
-classBody :  function* ;
+classBody :  field* function* ;
+field : type name;
 function : functionDeclaration block ;
 functionDeclaration : (type)? functionName '('? parametersList? ')'? ;
 parametersList:  parameter (',' parameter)*
@@ -33,6 +34,7 @@ block : '{' statement* '}' ;
 
 statement : block
            | variableDeclaration
+           | assignment
            | printStatement
            | forStatement
            | returnStatement
@@ -40,6 +42,7 @@ statement : block
            | expression ;
 
 variableDeclaration : VARIABLE name EQUALS expression;
+assignment : name EQUALS expression;
 printStatement : PRINT expression ;
 returnStatement : 'return' expression #ReturnWithValue
                 | 'return' #ReturnVoid ;

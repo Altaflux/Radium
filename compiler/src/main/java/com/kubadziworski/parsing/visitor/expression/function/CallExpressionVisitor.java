@@ -1,13 +1,13 @@
 package com.kubadziworski.parsing.visitor.expression.function;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ArgumentListContext;
 import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
 import com.kubadziworski.antlr.EnkelParser.SupercallContext;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.exception.FunctionNameEqualClassException;
@@ -42,7 +42,8 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         }
         ClassType thisType = new ClassType(scope.getClassName());
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
-        return new FunctionCall(signature, arguments, new VariableReference("this", thisType));
+        LocalVariable thisVariable = new LocalVariable("this",thisType);
+        return new FunctionCall(signature, arguments, new LocalVariableReference(thisVariable));
     }
 
     @Override

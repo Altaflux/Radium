@@ -1,10 +1,11 @@
 package com.kubadziworski.domain;
 
 
-import com.kubadziworski.domain.Function;
+import com.kubadziworski.domain.scope.Field;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,10 +14,12 @@ import java.util.List;
 public class ClassDeclaration {
 
     private final String name;
-    private final Collection<Function> methods;
+    private final List<Field> fields;
+    private final List<Function> methods;
 
-    public ClassDeclaration(String name, Collection<Function> methods) {
+    public ClassDeclaration(String name, List<Field> fields, List<Function> methods) {
         this.name = name;
+        this.fields = fields;
         this.methods = methods;
     }
 
@@ -24,8 +27,12 @@ public class ClassDeclaration {
         return name;
     }
 
+    public List<Field> getFields() {
+        return Collections.unmodifiableList(fields);
+    }
+
     public List<Function> getMethods() {
-        return new ArrayList<>(methods);
+        return Collections.unmodifiableList(methods);
     }
 
 }

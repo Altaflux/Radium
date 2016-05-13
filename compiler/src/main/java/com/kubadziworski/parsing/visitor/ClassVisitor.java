@@ -11,6 +11,7 @@ import com.kubadziworski.domain.node.expression.FunctionCall;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.ClassDeclaration;
 import com.kubadziworski.domain.MetaData;
+import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.Block;
@@ -22,6 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by kuba on 01.04.16.
@@ -32,11 +36,16 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
 
     @Override
     public ClassDeclaration visitClassDeclaration(@NotNull ClassDeclarationContext ctx) {
-        String name = ctx.className().getText();
-        FunctionSignatureVisitor functionSignatureVisitor = new FunctionSignatureVisitor(scope);
-        List<FunctionContext> methodsCtx = ctx.classBody().function();
         MetaData metaData = new MetaData(ctx.className().getText(),"java.lang.Object");
         scope = new Scope(metaData);
+        String name = ctx.className().getText();
+        FieldVisitor fieldVisitor = new FieldVisitor(scope);
+        FunctionSignatureVisitor functionSignatureVisitor = new FunctionSignatureVisitor(scope);
+        List<FunctionContext> methodsCtx = ctx.classBody().function();
+        List<Field> fields = ctx.classBody().field().stream()
+                .map(field -> field.accept(fieldVisitor))
+                .peek(scope::addField)
+                .collect(toList());
         methodsCtx.stream()
                 .map(method -> method.functionDeclaration().accept(functionSignatureVisitor))
                 .forEach(scope::addSignature);
@@ -44,7 +53,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         addDefaultConstructorSignatureToScope(name, defaultConstructorExists);
         List<Function> methods = methodsCtx.stream()
                 .map(method -> method.accept(new FunctionVisitor(scope)))
-                .collect(Collectors.toList());
+                .collect(toList());
         if(!defaultConstructorExists) {
             methods.add(getDefaultConstructor());
         }
@@ -53,7 +62,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
             methods.add(getGeneratedMainMethod());
         }
 
-        return new ClassDeclaration(name, methods);
+        return new ClassDeclaration(name, fields, methods);
     }
 
     private void addDefaultConstructorSignatureToScope(String name, boolean defaultConstructorExists) {

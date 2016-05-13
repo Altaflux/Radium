@@ -32,7 +32,7 @@ public class StatementGenerator {
         blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
         ifStatementGenerator = new IfStatementGenerator(this, expressionGenerator, methodVisitor);
         returnStatemenetGenerator = new ReturnStatemenetGenerator(expressionGenerator, methodVisitor);
-        assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor, scope);
+        assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor, expressionGenerator,scope);
     }
 
     public void generate(PrintStatement printStatement) {
@@ -95,10 +95,6 @@ public class StatementGenerator {
         expressionGenerator.generate(value);
     }
 
-    public void generate(VariableReference variableReference) {
-        expressionGenerator.generate(variableReference);
-    }
-
     public void generate(Substraction substraction) {
         expressionGenerator.generate(substraction);
     }
@@ -109,5 +105,13 @@ public class StatementGenerator {
 
     public void generate(EmptyExpression emptyExpression) {
         expressionGenerator.generate(emptyExpression);
+    }
+
+    public void generate(LocalVariableReference localVariableReference) {
+        expressionGenerator.generate(localVariableReference);
+    }
+
+    public void generate(FieldReference fieldReference) {
+        expressionGenerator.generate(fieldReference);
     }
 }

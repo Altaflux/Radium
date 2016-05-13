@@ -3,11 +3,13 @@ package com.kubadziworski.bytecodegeneration.statement;
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.VariableReference;
+import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.CompareSign;
+import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.RangedForStatement;
 import com.kubadziworski.domain.node.statement.Statement;
+import com.kubadziworski.domain.scope.Variable;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -29,7 +31,8 @@ public class ForStatementGenerator {
         Label endLoopSection = new Label();
         String iteratorVarName = rangedForStatement.getIteratorVarName();
         Expression endExpression = rangedForStatement.getEndExpression();
-        Expression iteratorVariable = new VariableReference(iteratorVarName, rangedForStatement.getType());
+        LocalVariable variable = new LocalVariable(iteratorVarName,rangedForStatement.getType());
+        Expression iteratorVariable = new LocalVariableReference(variable);
         ConditionalExpression iteratorGreaterThanEndConditional = new ConditionalExpression(iteratorVariable, endExpression, CompareSign.GREATER);
         ConditionalExpression iteratorLessThanEndConditional = new ConditionalExpression(iteratorVariable, endExpression, CompareSign.LESS);
 

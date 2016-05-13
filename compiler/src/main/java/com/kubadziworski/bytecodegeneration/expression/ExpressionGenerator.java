@@ -11,7 +11,7 @@ import org.objectweb.asm.MethodVisitor;
 public class ExpressionGenerator {
 
 
-    private final VariableReferenceExpressionGenerator variableReferenceExpressionGenerator;
+    private final ReferenceExpressionGenerator referenceExpressionGenerator;
     private final ValueExpressionGenerator valueExpressionGenerator;
     private final CallExpressionGenerator callExpressionGenerator;
     private final ArithmeticExpressionGenerator arithmeticExpressionGenerator;
@@ -19,7 +19,7 @@ public class ExpressionGenerator {
     private final ParameterExpressionGenerator parameterExpressionGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
-        variableReferenceExpressionGenerator = new VariableReferenceExpressionGenerator(methodVisitor,scope);
+        referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor,scope);
         valueExpressionGenerator = new ValueExpressionGenerator(methodVisitor);
         callExpressionGenerator = new CallExpressionGenerator(this, scope, methodVisitor);
         arithmeticExpressionGenerator = new ArithmeticExpressionGenerator(this, methodVisitor);
@@ -27,8 +27,12 @@ public class ExpressionGenerator {
         parameterExpressionGenerator = new ParameterExpressionGenerator(methodVisitor, scope);
     }
 
-    public void generate(VariableReference variableReference) {
-        variableReferenceExpressionGenerator.generate(variableReference);
+    public void generate(FieldReference reference) {
+        referenceExpressionGenerator.generate(reference);
+    }
+
+    public void generate(LocalVariableReference reference) {
+        referenceExpressionGenerator.generate(reference);
     }
 
     public void generate(Parameter parameter) {
