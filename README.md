@@ -1,4 +1,6 @@
 #Enkel
+
+[![Join the chat at https://gitter.im/JakubDziworski/Enkel-JVM-language](https://badges.gitter.im/JakubDziworski/Enkel-JVM-language.svg)](https://gitter.im/JakubDziworski/Enkel-JVM-language?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Enkel is a simple programming language running on jvm
 
 #[BLOG - Creating JVM Language] (http://jakubdziworski.github.io/categories.html#Enkel-ref)
