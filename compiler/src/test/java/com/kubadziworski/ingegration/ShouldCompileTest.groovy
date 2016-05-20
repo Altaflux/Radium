@@ -287,7 +287,7 @@ class ShouldCompileTest extends Specification {
 								}
 							  }
 							}
-"""
+							"""
 
 	@Unroll
 	def "Should Compile and run"() {

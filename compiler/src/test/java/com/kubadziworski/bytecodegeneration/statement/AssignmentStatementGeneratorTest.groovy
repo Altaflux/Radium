@@ -4,6 +4,7 @@ import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator
 import com.kubadziworski.domain.node.expression.Value
 import com.kubadziworski.domain.node.statement.Assignment
 import com.kubadziworski.domain.scope.Field
+import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BultInType
 import com.kubadziworski.domain.type.ClassType
@@ -32,15 +33,17 @@ class AssignmentStatementGeneratorTest extends Specification {
     def "should generate bytecode for local variable if variable for name exists in scope"() {
         given:
             def assignment = new Assignment(varName,assignmentExpression)
+            def localVariable = Mock(LocalVariable)
             MethodVisitor methodVisitor = Mock()
             ExpressionGenerator expressionGenerator = Mock()
             Scope scope = Mock()
         when:
             new AssignmentStatementGenerator(methodVisitor,expressionGenerator,scope).generate(assignment)
         then :
-
             1*scope.isLocalVariableExists(varName) >> true
             1*scope.getLocalVariableIndex(varName) >> 3
+            1* scope.getLocalVariable(varName) >> localVariable
+            1* localVariable.getType() >> assignmentExpression.getType()
             1*methodVisitor.visitVarInsn(expectedOpcode,3)
         where:
             varName  | assignmentExpression                    | expectedOpcode
