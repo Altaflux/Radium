@@ -23,8 +23,8 @@ CardDrawer {
         cardsList.add(new Card("Spades",pattern))
     }
 
-    drawCardsForPlayers(List cardsList,int playersAmount = 3,int cardsAmount = 5) {
-        if(cardsList.size() < (playersAmount * cardsAmount)) {
+    drawCardsForPlayers(List cardsList,int playersAmount = 3,int cardsPerPlayer = 5) {
+        if(cardsList.size() < (playersAmount * cardsPerPlayer)) {
             print "ERROR - Not enough cards"
             return
         }
@@ -32,7 +32,7 @@ CardDrawer {
         for i from 1 to playersAmount {
             var playernumberString = new java.lang.Integer(i).toString()
             print "player " + playernumberString  + " is drawing:"
-            for j from 1 to cardsAmount {
+            for j from 1 to cardsPerPlayer {
                 var dawnCardIndex = random.nextInt(cardsList.size() - 1)
                 var drawedCard = cardsList.remove(dawnCardIndex)
                 print "    drawed:" + drawedCard
