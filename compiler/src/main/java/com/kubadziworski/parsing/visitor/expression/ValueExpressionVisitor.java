@@ -13,7 +13,7 @@ public class ValueExpressionVisitor extends EnkelBaseVisitor<Value> {
     @Override
     public Value visitValue(@NotNull ValueContext ctx) {
         String value = ctx.getText();
-        Type type = TypeResolver.getFromValue(ctx.getText());
+        Type type = TypeResolver.getFromValue(ctx);
         return new Value(type, value);
     }
 }
