@@ -1,7 +1,11 @@
 package com.kubadziworski.domain.type;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.ToString;
 import org.objectweb.asm.Opcodes;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by kuba on 02.04.16.
@@ -10,8 +14,32 @@ import org.objectweb.asm.Opcodes;
 public class ClassType implements Type {
     private final String name;
 
+    private static final Map<String, String> shortcuts = ImmutableMap.of(
+            "List", "java.util.ArrayList"
+    );
+
     public ClassType(String name) {
-        this.name = name;
+        this.name = Optional.ofNullable(shortcuts.get(name)).orElse(name);
+    }
+
+    public static ClassType Integer() {
+        return new ClassType("java.lang.Integer");
+    }
+
+    public static ClassType Double() {
+        return new ClassType("java.lang.Double");
+    }
+
+    public static ClassType Boolean() {
+        return new ClassType("java.lang.Boolean");
+    }
+
+    public static ClassType Float() {
+        return new ClassType("java.lang.Float");
+    }
+
+    public static Type String() {
+        return new ClassType("java.lang.String");
     }
 
     @Override
