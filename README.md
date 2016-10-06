@@ -5,9 +5,9 @@
 Enkel is a simple programming language running on the  jvm
 
 #[Blog - Creating JVM Language] (http://jakubdziworski.github.io/categories.html#Enkel-ref)
- Since day one I've been describing whole project development process on my blog [Blog - Creating JVM Language] (http://jakubdziworski.github.io/categories.html#Enkel-ref). 
+ Since day one I've been describing whole project development process on my [blog post series - Creating JVM Language] (http://jakubdziworski.github.io/categories.html#Enkel-ref). 
 It consist of 20 posts covering all the issues.
-When in doubt browsing the code, I encorouge you to the code take a look at the blog.
+When in doubt browsing the code, I encorouge you to take a look at the blog.
 
 ## Compiling and running Enkel scripts
 1.Build compiler into executable jar
