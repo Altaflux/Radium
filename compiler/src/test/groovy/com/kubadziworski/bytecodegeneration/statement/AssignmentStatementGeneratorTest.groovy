@@ -16,20 +16,7 @@ import spock.lang.Specification
  * Created by kuba on 13.05.16.
  */
 class AssignmentStatementGeneratorTest extends Specification {
-//
-//    String varName = assignment.getVarName();
-//    Expression assignmentExpression = assignment.getExpression();
-//    Type variableType = assignmentExpression.getType();
-//    if(scope.isLocalVariableExists(varName)) {
-//        int index = scope.getLocalVariableIndex(varName);
-//        methodVisitor.visitVarInsn(variableType.getStoreVariableOpcode(), index);
-//        return;
-//    }
-//    Field field = scope.getField(varName);
-//    String descriptor = field.getType().getDescriptor();
-//    methodVisitor.visitVarInsn(Opcodes.ALOAD,0);
-//    assignmentExpression.accept(expressionGenerator);
-//    methodVisitor.visitFieldInsn(Opcodes.PUTFIELD,field.getOwnerInternalName(),field.getName(),descriptor);
+
     def "should generate bytecode for local variable if variable for name exists in scope"() {
         given:
             def assignment = new Assignment(varName,assignmentExpression)
