@@ -30,16 +30,18 @@ public class Compiler {
     }
 
     public void compile(String[] args) throws Exception {
-        ARGUMENT_ERRORS argumentsErrors = getArgumentValidationErrors(args);
-        if (argumentsErrors != ARGUMENT_ERRORS.NONE) {
-            String errorMessage = argumentsErrors.getMessage();
-            LOGGER.error(errorMessage);
-            return;
-        }
-        File enkelFile = new File(args[0]);
+//        ARGUMENT_ERRORS argumentsErrors = getArgumentValidationErrors(args);
+//        if (argumentsErrors != ARGUMENT_ERRORS.NONE) {
+//            String errorMessage = argumentsErrors.getMessage();
+//            LOGGER.error(errorMessage);
+//            return;
+//        }
+        String path = "C:\\Users\\plozano\\sony\\enkel\\Pop.enk";
+        File enkelFile = new File(path);
         String fileAbsolutePath = enkelFile.getAbsolutePath();
-        LOGGER.info("Trying to parse '{}'.", enkelFile.getAbsolutePath());
+       // LOGGER.info("Trying to parse '{}'.", enkelFile.getAbsolutePath());
         CompilationUnit compilationUnit = new Parser().getCompilationUnit(fileAbsolutePath);
+
         LOGGER.info("Finished Parsing. Started compiling to bytecode.");
         saveBytecodeToClassFile(compilationUnit);
     }

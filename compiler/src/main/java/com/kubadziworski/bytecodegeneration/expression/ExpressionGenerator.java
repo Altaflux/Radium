@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.prefix.PrefixExpression;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 
@@ -17,22 +18,36 @@ public class ExpressionGenerator {
     private final ArithmeticExpressionGenerator arithmeticExpressionGenerator;
     private final ConditionalExpressionGenerator conditionalExpressionGenerator;
     private final ParameterExpressionGenerator parameterExpressionGenerator;
+    private final PrefixExpressionGenerator prefixExpressionGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
-        referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor,scope);
+        referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor, scope);
         valueExpressionGenerator = new ValueExpressionGenerator(methodVisitor);
         callExpressionGenerator = new CallExpressionGenerator(this, scope, methodVisitor);
         arithmeticExpressionGenerator = new ArithmeticExpressionGenerator(this, methodVisitor);
         conditionalExpressionGenerator = new ConditionalExpressionGenerator(this, methodVisitor);
         parameterExpressionGenerator = new ParameterExpressionGenerator(methodVisitor, scope);
+        prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor, this, scope);
     }
 
     public void generate(FieldReference reference) {
         referenceExpressionGenerator.generate(reference);
     }
 
+    public void generateDup(FieldReference reference) {
+        referenceExpressionGenerator.generateDup(reference);
+    }
+
+    public void generateDup(LocalVariableReference reference) {
+        referenceExpressionGenerator.generateDup(reference);
+    }
+
     public void generate(LocalVariableReference reference) {
         referenceExpressionGenerator.generate(reference);
+    }
+
+    public void generate(PrefixExpression prefixExpression){
+        prefixExpressionGenerator.generate(prefixExpression);
     }
 
     public void generate(Parameter parameter) {

@@ -5,26 +5,24 @@ import com.kubadziworski.domain.node.expression.Expression;
 
 import java.util.Optional;
 
-/**
- * Created by kuba on 12.04.16.
- */
+
 public class IfStatement implements Statement {
 
 
     private final Expression condition;
     private final Statement trueStatement;
-    private final Optional<Statement> falseStatement;
+    private final Statement falseStatement;
 
     public IfStatement(Expression condition, Statement trueStatement, Statement falseStatement) {
         this.condition = condition;
         this.trueStatement = trueStatement;
-        this.falseStatement = Optional.ofNullable(falseStatement);
+        this.falseStatement = falseStatement;
     }
 
     public IfStatement(Expression condition, Statement trueStatement) {
         this.condition = condition;
         this.trueStatement = trueStatement;
-        this.falseStatement = Optional.empty();
+        this.falseStatement = null;
     }
 
     public Expression getCondition() {
@@ -36,7 +34,7 @@ public class IfStatement implements Statement {
     }
 
     public Optional<Statement> getFalseStatement() {
-        return falseStatement;
+        return Optional.ofNullable(falseStatement);
     }
 
     @Override

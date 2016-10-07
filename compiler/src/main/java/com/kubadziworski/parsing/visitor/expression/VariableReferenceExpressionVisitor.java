@@ -1,7 +1,9 @@
 package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
+import com.kubadziworski.antlr.EnkelParser.VariableReferenceContext;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Reference;
@@ -21,7 +23,18 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
     @Override
     public Reference visitVarReference(@NotNull VarReferenceContext ctx) {
         String varName = ctx.getText();
-        if(scope.isFieldExists(varName)) {
+        if (scope.isFieldExists(varName)) {
+            Field field = scope.getField(varName);
+            return new FieldReference(field);
+        }
+        LocalVariable variable = scope.getLocalVariable(varName);
+        return new LocalVariableReference(variable);
+    }
+
+    @Override
+    public Reference visitVariableReference(@NotNull VariableReferenceContext ctx) {
+        String varName = ctx.getText();
+        if (scope.isFieldExists(varName)) {
             Field field = scope.getField(varName);
             return new FieldReference(field);
         }

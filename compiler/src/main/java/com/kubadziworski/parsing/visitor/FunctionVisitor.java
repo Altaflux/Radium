@@ -37,7 +37,7 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
     }
 
     private void addParametersAsLocalVariables(FunctionSignature signature) {
-        signature.getParameters().stream()
+        signature.getParameters()
                 .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
     }
 

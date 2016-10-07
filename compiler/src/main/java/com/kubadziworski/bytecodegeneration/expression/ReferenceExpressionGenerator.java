@@ -24,12 +24,31 @@ public class ReferenceExpressionGenerator {
         methodVisitor.visitVarInsn(type.getLoadVariableOpcode(), index);
     }
 
+    public void generateDup(LocalVariableReference localVariableReference) {
+        String varName = localVariableReference.geName();
+        int index = scope.getLocalVariableIndex(varName);
+        Type type = localVariableReference.getType();
+
+        methodVisitor.visitVarInsn(type.getLoadVariableOpcode(), index);
+       //methodVisitor.visitInsn(Opcodes.DUP);
+    }
+
     public void generate(FieldReference fieldReference) {
         String varName = fieldReference.geName();
         Type type = fieldReference.getType();
         String ownerInternalName = fieldReference.getOwnerInternalName();
         String descriptor = type.getDescriptor();
-        methodVisitor.visitVarInsn(Opcodes.ALOAD,0);
-        methodVisitor.visitFieldInsn(Opcodes.GETFIELD, ownerInternalName,varName,descriptor);
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
+        methodVisitor.visitFieldInsn(Opcodes.GETFIELD, ownerInternalName, varName, descriptor);
+    }
+
+    public void generateDup(FieldReference fieldReference) {
+        String varName = fieldReference.geName();
+        Type type = fieldReference.getType();
+        String ownerInternalName = fieldReference.getOwnerInternalName();
+        String descriptor = type.getDescriptor();
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
+        methodVisitor.visitInsn(Opcodes.DUP);
+        methodVisitor.visitFieldInsn(Opcodes.GETFIELD, ownerInternalName, varName, descriptor);
     }
 }

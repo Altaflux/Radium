@@ -23,6 +23,7 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.*;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
+import com.kubadziworski.parsing.visitor.expression.IncDecExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
 /**
@@ -39,16 +40,18 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     private final IfStatementVisitor ifStatementVisitor;
     private final ForStatementVisitor forStatementVisitor;
     private final AssignmentStatementVisitor assignmentStatementVisitor;
+    private final IncDecExpressionVisitor incDecExpressionVisitor;
 
     public StatementVisitor(Scope scope) {
         expressionVisitor = new ExpressionVisitor(scope);
         printStatementVisitor = new PrintStatementVisitor(expressionVisitor);
-        variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor(expressionVisitor,scope);
+        variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor(expressionVisitor, scope);
         returnStatementVisitor = new ReturnStatementVisitor(expressionVisitor);
         blockStatementVisitor = new BlockStatementVisitor(scope);
-        ifStatementVisitor = new IfStatementVisitor(this,expressionVisitor);
+        ifStatementVisitor = new IfStatementVisitor(this, expressionVisitor);
         forStatementVisitor = new ForStatementVisitor(scope);
         assignmentStatementVisitor = new AssignmentStatementVisitor(expressionVisitor);
+        incDecExpressionVisitor = new IncDecExpressionVisitor(expressionVisitor);
     }
 
     @Override
@@ -84,6 +87,22 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     @Override
     public Expression visitVarReference(@NotNull VarReferenceContext ctx) {
         return expressionVisitor.visitVarReference(ctx);
+    }
+
+    @Override
+    public Expression visitPrefixExpression(@NotNull EnkelParser.PrefixExpressionContext ctx) {
+        return incDecExpressionVisitor.visitPrefixExpression(ctx);
+    }
+
+    @Override
+    public Expression visitSuffixExpression(@NotNull EnkelParser.SuffixExpressionContext ctx) {
+        return incDecExpressionVisitor.visitSuffixExpression(ctx);
+    }
+
+
+    @Override
+    public Expression visitVariableReference(@NotNull EnkelParser.VariableReferenceContext ctx) {
+        return expressionVisitor.visitVariableReference(ctx);
     }
 
     @Override

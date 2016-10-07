@@ -36,6 +36,11 @@ public class FieldReference implements Reference {
         generator.generate(this);
     }
 
+    @Override
+    public void acceptDup(ExpressionGenerator generator){
+        generator.generateDup(this);
+    }
+
     public String getOwnerInternalName() {
         return field.getOwnerInternalName();
     }

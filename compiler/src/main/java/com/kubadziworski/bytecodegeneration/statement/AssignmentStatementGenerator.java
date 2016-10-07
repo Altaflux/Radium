@@ -2,6 +2,8 @@ package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.expression.LocalVariableReference;
+import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
@@ -39,6 +41,18 @@ public class AssignmentStatementGenerator {
         expression.accept(expressionGenerator);
         castIfNecessary(type, field.getType());
         methodVisitor.visitFieldInsn(Opcodes.PUTFIELD,field.getOwnerInternalName(),field.getName(),descriptor);
+    }
+
+    public void generateDup(Reference reference){
+        if (reference instanceof LocalVariableReference) {
+            int varIndex = scope.getLocalVariableIndex(reference.geName());
+            methodVisitor.visitVarInsn(reference.getType().getStoreVariableOpcode(), varIndex);
+
+        } else {
+            Field field = scope.getField(reference.geName());
+            String descriptor = field.getType().getDescriptor();
+            methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, field.getOwnerInternalName(), field.getName(), descriptor);
+        }
     }
 
     private void castIfNecessary(Type expressionType, Type variableType) {

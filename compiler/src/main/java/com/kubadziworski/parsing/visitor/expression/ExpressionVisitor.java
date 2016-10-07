@@ -1,6 +1,7 @@
 package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.AddContext;
 import com.kubadziworski.antlr.EnkelParser.ConditionalExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
@@ -10,6 +11,8 @@ import com.kubadziworski.antlr.EnkelParser.MultiplyContext;
 import com.kubadziworski.antlr.EnkelParser.SubstractContext;
 import com.kubadziworski.antlr.EnkelParser.SupercallContext;
 import com.kubadziworski.antlr.EnkelParser.ValueContext;
+import com.kubadziworski.antlr.EnkelParser.PrefixExpressionContext;
+import com.kubadziworski.antlr.EnkelParser.SuffixExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.Scope;
@@ -26,6 +29,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final ValueExpressionVisitor valueExpressionVisitor;
     private final CallExpressionVisitor callExpressionVisitor;
     private final ConditionalExpressionVisitor conditionalExpressionVisitor;
+    private final IncDecExpressionVisitor incDecExpressionVisitor;
 
     public ExpressionVisitor(Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
@@ -33,11 +37,29 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         valueExpressionVisitor = new ValueExpressionVisitor();
         callExpressionVisitor = new CallExpressionVisitor(this, scope);
         conditionalExpressionVisitor = new ConditionalExpressionVisitor(this);
+        incDecExpressionVisitor = new IncDecExpressionVisitor(this);
     }
+
+
+    @Override
+    public Expression visitPrefixExpression(@NotNull PrefixExpressionContext ctx) {
+        return incDecExpressionVisitor.visitPrefixExpression(ctx);
+    }
+
+    @Override
+    public Expression visitSuffixExpression(@NotNull SuffixExpressionContext ctx) {
+        return incDecExpressionVisitor.visitSuffixExpression(ctx);
+    }
+
 
     @Override
     public Expression visitVarReference(@NotNull VarReferenceContext ctx) {
         return variableReferenceExpressionVisitor.visitVarReference(ctx);
+    }
+
+    @Override
+    public Expression visitVariableReference(@NotNull EnkelParser.VariableReferenceContext ctx) {
+        return variableReferenceExpressionVisitor.visitVariableReference(ctx);
     }
 
     @Override
@@ -47,6 +69,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
     @Override
     public Expression visitFunctionCall(@NotNull FunctionCallContext ctx) {
+
         return callExpressionVisitor.visitFunctionCall(ctx);
     }
 

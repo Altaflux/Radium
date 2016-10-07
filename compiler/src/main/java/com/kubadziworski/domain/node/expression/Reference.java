@@ -10,8 +10,10 @@ public interface Reference extends Expression {
     String geName();
 
     @Override
-    void accept(ExpressionGenerator genrator);
+    void accept(ExpressionGenerator generator);
 
     @Override
     void accept(StatementGenerator generator);
+
+    void acceptDup(ExpressionGenerator generator);
 }

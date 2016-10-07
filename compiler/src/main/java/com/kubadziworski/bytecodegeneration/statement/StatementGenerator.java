@@ -1,11 +1,13 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
+import com.kubadziworski.bytecodegeneration.expression.PrefixExpressionGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
 import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
 import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
+import com.kubadziworski.domain.node.expression.prefix.PrefixExpression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.*;
 import org.objectweb.asm.MethodVisitor;
@@ -23,16 +25,18 @@ public class StatementGenerator {
     private final ForStatementGenerator forStatementGenerator;
     private final AssignmentStatementGenerator assignmentStatementGenerator;
     private final ExpressionGenerator expressionGenerator;
+    private final PrefixExpressionGenerator prefixExpressionGenerator;
 
     public StatementGenerator(MethodVisitor methodVisitor, Scope scope) {
         expressionGenerator = new ExpressionGenerator(methodVisitor, scope);
-        printStatementGenerator = new PrintStatementGenerator(expressionGenerator,methodVisitor);
+        printStatementGenerator = new PrintStatementGenerator(expressionGenerator, methodVisitor);
         variableDeclarationStatementGenerator = new VariableDeclarationStatementGenerator(this, expressionGenerator);
         forStatementGenerator = new ForStatementGenerator(methodVisitor);
         blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
         ifStatementGenerator = new IfStatementGenerator(this, expressionGenerator, methodVisitor);
         returnStatemenetGenerator = new ReturnStatemenetGenerator(expressionGenerator, methodVisitor);
-        assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor, expressionGenerator,scope);
+        assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor, expressionGenerator, scope);
+        prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor, expressionGenerator, scope);
     }
 
     public void generate(PrintStatement printStatement) {
@@ -41,6 +45,10 @@ public class StatementGenerator {
 
     public void generate(VariableDeclaration variableDeclaration) {
         variableDeclarationStatementGenerator.generate(variableDeclaration);
+    }
+
+    public void generate(PrefixExpression prefixExpression) {
+        prefixExpressionGenerator.generate(prefixExpression);
     }
 
     public void generate(FunctionCall functionCall) {

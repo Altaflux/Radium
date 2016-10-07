@@ -57,11 +57,19 @@ argument : expression ;
 namedArgument : name '->' expression ;
 
 expression : variableReference #VarReference
+           | owner=expression '.' variableReference  #VarReference
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
-           | functionName '(' argumentList ')' #FunctionCall
+           | functionName '(' argumentList ')' #Functionall
            | superCall='super' '('argumentList ')' #Supercall
            | newCall='new' className '('argumentList ')' #ConstructorCall
            | value        #ValueExpr
+           | (variableReference) operation='--'  #SuffixExpression
+           | (variableReference) operation='++'  #SuffixExpression
+           | operation='--' (variableReference) #PrefixExpression
+           | operation='++' (expression) #PrefixExpression
+           | expression '.' (expression.+)  #Expresions
+           | operation='-' expression #ArithmeticExpression
+           | operation='+' expression #ArithmeticExpression
            |  '('expression '*' expression')' #Multiply
            | expression '*' expression  #Multiply
            | '(' expression '/' expression ')' #Divide
@@ -77,7 +85,11 @@ expression : variableReference #VarReference
              | expression cmp='>=' expression #ConditionalExpression
              | expression cmp='<=' expression #ConditionalExpression
            ;
+
+
 variableReference : ID ;
+//Bdd: expression '.' variableReference;
+
 value : NUMBER
       | BOOL
       | STRING ;

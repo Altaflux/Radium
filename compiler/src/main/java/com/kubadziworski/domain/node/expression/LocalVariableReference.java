@@ -36,4 +36,9 @@ public class LocalVariableReference implements Reference {
     public void accept(StatementGenerator generator) {
         generator.generate(this);
     }
+
+    @Override
+    public void acceptDup(ExpressionGenerator generator){
+        generator.generateDup(this);
+    }
 }
