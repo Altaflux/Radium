@@ -36,7 +36,7 @@ public class Compiler {
 //            LOGGER.error(errorMessage);
 //            return;
 //        }
-        String path = "C:\\Users\\plozano\\sony\\enkel\\Pop.enk";
+        String path = "C:\\Users\\plozano\\sony\\enkel\\compiler\\Loops.enk";
         File enkelFile = new File(path);
         String fileAbsolutePath = enkelFile.getAbsolutePath();
        // LOGGER.info("Trying to parse '{}'.", enkelFile.getAbsolutePath());

@@ -59,7 +59,7 @@ namedArgument : name '->' expression ;
 expression : variableReference #VarReference
            | owner=expression '.' variableReference  #VarReference
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
-           | functionName '(' argumentList ')' #Functionall
+           | functionName '(' argumentList ')' #FunctionCall
            | superCall='super' '('argumentList ')' #Supercall
            | newCall='new' className '('argumentList ')' #ConstructorCall
            | value        #ValueExpr
