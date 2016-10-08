@@ -20,8 +20,6 @@ public class IncDecExpressionVisitor extends EnkelBaseVisitor<PrefixExpression> 
     public PrefixExpression visitSuffixExpression(SuffixExpressionContext ctx) {
         ArithmeticOperator operator = ArithmeticOperator.fromString(ctx.operation.getText());
         Expression expression = ctx.expr.accept(expressionVisitor);
-        System.out.println("Expression is type of: " + expression.getType());
-        System.out.println("Expression is class of: " + expression.getClass().getSimpleName());
         Reference ref = (Reference) expression;
         return new PrefixExpression(ref, false, operator);
     }
@@ -29,8 +27,6 @@ public class IncDecExpressionVisitor extends EnkelBaseVisitor<PrefixExpression> 
     public PrefixExpression visitPrefixExpression(PrefixExpressionContext ctx) {
         ArithmeticOperator operator = ArithmeticOperator.fromString(ctx.operation.getText());
         Expression expression = ctx.expression().accept(expressionVisitor);
-        System.out.println("Expression is type of: " + expression.getType());
-        System.out.println("Expression is class of: " + expression.getClass().getSimpleName());
         Reference ref = (Reference) expression;
         return new PrefixExpression(ref, true, operator);
     }

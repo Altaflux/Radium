@@ -15,20 +15,8 @@ parametersList:  parameter (',' parameter)*
 functionName : ID ;
 parameter : type ID ;
 parameterWithDefaultValue : type ID '=' defaultValue=expression ;
-type : primitiveType
-     | classType ;
 
-primitiveType :  'boolean' ('[' ']')*
-                |   'string' ('[' ']')*
-                |   'char' ('[' ']')*
-                |   'byte' ('[' ']')*
-                |   'short' ('[' ']')*
-                |   'int' ('[' ']')*
-                |   'long' ('[' ']')*
-                |   'float' ('[' ']')*
-                |  'double' ('[' ']')*
-                | 'void' ('[' ']')* ;
-classType : qualifiedName ('[' ']')* ;
+classType : qualifiedName  ;
 
 block : '{' statement* '}' ;
 
@@ -94,6 +82,47 @@ value : NUMBER
       | BOOL
       | STRING ;
 qualifiedName : ID ('.' ID)*;
+
+
+type
+	:	primitiveType
+	|	referenceType
+	;
+referenceType
+	:	classType
+	|	arrayType
+	;
+primitiveType
+	:	 numericType
+	|	 'boolean'
+	;
+
+numericType
+	:	integralType
+	|	floatingPointType
+	;
+
+integralType
+	:	'byte'
+	|	'short'
+	|	'int'
+	|	'long'
+	|	'char'
+	;
+floatingPointType
+	:	'float'
+	|	'double'
+	;
+
+arrayType
+	:	primitiveType dims
+	|	classType dims
+	;
+dims
+	:	'[' ']' ('[' ']')*
+	;
+
+
 //TOKENS
 VARIABLE : 'var' ;
 PRINT : 'print' ;

@@ -289,6 +289,42 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
+    private static final unaryExpressionTest ="""
+							UnaryExpressions {
+
+								int globalField
+
+								start(){
+									var x = 1
+									var y = 1
+
+									var preIncrement = ++x
+									var postIncrement = y++
+
+									var result = preIncrement == x
+									assert(expected -> true , actual -> result)
+
+									var result = postIncrement < y
+									assert(expected -> true , actual -> result)
+
+									globalField = 1
+
+									var incGlobal = globalField++
+									var result = incGlobal < globalField
+									assert(expected -> true , actual -> result)
+
+								}
+
+								void assert(boolean actual,boolean expected) {
+									if (actual == expected) {
+										print "OK"
+									}
+									else {
+										print "TEST FAILED"
+									}
+								  }
+							}
+                            """
 	@Unroll
 	def "Should Compile and run"() {
 		expect:
@@ -320,7 +356,8 @@ class ShouldCompileTest extends Specification {
 			defaultConstructor       | "DefaultConstructor.enk"
 			parameterLessConsturctor | "ParameterLessConstructor.enk"
 			construcotrWithParams    | "ConstructorWithParams.enk"
-			equalityTest    | "EqualitySyntax.enk"
+			equalityTest    		 | "EqualitySyntax.enk"
+			unaryExpressionTest      | "UnaryExpressions.enk"
 	}
 
 }
