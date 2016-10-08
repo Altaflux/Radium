@@ -36,10 +36,10 @@ public class Compiler {
 //            LOGGER.error(errorMessage);
 //            return;
 //        }
-        String path = "C:\\Users\\plozano\\sony\\enkel\\compiler\\Loops.enk";
-        File enkelFile = new File(path);
+        String path = "C:\\Users\\plozano\\sony\\enkel\\compiler\\target\\Client.enk";
+        File enkelFile = new File(args[0]);
         String fileAbsolutePath = enkelFile.getAbsolutePath();
-       // LOGGER.info("Trying to parse '{}'.", enkelFile.getAbsolutePath());
+
         CompilationUnit compilationUnit = new Parser().getCompilationUnit(fileAbsolutePath);
 
         LOGGER.info("Finished Parsing. Started compiling to bytecode.");

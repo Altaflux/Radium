@@ -63,11 +63,11 @@ expression : variableReference #VarReference
            | superCall='super' '('argumentList ')' #Supercall
            | newCall='new' className '('argumentList ')' #ConstructorCall
            | value        #ValueExpr
-           | (variableReference) operation='--'  #SuffixExpression
-           | (variableReference) operation='++'  #SuffixExpression
-           | operation='--' (variableReference) #PrefixExpression
+           | expr=expression operation='--'  #SuffixExpression
+           | expr=expression operation='++'  #SuffixExpression
+           | operation='--' (expression) #PrefixExpression
            | operation='++' (expression) #PrefixExpression
-           | expression '.' (expression.+)  #Expresions
+           | expression '.' (expression.+?)  #Expresions
            | operation='-' expression #ArithmeticExpression
            | operation='+' expression #ArithmeticExpression
            |  '('expression '*' expression')' #Multiply
@@ -88,7 +88,7 @@ expression : variableReference #VarReference
 
 
 variableReference : ID ;
-//Bdd: expression '.' variableReference;
+
 
 value : NUMBER
       | BOOL

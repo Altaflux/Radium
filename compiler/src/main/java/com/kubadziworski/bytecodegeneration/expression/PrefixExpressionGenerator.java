@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 
 import com.kubadziworski.domain.ArithmeticOperator;
+import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.node.expression.Value;
@@ -29,7 +30,12 @@ public class PrefixExpressionGenerator {
 
     public void generate(PrefixExpression prefixExpression) {
         Reference reference = prefixExpression.getReference(); //x
-        reference.acceptDup(expressionGenerator);
+
+        if (reference instanceof LocalVariableReference) {
+            reference.accept(expressionGenerator);
+        } else if (reference instanceof FieldReference) {
+            ((FieldReference) reference).acceptDup(expressionGenerator);
+        }
 
         int dupsCode;
         if (reference.getType() == DOUBLE || reference.getType() == LONG) {
@@ -70,10 +76,13 @@ public class PrefixExpressionGenerator {
             int varIndex = scope.getLocalVariableIndex(reference.geName());
             methodVisitor.visitVarInsn(reference.getType().getStoreVariableOpcode(), varIndex);
 
-        } else {
-            Field field = scope.getField(reference.geName());
-            String descriptor = field.getType().getDescriptor();
-            methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, field.getOwnerInternalName(), field.getName(), descriptor);
+        } else if(reference instanceof FieldReference){
+
+           // Field field = scope.getField(reference.geName());
+            String descriptor = ((FieldReference) reference).getField().getType().getDescriptor();
+            methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, ((FieldReference) reference).getField().getOwnerInternalName(), ((FieldReference) reference).getField().getName(), descriptor);
+        }else {
+            throw new RuntimeException("Reference of unknown type: " + reference.getClass().getSimpleName());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.expression
 
+import com.kubadziworski.domain.MetaData
 import com.kubadziworski.domain.node.expression.FieldReference
 import com.kubadziworski.domain.node.expression.LocalVariableReference
 import com.kubadziworski.domain.scope.Field
@@ -17,12 +18,17 @@ import spock.lang.Specification
 class ReferenceExpressionGeneratorTest extends Specification {
     def "should generate field reference"() {
         given:
-            Scope scope = Mock()
+            MetaData metaData = new MetaData("Main", "java.lang.Object")
+            Scope scope = new Scope(metaData)
             MethodVisitor methodVisitor = Mock()
+            ExpressionGenerator expressionGenerator = new ExpressionGenerator(methodVisitor, scope)
+            LocalVariable local = new LocalVariable("this",scope.getClassType())
+            scope.addLocalVariable(new LocalVariable("this",scope.getClassType()))
             def field = new Field(name,owner,type)
-            def fieldReference = new FieldReference(field)
+            LocalVariableReference ref = new LocalVariableReference(local)
+            def fieldReference = new FieldReference(field, ref)
         when:
-            new ReferenceExpressionGenerator(methodVisitor,scope).generate(fieldReference)
+            new ReferenceExpressionGenerator(methodVisitor,scope, expressionGenerator).generate(fieldReference)
         then:
             1* methodVisitor.visitVarInsn(Opcodes.ALOAD,0)
             1* methodVisitor.visitFieldInsn(Opcodes.GETFIELD,field.ownerInternalName,field.name,field.type.descriptor)
@@ -37,10 +43,11 @@ class ReferenceExpressionGeneratorTest extends Specification {
         given:
             Scope scope = Mock()
             MethodVisitor methodVisitor = Mock()
+            ExpressionGenerator expressionGenerator = new ExpressionGenerator(methodVisitor, scope)
             def variable = new LocalVariable(name,type)
             def localVariableReference = new LocalVariableReference(variable)
         when:
-            new ReferenceExpressionGenerator(methodVisitor,scope).generate(localVariableReference)
+            new ReferenceExpressionGenerator(methodVisitor,scope, expressionGenerator).generate(localVariableReference)
         then:
             1* scope.getLocalVariableIndex(name) >> 3
             1* methodVisitor.visitVarInsn(expectedOpcode,3)

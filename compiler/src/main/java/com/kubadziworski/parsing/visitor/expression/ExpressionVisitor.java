@@ -33,7 +33,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
     public ExpressionVisitor(Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
-        variableReferenceExpressionVisitor = new VariableReferenceExpressionVisitor(scope);
+        variableReferenceExpressionVisitor = new VariableReferenceExpressionVisitor(scope, this);
         valueExpressionVisitor = new ValueExpressionVisitor();
         callExpressionVisitor = new CallExpressionVisitor(this, scope);
         conditionalExpressionVisitor = new ConditionalExpressionVisitor(this);

@@ -15,5 +15,4 @@ public interface Reference extends Expression {
     @Override
     void accept(StatementGenerator generator);
 
-    void acceptDup(ExpressionGenerator generator);
 }

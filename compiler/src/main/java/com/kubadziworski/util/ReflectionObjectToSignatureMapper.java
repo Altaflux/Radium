@@ -1,9 +1,11 @@
 package com.kubadziworski.util;
 
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.Type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -32,5 +34,10 @@ public final class ReflectionObjectToSignatureMapper {
                 .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), Optional.empty()))
                 .collect(toList());
         return new FunctionSignature(name, parameters, BultInType.VOID);
+    }
+
+    public static Field fromField(java.lang.reflect.Field field, Type owner){
+        String name = field.getName();
+        return new Field(name, owner, TypeResolver.getFromTypeName(field.getType().getCanonicalName()));
     }
 }

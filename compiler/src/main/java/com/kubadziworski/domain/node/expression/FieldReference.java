@@ -9,10 +9,11 @@ import com.kubadziworski.domain.type.Type;
  * Created by kuba on 09.04.16.
  */
 public class FieldReference implements Reference {
-    private Field field;
-
-    public FieldReference(Field field) {
+    private final Field field;
+    private final Expression owner;
+    public FieldReference(Field field, Expression owner) {
         this.field = field;
+        this.owner = owner;
     }
 
 
@@ -36,12 +37,23 @@ public class FieldReference implements Reference {
         generator.generate(this);
     }
 
-    @Override
     public void acceptDup(ExpressionGenerator generator){
         generator.generateDup(this);
     }
 
     public String getOwnerInternalName() {
         return field.getOwnerInternalName();
+    }
+
+    public Expression getOwner() {
+        return owner;
+    }
+
+    public Type getOwnerType() {
+        return owner.getType();
+    }
+
+    public Field getField(){
+        return field;
     }
 }

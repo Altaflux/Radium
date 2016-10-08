@@ -119,6 +119,11 @@ public class Scope {
         fields.put(field.getName(),field);
     }
 
+    public Field getFieldOfOwner(Type type, String fieldName){
+      return new ClassPathScope().getFieldSignature(type, fieldName)
+              .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
+    }
+
     public Field getField(String fieldName) {
         return Optional.ofNullable(fields.get(fieldName))
                 .orElseThrow(() -> new FieldNotFoundException(this, fieldName));

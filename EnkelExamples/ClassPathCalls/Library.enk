@@ -1,4 +1,10 @@
 Library {
+
+    int foo
+
+    Library(){
+        foo = 1
+    }
     int add(int x,int y) {
         print "Library: add() method called"
         return x+y

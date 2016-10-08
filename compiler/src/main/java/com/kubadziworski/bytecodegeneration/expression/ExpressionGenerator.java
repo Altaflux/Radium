@@ -21,7 +21,7 @@ public class ExpressionGenerator {
     private final PrefixExpressionGenerator prefixExpressionGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
-        referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor, scope);
+        referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor, scope, this);
         valueExpressionGenerator = new ValueExpressionGenerator(methodVisitor);
         callExpressionGenerator = new CallExpressionGenerator(this, scope, methodVisitor);
         arithmeticExpressionGenerator = new ArithmeticExpressionGenerator(this, methodVisitor);
@@ -35,10 +35,6 @@ public class ExpressionGenerator {
     }
 
     public void generateDup(FieldReference reference) {
-        referenceExpressionGenerator.generateDup(reference);
-    }
-
-    public void generateDup(LocalVariableReference reference) {
         referenceExpressionGenerator.generateDup(reference);
     }
 
