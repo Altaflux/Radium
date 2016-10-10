@@ -3,29 +3,44 @@ package com.kubadziworski.domain.node.statement;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 
+import java.util.Optional;
+
 /**
  * Created by kuba on 23.04.16.
  */
-public class Assignment implements Statement{
+public class Assignment implements Statement {
     private final String varName;
-    private final Expression expression;
+    private final Expression assignmentExpression;
+    private final Expression preExpression;
 
-    public Assignment(String varName, Expression expression) {
+    public Assignment(Expression preExpression, String varName, Expression assignmentExpression) {
+        this.preExpression = preExpression;
         this.varName = varName;
-        this.expression = expression;
+        this.assignmentExpression = assignmentExpression;
+    }
+
+    public Assignment(String varName, Expression assignmentExpression) {
+        this.preExpression = null;
+        this.varName = varName;
+        this.assignmentExpression = assignmentExpression;
     }
 
     public Assignment(VariableDeclaration declarationStatement) {
+        this.preExpression = null;
         this.varName = declarationStatement.getName();
-        this.expression = declarationStatement.getExpression();
+        this.assignmentExpression = declarationStatement.getExpression();
     }
 
     public String getVarName() {
         return varName;
     }
 
-    public Expression getExpression() {
-        return expression;
+    public Expression getAssignmentExpression() {
+        return assignmentExpression;
+    }
+
+    public Optional<Expression> getPreExpression() {
+        return Optional.ofNullable(preExpression);
     }
 
     @Override

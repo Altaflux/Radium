@@ -18,15 +18,15 @@ class AssignmentStatementVisitorTest extends Specification {
             EnkelParser.NameContext nameContext = Mock()
             EnkelParser.ExpressionContext expressionContext = Mock()
             ExpressionVisitor expressionVisitor = Mock()
+            assignmentContext.postExpr = expressionContext
         when:
             def assignment = new AssignmentStatementVisitor(expressionVisitor).visitAssignment(assignmentContext)
         then:
-            1* assignmentContext.expression() >> expressionContext
             1* assignmentContext.name() >> nameContext
             1* nameContext.getText() >> name
             1* expressionContext.accept(expressionVisitor) >> expression
 
-            assignment.expression == expression
+            assignment.assignmentExpression == expression
             assignment.varName == name
         where:
             name | expression

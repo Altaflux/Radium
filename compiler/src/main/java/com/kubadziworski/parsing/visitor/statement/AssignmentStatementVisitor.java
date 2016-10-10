@@ -16,7 +16,8 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Assignment> {
 
     @Override
     public Assignment visitAssignment(@NotNull EnkelParser.AssignmentContext ctx) {
-        EnkelParser.ExpressionContext expressionCtx = ctx.expression();
+
+        EnkelParser.ExpressionContext expressionCtx = ctx.postExpr;
         Expression expression = expressionCtx.accept(expressionVisitor);
         String varName = ctx.name().getText();
         return new Assignment(varName, expression);

@@ -1,10 +1,11 @@
 package com.kubadziworski.integration
 
 import com.kubadziworski.compiler.Compiler
+import com.kubadziworski.domain.MetaData
 import org.apache.commons.io.FileUtils
 import spock.lang.Specification
 import spock.lang.Unroll
-
+import org.apache.commons.lang3.reflect.MethodUtils
 import java.lang.reflect.Method
 
 /**
@@ -111,6 +112,8 @@ class ShouldCompileTest extends Specification {
 
 
 								int sum (int x ,int y) {
+									print x
+									print y
 									x+y
 								}
 							}
@@ -339,11 +342,16 @@ class ShouldCompileTest extends Specification {
 			method.setAccessible(true);
 			method.invoke(urlClassLoader, u) == null;
 
-//			def name = Class.forName(filename.replace(".enk", ""))
-//			def method1 = name.getMethod("main", String[].class)
-//
-//			String[] objs = null
-//			MethodUtils.invokeStaticMethod(name,"main",objs);
+			def name = Class.forName(filename.replace(".enk", ""))
+			def method1 = name.getMethod("main", String[].class)
+
+			//println(name.getMethods())
+			//String[] objs = new String[0];
+			Object[] argss = new Object[1]
+			String[] testArray = [ "1", "2"]
+			argss.putAt(0, testArray as Object)
+			method1.invoke(null,  argss) == null;
+
 		where:
 			code                     | filename
 			helloWorld               | "HelloWorld.enk"

@@ -7,7 +7,6 @@ import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.node.expression.prefix.PrefixExpression;
-import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -34,6 +33,7 @@ public class PrefixExpressionGenerator {
         if (reference instanceof LocalVariableReference) {
             reference.accept(expressionGenerator);
         } else if (reference instanceof FieldReference) {
+
             ((FieldReference) reference).acceptDup(expressionGenerator);
         }
 
@@ -78,7 +78,6 @@ public class PrefixExpressionGenerator {
 
         } else if(reference instanceof FieldReference){
 
-           // Field field = scope.getField(reference.geName());
             String descriptor = ((FieldReference) reference).getField().getType().getDescriptor();
             methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, ((FieldReference) reference).getField().getOwnerInternalName(), ((FieldReference) reference).getField().getName(), descriptor);
         }else {

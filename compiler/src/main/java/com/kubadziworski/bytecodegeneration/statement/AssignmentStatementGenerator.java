@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.scope.Field;
@@ -25,9 +26,9 @@ public class AssignmentStatementGenerator {
 
     public void generate(Assignment assignment) {
         String varName = assignment.getVarName();
-        Expression expression = assignment.getExpression();
+        Expression expression = assignment.getAssignmentExpression();
         Type type = expression.getType();
-        if(scope.isLocalVariableExists(varName)) {
+        if (scope.isLocalVariableExists(varName)) {
             int index = scope.getLocalVariableIndex(varName);
             LocalVariable localVariable = scope.getLocalVariable(varName);
             Type localVariableType = localVariable.getType();
@@ -37,27 +38,35 @@ public class AssignmentStatementGenerator {
         }
         Field field = scope.getField(varName);
         String descriptor = field.getType().getDescriptor();
-        methodVisitor.visitVarInsn(Opcodes.ALOAD,0);
+
+        if (assignment.getPreExpression().isPresent()) {
+            expression.accept(expressionGenerator);
+        } else {
+            methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
+        }
+
         expression.accept(expressionGenerator);
         castIfNecessary(type, field.getType());
-        methodVisitor.visitFieldInsn(Opcodes.PUTFIELD,field.getOwnerInternalName(),field.getName(),descriptor);
+        methodVisitor.visitFieldInsn(Opcodes.PUTFIELD, field.getOwnerInternalName(), field.getName(), descriptor);
     }
 
-    public void generateDup(Reference reference){
+    public void generate(Reference reference) {
+
         if (reference instanceof LocalVariableReference) {
             int varIndex = scope.getLocalVariableIndex(reference.geName());
             methodVisitor.visitVarInsn(reference.getType().getStoreVariableOpcode(), varIndex);
 
+        } else if (reference instanceof FieldReference) {
+            String descriptor = ((FieldReference) reference).getField().getType().getDescriptor();
+            methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, ((FieldReference) reference).getField().getOwnerInternalName(), ((FieldReference) reference).getField().getName(), descriptor);
         } else {
-            Field field = scope.getField(reference.geName());
-            String descriptor = field.getType().getDescriptor();
-            methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, field.getOwnerInternalName(), field.getName(), descriptor);
+            throw new RuntimeException("Reference of unknown type: " + reference.getClass().getSimpleName());
         }
     }
 
     private void castIfNecessary(Type expressionType, Type variableType) {
-        if(!expressionType.equals(variableType)) {
-            methodVisitor.visitTypeInsn(Opcodes.CHECKCAST,variableType.getInternalName());
+        if (!expressionType.equals(variableType)) {
+            methodVisitor.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());
         }
     }
 }
