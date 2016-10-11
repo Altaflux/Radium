@@ -13,6 +13,8 @@ import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Optional;
+
 public class AssignmentStatementGenerator {
     private final MethodVisitor methodVisitor;
     private final ExpressionGenerator expressionGenerator;
@@ -28,20 +30,28 @@ public class AssignmentStatementGenerator {
         String varName = assignment.getVarName();
         Expression expression = assignment.getAssignmentExpression();
         Type type = expression.getType();
-        if (scope.isLocalVariableExists(varName)) {
-            int index = scope.getLocalVariableIndex(varName);
-            LocalVariable localVariable = scope.getLocalVariable(varName);
-            Type localVariableType = localVariable.getType();
-            castIfNecessary(type, localVariableType);
-            methodVisitor.visitVarInsn(type.getStoreVariableOpcode(), index);
-            return;
-        }
-        Field field = scope.getField(varName);
-        String descriptor = field.getType().getDescriptor();
 
-        if (assignment.getPreExpression().isPresent()) {
-            expression.accept(expressionGenerator);
+
+        Field field;
+        String descriptor;
+        Optional<Expression> preExpression = assignment.getPreExpression();
+        if (preExpression.isPresent()) {
+            field = scope.getField(preExpression.get().getType(), varName);
+            descriptor = field.getType().getDescriptor();
+            preExpression.get().accept(expressionGenerator);
         } else {
+
+            if (scope.isLocalVariableExists(varName)) {
+                int index = scope.getLocalVariableIndex(varName);
+                LocalVariable localVariable = scope.getLocalVariable(varName);
+                Type localVariableType = localVariable.getType();
+                castIfNecessary(type, localVariableType);
+                methodVisitor.visitVarInsn(type.getStoreVariableOpcode(), index);
+                return;
+            }
+
+            field = scope.getField(varName);
+            descriptor = field.getType().getDescriptor();
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
         }
 

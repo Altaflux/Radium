@@ -328,6 +328,29 @@ class ShouldCompileTest extends Specification {
 								  }
 							}
                             """
+	private static final globalLocal ="""
+							GlobalLocal {
+								int x
+
+								start(){
+									this.x = 2;
+									var x = 1;
+									print this.x;
+									print x;
+
+									assert(expected -> true , actual -> x == 1);
+									assert(expected -> true , actual -> this.x == 2);
+								}
+								void assert(boolean actual,boolean expected) {
+									if (actual == expected) {
+										print "OK"
+									}
+									else {
+										print "TEST FAILED"
+									}
+								}
+							}
+						""";
 	@Unroll
 	def "Should Compile and run"() {
 		expect:
@@ -366,6 +389,7 @@ class ShouldCompileTest extends Specification {
 			construcotrWithParams    | "ConstructorWithParams.enk"
 			equalityTest    		 | "EqualitySyntax.enk"
 			unaryExpressionTest      | "UnaryExpressions.enk"
+			globalLocal				 | "GlobalLocal.enk"
 	}
 
 }

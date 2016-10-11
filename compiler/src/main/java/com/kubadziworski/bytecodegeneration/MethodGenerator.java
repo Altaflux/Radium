@@ -34,9 +34,9 @@ public class MethodGenerator {
         int access = Opcodes.ACC_PUBLIC + (isMain ? Opcodes.ACC_STATIC : 0);
         MethodVisitor mv = classWriter.visitMethod(access, name, description, null, null);
         mv.visitCode();
-        StatementGenerator statementScopeGenrator = new StatementGenerator(mv, scope);
-        block.accept(statementScopeGenrator);
-        appendReturnIfNotExists(function, block, statementScopeGenrator);
+        StatementGenerator statementScopeGenerator = new StatementGenerator(mv, scope);
+        block.accept(statementScopeGenerator);
+        appendReturnIfNotExists(function, block, statementScopeGenerator);
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
     }

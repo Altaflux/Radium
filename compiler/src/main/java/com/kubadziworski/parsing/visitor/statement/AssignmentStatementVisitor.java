@@ -20,6 +20,9 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Assignment> {
         EnkelParser.ExpressionContext expressionCtx = ctx.postExpr;
         Expression expression = expressionCtx.accept(expressionVisitor);
         String varName = ctx.name().getText();
+        if (ctx.preExp != null) {
+            return new Assignment(ctx.preExp.accept(expressionVisitor), varName, expression);
+        }
         return new Assignment(varName, expression);
     }
 }

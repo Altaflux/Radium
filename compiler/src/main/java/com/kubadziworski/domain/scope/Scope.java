@@ -22,14 +22,14 @@ import static java.util.stream.Collectors.toList;
 public class Scope {
     private final List<FunctionSignature> functionSignatures;
     private final MetaData metaData;
-    private final LinkedMap<String,LocalVariable> localVariables;
-    private final Map<String,Field> fields;
+    private final LinkedMap<String, LocalVariable> localVariables;
+    private final Map<String, Field> fields;
 
     public Scope(MetaData metaData) {
         this.metaData = metaData;
         functionSignatures = new ArrayList<>();
         localVariables = new LinkedMap<>();
-        fields =  new LinkedMap<>();
+        fields = new LinkedMap<>();
     }
 
     public Scope(Scope scope) {
@@ -40,32 +40,32 @@ public class Scope {
     }
 
     public void addSignature(FunctionSignature signature) {
-        if(isParameterLessSignatureExists(signature.getName())) {
+        if (isParameterLessSignatureExists(signature.getName())) {
             throw new MethodWithNameAlreadyDefinedException(signature);
         }
         functionSignatures.add(signature);
     }
 
     public boolean isParameterLessSignatureExists(String identifier) {
-        return isSignatureExists(identifier,Collections.emptyList());
+        return isSignatureExists(identifier, Collections.emptyList());
     }
 
     public boolean isSignatureExists(String identifier, List<Argument> arguments) {
-        if(identifier.equals("super")) return true;
+        if (identifier.equals("super")) return true;
         return functionSignatures.stream()
-                .anyMatch(signature -> signature.matches(identifier,arguments));
+                .anyMatch(signature -> signature.matches(identifier, arguments));
     }
 
     public FunctionSignature getMethodCallSignatureWithoutParameters(String identifier) {
         return getMethodCallSignature(identifier, Collections.<Argument>emptyList());
     }
 
-    public FunctionSignature getConstructorCallSignature(String className,List<Argument> arguments) {
+    public FunctionSignature getConstructorCallSignature(String className, List<Argument> arguments) {
         boolean isDifferentThanCurrentClass = !className.equals(getClassName());
-        if(isDifferentThanCurrentClass) {
+        if (isDifferentThanCurrentClass) {
             List<Type> argumentsTypes = arguments.stream().map(Argument::getType).collect(toList());
             return new ClassPathScope().getConstructorSignature(className, argumentsTypes)
-                    .orElseThrow(() -> new MethodSignatureNotFoundException(this,className,arguments));
+                    .orElseThrow(() -> new MethodSignatureNotFoundException(this, className, arguments));
         }
         return getConstructorCallSignatureForCurrentClass(arguments);
     }
@@ -74,24 +74,24 @@ public class Scope {
         return getMethodCallSignature(Optional.empty(), getClassName(), arguments);
     }
 
-    public FunctionSignature getMethodCallSignature(Optional<Type> owner,String methodName,List<Argument> arguments) {
+    public FunctionSignature getMethodCallSignature(Optional<Type> owner, String methodName, List<Argument> arguments) {
         boolean isDifferentThanCurrentClass = owner.isPresent() && !owner.get().equals(getClassType());
-        if(isDifferentThanCurrentClass) {
+        if (isDifferentThanCurrentClass) {
             List<Type> argumentsTypes = arguments.stream().map(Argument::getType).collect(toList());
             return new ClassPathScope().getMethodSignature(owner.get(), methodName, argumentsTypes)
-                    .orElseThrow(() -> new MethodSignatureNotFoundException(this,methodName,arguments));
+                    .orElseThrow(() -> new MethodSignatureNotFoundException(this, methodName, arguments));
         }
         return getMethodCallSignature(methodName, arguments);
     }
 
-    public FunctionSignature getMethodCallSignature(String identifier,List<Argument> arguments) {
-        if(identifier.equals("super")){
+    public FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
+        if (identifier.equals("super")) {
             return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID);
         }
         return functionSignatures.stream()
-                .filter(signature -> signature.matches(identifier,arguments))
+                .filter(signature -> signature.matches(identifier, arguments))
                 .findFirst()
-                .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier,arguments));
+                .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier, arguments));
     }
 
     private String getSuperClassName() {
@@ -99,7 +99,7 @@ public class Scope {
     }
 
     public void addLocalVariable(LocalVariable variable) {
-        localVariables.put(variable.getName(),variable);
+        localVariables.put(variable.getName(), variable);
     }
 
     public LocalVariable getLocalVariable(String varName) {
@@ -116,12 +116,16 @@ public class Scope {
     }
 
     public void addField(Field field) {
-        fields.put(field.getName(),field);
+        fields.put(field.getName(), field);
     }
 
-    public Field getFieldOfOwner(Type type, String fieldName){
-      return new ClassPathScope().getFieldSignature(type, fieldName)
-              .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
+    public Field getField(Type owner, String fieldName) {
+        boolean isDifferentThanCurrentClass = owner != null && !owner.equals(getClassType());
+        if (!isDifferentThanCurrentClass) {
+            return getField(fieldName);
+        }
+        return new ClassPathScope().getFieldSignature(owner, fieldName)
+                .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
     }
 
     public Field getField(String fieldName) {

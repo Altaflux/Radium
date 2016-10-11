@@ -29,7 +29,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 /**
  * Created by kuba on 01.04.16.
  */
-
 public class StatementVisitor extends EnkelBaseVisitor<Statement> {
 
     private final ExpressionVisitor expressionVisitor;
@@ -40,7 +39,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     private final IfStatementVisitor ifStatementVisitor;
     private final ForStatementVisitor forStatementVisitor;
     private final AssignmentStatementVisitor assignmentStatementVisitor;
-    private final IncDecExpressionVisitor incDecExpressionVisitor;
+
 
     public StatementVisitor(Scope scope) {
         expressionVisitor = new ExpressionVisitor(scope);
@@ -51,7 +50,6 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
         ifStatementVisitor = new IfStatementVisitor(this, expressionVisitor);
         forStatementVisitor = new ForStatementVisitor(scope);
         assignmentStatementVisitor = new AssignmentStatementVisitor(expressionVisitor);
-        incDecExpressionVisitor = new IncDecExpressionVisitor(expressionVisitor);
     }
 
     @Override
@@ -91,14 +89,17 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
 
     @Override
     public Expression visitPrefixExpression(@NotNull EnkelParser.PrefixExpressionContext ctx) {
-        return incDecExpressionVisitor.visitPrefixExpression(ctx);
+        return expressionVisitor.visitPrefixExpression(ctx);
     }
 
     @Override
     public Expression visitSuffixExpression(@NotNull EnkelParser.SuffixExpressionContext ctx) {
-        return incDecExpressionVisitor.visitSuffixExpression(ctx);
+        return expressionVisitor.visitSuffixExpression(ctx);
     }
 
+    public Expression visitThisReference(EnkelParser.ThisReferenceContext ctx) {
+        return expressionVisitor.visitThisReference(ctx);
+    }
 
     @Override
     public Expression visitVariableReference(@NotNull EnkelParser.VariableReferenceContext ctx) {

@@ -59,7 +59,7 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
                 block = new Block(block.getScope(), statements);
 
             } else if (!(lastStatement instanceof ReturnStatement)) {
-                List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size() - 1));
+                List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size()));
                 ReturnStatement returnStatement = new ReturnStatement(new EmptyExpression(BultInType.VOID));
                 statements.add(returnStatement);
                 block = new Block(block.getScope(), statements);

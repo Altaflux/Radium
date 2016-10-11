@@ -30,6 +30,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final CallExpressionVisitor callExpressionVisitor;
     private final ConditionalExpressionVisitor conditionalExpressionVisitor;
     private final IncDecExpressionVisitor incDecExpressionVisitor;
+    private final ThisExpressionVisitor thisExpressionVisitor;
 
     public ExpressionVisitor(Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
@@ -38,8 +39,12 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         callExpressionVisitor = new CallExpressionVisitor(this, scope);
         conditionalExpressionVisitor = new ConditionalExpressionVisitor(this);
         incDecExpressionVisitor = new IncDecExpressionVisitor(this);
+        thisExpressionVisitor = new ThisExpressionVisitor(scope);
     }
 
+    public Expression visitThisReference(EnkelParser.ThisReferenceContext ctx) {
+        return thisExpressionVisitor.visitThisReference(ctx);
+    }
 
     @Override
     public Expression visitPrefixExpression(@NotNull PrefixExpressionContext ctx) {

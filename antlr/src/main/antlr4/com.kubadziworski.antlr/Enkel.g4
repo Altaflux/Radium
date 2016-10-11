@@ -52,12 +52,12 @@ grammar Enkel;
             // There is definitely a line terminator ahead.
             return true;
         }
-//
-//        if (ahead.getType() == WhiteSpaces) {
-//            // Get the token ahead of the current whitespaces.
-//            possibleIndexEosToken = this.getCurrentToken().getTokenIndex() - 2;
-//            ahead = _input.get(possibleIndexEosToken);
-//        }
+
+        if (ahead.getType() == WhiteSpaces) {
+            // Get the token ahead of the current whitespaces.
+            possibleIndexEosToken = this.getCurrentToken().getTokenIndex() - 2;
+            ahead = _input.get(possibleIndexEosToken);
+        }
 
         // Get the token's text and type.
         String text = ahead.getText();
@@ -93,7 +93,7 @@ classType : qualifiedName  ;
 block : '{' blockStatement* '}' ;
 
 blockStatement :  {(_input.LA(1) != OpenBrace) }? statement eos ;
-// blockStatement : {(_input.LA(1) != OpenBrace) }? statement eos ;
+
 statement : block
            | variableDeclaration
            | assignment
@@ -118,7 +118,8 @@ argumentList : argument? (',' a=argument)* #UnnamedArgumentsList
 argument : expression ;
 namedArgument : name '->' expression ;
 
-expression : variableReference #VarReference
+expression : THIS #ThisReference
+           | variableReference #VarReference
            | owner=expression '.' variableReference  #VarReference
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
            | functionName '(' argumentList ')' #FunctionCall
@@ -131,7 +132,6 @@ expression : variableReference #VarReference
            //| expr=expression {!here(LineTerminator)}? operation='++'  #SuffixExpression
            | operation='--' (expression) #PrefixExpression
            | operation='++' (expression) #PrefixExpression
-          // | expression '.' (expression.+?)  #Expresions
            | operation='-' expression #ArithmeticExpression
            | operation='+' expression #ArithmeticExpression
            |  '('expression '*' expression')' #Multiply
@@ -224,6 +224,7 @@ MultiLineComment
 
 
 //TOKENS
+THIS : 'this' ;
 VARIABLE : 'var' ;
 PRINT : 'print' ;
 EQUALS : '=' ;

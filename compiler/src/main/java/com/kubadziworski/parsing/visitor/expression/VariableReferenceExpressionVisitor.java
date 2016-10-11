@@ -43,17 +43,18 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
     private Reference visitReference(@NotNull String varName, Expression owner) {
 
         if (owner != null) {
-            return new FieldReference(scope.getFieldOfOwner(owner.getType(), varName), owner);
+            return new FieldReference(scope.getField(owner.getType(), varName), owner);
         }
 
-        if (scope.isFieldExists(varName)) {
-            ClassType thisType = new ClassType(scope.getClassName());
-            LocalVariable thisVariable = new LocalVariable("this", thisType);
-            Field field = scope.getField(varName);
-            return new FieldReference(field, new LocalVariableReference(thisVariable));
+        if (scope.isLocalVariableExists(varName)) {
+            LocalVariable variable = scope.getLocalVariable(varName);
+            return new LocalVariableReference(variable);
         }
 
-        LocalVariable variable = scope.getLocalVariable(varName);
-        return new LocalVariableReference(variable);
+        ClassType thisType = new ClassType(scope.getClassName());
+        LocalVariable thisVariable = new LocalVariable("this", thisType);
+        Field field = scope.getField(varName);
+        return new FieldReference(field, new LocalVariableReference(thisVariable));
+
     }
 }
