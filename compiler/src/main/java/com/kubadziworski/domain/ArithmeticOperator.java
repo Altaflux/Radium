@@ -5,19 +5,15 @@ import java.util.Arrays;
 
 public enum ArithmeticOperator {
 
-    INCREMENT("++", "1"), DECREMENT("--", "-1");
+    INCREMENT("++"), DECREMENT("--");
 
     private final String operator;
-    private final String incremental;
 
-    ArithmeticOperator(String operator, String incremental) {
+
+    ArithmeticOperator(String operator) {
         this.operator = operator;
-        this.incremental = incremental;
     }
 
-    public String getIncremental() {
-        return incremental;
-    }
 
     public static ArithmeticOperator fromString(String sign) {
         return Arrays.stream(values()).filter(opSign -> opSign.operator.equals(sign))

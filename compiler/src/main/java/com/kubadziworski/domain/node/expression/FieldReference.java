@@ -49,10 +49,6 @@ public class FieldReference implements Reference {
         return owner;
     }
 
-    public Type getOwnerType() {
-        return owner.getType();
-    }
-
     public Field getField(){
         return field;
     }

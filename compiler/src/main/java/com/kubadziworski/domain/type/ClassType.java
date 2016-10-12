@@ -58,12 +58,12 @@ public class ClassType implements Type {
 
     @Override
     public String getDescriptor() {
-        return  "L" + getInternalName() + ";";
+        return "L" + getInternalName() + ";";
     }
 
     @Override
     public String getInternalName() {
-        return  name.replace(".", "/");
+        return name.replace(".", "/");
     }
 
     @Override
@@ -74,6 +74,16 @@ public class ClassType implements Type {
     @Override
     public int getStoreVariableOpcode() {
         return Opcodes.ASTORE;
+    }
+
+    @Override
+    public int getDupCode() {
+        return Opcodes.DUP;
+    }
+
+    @Override
+    public int getDupX1Code() {
+        return Opcodes.DUP_X1;
     }
 
     @Override

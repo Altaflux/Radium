@@ -8,6 +8,8 @@ public interface Type {
     Class<?> getTypeClass();
     String getDescriptor();
     String getInternalName();
+    int getDupCode();
+    int getDupX1Code();
     int getLoadVariableOpcode();
     int getStoreVariableOpcode();
     int getReturnOpcode();

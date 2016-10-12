@@ -33,25 +33,14 @@ public class PrefixExpressionGenerator {
         if (reference instanceof LocalVariableReference) {
             reference.accept(expressionGenerator);
         } else if (reference instanceof FieldReference) {
-
             ((FieldReference) reference).acceptDup(expressionGenerator);
         }
 
         int dupsCode;
-        if (reference.getType() == DOUBLE || reference.getType() == LONG) {
-            if (reference instanceof LocalVariableReference) {
-                dupsCode = Opcodes.DUP2;
-            } else {
-                dupsCode = Opcodes.DUP2_X1;
-            }
-
+        if (reference instanceof LocalVariableReference) {
+            dupsCode = reference.getType().getDupCode();
         } else {
-            if (reference instanceof LocalVariableReference) {
-                dupsCode = Opcodes.DUP;
-            } else {
-                dupsCode = Opcodes.DUP_X1;
-            }
-
+            dupsCode = reference.getType().getDupX1Code();
         }
 
         int operationOpCode;
@@ -62,13 +51,13 @@ public class PrefixExpressionGenerator {
         }
 
         if (prefixExpression.isPrefix()) {
-            expressionGenerator.generate(new Value(reference.getType(), prefixExpression.getOperator().getIncremental())); //ICONST_1
+            expressionGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
             methodVisitor.visitInsn(dupsCode);
 
         } else {
             methodVisitor.visitInsn(dupsCode);
-            expressionGenerator.generate(new Value(reference.getType(), prefixExpression.getOperator().getIncremental())); //ICONST_1
+            expressionGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
         }
 
@@ -76,11 +65,11 @@ public class PrefixExpressionGenerator {
             int varIndex = scope.getLocalVariableIndex(reference.geName());
             methodVisitor.visitVarInsn(reference.getType().getStoreVariableOpcode(), varIndex);
 
-        } else if(reference instanceof FieldReference){
+        } else if (reference instanceof FieldReference) {
 
             String descriptor = ((FieldReference) reference).getField().getType().getDescriptor();
             methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, ((FieldReference) reference).getField().getOwnerInternalName(), ((FieldReference) reference).getField().getName(), descriptor);
-        }else {
+        } else {
             throw new RuntimeException("Reference of unknown type: " + reference.getClass().getSimpleName());
         }
     }

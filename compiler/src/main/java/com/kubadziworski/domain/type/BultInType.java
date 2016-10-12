@@ -85,6 +85,15 @@ public enum BultInType implements Type {
     }
 
     @Override
+    public int getDupCode(){
+        return opcodes.getDupCode();
+    }
+    @Override
+    public int getDupX1Code(){
+        return opcodes.getDupX1Code();
+    }
+
+    @Override
     public int getMultiplyOpcode() {
         return opcodes.getMultiply();
     }
