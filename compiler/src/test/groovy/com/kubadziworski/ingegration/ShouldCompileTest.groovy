@@ -333,7 +333,7 @@ class ShouldCompileTest extends Specification {
 								int x
 
 								start(){
-									this.x = 2;
+									x = 2;
 									var x = 1;
 									print this.x;
 									print x;

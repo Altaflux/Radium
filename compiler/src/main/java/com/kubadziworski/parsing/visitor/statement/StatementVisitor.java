@@ -49,7 +49,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
         blockStatementVisitor = new BlockStatementVisitor(scope);
         ifStatementVisitor = new IfStatementVisitor(this, expressionVisitor);
         forStatementVisitor = new ForStatementVisitor(scope);
-        assignmentStatementVisitor = new AssignmentStatementVisitor(expressionVisitor);
+        assignmentStatementVisitor = new AssignmentStatementVisitor(expressionVisitor, scope);
     }
 
     @Override
