@@ -5,27 +5,23 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
 
+
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by kuba on 02.04.16.
- */
-public class FunctionCall implements Call {
-    private final Expression owner;
+
+public class StaticFunctionCall implements Call {
+
     private final FunctionSignature signature;
     private final List<Argument> arguments;
     private final Type type;
+    private final Type owner;
 
-    public FunctionCall(FunctionSignature signature, List<Argument> arguments, Expression owner) {
-        this.type = signature.getReturnType();
+    public StaticFunctionCall(FunctionSignature signature, List<Argument> arguments, Type owner) {
         this.signature = signature;
         this.arguments = arguments;
+        this.type = signature.getReturnType();
         this.owner = owner;
-    }
-
-    public FunctionCall(FunctionSignature signature, List<Argument> arguments, Type ownerType) {
-        this(signature,arguments, new EmptyExpression(ownerType));
     }
 
     @Override
@@ -38,11 +34,12 @@ public class FunctionCall implements Call {
         return signature.getName();
     }
 
-    public Type getOwnerType() {
-        return owner.getType();
+    @Override
+    public Type getType() {
+        return type;
     }
 
-    public Expression getOwner() {
+    public Type getOwner() {
         return owner;
     }
 
@@ -51,17 +48,12 @@ public class FunctionCall implements Call {
     }
 
     @Override
-    public void accept(ExpressionGenerator genrator) {
-        genrator.generate(this);
+    public void accept(ExpressionGenerator generator) {
+        generator.generate(this);
     }
 
     @Override
     public void accept(StatementGenerator generator) {
         generator.generate(this);
-    }
-
-    @Override
-    public Type getType() {
-        return type;
     }
 }

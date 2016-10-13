@@ -11,11 +11,13 @@ public class Field implements Variable {
     private final String name;
     private final Type owner;
     private final Type type;
+    private final int modifiers;
 
-    public Field(String name, Type owner, Type type) {
+    public Field(String name, Type owner, Type type, int modifiers) {
         this.name = name;
         this.type = type;
         this.owner = owner;
+        this.modifiers = modifiers;
     }
 
     @Override
@@ -26,6 +28,10 @@ public class Field implements Variable {
     @Override
     public String getName() {
         return name;
+    }
+
+    public int getModifiers() {
+        return modifiers;
     }
 
     public String getOwnerInternalName() {

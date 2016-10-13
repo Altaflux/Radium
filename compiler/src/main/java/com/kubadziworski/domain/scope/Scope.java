@@ -12,6 +12,7 @@ import com.kubadziworski.exception.MethodSignatureNotFoundException;
 import com.kubadziworski.exception.MethodWithNameAlreadyDefinedException;
 import org.apache.commons.collections4.map.LinkedMap;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -86,7 +87,8 @@ public class Scope {
 
     public FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
         if (identifier.equals("super")) {
-            return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID);
+            //TODO Set modifiers correctly
+            return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC);
         }
         return functionSignatures.stream()
                 .filter(signature -> signature.matches(identifier, arguments))

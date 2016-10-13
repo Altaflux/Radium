@@ -3,6 +3,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
+import com.kubadziworski.domain.node.expression.StaticFieldReference;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.scope.Variable;
 import com.kubadziworski.domain.type.Type;
@@ -37,6 +38,16 @@ public class ReferenceExpressionGenerator {
         Expression owner = fieldReference.getOwner();
         owner.accept(expressionGenerator);
         methodVisitor.visitFieldInsn(Opcodes.GETFIELD, ownerInternalName, varName, descriptor);
+    }
+
+    public void generate(StaticFieldReference fieldReference) {
+        String varName = fieldReference.geName();
+
+        Type type = fieldReference.getType();
+        String ownerInternalName = fieldReference.getOwnerInternalName();
+        String descriptor = type.getDescriptor();
+        methodVisitor.visitFieldInsn(Opcodes.GETSTATIC, ownerInternalName,
+                varName, descriptor);
     }
 
     public void generateDup(FieldReference fieldReference) {

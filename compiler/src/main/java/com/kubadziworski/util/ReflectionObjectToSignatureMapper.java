@@ -9,6 +9,7 @@ import com.kubadziworski.domain.type.Type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,8 @@ public final class ReflectionObjectToSignatureMapper {
                 .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), Optional.empty()))
                 .collect(toList());
         Class<?> returnType = method.getReturnType();
-        return new FunctionSignature(name, parameters, TypeResolver.getFromTypeName(returnType.getCanonicalName()));
+
+        return new FunctionSignature(name, parameters, TypeResolver.getFromTypeName(returnType.getCanonicalName()), method.getModifiers(), method);
     }
 
     public static FunctionSignature fromConstructor(Constructor constructor) {
@@ -33,11 +35,12 @@ public final class ReflectionObjectToSignatureMapper {
         List<Parameter> parameters = Arrays.stream(constructor.getParameters())
                 .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), Optional.empty()))
                 .collect(toList());
-        return new FunctionSignature(name, parameters, BultInType.VOID);
+
+        return new FunctionSignature(name, parameters, BultInType.VOID, constructor.getModifiers());
     }
 
     public static Field fromField(java.lang.reflect.Field field, Type owner){
         String name = field.getName();
-        return new Field(name, owner, TypeResolver.getFromTypeName(field.getType().getCanonicalName()));
+        return new Field(name, owner, TypeResolver.getFromTypeName(field.getType().getCanonicalName()), field.getModifiers());
     }
 }

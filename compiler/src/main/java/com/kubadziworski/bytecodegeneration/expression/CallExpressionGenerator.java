@@ -32,7 +32,7 @@ public class CallExpressionGenerator {
         methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
         methodVisitor.visitInsn(Opcodes.DUP);
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
-        generateArguments(constructorCall,signature);
+        generateArguments(constructorCall, signature);
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
     }
 
@@ -53,20 +53,34 @@ public class CallExpressionGenerator {
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, functionName, methodDescriptor, false);
     }
 
+    public void generate(StaticFunctionCall staticFunctionCall) {
+        String functionName = staticFunctionCall.getIdentifier();
+        generateArguments(staticFunctionCall);
+        String methodDescriptor = DescriptorFactory.getMethodDescriptor(staticFunctionCall.getSignature());
+        String ownerDescriptor = staticFunctionCall.getOwner().getInternalName();
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, functionName, methodDescriptor, false);
+    }
+
+    private void generateArguments(StaticFunctionCall call) {
+        FunctionSignature signature = scope.getMethodCallSignature(Optional.of(call.getOwner()), call.getIdentifier(), call.getArguments());
+        generateArguments(call, signature);
+    }
+
     private void generateArguments(FunctionCall call) {
-        FunctionSignature signature = scope.getMethodCallSignature(Optional.of(call.getOwnerType()),call.getIdentifier(),call.getArguments());
-        generateArguments(call,signature);
+        FunctionSignature signature = scope.getMethodCallSignature(Optional.of(call.getOwnerType()), call.getIdentifier(), call.getArguments());
+        generateArguments(call, signature);
     }
 
     private void generateArguments(SuperCall call) {
-        FunctionSignature signature = scope.getMethodCallSignature(call.getIdentifier(),call.getArguments());
-        generateArguments(call,signature);
+        FunctionSignature signature = scope.getMethodCallSignature(call.getIdentifier(), call.getArguments());
+        generateArguments(call, signature);
     }
 
     private void generateArguments(ConstructorCall call) {
-        FunctionSignature signature = scope.getConstructorCallSignature(call.getIdentifier(),call.getArguments());
-        generateArguments(call,signature);
+        FunctionSignature signature = scope.getConstructorCallSignature(call.getIdentifier(), call.getArguments());
+        generateArguments(call, signature);
     }
+
 
     private void generateArguments(Call call, FunctionSignature signature) {
         List<Parameter> parameters = signature.getParameters();
@@ -74,12 +88,12 @@ public class CallExpressionGenerator {
         if (arguments.size() > parameters.size()) {
             throw new BadArgumentsToFunctionCallException(call);
         }
-        arguments = getSortedArguments(arguments,parameters);
+        arguments = getSortedArguments(arguments, parameters);
         arguments.forEach(argument -> argument.accept(expressionGenerator));
         generateDefaultParameters(call, parameters, arguments);
     }
 
-    private List<Argument> getSortedArguments(List<Argument> arguments , List<Parameter> parameters) {
+    private List<Argument> getSortedArguments(List<Argument> arguments, List<Parameter> parameters) {
         Comparator<Argument> argumentIndexComparator = (o1, o2) -> {
             if (!o1.getParameterName().isPresent()) return 0;
             return getIndexOfArgument(o1, parameters) - getIndexOfArgument(o2, parameters);
@@ -87,7 +101,7 @@ public class CallExpressionGenerator {
         return Ordering.from(argumentIndexComparator).immutableSortedCopy(arguments);
     }
 
-    private Integer getIndexOfArgument(Argument argument, List<Parameter> parameters ) {
+    private Integer getIndexOfArgument(Argument argument, List<Parameter> parameters) {
         String paramName = argument.getParameterName().get();
         return parameters.stream()
                 .filter(p -> p.getName().equals(paramName))

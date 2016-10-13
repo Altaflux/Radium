@@ -34,6 +34,10 @@ public class ExpressionGenerator {
         referenceExpressionGenerator.generate(reference);
     }
 
+    public void generate(StaticFieldReference reference) {
+        referenceExpressionGenerator.generate(reference);
+    }
+
     public void generateDup(FieldReference reference) {
         referenceExpressionGenerator.generateDup(reference);
     }
@@ -63,6 +67,10 @@ public class ExpressionGenerator {
     }
 
     public void generate(FunctionCall functionCall) {
+        callExpressionGenerator.generate(functionCall);
+    }
+
+    public void generate(StaticFunctionCall functionCall) {
         callExpressionGenerator.generate(functionCall);
     }
 

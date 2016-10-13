@@ -12,6 +12,8 @@ import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes
 import org.objectweb.asm.MethodVisitor
 import spock.lang.Specification
 
+import java.lang.reflect.Modifier
+
 /**
  * Created by kuba on 13.05.16.
  */
@@ -24,7 +26,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
             ExpressionGenerator expressionGenerator = new ExpressionGenerator(methodVisitor, scope)
             LocalVariable local = new LocalVariable("this",scope.getClassType())
             scope.addLocalVariable(new LocalVariable("this",scope.getClassType()))
-            def field = new Field(name,owner,type)
+            def field = new Field(name,owner,type, Modifier.PUBLIC)
             LocalVariableReference ref = new LocalVariableReference(local)
             def fieldReference = new FieldReference(field, ref)
         when:

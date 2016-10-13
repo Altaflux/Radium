@@ -39,6 +39,10 @@ public class Function {
         return functionSignature.getReturnType();
     }
 
+    public int getModifiers() {
+        return functionSignature.getModifiers();
+    }
+
     public void accept(MethodGenerator generator) {
         generator.generate(this);
     }

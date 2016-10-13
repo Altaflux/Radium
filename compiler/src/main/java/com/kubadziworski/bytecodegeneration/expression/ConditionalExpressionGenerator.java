@@ -9,6 +9,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class ConditionalExpressionGenerator {
         switch (compareSign) {
             case EQUAL:
             case NOT_EQUAL:
-                FunctionSignature equalsSignature = new FunctionSignature("equals", parameters, BultInType.BOOLEAN);
+                FunctionSignature equalsSignature = new FunctionSignature("equals", parameters, BultInType.BOOLEAN, Modifier.PUBLIC);
                 FunctionCall equalsCall = new FunctionCall(equalsSignature, arguments, leftExpression);
                 equalsCall.accept(expressionGenerator);
                 methodVisitor.visitInsn(Opcodes.ICONST_1);
@@ -59,7 +60,7 @@ public class ConditionalExpressionGenerator {
             case GREATER:
             case LESS_OR_EQUAL:
             case GRATER_OR_EQAL:
-                FunctionSignature compareToSignature = new FunctionSignature("compareTo", parameters, BultInType.INT);
+                FunctionSignature compareToSignature = new FunctionSignature("compareTo", parameters, BultInType.INT, Modifier.PUBLIC);
                 FunctionCall compareToCall = new FunctionCall(compareToSignature, arguments, leftExpression);
                 compareToCall.accept(expressionGenerator);
                 break;

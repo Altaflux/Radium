@@ -36,13 +36,18 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
         boolean ownerIsExplicit = ctx.owner != null;
         if (ownerIsExplicit) {
-            Expression owner = ctx.owner.accept(expressionVisitor);
-            FunctionSignature signature = scope.getMethodCallSignature(Optional.of(owner.getType()),functionName, arguments);
-            return new FunctionCall(signature, arguments, owner);
+            try {
+                Expression owner = ctx.owner.accept(expressionVisitor);
+                FunctionSignature signature = scope.getMethodCallSignature(Optional.of(owner.getType()), functionName, arguments);
+                return new FunctionCall(signature, arguments, owner);
+            } catch (Exception e) {
+                String possibleClass = ctx.owner.getText();
+                return visitStaticReference(possibleClass, functionName, arguments);
+            }
         }
         ClassType thisType = new ClassType(scope.getClassName());
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
-        LocalVariable thisVariable = new LocalVariable("this",thisType);
+        LocalVariable thisVariable = new LocalVariable("this", thisType);
         return new FunctionCall(signature, arguments, new LocalVariableReference(thisVariable));
     }
 
@@ -57,6 +62,12 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     public Call visitSupercall(@NotNull SupercallContext ctx) {
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
         return new SuperCall(arguments);
+    }
+
+    private Call visitStaticReference(String possibleClass, String functionName, List<Argument> arguments) {
+        ClassType classType = new ClassType(possibleClass);
+        FunctionSignature signature = scope.getMethodCallSignature(Optional.of(classType), functionName, arguments);
+        return new StaticFunctionCall(signature, arguments, classType);
     }
 
     private List<Argument> getArgumentsForCall(ArgumentListContext argumentsListCtx) {

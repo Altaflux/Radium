@@ -9,6 +9,8 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.lang.reflect.Modifier;
+
 /**
  * Created by kuba on 13.05.16.
  */
@@ -25,6 +27,6 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
         Type owner = scope.getClassType();
         Type type = TypeResolver.getFromTypeContext(ctx.type());
         String name = ctx.name().getText();
-        return new Field(name, owner, type);
+        return new Field(name, owner, type, Modifier.PUBLIC);
     }
 }

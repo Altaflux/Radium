@@ -5,6 +5,8 @@ import com.kubadziworski.domain.type.BultInType
 import com.kubadziworski.domain.type.ClassType
 import spock.lang.Specification
 
+import java.lang.reflect.Modifier
+
 /**
  * Created by kuba on 11.05.16.
  */
@@ -14,7 +16,7 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, Optional.empty())
         }
-        def expectedSignature = new FunctionSignature(expectedName, expectedParams, expectedReturnType)
+        def expectedSignature = new FunctionSignature(expectedName, expectedParams, expectedReturnType, Modifier.PUBLIC)
         when:
         ClassPathScope classPathScope = new ClassPathScope();
         def actualSignature = classPathScope.getMethodSignature(type, methodName, args)
@@ -44,7 +46,7 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, Optional.empty())
         }
-        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, BultInType.VOID);
+        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, BultInType.VOID, Modifier.PUBLIC);
         when:
         ClassPathScope classPathScope = new ClassPathScope();
         def actualSignature = classPathScope.getConstructorSignature(className, args)

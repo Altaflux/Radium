@@ -12,6 +12,7 @@ import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.function.ParameterExpressionListVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,11 +32,12 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
         String functionName = ctx.functionName().getText();
         Type returnType = TypeResolver.getFromTypeContext(ctx.type());
         ParametersListContext parametersCtx = ctx.parametersList();
-        if(parametersCtx != null) {
+        //TODO SET CORRECTLY MODIFIERS
+        if (parametersCtx != null) {
             List<Parameter> parameters = parametersCtx.accept(new ParameterExpressionListVisitor(expressionVisitor));
-            return new FunctionSignature(functionName, parameters, returnType);
+            return new FunctionSignature(functionName, parameters, returnType, Modifier.PUBLIC);
         }
-        return new FunctionSignature(functionName, Collections.emptyList(), returnType);
+        return new FunctionSignature(functionName, Collections.emptyList(), returnType, Modifier.PUBLIC);
 
     }
 }

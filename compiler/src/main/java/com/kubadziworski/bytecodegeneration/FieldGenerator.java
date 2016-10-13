@@ -20,7 +20,8 @@ public class FieldGenerator {
     public void generate(Field field) {
         String name = field.getName();
         String descriptor = field.getType().getDescriptor();
-        FieldVisitor fieldVisitor = classWriter.visitField(Opcodes.ACC_PUBLIC, name,descriptor, null, null);
+        //classWriter.visitField(Opcodes.ACC_PUBLIC & Opcodes.ACC_STATIC, name,descriptor, null, null)
+        FieldVisitor fieldVisitor = classWriter.visitField(field.getModifiers(), name,descriptor, null, null);
         fieldVisitor.visitEnd();
     }
 }

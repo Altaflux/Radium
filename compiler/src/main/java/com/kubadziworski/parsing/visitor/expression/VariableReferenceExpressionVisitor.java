@@ -1,17 +1,13 @@
 package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
 import com.kubadziworski.antlr.EnkelParser.VariableReferenceContext;
-import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.FieldReference;
-import com.kubadziworski.domain.node.expression.LocalVariableReference;
-import com.kubadziworski.domain.node.expression.Reference;
+import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.scope.Variable;
+
 import com.kubadziworski.domain.type.ClassType;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -28,7 +24,12 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
     public Reference visitVarReference(@NotNull VarReferenceContext ctx) {
         String varName = ctx.variableReference().getText();
         if (ctx.owner != null) {
-            return visitReference(varName, ctx.owner.accept(expressionVisitor));
+            try {
+                return visitReference(varName, ctx.owner.accept(expressionVisitor));
+            } catch (Throwable e) {
+                String possibleClass = ctx.owner.getText();
+                return visitStaticReference(possibleClass, ctx);
+            }
         }
         return visitReference(varName, null);
     }
@@ -38,6 +39,12 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
 
         String varName = ctx.getText();
         return visitReference(varName, null);
+    }
+
+    private Reference visitStaticReference(String possibleClass, VarReferenceContext ctx) {
+        ClassType classType = new ClassType(possibleClass);
+        Field field = scope.getField(classType, ctx.variableReference().getText());
+        return new StaticFieldReference(field);
     }
 
     private Reference visitReference(@NotNull String varName, Expression owner) {

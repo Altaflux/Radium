@@ -31,7 +31,9 @@ public class ClassPathScope {
 
     public Optional<com.kubadziworski.domain.scope.Field> getFieldSignature(Type owner, String fieldName) {
         try {
+
             Field  field = FieldUtils.getField(owner.getTypeClass(), fieldName);
+
             return Optional.of(ReflectionObjectToSignatureMapper.fromField(field, owner));
         } catch (Exception e) {
             return Optional.empty();

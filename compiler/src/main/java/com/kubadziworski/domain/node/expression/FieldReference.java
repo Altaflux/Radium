@@ -9,13 +9,14 @@ import com.kubadziworski.domain.type.Type;
  * Created by kuba on 09.04.16.
  */
 public class FieldReference implements Reference {
+
     private final Field field;
     private final Expression owner;
+
     public FieldReference(Field field, Expression owner) {
         this.field = field;
         this.owner = owner;
     }
-
 
     @Override
     public String geName() {

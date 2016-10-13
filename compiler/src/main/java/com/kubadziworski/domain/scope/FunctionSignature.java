@@ -4,7 +4,10 @@ import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ParameterForNameNotFoundException;
+import org.objectweb.asm.Opcodes;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -16,11 +19,23 @@ public class FunctionSignature {
     private final String name;
     private final List<Parameter> parameters;
     private final Type returnType;
+    private final int modifiers;
+    private final Method method;
 
-    public FunctionSignature(String name, List<Parameter> parameters, Type returnType) {
+    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, int modifiers) {
         this.name = name;
         this.parameters = parameters;
         this.returnType = returnType;
+        this.modifiers = modifiers;
+        this.method = null;
+    }
+
+    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, int modifiers, Method method) {
+        this.name = name;
+        this.parameters = parameters;
+        this.returnType = returnType;
+        this.modifiers = modifiers;
+        this.method = method;
     }
 
     public String getName() {
@@ -35,7 +50,7 @@ public class FunctionSignature {
         return parameters.stream()
                 .filter(param -> param.getName().equals(name))
                 .findFirst()
-                .orElseThrow(() -> new ParameterForNameNotFoundException(name,parameters));
+                .orElseThrow(() -> new ParameterForNameNotFoundException(name, parameters));
     }
 
     public int getIndexOfParameter(String parameterName) {
@@ -45,13 +60,13 @@ public class FunctionSignature {
 
     public boolean matches(String otherSignatureName, List<Argument> arguments) {
         boolean namesAreEqual = this.name.equals(otherSignatureName);
-        if(!namesAreEqual) return false;
+        if (!namesAreEqual) return false;
         long nonDefaultParametersCount = parameters.stream()
                 .filter(p -> !p.getDefaultValue().isPresent())
                 .count();
-        if(nonDefaultParametersCount > arguments.size()) return false;
+        if (nonDefaultParametersCount > arguments.size()) return false;
         boolean isNamedArgList = arguments.stream().anyMatch(a -> a.getParameterName().isPresent());
-        if(isNamedArgList) {
+        if (isNamedArgList) {
             return areArgumentsAndParamsMatchedByName(arguments);
         }
         return areArgumentsAndParamsMatchedByIndex(arguments);
@@ -77,6 +92,27 @@ public class FunctionSignature {
 
     public Type getReturnType() {
         return returnType;
+    }
+
+
+    public int getModifiers() {
+        return modifiers;
+    }
+
+    public int getInvokeOpcode() {
+        if (method != null) {
+            if (method.isDefault()) {
+                return Opcodes.INVOKESPECIAL;
+            }
+            if (method.getDeclaringClass().isInterface()) {
+                return Opcodes.INVOKEINTERFACE;
+            }
+        }
+        if (Modifier.isStatic(modifiers)) {
+            return Opcodes.INVOKESTATIC;
+        } else {
+            return Opcodes.INVOKEVIRTUAL;
+        }
     }
 
     @Override

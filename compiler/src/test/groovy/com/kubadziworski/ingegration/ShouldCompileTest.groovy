@@ -351,6 +351,26 @@ class ShouldCompileTest extends Specification {
 								}
 							}
 						""";
+	private static final staticTest ="""
+							StaticTest {
+								int x
+
+								start(){
+
+									print java.lang.System.out.hashCode();
+
+									com.kubadziworski.test.Library.execute("Hello!!");
+								}
+								void assert(boolean actual,boolean expected) {
+									if (actual == expected) {
+										print "OK"
+									}
+									else {
+										print "TEST FAILED"
+									}
+								}
+							}
+						""";
 	@Unroll
 	def "Should Compile and run"() {
 		expect:
@@ -390,6 +410,7 @@ class ShouldCompileTest extends Specification {
 			equalityTest    		 | "EqualitySyntax.enk"
 			unaryExpressionTest      | "UnaryExpressions.enk"
 			globalLocal				 | "GlobalLocal.enk"
+			staticTest				 | "StaticTest.enk"
 	}
 
 }

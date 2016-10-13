@@ -18,6 +18,7 @@ import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.type.BultInType;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
 
     @Override
     public ClassDeclaration visitClassDeclaration(@NotNull ClassDeclarationContext ctx) {
-        MetaData metaData = new MetaData(ctx.className().getText(),"java.lang.Object");
+        MetaData metaData = new MetaData(ctx.className().getText(), "java.lang.Object");
         scope = new Scope(metaData);
         String name = ctx.className().getText();
         FieldVisitor fieldVisitor = new FieldVisitor(scope);
@@ -54,11 +55,11 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         List<Function> methods = methodsCtx.stream()
                 .map(method -> method.accept(new FunctionVisitor(scope)))
                 .collect(toList());
-        if(!defaultConstructorExists) {
+        if (!defaultConstructorExists) {
             methods.add(getDefaultConstructor());
         }
         boolean startMethodDefined = scope.isParameterLessSignatureExists("start");
-        if(startMethodDefined) {
+        if (startMethodDefined) {
             methods.add(getGeneratedMainMethod());
         }
 
@@ -66,8 +67,8 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
     }
 
     private void addDefaultConstructorSignatureToScope(String name, boolean defaultConstructorExists) {
-        if(!defaultConstructorExists) {
-            FunctionSignature constructorSignature = new FunctionSignature(name, Collections.emptyList(), BultInType.VOID);
+        if (!defaultConstructorExists) {
+            FunctionSignature constructorSignature = new FunctionSignature(name, Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC);
             scope.addSignature(constructorSignature);
         }
     }
@@ -79,11 +80,11 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
 
     private Function getGeneratedMainMethod() {
         Parameter args = new Parameter("args", BultInType.STRING_ARR, Optional.empty());
-        FunctionSignature functionSignature = new FunctionSignature("main", Collections.singletonList(args), BultInType.VOID);
+        FunctionSignature functionSignature = new FunctionSignature("main", Collections.singletonList(args), BultInType.VOID, Modifier.PUBLIC + Modifier.STATIC);
         ConstructorCall constructorCall = new ConstructorCall(scope.getClassName());
-        FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), BultInType.VOID);
+        FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC);
         FunctionCall startFunctionCall = new FunctionCall(startFunSignature, Collections.emptyList(), scope.getClassType());
-        Block block = new Block(new Scope(scope), Arrays.asList(constructorCall,startFunctionCall));
+        Block block = new Block(new Scope(scope), Arrays.asList(constructorCall, startFunctionCall));
         return new Function(functionSignature, block);
     }
 }

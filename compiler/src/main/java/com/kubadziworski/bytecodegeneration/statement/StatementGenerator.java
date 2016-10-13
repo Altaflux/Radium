@@ -47,11 +47,19 @@ public class StatementGenerator {
         variableDeclarationStatementGenerator.generate(variableDeclaration);
     }
 
+    public void generate(StaticFieldReference reference) {
+        expressionGenerator.generate(reference);
+    }
+
     public void generate(PrefixExpression prefixExpression) {
         prefixExpressionGenerator.generate(prefixExpression);
     }
 
     public void generate(FunctionCall functionCall) {
+        functionCall.accept(expressionGenerator);
+    }
+
+    public void generate(StaticFunctionCall functionCall) {
         functionCall.accept(expressionGenerator);
     }
 

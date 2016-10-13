@@ -12,6 +12,8 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import spock.lang.Specification
 
+import java.lang.reflect.Modifier
+
 /**
  * Created by kuba on 13.05.16.
  */
@@ -41,7 +43,7 @@ class AssignmentStatementGeneratorTest extends Specification {
     def "should generate bytecode for assignment if field for name exists in scope but local variable does not"() {
         given:
             def assignment = new Assignment(varName,assignmentExpression)
-            def field = new Field(varName, variableOwner, variableType)
+            def field = new Field(varName, variableOwner, variableType,  Modifier.PUBLIC)
             MethodVisitor methodVisitor = Mock()
             ExpressionGenerator expressionGenerator = Mock()
             Scope scope = Mock()
