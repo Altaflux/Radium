@@ -19,6 +19,10 @@ public final class TypeChecker {
         return type == BultInType.FLOAT;
     }
 
+    public static boolean isLong(Type type) {
+        return type == BultInType.LONG;
+    }
+
     public static boolean isDouble(Type type) {
         return type == BultInType.DOUBLE;
     }

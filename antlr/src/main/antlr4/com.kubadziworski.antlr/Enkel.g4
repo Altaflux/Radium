@@ -154,7 +154,9 @@ expression : THIS #ThisReference
 variableReference : ID ;
 
 
-value : NUMBER
+value : IntegerLiteral
+      |	FloatingPointLiteral
+      | CharacterLiteral
       | BOOL
       | STRING ;
 qualifiedName : ID ('.' ID)*;
@@ -222,13 +224,196 @@ MultiLineComment
  : '/*' .*? '*/' -> channel(HIDDEN)
  ;
 
+IntegerLiteral
+	:	DecimalIntegerLiteral
+	|	HexIntegerLiteral
+	|	OctalIntegerLiteral
+	|	BinaryIntegerLiteral
+	;
+
+CharacterLiteral
+	:	'\'' SingleCharacter '\''
+	;
+
+fragment
+SingleCharacter
+	:	~['\\]
+	;
+fragment
+DecimalIntegerLiteral
+	:	DecimalNumeral IntegerTypeSuffix?
+	;
+fragment
+HexIntegerLiteral
+	:	HexNumeral IntegerTypeSuffix?
+	;
+fragment
+OctalIntegerLiteral
+	:	OctalNumeral IntegerTypeSuffix?
+	;
+fragment
+BinaryIntegerLiteral
+	:	BinaryNumeral IntegerTypeSuffix?
+	;
+fragment
+BinaryNumeral
+	:	'0' [bB] BinaryDigits
+	;
+fragment
+BinaryDigits
+	:	BinaryDigit (BinaryDigitsAndUnderscores? BinaryDigit)?
+	;
+fragment
+BinaryDigit
+	:	[01]
+	;
+fragment
+BinaryDigitsAndUnderscores
+	:	BinaryDigitOrUnderscore+
+	;
+fragment
+BinaryDigitOrUnderscore
+	:	BinaryDigit
+	|	'_'
+	;
+fragment
+DecimalNumeral
+	:	'0'
+	|	NonZeroDigit (Digits? | Underscores Digits)
+	;
+fragment
+IntegerTypeSuffix
+	:	[lL]
+	;
+fragment
+DigitsAndUnderscores
+	:	DigitOrUnderscore+
+	;
+fragment
+DigitOrUnderscore
+	:	Digit
+	|	'_'
+	;
+fragment
+Digits
+	:	Digit (DigitsAndUnderscores? Digit)?
+	;
+fragment
+OctalNumeral
+	:	'0' Underscores? OctalDigits
+	;
+fragment
+Digit
+	:	'0'
+	|	NonZeroDigit
+	;
+
+fragment
+NonZeroDigit
+	:	[1-9]
+	;
+
+fragment
+HexNumeral
+	:	'0' [xX] HexDigits
+	;
+fragment
+HexDigits
+	:	HexDigit (HexDigitsAndUnderscores? HexDigit)?
+	;
+fragment
+HexDigitsAndUnderscores
+	:	HexDigitOrUnderscore+
+	;
+
+fragment
+HexDigitOrUnderscore
+	:	HexDigit
+	|	'_'
+	;
+fragment
+HexDigit
+	:	[0-9a-fA-F]
+	;
+fragment
+Underscores
+	:	'_'+
+	;
+fragment
+OctalDigits
+	:	OctalDigit (OctalDigitsAndUnderscores? OctalDigit)?
+	;
+
+fragment
+OctalDigit
+	:	[0-7]
+	;
+fragment
+OctalDigitsAndUnderscores
+	:	OctalDigitOrUnderscore+
+	;
+fragment
+OctalDigitOrUnderscore
+	:	OctalDigit
+	|	'_'
+	;
+FloatingPointLiteral
+	:	DecimalFloatingPointLiteral
+	|	HexadecimalFloatingPointLiteral
+	;
+fragment
+DecimalFloatingPointLiteral
+	:	Digits '.' Digits? ExponentPart? FloatTypeSuffix?
+	|	'.' Digits ExponentPart? FloatTypeSuffix?
+	|	Digits ExponentPart FloatTypeSuffix?
+	|	Digits FloatTypeSuffix
+	;
+fragment
+FloatTypeSuffix
+	:	[fFdD]
+	;
+fragment
+HexadecimalFloatingPointLiteral
+	:	HexSignificand BinaryExponent FloatTypeSuffix?
+	;
+fragment
+HexSignificand
+	:	HexNumeral '.'?
+	|	'0' [xX] HexDigits? '.' HexDigits
+	;
+
+fragment
+BinaryExponent
+	:	BinaryExponentIndicator SignedInteger
+	;
+fragment
+BinaryExponentIndicator
+	:	[pP]
+	;
+fragment
+ExponentPart
+	:	ExponentIndicator SignedInteger
+	;
+
+fragment
+ExponentIndicator
+	:	[eE]
+	;
+fragment
+SignedInteger
+	:	Sign? Digits
+	;
+
+fragment
+Sign
+	:	[+-]
+	;
 
 //TOKENS
 THIS : 'this' ;
 VARIABLE : 'var' ;
 PRINT : 'print' ;
 EQUALS : '=' ;
-NUMBER : '-'?[0-9.]+ ;
 BOOL : 'true' | 'false' ;
 STRING : '"'~('\r' | '\n' | '"')*'"' ;
 ID : [a-zA-Z0-9]+ ;

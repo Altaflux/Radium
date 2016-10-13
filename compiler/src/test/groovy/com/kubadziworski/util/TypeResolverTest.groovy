@@ -11,71 +11,80 @@ import spock.lang.Specification
  * Created by kuba on 12.05.16.
  */
 class TypeResolverTest extends Specification {
-	def "GetFromTypeName with string"() {
-		when:
-			def actualType = TypeResolver.getFromTypeName(typeName)
+    def "GetFromTypeName with string"() {
+        when:
+        def actualType = TypeResolver.getFromTypeName(typeName)
 
-		then:
-			actualType.equals(expectedType)
+        then:
+        actualType.equals(expectedType)
 
-		where:
-			typeName            | expectedType
-			"java.lang.Integer" | new ClassType("java.lang.Integer")
-			"int"               | BultInType.INT
-			"boolean"           | BultInType.BOOLEAN
-			"java.lang.String"  | BultInType.STRING
-			"byte[]"            | BultInType.BYTE_ARR
-	}
+        where:
+        typeName            | expectedType
+        "java.lang.Integer" | new ClassType("java.lang.Integer")
+        "int"               | BultInType.INT
+        "boolean"           | BultInType.BOOLEAN
+        "java.lang.String"  | BultInType.STRING
+        "byte[]"            | BultInType.BYTE_ARR
+    }
 
-	def "getFromTypeContext"() {
-		given:
-			EnkelParser.TypeContext typeContext = Mock(EnkelParser.TypeContext)
+    def "getFromTypeContext"() {
+        given:
+        EnkelParser.TypeContext typeContext = Mock(EnkelParser.TypeContext)
 
-		when:
-			def actualType = TypeResolver.getFromTypeContext(typeContext)
+        when:
+        def actualType = TypeResolver.getFromTypeContext(typeContext)
 
-		then:
-			1 * typeContext.getText() >> typeName
-			actualType.equals(expectedType)
+        then:
+        1 * typeContext.getText() >> typeName
+        actualType.equals(expectedType)
 
-		where:
-			typeName            | expectedType
-			"java.lang.Integer" | new ClassType("java.lang.Integer")
-			"int"               | BultInType.INT
-			"boolean"           | BultInType.BOOLEAN
-			"java.lang.String"  | BultInType.STRING
-	}
+        where:
+        typeName            | expectedType
+        "java.lang.Integer" | new ClassType("java.lang.Integer")
+        "int"               | BultInType.INT
+        "boolean"           | BultInType.BOOLEAN
+        "java.lang.String"  | BultInType.STRING
+    }
 
-	def "getFromTypeContext where typeContext = null should return VOID"() {
-		when:
-			def actualType = TypeResolver.getFromTypeContext(null)
+    def "getFromTypeContext where typeContext = null should return VOID"() {
+        when:
+        def actualType = TypeResolver.getFromTypeContext(null)
 
-		then:
-			actualType.equals(BultInType.VOID)
-	}
+        then:
+        actualType.equals(BultInType.VOID)
+    }
 
-	def "GetFromValue"() {
-		given:
-			def valueCtx = Mock(EnkelParser.ValueContext)
-			def terminalNode = Mock(TerminalNode)
-		when:
-			def actualType = TypeResolver.getFromValue(valueCtx)
+    def "GetFromValue"() {
+        given:
+        def valueCtx = Mock(EnkelParser.ValueContext)
+        def terminalNode = Mock(TerminalNode)
+        when:
+        def actualType = TypeResolver.getFromValue(valueCtx)
 
-		then:
-			1 * valueCtx.NUMBER() >> (contextType == "number" ? terminalNode : null)
-			if(contextType != "number") {
-				1 * valueCtx.BOOL() >> (contextType == "boolean" ? terminalNode : null)
-			}
+        then:
+        if (contextType == "int") {
+            1 * valueCtx.IntegerLiteral() >> (contextType == "int" ? terminalNode : null)
+        }
+        if (contextType == "char") {
+            1 * valueCtx.CharacterLiteral() >> (contextType == "char" ? terminalNode : null)
+        }
+        if (contextType == "float") {
+            1 * valueCtx.FloatingPointLiteral() >> (contextType == "float" ? terminalNode : null)
+        }
+        if (contextType == "boolean") {
+            1 * valueCtx.BOOL() >> (contextType == "boolean" ? terminalNode : null)
+        }
 
-			1 * valueCtx.getText() >> stringValue
-			actualType.equals(expectedType)
+        1 * valueCtx.getText() >> stringValue
+        actualType.equals(expectedType)
 
-		where:
-			stringValue | contextType | expectedType
-			"true"      | "boolean"   | BultInType.BOOLEAN
-			"5.5"       | "number"    | BultInType.FLOAT
-			"5"       | "number"    | BultInType.INT
-			"something" | "string"    | BultInType.STRING
-	}
+        where:
+        stringValue | contextType | expectedType
+        "true"      | "boolean"   | BultInType.BOOLEAN
+        "5.5f"      | "float"     | BultInType.FLOAT
+        "0x20D"     | "int"       | BultInType.INT
+        "something" | "string"    | BultInType.STRING
+        "'c'"       | "char"    | BultInType.CHAR
+    }
 
 }
