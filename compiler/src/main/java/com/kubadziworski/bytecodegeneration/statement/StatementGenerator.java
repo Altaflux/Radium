@@ -7,7 +7,7 @@ import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
 import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
 import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
-import com.kubadziworski.domain.node.expression.prefix.PrefixExpression;
+import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.*;
 import org.objectweb.asm.MethodVisitor;
@@ -51,8 +51,8 @@ public class StatementGenerator {
         expressionGenerator.generate(reference);
     }
 
-    public void generate(PrefixExpression prefixExpression) {
-        prefixExpressionGenerator.generate(prefixExpression);
+    public void generate(UnaryExpression unaryExpression) {
+        prefixExpressionGenerator.generate(unaryExpression);
     }
 
     public void generate(FunctionCall functionCall) {

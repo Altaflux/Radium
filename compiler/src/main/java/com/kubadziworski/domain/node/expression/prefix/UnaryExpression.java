@@ -8,13 +8,13 @@ import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.type.Type;
 
 
-public class PrefixExpression implements Expression {
+public class UnaryExpression implements Expression {
 
     private final Reference reference;
     private final boolean prefix;
     private final ArithmeticOperator operator;
 
-    public PrefixExpression(Reference reference, boolean prefix, ArithmeticOperator operator) {
+    public UnaryExpression(Reference reference, boolean prefix, ArithmeticOperator operator) {
         this.reference = reference;
         this.prefix = prefix;
         this.operator = operator;

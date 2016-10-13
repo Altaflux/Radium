@@ -353,12 +353,9 @@ class ShouldCompileTest extends Specification {
 						""";
 	private static final staticTest ="""
 							StaticTest {
-								int x
 
 								start(){
-
 									print java.lang.System.out.hashCode();
-
 									com.kubadziworski.test.Library.execute("Hello!!");
 								}
 								void assert(boolean actual,boolean expected) {

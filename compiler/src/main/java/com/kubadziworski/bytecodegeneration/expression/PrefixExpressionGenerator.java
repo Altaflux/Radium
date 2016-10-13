@@ -6,13 +6,9 @@ import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.node.expression.Value;
-import com.kubadziworski.domain.node.expression.prefix.PrefixExpression;
+import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-
-import static com.kubadziworski.domain.type.BultInType.DOUBLE;
-import static com.kubadziworski.domain.type.BultInType.LONG;
 
 public class PrefixExpressionGenerator {
 
@@ -27,8 +23,8 @@ public class PrefixExpressionGenerator {
     }
 
 
-    public void generate(PrefixExpression prefixExpression) {
-        Reference reference = prefixExpression.getReference(); //x
+    public void generate(UnaryExpression unaryExpression) {
+        Reference reference = unaryExpression.getReference(); //x
 
         if (reference instanceof LocalVariableReference) {
             reference.accept(expressionGenerator);
@@ -44,13 +40,13 @@ public class PrefixExpressionGenerator {
         }
 
         int operationOpCode;
-        if (prefixExpression.getOperator().equals(ArithmeticOperator.INCREMENT)) {
+        if (unaryExpression.getOperator().equals(ArithmeticOperator.INCREMENT)) {
             operationOpCode = reference.getType().getAddOpcode();
         } else {
             operationOpCode = reference.getType().getSubstractOpcode();
         }
 
-        if (prefixExpression.isPrefix()) {
+        if (unaryExpression.isPrefix()) {
             expressionGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
             methodVisitor.visitInsn(dupsCode);

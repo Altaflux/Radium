@@ -2,7 +2,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
-import com.kubadziworski.domain.node.expression.prefix.PrefixExpression;
+import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 
@@ -46,8 +46,8 @@ public class ExpressionGenerator {
         referenceExpressionGenerator.generate(reference);
     }
 
-    public void generate(PrefixExpression prefixExpression){
-        prefixExpressionGenerator.generate(prefixExpression);
+    public void generate(UnaryExpression unaryExpression){
+        prefixExpressionGenerator.generate(unaryExpression);
     }
 
     public void generate(Parameter parameter) {

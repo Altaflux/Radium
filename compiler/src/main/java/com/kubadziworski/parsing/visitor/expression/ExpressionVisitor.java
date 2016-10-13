@@ -29,7 +29,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final ValueExpressionVisitor valueExpressionVisitor;
     private final CallExpressionVisitor callExpressionVisitor;
     private final ConditionalExpressionVisitor conditionalExpressionVisitor;
-    private final IncDecExpressionVisitor incDecExpressionVisitor;
+    private final UnaryExpressionVisitor unaryExpressionVisitor;
     private final ThisExpressionVisitor thisExpressionVisitor;
 
     public ExpressionVisitor(Scope scope) {
@@ -38,7 +38,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         valueExpressionVisitor = new ValueExpressionVisitor();
         callExpressionVisitor = new CallExpressionVisitor(this, scope);
         conditionalExpressionVisitor = new ConditionalExpressionVisitor(this);
-        incDecExpressionVisitor = new IncDecExpressionVisitor(this);
+        unaryExpressionVisitor = new UnaryExpressionVisitor(this);
         thisExpressionVisitor = new ThisExpressionVisitor(scope);
     }
 
@@ -48,12 +48,12 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
     @Override
     public Expression visitPrefixExpression(@NotNull PrefixExpressionContext ctx) {
-        return incDecExpressionVisitor.visitPrefixExpression(ctx);
+        return unaryExpressionVisitor.visitPrefixExpression(ctx);
     }
 
     @Override
     public Expression visitSuffixExpression(@NotNull SuffixExpressionContext ctx) {
-        return incDecExpressionVisitor.visitSuffixExpression(ctx);
+        return unaryExpressionVisitor.visitSuffixExpression(ctx);
     }
 
 
