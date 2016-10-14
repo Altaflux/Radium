@@ -80,7 +80,7 @@ className : qualifiedName ;
 classBody :  field* function* ;
 field : type name;
 function : functionDeclaration block ;
-functionDeclaration : (type)? functionName '('? parametersList? ')'? ;
+functionDeclaration : methodModifiers* (type)? functionName '('? parametersList? ')'? ;
 parametersList:  parameter (',' parameter)*
           |  parameter (',' parameterWithDefaultValue)*
           |  parameterWithDefaultValue (',' parameterWithDefaultValue)* ;
@@ -160,6 +160,11 @@ value : IntegerLiteral
       | BOOL
       | STRING ;
 qualifiedName : ID ('.' ID)*;
+
+methodModifiers
+    : 'static'
+    | 'public'
+    | 'private' ;
 
 
 type
@@ -410,6 +415,7 @@ Sign
 	;
 
 //TOKENS
+STATIC : 'static' ;
 THIS : 'this' ;
 VARIABLE : 'var' ;
 PRINT : 'print' ;

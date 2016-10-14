@@ -14,6 +14,7 @@ import com.kubadziworski.exception.FunctionNameEqualClassException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,11 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
             try {
                 Expression owner = ctx.owner.accept(expressionVisitor);
                 FunctionSignature signature = scope.getMethodCallSignature(Optional.of(owner.getType()), functionName, arguments);
+
+                //TODO join StaticFunctionCall and FunctionCall
+                if(Modifier.isStatic(signature.getModifiers())){
+                    return new StaticFunctionCall(signature, arguments, owner.getType());
+                }
                 return new FunctionCall(signature, arguments, owner);
             } catch (Exception e) {
                 String possibleClass = ctx.owner.getText();
@@ -47,6 +53,11 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         }
         ClassType thisType = new ClassType(scope.getClassName());
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
+
+        //TODO join StaticFunctionCall and FunctionCall
+        if(Modifier.isStatic(signature.getModifiers())){
+            return new StaticFunctionCall(signature, arguments, thisType);
+        }
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         return new FunctionCall(signature, arguments, new LocalVariableReference(thisVariable));
     }

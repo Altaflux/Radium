@@ -32,12 +32,21 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
         String functionName = ctx.functionName().getText();
         Type returnType = TypeResolver.getFromTypeContext(ctx.type());
         ParametersListContext parametersCtx = ctx.parametersList();
+
+
+        int modifiers = ctx.methodModifiers().stream().map(methodModifiersContext -> {
+            if (methodModifiersContext.getText().equals("static")) {
+                return Modifier.STATIC;
+            }
+            return 0;
+        }).mapToInt(Integer::intValue).sum();
+
         //TODO SET CORRECTLY MODIFIERS
         if (parametersCtx != null) {
             List<Parameter> parameters = parametersCtx.accept(new ParameterExpressionListVisitor(expressionVisitor));
-            return new FunctionSignature(functionName, parameters, returnType, Modifier.PUBLIC);
+            return new FunctionSignature(functionName, parameters, returnType, Modifier.PUBLIC + modifiers);
         }
-        return new FunctionSignature(functionName, Collections.emptyList(), returnType, Modifier.PUBLIC);
+        return new FunctionSignature(functionName, Collections.emptyList(), returnType, Modifier.PUBLIC + modifiers);
 
     }
 }

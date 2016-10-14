@@ -18,6 +18,7 @@ import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,10 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
     @Override
     public Function visitFunction(@NotNull FunctionContext ctx) {
         FunctionSignature signature = ctx.functionDeclaration().accept(new FunctionSignatureVisitor(scope));
-        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+        //TODO do better
+        if (!Modifier.isStatic(signature.getModifiers())) {
+            scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+        }
         addParametersAsLocalVariables(signature);
         Block block = getBlock(ctx);
         if (signature.getName().equals(scope.getClassName())) {
@@ -47,6 +51,7 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
 
         return new Function(signature, block);
     }
+
 
     private Block addAutoReturnStatement(FunctionSignature signature, Block incomingBlock) {
         Block block = incomingBlock;

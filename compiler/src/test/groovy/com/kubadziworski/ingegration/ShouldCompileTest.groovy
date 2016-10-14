@@ -368,6 +368,22 @@ class ShouldCompileTest extends Specification {
 								}
 							}
 						""";
+	private static final staticFunctionTest ="""
+							StaticFunctionTest {
+
+								start(){
+									assert(expected -> true , actual -> 1 == 1);
+								}
+								static void assert(boolean actual,boolean expected) {
+									if (actual == expected) {
+										print "OK"
+									}
+									else {
+										print "TEST FAILED"
+									}
+								}
+							}
+						""";
 	@Unroll
 	def "Should Compile and run"() {
 		expect:
@@ -408,6 +424,7 @@ class ShouldCompileTest extends Specification {
 			unaryExpressionTest      | "UnaryExpressions.enk"
 			globalLocal				 | "GlobalLocal.enk"
 			staticTest				 | "StaticTest.enk"
+			staticFunctionTest		 | "StaticFunctionTest.enk"
 	}
 
 }
