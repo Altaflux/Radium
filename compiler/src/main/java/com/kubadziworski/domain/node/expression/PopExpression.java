@@ -4,25 +4,27 @@ import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.type.Type;
 
-/**
- * Created by kuba on 14.04.16.
- */
-public class EmptyExpression implements Expression {
 
-    private final Type type;
+public class PopExpression implements Expression {
 
-    public EmptyExpression(Type type) {
-        this.type = type;
+    private final Expression owner;
+
+    public PopExpression(Expression owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public Type getType() {
+        return owner.getType();
+    }
+
+    public Expression getOwner(){
+        return owner;
     }
 
     @Override
     public void accept(ExpressionGenerator generator) {
         generator.generate(this);
-    }
-
-    @Override
-    public Type getType() {
-        return type;
     }
 
     @Override

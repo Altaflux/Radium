@@ -41,9 +41,13 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                 Expression owner = ctx.owner.accept(expressionVisitor);
                 FunctionSignature signature = scope.getMethodCallSignature(Optional.of(owner.getType()), functionName, arguments);
 
-                //TODO join StaticFunctionCall and FunctionCall
                 if(Modifier.isStatic(signature.getModifiers())){
-                    return new StaticFunctionCall(signature, arguments, owner.getType());
+
+                    //If the reference is static we can avoid calling the owning reference
+                    //and simply use the class to call it.
+                    //We may need to check if this doesn't causes trouble, else we use a POP after
+                    //calling the owner expression, for now lets optimize...
+                    return new FunctionCall(signature, arguments, new EmptyExpression(owner.getType()));
                 }
                 return new FunctionCall(signature, arguments, owner);
             } catch (Exception e) {
@@ -54,9 +58,8 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         ClassType thisType = new ClassType(scope.getClassName());
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
 
-        //TODO join StaticFunctionCall and FunctionCall
         if(Modifier.isStatic(signature.getModifiers())){
-            return new StaticFunctionCall(signature, arguments, thisType);
+            return new FunctionCall(signature, arguments, thisType);
         }
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         return new FunctionCall(signature, arguments, new LocalVariableReference(thisVariable));
@@ -78,7 +81,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     private Call visitStaticReference(String possibleClass, String functionName, List<Argument> arguments) {
         ClassType classType = new ClassType(possibleClass);
         FunctionSignature signature = scope.getMethodCallSignature(Optional.of(classType), functionName, arguments);
-        return new StaticFunctionCall(signature, arguments, classType);
+        return new FunctionCall(signature, arguments, classType);
     }
 
     private List<Argument> getArgumentsForCall(ArgumentListContext argumentsListCtx) {

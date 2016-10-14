@@ -59,10 +59,6 @@ public class StatementGenerator {
         functionCall.accept(expressionGenerator);
     }
 
-    public void generate(StaticFunctionCall functionCall) {
-        functionCall.accept(expressionGenerator);
-    }
-
     public void generate(ReturnStatement returnStatement) {
         returnStatemenetGenerator.generate(returnStatement);
     }
@@ -129,5 +125,9 @@ public class StatementGenerator {
 
     public void generate(FieldReference fieldReference) {
         expressionGenerator.generate(fieldReference);
+    }
+
+    public void generate(PopExpression popExpression) {
+        expressionGenerator.generate(popExpression);
     }
 }

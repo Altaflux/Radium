@@ -19,6 +19,7 @@ public class ExpressionGenerator {
     private final ConditionalExpressionGenerator conditionalExpressionGenerator;
     private final ParameterExpressionGenerator parameterExpressionGenerator;
     private final PrefixExpressionGenerator prefixExpressionGenerator;
+    private final PopExpressionGenerator popExpressionGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
         referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor, scope, this);
@@ -28,6 +29,7 @@ public class ExpressionGenerator {
         conditionalExpressionGenerator = new ConditionalExpressionGenerator(this, methodVisitor);
         parameterExpressionGenerator = new ParameterExpressionGenerator(methodVisitor, scope);
         prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor, this, scope);
+        popExpressionGenerator = new PopExpressionGenerator(methodVisitor, this);
     }
 
     public void generate(FieldReference reference) {
@@ -70,10 +72,6 @@ public class ExpressionGenerator {
         callExpressionGenerator.generate(functionCall);
     }
 
-    public void generate(StaticFunctionCall functionCall) {
-        callExpressionGenerator.generate(functionCall);
-    }
-
     public void generate(Addition expression) {
         arithmeticExpressionGenerator.generate(expression);
     }
@@ -92,6 +90,10 @@ public class ExpressionGenerator {
 
     public void generate(ConditionalExpression conditionalExpression) {
         conditionalExpressionGenerator.generate(conditionalExpression);
+    }
+
+    public void generate(PopExpression popExpression) {
+        popExpressionGenerator.generate(popExpression);
     }
 
     public void generate(EmptyExpression emptyExpression) {

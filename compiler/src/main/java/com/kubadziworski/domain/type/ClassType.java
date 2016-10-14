@@ -112,6 +112,11 @@ public class ClassType implements Type {
     }
 
     @Override
+    public int getStackSize() {
+        return 1;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

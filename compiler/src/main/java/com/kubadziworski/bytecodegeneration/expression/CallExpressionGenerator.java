@@ -50,20 +50,9 @@ public class CallExpressionGenerator {
         String functionName = functionCall.getIdentifier();
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(functionCall.getSignature());
         String ownerDescriptor = functionCall.getOwnerType().getInternalName();
-        methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, ownerDescriptor, functionName, methodDescriptor, false);
-    }
+        int callOpCode = functionCall.getSignature().getInvokeOpcode();
 
-    public void generate(StaticFunctionCall staticFunctionCall) {
-        String functionName = staticFunctionCall.getIdentifier();
-        generateArguments(staticFunctionCall);
-        String methodDescriptor = DescriptorFactory.getMethodDescriptor(staticFunctionCall.getSignature());
-        String ownerDescriptor = staticFunctionCall.getOwner().getInternalName();
-        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, ownerDescriptor, functionName, methodDescriptor, false);
-    }
-
-    private void generateArguments(StaticFunctionCall call) {
-        FunctionSignature signature = scope.getMethodCallSignature(Optional.of(call.getOwner()), call.getIdentifier(), call.getArguments());
-        generateArguments(call, signature);
+        methodVisitor.visitMethodInsn(callOpCode, ownerDescriptor, functionName, methodDescriptor, false);
     }
 
     private void generateArguments(FunctionCall call) {

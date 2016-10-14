@@ -372,7 +372,9 @@ class ShouldCompileTest extends Specification {
 							StaticFunctionTest {
 
 								start(){
+
 									assert(expected -> true , actual -> 1 == 1);
+									this.assert(expected -> true , actual -> 1 == 1);
 								}
 								static void assert(boolean actual,boolean expected) {
 									if (actual == expected) {

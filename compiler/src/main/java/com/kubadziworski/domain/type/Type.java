@@ -17,4 +17,5 @@ public interface Type {
     int getSubstractOpcode();
     int getMultiplyOpcode();
     int getDividOpcode();
+    int getStackSize();
 }
