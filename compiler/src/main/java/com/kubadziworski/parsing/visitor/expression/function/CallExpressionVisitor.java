@@ -46,8 +46,8 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                     //If the reference is static we can avoid calling the owning reference
                     //and simply use the class to call it.
                     //We may need to check if this doesn't causes trouble, else we use a POP after
-                    //calling the owner expression, for now lets optimize...
-                    return new FunctionCall(signature, arguments, new EmptyExpression(owner.getType()));
+                    //calling the owner expression, for now lets not optimize...
+                    return new FunctionCall(signature, arguments, new PopExpression(owner));
                 }
                 return new FunctionCall(signature, arguments, owner);
             } catch (Exception e) {
