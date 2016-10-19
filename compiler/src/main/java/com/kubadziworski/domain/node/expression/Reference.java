@@ -7,7 +7,8 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
  * Created by kuba on 13.05.16.
  */
 public interface Reference extends Expression {
-    String geName();
+
+    String getName();
 
     @Override
     void accept(ExpressionGenerator generator);

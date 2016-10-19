@@ -3,6 +3,7 @@ package com.kubadziworski.domain.scope;
 import com.google.common.collect.Lists;
 import com.kubadziworski.domain.MetaData;
 import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.resolver.ImportResolver;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
@@ -25,12 +26,14 @@ public class Scope {
     private final MetaData metaData;
     private final LinkedMap<String, LocalVariable> localVariables;
     private final Map<String, Field> fields;
+    private final ImportResolver imports;
 
-    public Scope(MetaData metaData) {
+    public Scope(MetaData metaData, ImportResolver imports) {
         this.metaData = metaData;
         functionSignatures = new ArrayList<>();
         localVariables = new LinkedMap<>();
         fields = new LinkedMap<>();
+        this.imports = imports;
     }
 
     public Scope(Scope scope) {
@@ -38,7 +41,9 @@ public class Scope {
         functionSignatures = Lists.newArrayList(scope.functionSignatures);
         fields = new LinkedMap<>(scope.fields);
         localVariables = new LinkedMap<>(scope.localVariables);
+        this.imports = scope.getImports();
     }
+
 
     public void addSignature(FunctionSignature signature) {
         if (isParameterLessSignatureExists(signature.getName())) {
@@ -53,20 +58,24 @@ public class Scope {
 
     public boolean isSignatureExists(String identifier, List<Argument> arguments) {
         if (identifier.equals("super")) return true;
+
         return functionSignatures.stream()
                 .anyMatch(signature -> signature.matches(identifier, arguments));
     }
 
     public FunctionSignature getMethodCallSignatureWithoutParameters(String identifier) {
-        return getMethodCallSignature(identifier, Collections.<Argument>emptyList());
+        return getMethodCallSignature(identifier, Collections.emptyList());
     }
 
     public FunctionSignature getConstructorCallSignature(String className, List<Argument> arguments) {
+        //TODO Think about how to resolve is if another class name is the same as the local class
         boolean isDifferentThanCurrentClass = !className.equals(getClassName());
         if (isDifferentThanCurrentClass) {
+
             List<Type> argumentsTypes = arguments.stream().map(Argument::getType).collect(toList());
-            return new ClassPathScope().getConstructorSignature(className, argumentsTypes)
-                    .orElseThrow(() -> new MethodSignatureNotFoundException(this, className, arguments));
+            ClassType resolvedClass = resolveClassName(className);
+            return new ClassPathScope().getConstructorSignature(resolvedClass, argumentsTypes)
+                    .orElseThrow(() -> new MethodSignatureNotFoundException(this, resolvedClass.getName(), arguments));
         }
         return getConstructorCallSignatureForCurrentClass(arguments);
     }
@@ -88,12 +97,15 @@ public class Scope {
     public FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
         if (identifier.equals("super")) {
             //TODO Set modifiers correctly
-            return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC);
+            return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC, new ClassType(metaData.getSuperClassName()));
         }
-        return functionSignatures.stream()
+        Optional<FunctionSignature> function = functionSignatures.stream()
                 .filter(signature -> signature.matches(identifier, arguments))
-                .findFirst()
+                .findFirst();
+
+        return function.map(Optional::of).orElse(imports.getMethod(identifier, arguments))
                 .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier, arguments));
+
     }
 
     private String getSuperClassName() {
@@ -131,7 +143,7 @@ public class Scope {
     }
 
     public Field getField(String fieldName) {
-        return Optional.ofNullable(fields.get(fieldName))
+        return Optional.ofNullable(fields.get(fieldName)).map(Optional::of).orElse(imports.getField(fieldName))
                 .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
     }
 
@@ -154,6 +166,14 @@ public class Scope {
 
     public String getClassInternalName() {
         return getClassType().getInternalName();
+    }
+
+    private ImportResolver getImports() {
+        return imports;
+    }
+
+    public ClassType resolveClassName(String className) {
+        return imports.getClass(className).orElse(new ClassType(className));
     }
 
 }

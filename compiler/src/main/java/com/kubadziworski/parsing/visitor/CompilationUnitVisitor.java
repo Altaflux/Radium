@@ -15,7 +15,9 @@ public class CompilationUnitVisitor extends EnkelBaseVisitor<CompilationUnit> {
 
     @Override
     public CompilationUnit visitCompilationUnit(@NotNull CompilationUnitContext ctx) {
-        ClassVisitor classVisitor = new ClassVisitor();
+
+
+        ClassVisitor classVisitor = new ClassVisitor(ctx.importDeclaration());
         ClassDeclarationContext classDeclarationContext = ctx.classDeclaration();
         ClassDeclaration classDeclaration = classDeclarationContext.accept(classVisitor);
         return new CompilationUnit(classDeclaration);

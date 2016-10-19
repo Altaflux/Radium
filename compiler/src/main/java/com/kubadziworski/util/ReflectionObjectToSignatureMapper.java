@@ -20,26 +20,27 @@ import static java.util.stream.Collectors.toList;
  * Created by kuba on 03.05.16.
  */
 public final class ReflectionObjectToSignatureMapper {
+
     public static FunctionSignature fromMethod(Method method) {
         String name = method.getName();
         List<Parameter> parameters = Arrays.stream(method.getParameters())
                 .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), Optional.empty()))
                 .collect(toList());
         Class<?> returnType = method.getReturnType();
-
-        return new FunctionSignature(name, parameters, TypeResolver.getFromTypeName(returnType.getCanonicalName()), method.getModifiers(), method);
+        ClassType owner = new ClassType(method.getDeclaringClass().getName());
+        return new FunctionSignature(name, parameters, TypeResolver.getFromTypeName(returnType.getCanonicalName()), method.getModifiers(), owner);
     }
 
-    public static FunctionSignature fromConstructor(Constructor constructor) {
+    public static FunctionSignature fromConstructor(Constructor constructor, Type owner) {
         String name = constructor.getName();
         List<Parameter> parameters = Arrays.stream(constructor.getParameters())
                 .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), Optional.empty()))
                 .collect(toList());
 
-        return new FunctionSignature(name, parameters, BultInType.VOID, constructor.getModifiers());
+        return new FunctionSignature(name, parameters, BultInType.VOID, constructor.getModifiers(), owner);
     }
 
-    public static Field fromField(java.lang.reflect.Field field, Type owner){
+    public static Field fromField(java.lang.reflect.Field field, Type owner) {
         String name = field.getName();
         return new Field(name, owner, TypeResolver.getFromTypeName(field.getType().getCanonicalName()), field.getModifiers());
     }

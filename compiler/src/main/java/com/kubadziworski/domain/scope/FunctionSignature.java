@@ -2,6 +2,7 @@ package com.kubadziworski.domain.scope;
 
 import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ParameterForNameNotFoundException;
 import org.objectweb.asm.Opcodes;
@@ -20,22 +21,14 @@ public class FunctionSignature {
     private final List<Parameter> parameters;
     private final Type returnType;
     private final int modifiers;
-    private final Method method;
+    private final Type owner;
 
-    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, int modifiers) {
+    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, int modifiers, Type owner) {
         this.name = name;
         this.parameters = parameters;
         this.returnType = returnType;
         this.modifiers = modifiers;
-        this.method = null;
-    }
-
-    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, int modifiers, Method method) {
-        this.name = name;
-        this.parameters = parameters;
-        this.returnType = returnType;
-        this.modifiers = modifiers;
-        this.method = method;
+        this.owner = owner;
     }
 
     public String getName() {
@@ -100,19 +93,15 @@ public class FunctionSignature {
     }
 
     public int getInvokeOpcode() {
-        if (method != null) {
-            if (method.isDefault()) {
-                return Opcodes.INVOKESPECIAL;
-            }
-            if (method.getDeclaringClass().isInterface()) {
-                return Opcodes.INVOKEINTERFACE;
-            }
-        }
         if (Modifier.isStatic(modifiers)) {
             return Opcodes.INVOKESTATIC;
         } else {
             return Opcodes.INVOKEVIRTUAL;
         }
+    }
+
+    public Type getOwner() {
+        return owner;
     }
 
     @Override

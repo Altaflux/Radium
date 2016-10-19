@@ -19,7 +19,7 @@ public class StaticFieldReference implements Reference {
     }
 
     @Override
-    public String geName() {
+    public String getName() {
         return field.getName();
     }
 

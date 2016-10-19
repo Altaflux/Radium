@@ -22,9 +22,11 @@ import java.util.List;
 public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature> {
 
     private final ExpressionVisitor expressionVisitor;
+    private final Scope scope;
 
     public FunctionSignatureVisitor(Scope scope) {
         this.expressionVisitor = new ExpressionVisitor(scope);
+        this.scope = scope;
     }
 
     @Override
@@ -44,9 +46,9 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
         //TODO SET CORRECTLY MODIFIERS
         if (parametersCtx != null) {
             List<Parameter> parameters = parametersCtx.accept(new ParameterExpressionListVisitor(expressionVisitor));
-            return new FunctionSignature(functionName, parameters, returnType, Modifier.PUBLIC + modifiers);
+            return new FunctionSignature(functionName, parameters, returnType, Modifier.PUBLIC + modifiers, scope.getClassType());
         }
-        return new FunctionSignature(functionName, Collections.emptyList(), returnType, Modifier.PUBLIC + modifiers);
+        return new FunctionSignature(functionName, Collections.emptyList(), returnType, Modifier.PUBLIC + modifiers, scope.getClassType());
 
     }
 }

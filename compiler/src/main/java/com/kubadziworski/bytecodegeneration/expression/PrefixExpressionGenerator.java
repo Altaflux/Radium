@@ -58,7 +58,7 @@ public class PrefixExpressionGenerator {
         }
 
         if (reference instanceof LocalVariableReference) {
-            int varIndex = scope.getLocalVariableIndex(reference.geName());
+            int varIndex = scope.getLocalVariableIndex(reference.getName());
             methodVisitor.visitVarInsn(reference.getType().getStoreVariableOpcode(), varIndex);
 
         } else if (reference instanceof FieldReference) {

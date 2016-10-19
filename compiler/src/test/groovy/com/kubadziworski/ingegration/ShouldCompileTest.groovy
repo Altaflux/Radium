@@ -369,6 +369,9 @@ class ShouldCompileTest extends Specification {
 							}
 						""";
 	private static final staticFunctionTest ="""
+							import org.apache.commons.beanutils.locale.*;
+							import org.apache.log4j.CategoryKey;
+
 							StaticFunctionTest {
 
 								start(){
@@ -384,6 +387,19 @@ class ShouldCompileTest extends Specification {
 										print "TEST FAILED"
 									}
 								}
+							}
+						""";
+	private static final importingTest ="""
+							import com.kubadziworski.test.Library.*;
+							ImportingTest {
+
+								start(){
+									execute("hello");
+									var myStuff = new Integer(1);
+									print myStuff
+									print statField
+								}
+
 							}
 						""";
 	@Unroll
@@ -427,6 +443,7 @@ class ShouldCompileTest extends Specification {
 			globalLocal				 | "GlobalLocal.enk"
 			staticTest				 | "StaticTest.enk"
 			staticFunctionTest		 | "StaticFunctionTest.enk"
+			importingTest		     | "ImportingTest.enk"
 	}
 
 }

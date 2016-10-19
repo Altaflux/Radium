@@ -16,7 +16,7 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, Optional.empty())
         }
-        def expectedSignature = new FunctionSignature(expectedName, expectedParams, expectedReturnType, Modifier.PUBLIC)
+        def expectedSignature = new FunctionSignature(expectedName, expectedParams, expectedReturnType, Modifier.PUBLIC, type)
         when:
         ClassPathScope classPathScope = new ClassPathScope();
         def actualSignature = classPathScope.getMethodSignature(type, methodName, args)
@@ -46,10 +46,10 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, Optional.empty())
         }
-        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, BultInType.VOID, Modifier.PUBLIC);
+        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, BultInType.VOID, Modifier.PUBLIC, new ClassType(className));
         when:
         ClassPathScope classPathScope = new ClassPathScope();
-        def actualSignature = classPathScope.getConstructorSignature(className, args)
+        def actualSignature = classPathScope.getConstructorSignature(new ClassType(className), args)
         then:
         actualSignature.isPresent()
         actualSignature.get().equals(expectedSignature);
@@ -63,7 +63,7 @@ class ClassPathScopeTest extends Specification {
     def "GetConstructorSignature should not return private Constructor"() {
         when:
         ClassPathScope classPathScope = new ClassPathScope();
-        def actualSignature = classPathScope.getConstructorSignature(className, args)
+        def actualSignature = classPathScope.getConstructorSignature(new ClassType(className), args)
         then:
         !actualSignature.isPresent()
         where:

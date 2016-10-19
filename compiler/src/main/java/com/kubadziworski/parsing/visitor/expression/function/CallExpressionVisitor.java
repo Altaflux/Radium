@@ -41,8 +41,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                 Expression owner = ctx.owner.accept(expressionVisitor);
                 FunctionSignature signature = scope.getMethodCallSignature(Optional.of(owner.getType()), functionName, arguments);
 
-                if(Modifier.isStatic(signature.getModifiers())){
-
+                if (Modifier.isStatic(signature.getModifiers())) {
                     //If the reference is static we can avoid calling the owning reference
                     //and simply use the class to call it.
                     //We may need to check if this doesn't causes trouble, else we use a POP after
@@ -55,21 +54,24 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                 return visitStaticReference(possibleClass, functionName, arguments);
             }
         }
-        ClassType thisType = new ClassType(scope.getClassName());
+
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
 
-        if(Modifier.isStatic(signature.getModifiers())){
-            return new FunctionCall(signature, arguments, thisType);
+        if (Modifier.isStatic(signature.getModifiers())) {
+            return new FunctionCall(signature, arguments, signature.getOwner());
         }
+
+        ClassType thisType = new ClassType(scope.getClassName());
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         return new FunctionCall(signature, arguments, new LocalVariableReference(thisVariable));
     }
 
     @Override
     public Call visitConstructorCall(@NotNull ConstructorCallContext ctx) {
-        String className = ctx.className().getText();
+
+        ClassType className = scope.resolveClassName(ctx.typeName().getText());
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
-        return new ConstructorCall(className, arguments);
+        return new ConstructorCall(className.getName(), arguments);
     }
 
     @Override
@@ -79,7 +81,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     }
 
     private Call visitStaticReference(String possibleClass, String functionName, List<Argument> arguments) {
-        ClassType classType = new ClassType(possibleClass);
+        ClassType classType = scope.resolveClassName(possibleClass);
         FunctionSignature signature = scope.getMethodCallSignature(Optional.of(classType), functionName, arguments);
         return new FunctionCall(signature, arguments, classType);
     }

@@ -1,5 +1,6 @@
 package com.kubadziworski.domain.scope;
 
+import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
@@ -31,22 +32,20 @@ public class ClassPathScope {
 
     public Optional<com.kubadziworski.domain.scope.Field> getFieldSignature(Type owner, String fieldName) {
         try {
-
             Field  field = FieldUtils.getField(owner.getTypeClass(), fieldName);
-
             return Optional.of(ReflectionObjectToSignatureMapper.fromField(field, owner));
         } catch (Exception e) {
             return Optional.empty();
         }
     }
 
-    public Optional<FunctionSignature> getConstructorSignature(String className, List<Type> arguments) {
+    public Optional<FunctionSignature> getConstructorSignature(ClassType className, List<Type> arguments) {
         try {
-            Class<?> methodOwnerClass = Class.forName(className);
+            Class<?> methodOwnerClass = className.getTypeClass();
             Class<?>[] params = arguments.stream()
                     .map(Type::getTypeClass).toArray(Class<?>[]::new);
             Constructor<?> constructor = ConstructorUtils.getMatchingAccessibleConstructor(methodOwnerClass,params);
-            return Optional.of(ReflectionObjectToSignatureMapper.fromConstructor(constructor));
+            return Optional.of(ReflectionObjectToSignatureMapper.fromConstructor(constructor, className));
         } catch (Exception e) {
             return Optional.empty();
         }

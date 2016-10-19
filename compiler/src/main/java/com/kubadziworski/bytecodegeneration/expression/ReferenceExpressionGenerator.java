@@ -5,7 +5,6 @@ import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.StaticFieldReference;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.scope.Variable;
 import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -22,7 +21,7 @@ public class ReferenceExpressionGenerator {
     }
 
     public void generate(LocalVariableReference localVariableReference) {
-        String varName = localVariableReference.geName();
+        String varName = localVariableReference.getName();
         int index = scope.getLocalVariableIndex(varName);
         Type type = localVariableReference.getType();
         methodVisitor.visitVarInsn(type.getLoadVariableOpcode(), index);
@@ -30,18 +29,18 @@ public class ReferenceExpressionGenerator {
 
 
     public void generate(FieldReference fieldReference) {
-        String varName = fieldReference.geName();
+        String varName = fieldReference.getName();
         Type type = fieldReference.getType();
         String ownerInternalName = fieldReference.getOwnerInternalName();
         String descriptor = type.getDescriptor();
 
         Expression owner = fieldReference.getOwner();
         owner.accept(expressionGenerator);
-        methodVisitor.visitFieldInsn(Opcodes.GETFIELD, ownerInternalName, varName, descriptor);
+        methodVisitor.visitFieldInsn(fieldReference.getField().getInvokeOpcode(), ownerInternalName, varName, descriptor);
     }
 
     public void generate(StaticFieldReference fieldReference) {
-        String varName = fieldReference.geName();
+        String varName = fieldReference.getName();
 
         Type type = fieldReference.getType();
         String ownerInternalName = fieldReference.getOwnerInternalName();
@@ -51,7 +50,7 @@ public class ReferenceExpressionGenerator {
     }
 
     public void generateDup(FieldReference fieldReference) {
-        String varName = fieldReference.geName();
+        String varName = fieldReference.getName();
         Type type = fieldReference.getType();
         String ownerInternalName = fieldReference.getOwnerInternalName();
         String descriptor = type.getDescriptor();

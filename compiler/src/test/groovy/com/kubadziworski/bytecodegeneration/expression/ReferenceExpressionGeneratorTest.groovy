@@ -3,6 +3,7 @@ package com.kubadziworski.bytecodegeneration.expression
 import com.kubadziworski.domain.MetaData
 import com.kubadziworski.domain.node.expression.FieldReference
 import com.kubadziworski.domain.node.expression.LocalVariableReference
+import com.kubadziworski.domain.resolver.ImportResolver
 import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
@@ -21,7 +22,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
     def "should generate field reference"() {
         given:
             MetaData metaData = new MetaData("Main", "java.lang.Object")
-            Scope scope = new Scope(metaData)
+            Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList()))
             MethodVisitor methodVisitor = Mock()
             ExpressionGenerator expressionGenerator = new ExpressionGenerator(methodVisitor, scope)
             LocalVariable local = new LocalVariable("this",scope.getClassType())

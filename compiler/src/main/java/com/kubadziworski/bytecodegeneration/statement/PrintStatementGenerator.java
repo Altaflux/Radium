@@ -2,11 +2,17 @@ package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.expression.FunctionCall;
 import com.kubadziworski.domain.node.statement.PrintStatement;
+import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+
+import java.lang.reflect.Modifier;
+import java.util.Collections;
 
 public class PrintStatementGenerator {
     private final MethodVisitor methodVisitor;
@@ -22,6 +28,11 @@ public class PrintStatementGenerator {
         methodVisitor.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         expression.accept(expressionGenerator);
         Type type = expression.getType();
+
+        if ((type instanceof ClassType)) {
+            type = new ClassType("java.lang.Object");
+        }
+
         String descriptor = "(" + type.getDescriptor() + ")V";
         ClassType owner = new ClassType("java.io.PrintStream");
         String fieldDescriptor = owner.getDescriptor();

@@ -109,4 +109,12 @@ public enum BultInType implements Type {
     public int getStackSize() {
         return stackSize;
     }
+
+    @Override
+    public String toString() {
+        return "BultInType{" +
+                "name='" + name + '\'' +
+                ", descriptor='" + descriptor + '\'' +
+                '}';
+    }
 }

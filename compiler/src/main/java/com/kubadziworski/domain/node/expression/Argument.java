@@ -37,4 +37,12 @@ public class Argument implements Expression {
     public Optional<String> getParameterName() {
         return parameterName;
     }
+
+    @Override
+    public String toString() {
+        return "Argument{" +
+                "parameterName=" + parameterName +
+                ", descriptor='" + getType() + '\'' +
+                '}';
+    }
 }

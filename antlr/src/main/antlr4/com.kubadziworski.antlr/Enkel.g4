@@ -71,10 +71,29 @@ grammar Enkel;
 }
 
 
+typeName
+	:	ID
+	|	packageOrTypeName '.' ID
+	;
+packageOrTypeName
+	:	ID
+	|	packageOrTypeName '.' ID
+	;
 
+importDeclaration
+	:	singleTypeImportDeclaration
+	|	typeImportOnDemandDeclaration
+	;
+singleTypeImportDeclaration
+	:	'import' typeName ';'
+	;
+
+typeImportOnDemandDeclaration
+	:	'import' packageOrTypeName '.' '*' ';'
+	;
 
 //RULES
-compilationUnit : classDeclaration EOF ;
+compilationUnit : importDeclaration* classDeclaration EOF ;
 classDeclaration : className '{' classBody '}' ;
 className : qualifiedName ;
 classBody :  field* function* ;
@@ -88,7 +107,7 @@ functionName : ID ;
 parameter : type ID ;
 parameterWithDefaultValue : type ID '=' defaultValue=expression ;
 
-classType : qualifiedName  ;
+//classType : qualifiedName  ;
 
 block : '{' blockStatement* '}' ;
 
@@ -124,7 +143,7 @@ expression : THIS #ThisReference
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
            | functionName '(' argumentList ')' #FunctionCall
            | superCall='super' '('argumentList ')' #Supercall
-           | newCall='new' className '('argumentList ')' #ConstructorCall
+           | newCall='new' typeName '('argumentList ')' #ConstructorCall
            | value        #ValueExpr
            | expr=expression operation='--'  #SuffixExpression
            | expr=expression operation='++'  #SuffixExpression
@@ -172,7 +191,7 @@ type
 	|	referenceType
 	;
 referenceType
-	:	classType
+	:	typeName
 	|	arrayType
 	;
 primitiveType
@@ -199,7 +218,7 @@ floatingPointType
 
 arrayType
 	:	primitiveType dims
-	|	classType dims
+	|	typeName dims
 	;
 dims
 	:	'[' ']' ('[' ']')*

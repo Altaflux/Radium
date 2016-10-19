@@ -11,6 +11,8 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassType;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.lang.reflect.Modifier;
+
 public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Reference> {
     private final Scope scope;
     private final ExpressionVisitor expressionVisitor;
@@ -23,9 +25,11 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
     @Override
     public Reference visitVarReference(@NotNull VarReferenceContext ctx) {
         String varName = ctx.variableReference().getText();
-        if (ctx.owner != null) {
+        boolean ownerIsExplicit = ctx.owner != null;
+        if (ownerIsExplicit) {
             try {
-                return visitReference(varName, ctx.owner.accept(expressionVisitor));
+                Expression owner = ctx.owner.accept(expressionVisitor);
+                return visitReference(varName, owner);
             } catch (Throwable e) {
                 String possibleClass = ctx.owner.getText();
                 return visitStaticReference(possibleClass, ctx);
@@ -44,12 +48,20 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
     private Reference visitStaticReference(String possibleClass, VarReferenceContext ctx) {
         ClassType classType = new ClassType(possibleClass);
         Field field = scope.getField(classType, ctx.variableReference().getText());
-        return new StaticFieldReference(field);
+        return new FieldReference(field, new EmptyExpression(field.getOwner()));
     }
 
     private Reference visitReference(@NotNull String varName, Expression owner) {
 
         if (owner != null) {
+            Field field = scope.getField(owner.getType(), varName);
+            if (Modifier.isStatic(field.getModifiers())) {
+                //If the reference is static we can avoid calling the owning reference
+                //and simply use the class to call it.
+                //We may need to check if this doesn't causes trouble, else we use a POP after
+                //calling the owner expression, for now lets not optimize...
+                return new FieldReference(scope.getField(owner.getType(), varName), new PopExpression(owner));
+            }
             return new FieldReference(scope.getField(owner.getType(), varName), owner);
         }
 
@@ -58,9 +70,14 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
             return new LocalVariableReference(variable);
         }
 
+        Field field = scope.getField(varName);
+
+        if (Modifier.isStatic(field.getModifiers())) {
+            return new FieldReference(field, new EmptyExpression(field.getOwner()));
+        }
+
         ClassType thisType = new ClassType(scope.getClassName());
         LocalVariable thisVariable = new LocalVariable("this", thisType);
-        Field field = scope.getField(varName);
         return new FieldReference(field, new LocalVariableReference(thisVariable));
 
     }

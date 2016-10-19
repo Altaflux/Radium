@@ -18,7 +18,7 @@ public class LocalVariableReference implements Reference {
     }
 
     @Override
-    public String geName() {
+    public String getName() {
         return variable.getName();
     }
 
