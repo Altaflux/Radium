@@ -36,10 +36,6 @@ public class ExpressionGenerator {
         referenceExpressionGenerator.generate(reference);
     }
 
-    public void generate(StaticFieldReference reference) {
-        referenceExpressionGenerator.generate(reference);
-    }
-
     public void generateDup(FieldReference reference) {
         referenceExpressionGenerator.generateDup(reference);
     }

@@ -47,10 +47,6 @@ public class StatementGenerator {
         variableDeclarationStatementGenerator.generate(variableDeclaration);
     }
 
-    public void generate(StaticFieldReference reference) {
-        expressionGenerator.generate(reference);
-    }
-
     public void generate(UnaryExpression unaryExpression) {
         prefixExpressionGenerator.generate(unaryExpression);
     }
