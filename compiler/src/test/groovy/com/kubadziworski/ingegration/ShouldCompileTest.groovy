@@ -13,8 +13,8 @@ import java.lang.reflect.Method
  */
 class ShouldCompileTest extends Specification {
 
-	private final static helloWorld =
-							"""
+    private final static helloWorld =
+            """
 							HelloWorld {
 
 								start {
@@ -23,8 +23,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private final static loopsCode =
-							"""
+    private final static loopsCode =
+            """
 							Loops {
 								start() {
 									for i from 3 to 1 {
@@ -38,8 +38,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private final static allTypes =
-							"""
+    private final static allTypes =
+            """
 							AllPrimitiveTypes {
 								start() {
 									var stringVar = "str"
@@ -53,8 +53,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private final static defaultParams =
-							"""
+    private final static defaultParams =
+            """
 							DefaultParamTest {
 								start() {
 									greet("kuba","enkel")
@@ -69,8 +69,8 @@ class ShouldCompileTest extends Specification {
 								}
 							}
     						"""
-	private final static fields =
-							"""
+    private final static fields =
+            """
 							Fields {
 
 								int field
@@ -83,8 +83,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private final static namedParams =
-							"""
+    private final static namedParams =
+            """
 							NamedParamsTest {
 
 								start {
@@ -97,8 +97,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private final static sumCalculator =
-							"""
+    private final static sumCalculator =
+            """
 								SumCalculator {
 									start() {
 										var expected = 8
@@ -119,8 +119,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private final static defaultConstructor =
-							"""
+    private final static defaultConstructor =
+            """
 							DefaultConstructor {
 
 							start() {
@@ -129,8 +129,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private final static construcotrWithParams =
-							"""
+    private final static construcotrWithParams =
+            """
 							ConstructorWithParams {
 
 							ConstructorWithParams(int x) {
@@ -148,8 +148,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private final static parameterLessConsturctor =
-							"""
+    private final static parameterLessConsturctor =
+            """
 							ParameterLessConstructor {
 
 							ParameterLessConstructor() {
@@ -166,8 +166,8 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-	private static final equalityTest =
-							"""
+    private static final equalityTest =
+            """
 							EqualitySyntax {
 
 							 start {
@@ -292,7 +292,7 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
-    private static final unaryExpressionTest ="""
+    private static final unaryExpressionTest = """
 							UnaryExpressions {
 
 								int globalField
@@ -328,7 +328,7 @@ class ShouldCompileTest extends Specification {
 								  }
 							}
                             """
-	private static final globalLocal ="""
+    private static final globalLocal = """
 							GlobalLocal {
 								int x
 
@@ -351,7 +351,7 @@ class ShouldCompileTest extends Specification {
 								}
 							}
 						""";
-	private static final staticTest ="""
+    private static final staticTest = """
 							StaticTest {
 
 								start(){
@@ -368,7 +368,7 @@ class ShouldCompileTest extends Specification {
 								}
 							}
 						""";
-	private static final staticFunctionTest ="""
+    private static final staticFunctionTest = """
 							import org.apache.commons.beanutils.locale.*;
 							import org.apache.log4j.CategoryKey;
 
@@ -389,7 +389,7 @@ class ShouldCompileTest extends Specification {
 								}
 							}
 						""";
-	private static final importingTest ="""
+    private static final importingTest = """
 							import com.kubadziworski.test.Library.*;
 							ImportingTest {
 
@@ -402,48 +402,49 @@ class ShouldCompileTest extends Specification {
 
 							}
 						""";
-	@Unroll
-	def "Should Compile and run"() {
-		expect:
-			def file = new File(filename)
-			FileUtils.writeStringToFile(file, code)
-			Compiler.main(filename)
 
-			URL u = new File(".").toURL();
-			URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-			Class urlClass = URLClassLoader.class;
-			Method method = urlClass.getDeclaredMethod("addURL", URL.class);
-			method.setAccessible(true);
-			method.invoke(urlClassLoader, u) == null;
+    @Unroll
+    def "Should Compile and run"() {
+        expect:
+            def file = new File(filename)
+            FileUtils.writeStringToFile(file, code)
+            Compiler.main(filename)
 
-			def name = Class.forName(filename.replace(".enk", ""))
-			def method1 = name.getMethod("main", String[].class)
+            URL u = new File(".").toURL();
+            URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            Class urlClass = URLClassLoader.class;
+            Method method = urlClass.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(urlClassLoader, u) == null;
 
-			//println(name.getMethods())
-			//String[] objs = new String[0];
-			Object[] argss = new Object[1]
-			String[] testArray = [ "1", "2"]
-			argss.putAt(0, testArray as Object)
-			method1.invoke(null,  argss) == null;
+            def name = Class.forName(filename.replace(".enk", ""))
+            def method1 = name.getMethod("main", String[].class)
 
-		where:
-			code                     | filename
-			helloWorld               | "HelloWorld.enk"
-			loopsCode                | "Loops.enk"
-			allTypes                 | "AllPrimitiveTypes.enk"
-			defaultParams            | "DefaultParamTest.enk"
-			fields                   | "Fields.enk"
-			namedParams              | "NamedParamsTest.enk"
-			sumCalculator            | "SumCalculator.enk"
-			defaultConstructor       | "DefaultConstructor.enk"
-			parameterLessConsturctor | "ParameterLessConstructor.enk"
-			construcotrWithParams    | "ConstructorWithParams.enk"
-			equalityTest    		 | "EqualitySyntax.enk"
-			unaryExpressionTest      | "UnaryExpressions.enk"
-			globalLocal				 | "GlobalLocal.enk"
-			staticTest				 | "StaticTest.enk"
-			staticFunctionTest		 | "StaticFunctionTest.enk"
-			importingTest		     | "ImportingTest.enk"
-	}
+            //println(name.getMethods())
+            //String[] objs = new String[0];
+            Object[] argss = new Object[1]
+            String[] testArray = ["1", "2"]
+            argss.putAt(0, testArray as Object)
+            method1.invoke(null, argss) == null;
+
+        where:
+            code                     | filename
+            helloWorld               | "HelloWorld.enk"
+            loopsCode                | "Loops.enk"
+            allTypes                 | "AllPrimitiveTypes.enk"
+            defaultParams            | "DefaultParamTest.enk"
+            fields                   | "Fields.enk"
+            namedParams              | "NamedParamsTest.enk"
+            sumCalculator            | "SumCalculator.enk"
+            defaultConstructor       | "DefaultConstructor.enk"
+            parameterLessConsturctor | "ParameterLessConstructor.enk"
+            construcotrWithParams    | "ConstructorWithParams.enk"
+            equalityTest             | "EqualitySyntax.enk"
+            unaryExpressionTest      | "UnaryExpressions.enk"
+            globalLocal              | "GlobalLocal.enk"
+            staticTest               | "StaticTest.enk"
+            staticFunctionTest       | "StaticFunctionTest.enk"
+            importingTest            | "ImportingTest.enk"
+    }
 
 }
