@@ -5,18 +5,18 @@ package com.kubadziworski.domain;
  */
 public class MetaData {
     private final String className;
-    private final String superClassName;
+    private final String packageName;
 
-    public MetaData(String className, String superClassName) {
+    public MetaData(String className, String packageName) {
         this.className = className;
-        this.superClassName = superClassName;
+        this.packageName = packageName;
     }
 
     public String getClassName() {
         return className;
     }
 
-    public String getSuperClassName() {
-        return superClassName;
+    public String getPackageName() {
+        return packageName;
     }
 }

@@ -1,7 +1,6 @@
 package com.kubadziworski.parsing.visitor;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.BlockContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.domain.Constructor;
@@ -42,7 +41,7 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
         }
         addParametersAsLocalVariables(signature);
         Block block = getBlock(ctx);
-        if (signature.getName().equals(scope.getClassName())) {
+        if (signature.getName().equals(scope.getFullClassName())) {
             return new Constructor(signature, block);
         }
 

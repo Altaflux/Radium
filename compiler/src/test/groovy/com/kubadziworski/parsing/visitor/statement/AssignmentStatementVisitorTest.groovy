@@ -1,13 +1,10 @@
 package com.kubadziworski.parsing.visitor.statement
 
 import com.kubadziworski.antlr.EnkelParser
-import com.kubadziworski.domain.MetaData
 import com.kubadziworski.domain.node.expression.EmptyExpression
 import com.kubadziworski.domain.node.expression.Value
-import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BultInType
-import com.kubadziworski.domain.type.ClassType
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor
 import spock.lang.Specification
 

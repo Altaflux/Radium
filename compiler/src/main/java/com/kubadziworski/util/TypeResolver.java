@@ -36,7 +36,6 @@ public final class TypeResolver {
 
         if (value.IntegerLiteral() != null) {
             stringValue = stringValue.replace("_", "");
-
             if (stringValue.startsWith("0x") || stringValue.startsWith("0X") || stringValue.startsWith("0")) {
                 if (tryInteger(stringValue) != null) {
                     return BultInType.INT;

@@ -5,6 +5,7 @@ import com.kubadziworski.domain.node.expression.FieldReference
 import com.kubadziworski.domain.node.expression.LocalVariableReference
 import com.kubadziworski.domain.resolver.ImportResolver
 import com.kubadziworski.domain.scope.Field
+import com.kubadziworski.domain.scope.GlobalScope
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BultInType
@@ -21,8 +22,8 @@ import java.lang.reflect.Modifier
 class ReferenceExpressionGeneratorTest extends Specification {
     def "should generate field reference"() {
         given:
-            MetaData metaData = new MetaData("Main", "java.lang.Object")
-            Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList()))
+            MetaData metaData = new MetaData("Main", "")
+            Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList(), new GlobalScope()))
             MethodVisitor methodVisitor = Mock()
             ExpressionGenerator expressionGenerator = new ExpressionGenerator(methodVisitor, scope)
             LocalVariable local = new LocalVariable("this",scope.getClassType())

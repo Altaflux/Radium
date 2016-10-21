@@ -5,6 +5,7 @@ import com.kubadziworski.antlr.EnkelParser.ArgumentListContext;
 import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
 import com.kubadziworski.antlr.EnkelParser.SupercallContext;
+
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
@@ -13,6 +14,8 @@ import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.exception.FunctionNameEqualClassException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;
@@ -22,6 +25,7 @@ import java.util.Optional;
 public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     private final ExpressionVisitor expressionVisitor;
     private final Scope scope;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CallExpressionVisitor.class);
 
     public CallExpressionVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
         this.expressionVisitor = expressionVisitor;
@@ -31,7 +35,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     @Override
     public Call visitFunctionCall(@NotNull FunctionCallContext ctx) {
         String functionName = ctx.functionName().getText();
-        if (functionName.equals(scope.getClassName())) {
+        if (functionName.equals(scope.getFullClassName())) {
             throw new FunctionNameEqualClassException(functionName);
         }
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
@@ -50,6 +54,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                 }
                 return new FunctionCall(signature, arguments, owner);
             } catch (Exception e) {
+                LOGGER.error("Exception", e);
                 String possibleClass = ctx.owner.getText();
                 return visitStaticReference(possibleClass, functionName, arguments);
             }
@@ -61,7 +66,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
             return new FunctionCall(signature, arguments, signature.getOwner());
         }
 
-        ClassType thisType = new ClassType(scope.getClassName());
+        ClassType thisType = new ClassType(scope.getFullClassName());
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         return new FunctionCall(signature, arguments, new LocalVariableReference(thisVariable));
     }

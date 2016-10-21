@@ -1,25 +1,30 @@
 package com.kubadziworski.compiler;
 
-import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.bytecodegeneration.BytecodeGenerator;
+import com.kubadziworski.domain.CompilationUnit;
+import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.parsing.Parser;
 import com.kubadziworski.validation.ARGUMENT_ERRORS;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.objectweb.asm.Opcodes;
+import org.apache.tools.ant.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Created by kuba on 15.03.16.
- */
+
 public class Compiler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
+
+    private File compilePath = new File(".");
 
     public static void main(String[] args) throws Exception {
         try {
@@ -30,41 +35,55 @@ public class Compiler {
     }
 
     public void compile(String[] args) throws Exception {
-//        ARGUMENT_ERRORS argumentsErrors = getArgumentValidationErrors(args);
-//        if (argumentsErrors != ARGUMENT_ERRORS.NONE) {
-//            String errorMessage = argumentsErrors.getMessage();
-//            LOGGER.error(errorMessage);
-//            return;
-//        }
-        String path = "C:\\Users\\plozano\\sony\\enkel\\compiler\\target\\Client.enk";
-        File enkelFile = new File(args[0]);
-        String fileAbsolutePath = enkelFile.getAbsolutePath();
 
-        CompilationUnit compilationUnit = new Parser().getCompilationUnit(fileAbsolutePath);
+        List<String> enkelFiles = getListOfFiles(args[0]);
+        if (enkelFiles.isEmpty()) {
+            LOGGER.error(ARGUMENT_ERRORS.NO_FILE.getMessage());
+            return;
+        }
+        LOGGER.info("Files to compile: ");
+        enkelFiles.forEach(LOGGER::info);
+        GlobalScope globalScope = new GlobalScope();
+        Parser parser = new Parser(globalScope);
+        List<CompilationUnit> compilationUnits = parser.processAllFiles(enkelFiles);
 
-        LOGGER.info("Finished Parsing. Started compiling to bytecode.");
-        saveBytecodeToClassFile(compilationUnit);
+        compilationUnits.forEach(compilationUnit -> {
+            LOGGER.info("Finished Parsing. Started compiling to bytecode.");
+            try {
+                saveBytecodeToClassFile(compilationUnit);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
-    private ARGUMENT_ERRORS getArgumentValidationErrors(String[] args) {
-        if (args.length != 1) {
-            return ARGUMENT_ERRORS.NO_FILE;
-        }
-        String filePath = args[0];
-        if (!filePath.endsWith(".enk")) {
-            return ARGUMENT_ERRORS.BAD_FILE_EXTENSION;
-        }
-        return ARGUMENT_ERRORS.NONE;
+    private List<String> getListOfFiles(String path) {
+
+        DirectoryScanner scanner = new DirectoryScanner();
+        // scanner.setIncludes(new String[]{"**/*.java"});
+        scanner.setIncludes(new String[]{path});
+        LOGGER.info("Base path: " + Paths.get(".").toAbsolutePath().normalize().toString());
+        scanner.setBasedir(Paths.get(".").toAbsolutePath().normalize().toString());
+        scanner.setCaseSensitive(true);
+        scanner.scan();
+
+        String[] files = scanner.getIncludedFiles();
+        return Arrays.stream(files).filter(s -> s.endsWith(".enk"))
+                .collect(Collectors.toList());
     }
+
 
     private void saveBytecodeToClassFile(CompilationUnit compilationUnit) throws IOException {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
         byte[] bytecode = bytecodeGenerator.generate(compilationUnit);
         String className = compilationUnit.getClassName();
-        String fileName = className + ".class";
-        LOGGER.info("Finished Compiling. Saving bytecode to '{}'.", Paths.get(fileName).toAbsolutePath());
-        OutputStream os = new FileOutputStream(fileName);
+
+        File base = new File( compilationUnit.getFilePath());
+        File compileFile = new File(base.getParentFile(), className + ".class");
+
+        LOGGER.info("Finished Compiling. Saving bytecode to '{}'.", compileFile.getAbsolutePath());
+        OutputStream os = new FileOutputStream(compileFile);
         IOUtils.write(bytecode, os);
-        LOGGER.info("Done. To run compiled file execute: 'java {}' in current dir",className);
+        LOGGER.info("Done. To run compiled file execute: 'java {}' in current dir", className);
     }
 }

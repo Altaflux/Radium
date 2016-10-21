@@ -1,11 +1,10 @@
 package com.kubadziworski.integration
 
 import com.kubadziworski.compiler.Compiler
-import com.kubadziworski.domain.MetaData
 import org.apache.commons.io.FileUtils
 import spock.lang.Specification
 import spock.lang.Unroll
-import org.apache.commons.lang3.reflect.MethodUtils
+
 import java.lang.reflect.Method
 
 /**

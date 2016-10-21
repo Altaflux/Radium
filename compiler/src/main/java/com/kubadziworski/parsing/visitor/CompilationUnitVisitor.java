@@ -1,11 +1,11 @@
 package com.kubadziworski.parsing.visitor;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ClassDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.CompilationUnitContext;
-import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.domain.ClassDeclaration;
+import com.kubadziworski.domain.CompilationUnit;
+import com.kubadziworski.domain.scope.Scope;
 import org.antlr.v4.runtime.misc.NotNull;
 
 /**
@@ -13,13 +13,22 @@ import org.antlr.v4.runtime.misc.NotNull;
  */
 public class CompilationUnitVisitor extends EnkelBaseVisitor<CompilationUnit> {
 
+    private final Scope scope;
+    private final String filePath;
+
+    public CompilationUnitVisitor(Scope scope, String filePath) {
+        this.scope = scope;
+        this.filePath = filePath;
+    }
+
     @Override
     public CompilationUnit visitCompilationUnit(@NotNull CompilationUnitContext ctx) {
 
-
-        ClassVisitor classVisitor = new ClassVisitor(ctx.importDeclaration());
         ClassDeclarationContext classDeclarationContext = ctx.classDeclaration();
+        ClassVisitor classVisitor = new ClassVisitor(scope);
         ClassDeclaration classDeclaration = classDeclarationContext.accept(classVisitor);
-        return new CompilationUnit(classDeclaration);
+        return new CompilationUnit(classDeclaration, filePath);
     }
+
+
 }

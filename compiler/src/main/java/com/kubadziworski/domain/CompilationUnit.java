@@ -6,9 +6,11 @@ package com.kubadziworski.domain;
 public class CompilationUnit {
 
     private final ClassDeclaration classDeclaration;
+    private final String filePath;
 
-    public CompilationUnit(ClassDeclaration classDeclaration) {
+    public CompilationUnit(ClassDeclaration classDeclaration, String filePath) {
         this.classDeclaration = classDeclaration;
+        this.filePath = filePath;
     }
 
     public ClassDeclaration getClassDeclaration() {
@@ -17,5 +19,9 @@ public class CompilationUnit {
 
     public String getClassName() {
         return classDeclaration.getName();
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 }

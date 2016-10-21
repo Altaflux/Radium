@@ -9,6 +9,7 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 
 import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.Type;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
@@ -76,7 +77,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
             return new FieldReference(field, new EmptyExpression(field.getOwner()));
         }
 
-        ClassType thisType = new ClassType(scope.getClassName());
+        Type thisType = scope.getClassType();
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         return new FieldReference(field, new LocalVariableReference(thisVariable));
 

@@ -93,7 +93,12 @@ typeImportOnDemandDeclaration
 	;
 
 //RULES
-compilationUnit : importDeclaration* classDeclaration EOF ;
+compilationUnit : packageDeclaration? importDeclaration* classDeclaration EOF ;
+//
+packageDeclaration
+	:   'package' ID ('.' ID)* ';'
+	;
+
 classDeclaration : className '{' classBody '}' ;
 className : qualifiedName ;
 classBody :  field* function* ;
