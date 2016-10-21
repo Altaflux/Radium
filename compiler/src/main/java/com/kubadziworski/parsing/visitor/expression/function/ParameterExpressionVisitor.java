@@ -11,7 +11,6 @@ import com.kubadziworski.util.TypeResolver;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
-import java.util.Optional;
 
 /**
  * Created by kuba on 09.05.16.
@@ -30,7 +29,7 @@ public class ParameterExpressionVisitor extends EnkelBaseVisitor<Parameter> {
     public Parameter visitParameter(@NotNull ParameterContext ctx) {
         String name = ctx.ID().getText();
         Type type = TypeResolver.getFromTypeContext(ctx.type(), scope);
-        return new Parameter(name, type, Optional.empty());
+        return new Parameter(name, type, null);
     }
 
     @Override
@@ -38,6 +37,6 @@ public class ParameterExpressionVisitor extends EnkelBaseVisitor<Parameter> {
         String name = ctx.ID().getText();
         Type type = TypeResolver.getFromTypeContext(ctx.type(), scope);
         Expression defaultValue = ctx.defaultValue.accept(expressionVisitor);
-        return new Parameter(name, type, Optional.of(defaultValue));
+        return new Parameter(name, type, defaultValue);
     }
 }

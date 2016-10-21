@@ -43,7 +43,8 @@ public class ConditionalExpressionGenerator {
     }
 
     private void generateObjectsComparison(Expression leftExpression, Expression rightExpression, CompareSign compareSign) {
-        Parameter parameter = new Parameter("o", new ClassType("java.lang.Object"), Optional.empty());
+        Parameter parameter = new Parameter("o", new ClassType("java.lang.Object"), null);
+
         List<Parameter> parameters = Collections.singletonList(parameter);
         Argument argument = new Argument(rightExpression, Optional.empty());
         List<Argument> arguments = Collections.singletonList(argument);

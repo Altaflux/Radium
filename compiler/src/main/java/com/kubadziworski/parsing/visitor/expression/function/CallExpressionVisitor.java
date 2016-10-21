@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     private final ExpressionVisitor expressionVisitor;
@@ -43,7 +42,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         if (ownerIsExplicit) {
             try {
                 Expression owner = ctx.owner.accept(expressionVisitor);
-                FunctionSignature signature = scope.getMethodCallSignature(Optional.of(owner.getType()), functionName, arguments);
+                FunctionSignature signature = scope.getMethodCallSignature(owner.getType(), functionName, arguments);
 
                 if (Modifier.isStatic(signature.getModifiers())) {
                     //If the reference is static we can avoid calling the owning reference
@@ -87,7 +86,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
 
     private Call visitStaticReference(String possibleClass, String functionName, List<Argument> arguments) {
         ClassType classType = scope.resolveClassName(possibleClass);
-        FunctionSignature signature = scope.getMethodCallSignature(Optional.of(classType), functionName, arguments);
+        FunctionSignature signature = scope.getMethodCallSignature(classType, functionName, arguments);
         return new FunctionCall(signature, arguments, classType);
     }
 

@@ -67,7 +67,7 @@ class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
     }
 
     private Function getGeneratedMainMethod() {
-        Parameter args = new Parameter("args", BultInType.STRING_ARR, Optional.empty());
+        Parameter args = new Parameter("args", BultInType.STRING_ARR, null);
         Type owner = scope.getClassType();
         FunctionSignature functionSignature = new FunctionSignature("main", Collections.singletonList(args), BultInType.VOID, Modifier.PUBLIC + Modifier.STATIC, owner);
         ConstructorCall constructorCall = new ConstructorCall(scope.getFullClassName());

@@ -13,10 +13,10 @@ import java.util.Optional;
 @ToString
 public class Parameter implements Expression {
     private final String name;
-    private final Optional<Expression> defaultValue;
+    private final Expression defaultValue;
     private final Type type;
 
-    public Parameter(String name, Type type, Optional<Expression> defaultValue) {
+    public Parameter(String name, Type type, Expression defaultValue) {
         this.type = type;
         this.name = name;
         this.defaultValue = defaultValue;
@@ -27,7 +27,7 @@ public class Parameter implements Expression {
     }
 
     public Optional<Expression> getDefaultValue() {
-        return defaultValue;
+        return Optional.ofNullable(defaultValue);
     }
 
     @Override

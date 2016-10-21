@@ -14,7 +14,7 @@ class ClassPathScopeTest extends Specification {
     def "GetMethodSignature"() {
         given:
         def expectedParams = expectedParamsTypes.collect {
-            new Parameter("arg", it, Optional.empty())
+            new Parameter("arg", it, null)
         }
         def expectedSignature = new FunctionSignature(expectedName, expectedParams, expectedReturnType, Modifier.PUBLIC, type)
         when:
@@ -44,7 +44,7 @@ class ClassPathScopeTest extends Specification {
     def "GetConstructorSignature"() {
         given:
         def expectedParams = expectedParamsTypes.collect {
-            new Parameter("arg", it, Optional.empty())
+            new Parameter("arg", it, null)
         }
         def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, BultInType.VOID, Modifier.PUBLIC, new ClassType(className));
         when:

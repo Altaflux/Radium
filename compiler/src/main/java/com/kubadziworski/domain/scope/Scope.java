@@ -92,16 +92,16 @@ public class Scope {
     }
 
     private FunctionSignature getConstructorCallSignatureForCurrentClass(List<Argument> arguments) {
-        return getMethodCallSignature(Optional.empty(), getFullClassName(), arguments);
+        return getMethodCallSignature(null, getFullClassName(), arguments);
     }
 
-    public FunctionSignature getMethodCallSignature(Optional<Type> owner, String methodName, List<Argument> arguments) {
-        boolean isDifferentThanCurrentClass = owner.isPresent() && !owner.get().equals(getClassType());
+    public FunctionSignature getMethodCallSignature(Type owner, String methodName, List<Argument> arguments) {
+        boolean isDifferentThanCurrentClass = owner != null && !owner.equals(getClassType());
         if (isDifferentThanCurrentClass) {
 
             List<Type> argumentsTypes = arguments.stream().map(Argument::getType).collect(toList());
-           return enkelScope.getMethodSignature(owner.get(), methodName, arguments).map(Optional::of)
-                    .orElse(new ClassPathScope().getMethodSignature(owner.get(), methodName, argumentsTypes))
+           return enkelScope.getMethodSignature(owner, methodName, arguments).map(Optional::of)
+                    .orElse(new ClassPathScope().getMethodSignature(owner, methodName, argumentsTypes))
                     .orElseThrow(() -> new MethodSignatureNotFoundException(this, methodName, arguments));
         }
         return getMethodCallSignature(methodName, arguments);

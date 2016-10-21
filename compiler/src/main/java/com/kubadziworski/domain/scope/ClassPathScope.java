@@ -2,7 +2,6 @@ package com.kubadziworski.domain.scope;
 
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;

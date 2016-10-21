@@ -9,10 +9,9 @@ import com.kubadziworski.domain.type.Type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
 
 import static java.util.stream.Collectors.toList;
 
@@ -24,7 +23,7 @@ public final class ReflectionObjectToSignatureMapper {
     public static FunctionSignature fromMethod(Method method) {
         String name = method.getName();
         List<Parameter> parameters = Arrays.stream(method.getParameters())
-                .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), Optional.empty()))
+                .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), null))
                 .collect(toList());
         Class<?> returnType = method.getReturnType();
         ClassType owner = new ClassType(method.getDeclaringClass().getName());
@@ -34,7 +33,7 @@ public final class ReflectionObjectToSignatureMapper {
     public static FunctionSignature fromConstructor(Constructor constructor, Type owner) {
         String name = constructor.getName();
         List<Parameter> parameters = Arrays.stream(constructor.getParameters())
-                .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), Optional.empty()))
+                .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), null))
                 .collect(toList());
 
         return new FunctionSignature(name, parameters, BultInType.VOID, constructor.getModifiers(), owner);

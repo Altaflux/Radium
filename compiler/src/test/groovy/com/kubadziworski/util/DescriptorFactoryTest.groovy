@@ -13,7 +13,7 @@ class DescriptorFactoryTest extends spock.lang.Specification {
     def "test descriptor factory with function"() {
         given:
             Function function = Mock(Function)
-            Parameter param = new Parameter("param", paramType,Optional.empty())
+            Parameter param = new Parameter("param", paramType,null)
 
         when:
             def descr = DescriptorFactory.getMethodDescriptor(function)
@@ -34,7 +34,7 @@ class DescriptorFactoryTest extends spock.lang.Specification {
 
     def "test descriptor factory with signature"() {
         given:
-            Parameter param = new Parameter("param", paramType,Optional.empty())
+            Parameter param = new Parameter("param", paramType,null)
             FunctionSignature signature = Mock(FunctionSignature)
 
         when:

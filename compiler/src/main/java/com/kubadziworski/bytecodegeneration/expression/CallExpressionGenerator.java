@@ -13,7 +13,6 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class CallExpressionGenerator {
     private final ExpressionGenerator expressionGenerator;
@@ -56,7 +55,7 @@ public class CallExpressionGenerator {
     }
 
     private void generateArguments(FunctionCall call) {
-        FunctionSignature signature = scope.getMethodCallSignature(Optional.of(call.getOwnerType()), call.getIdentifier(), call.getArguments());
+        FunctionSignature signature = scope.getMethodCallSignature(call.getOwnerType(), call.getIdentifier(), call.getArguments());
         generateArguments(call, signature);
     }
 
