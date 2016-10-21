@@ -53,7 +53,6 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                 }
                 return new FunctionCall(signature, arguments, owner);
             } catch (Exception e) {
-                LOGGER.error("Exception", e);
                 String possibleClass = ctx.owner.getText();
                 return visitStaticReference(possibleClass, functionName, arguments);
             }

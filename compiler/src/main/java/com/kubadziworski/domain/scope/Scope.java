@@ -25,17 +25,17 @@ public class Scope {
 
     private final LinkedMap<String, LocalVariable> localVariables;
     private final Map<String, Field> fields;
-    private final ImportResolver imports;
+    private final ImportResolver importResolver;
     private final MetaData metaData;
     private final EnkelScope enkelScope;
 
-    public Scope(MetaData metaData, ImportResolver imports) {
+    public Scope(MetaData metaData, ImportResolver importResolver) {
         this.metaData = metaData;
         functionSignatures = new ArrayList<>();
         localVariables = new LinkedMap<>();
         fields = new LinkedMap<>();
-        this.imports = imports;
-        this.enkelScope = new EnkelScope(imports);
+        this.importResolver = importResolver;
+        this.enkelScope = new EnkelScope(importResolver.getGlobalScope());
     }
 
     public Scope(Scope scope) {
@@ -43,16 +43,8 @@ public class Scope {
         functionSignatures = Lists.newArrayList(scope.functionSignatures);
         fields = new LinkedMap<>(scope.fields);
         localVariables = new LinkedMap<>(scope.localVariables);
-        this.imports = scope.getImports();
+        this.importResolver = scope.getImportResolver();
         this.enkelScope = scope.enkelScope;
-    }
-
-    public void resolveImports() {
-        imports.parseImports();
-    }
-
-    public void partialImportResolve() {
-        imports.doPreClassParse();
     }
 
     public void addSignature(FunctionSignature signature) {
@@ -116,7 +108,7 @@ public class Scope {
                 .filter(signature -> signature.matches(identifier, arguments))
                 .findFirst();
 
-        return function.map(Optional::of).orElse(imports.getMethod(identifier, arguments))
+        return function.map(Optional::of).orElse(importResolver.getMethod(identifier, arguments))
                 .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier, arguments));
 
     }
@@ -166,7 +158,7 @@ public class Scope {
     }
 
     public Field getField(String fieldName) {
-        return Optional.ofNullable(fields.get(fieldName)).map(Optional::of).orElse(imports.getField(fieldName))
+        return Optional.ofNullable(fields.get(fieldName)).map(Optional::of).orElse(importResolver.getField(fieldName))
                 .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
     }
 
@@ -198,12 +190,12 @@ public class Scope {
         return getClassType().getInternalName();
     }
 
-    private ImportResolver getImports() {
-        return imports;
+    public ImportResolver getImportResolver() {
+        return importResolver;
     }
 
     public ClassType resolveClassName(String className) {
-        return imports.getClass(className).orElse(new ClassType(className));
+        return importResolver.getClass(className).orElse(new ClassType(className));
     }
 
 }

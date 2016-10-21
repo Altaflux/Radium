@@ -58,14 +58,15 @@ public class PhaseVisitor {
                 .stream()
                 .map(this::processClassDeclarations)
                 .peek(scope -> globalScope.scopeMap.put(scope.scope.getFullClassName(), scope.scope))
-                .peek(enkelParserScope -> enkelParserScope.scope.partialImportResolve())
+                .collect(Collectors.toList());
+
+        parserScopes.stream()
+                .peek(enkelParserScope -> enkelParserScope.scope.getImportResolver().doPreClassParse())
                 .peek(enkelParserScope -> processFieldDeclarations(enkelParserScope.compilationData, enkelParserScope.scope))
-                .peek(enkelParserScope -> {
-                    processMethodDeclarations(enkelParserScope.compilationData, enkelParserScope.scope);
-                }).collect(Collectors.toList());
+                .forEach(enkelParserScope -> processMethodDeclarations(enkelParserScope.compilationData, enkelParserScope.scope));
 
         return parserScopes.stream().map(enkelParserScope -> {
-            enkelParserScope.scope.resolveImports();
+            enkelParserScope.scope.getImportResolver().parseImports();
             return processCompilationUnit(enkelParserScope.compilationData, enkelParserScope.scope);
         }).collect(Collectors.toList());
     }

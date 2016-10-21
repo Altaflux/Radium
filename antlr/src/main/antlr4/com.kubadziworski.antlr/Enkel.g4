@@ -112,8 +112,6 @@ functionName : ID ;
 parameter : type ID ;
 parameterWithDefaultValue : type ID '=' defaultValue=expression ;
 
-//classType : qualifiedName  ;
-
 block : '{' blockStatement* '}' ;
 
 blockStatement :  {(_input.LA(1) != OpenBrace) }? statement eos ;

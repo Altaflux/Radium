@@ -1,7 +1,6 @@
 package com.kubadziworski.domain.scope;
 
 import com.kubadziworski.domain.node.expression.Argument;
-import com.kubadziworski.domain.resolver.ImportResolver;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 
@@ -13,10 +12,9 @@ public class EnkelScope {
 
     private final GlobalScope globalScope;
 
-    //TODO DO NOT IMPORT STATICS IMPORTS FROM OTHER CLASSES
-    //FIX GlobalScope structure
-    public EnkelScope(ImportResolver globalScope) {
-        this.globalScope = globalScope.getGlobalScope();
+
+    public EnkelScope(GlobalScope globalScope) {
+        this.globalScope = globalScope;
     }
 
     public Optional<FunctionSignature> getMethodSignature(Type owner, String methodName, List<Argument> arguments) {

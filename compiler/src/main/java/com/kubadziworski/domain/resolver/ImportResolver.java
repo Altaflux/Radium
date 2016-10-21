@@ -49,7 +49,7 @@ public class ImportResolver {
 
     public void parseImports() {
         List<DeclarationDescriptor> imports = new ArrayList<>();
-        imports.addAll(doOnDemanImport("java.lang"));
+        imports.addAll(doOnDemandImport("java.lang"));
         List<DeclarationDescriptor> classImports = importDeclarationContexts.stream().map(importDeclarationContext -> {
             if (importDeclarationContext.singleTypeImportDeclaration() != null) {
                 return doSingleTypeImport(importDeclarationContext.singleTypeImportDeclaration().typeName().getText());
@@ -57,7 +57,7 @@ public class ImportResolver {
 
             if (importDeclarationContext.typeImportOnDemandDeclaration() != null) {
                 String importPackage = importDeclarationContext.typeImportOnDemandDeclaration().packageOrTypeName().getText();
-                return doOnDemanImport(importPackage);
+                return doOnDemandImport(importPackage);
             }
             return null;
         }).filter(stringStringMap -> stringStringMap != null)
@@ -67,7 +67,7 @@ public class ImportResolver {
         declarationDescriptors.addAll(imports);
     }
 
-    private List<DeclarationDescriptor> doOnDemanImport(String importPackage) {
+    private List<DeclarationDescriptor> doOnDemandImport(String importPackage) {
 
 
         List<DeclarationDescriptor> descriptors = new ArrayList<>();
