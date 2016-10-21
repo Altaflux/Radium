@@ -27,6 +27,10 @@ class FieldVisitorTest extends Specification {
             1* fieldContext.name() >> nameContext
             1* fieldContext.type() >> typeContext
             1* typeContext.getText() >> typeName
+
+            if(typeName == "java.lang.Integer"){
+                1* scope.resolveClassName(typeName) >> new ClassType("java.lang.Integer")
+            }
         where:
         name        | typeName            | expectedType                       | expectedOwnerInternalName
         "var"       | "int"               | BultInType.INT                     | "Main"

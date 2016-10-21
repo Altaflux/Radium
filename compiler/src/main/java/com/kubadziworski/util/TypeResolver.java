@@ -3,6 +3,7 @@ package com.kubadziworski.util;
 import com.google.common.primitives.*;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.TypeContext;
+import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
@@ -21,6 +22,16 @@ public final class TypeResolver {
     public static Type getFromTypeContext(TypeContext typeContext) {
         if (typeContext == null) return BultInType.VOID;
         return getFromTypeName(typeContext.getText());
+    }
+
+    public static Type getFromTypeContext(TypeContext typeContext, Scope scope) {
+        if (typeContext == null) return BultInType.VOID;
+        String typeName = typeContext.getText();
+
+        if (typeName.equals("java.lang.String")) return BultInType.STRING;
+        Optional<? extends Type> builtInType = getBuiltInType(typeName);
+        if (builtInType.isPresent()) return builtInType.get();
+        return scope.resolveClassName(typeName);
     }
 
     public static Type getFromTypeName(String typeName) {

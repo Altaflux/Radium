@@ -20,4 +20,24 @@ public class PropertyDescriptor implements DeclarationDescriptor {
     public Field getField() {
         return field;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PropertyDescriptor that = (PropertyDescriptor) o;
+
+        if (!name.equals(that.name)) return false;
+        return field.equals(that.field);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + field.hashCode();
+        return result;
+    }
 }

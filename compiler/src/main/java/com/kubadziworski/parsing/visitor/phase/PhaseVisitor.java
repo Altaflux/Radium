@@ -58,6 +58,7 @@ public class PhaseVisitor {
                 .stream()
                 .map(this::processClassDeclarations)
                 .peek(scope -> globalScope.scopeMap.put(scope.scope.getFullClassName(), scope.scope))
+                .peek(enkelParserScope -> enkelParserScope.scope.partialImportResolve())
                 .peek(enkelParserScope -> processFieldDeclarations(enkelParserScope.compilationData, enkelParserScope.scope))
                 .peek(enkelParserScope -> {
                     processMethodDeclarations(enkelParserScope.compilationData, enkelParserScope.scope);

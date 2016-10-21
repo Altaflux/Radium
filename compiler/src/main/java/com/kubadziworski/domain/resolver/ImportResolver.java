@@ -7,17 +7,14 @@ import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.exception.BadImportException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class ImportResolver {
 
     private final List<EnkelParser.ImportDeclarationContext> importDeclarationContexts;
-    private final List<DeclarationDescriptor> declarationDescriptors = new ArrayList<>();
+    private final HashSet<DeclarationDescriptor> declarationDescriptors = new HashSet<>();
     private final ClazzImportResolver clazzImportResolver;
     private final EnkelImportResolver enkelImportResolver;
     private final GlobalScope globalScope;
@@ -29,6 +26,25 @@ public class ImportResolver {
         this.enkelImportResolver = new EnkelImportResolver(globalScope);
         this.globalScope = globalScope;
 
+    }
+
+    public void doPreClassParse(){
+        List<DeclarationDescriptor> imports = new ArrayList<>();
+        List<DeclarationDescriptor> classImports = importDeclarationContexts.stream().map(importDeclarationContext -> {
+            if (importDeclarationContext.singleTypeImportDeclaration() != null) {
+                return enkelImportResolver.preParseClassDeclarations(importDeclarationContext.singleTypeImportDeclaration().typeName().getText());
+            }
+
+            if (importDeclarationContext.typeImportOnDemandDeclaration() != null) {
+                String importPackage = importDeclarationContext.typeImportOnDemandDeclaration().packageOrTypeName().getText();
+                return enkelImportResolver.extractClassesFromPackage(importPackage);
+            }
+            return null;
+        }).filter(stringStringMap -> stringStringMap != null)
+                .flatMap(Collection::stream).collect(Collectors.toList());
+
+        imports.addAll(classImports);
+        declarationDescriptors.addAll(imports);
     }
 
     public void parseImports() {

@@ -32,7 +32,7 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
     @Override
     public FunctionSignature visitFunctionDeclaration(@NotNull FunctionDeclarationContext ctx) {
         String functionName = ctx.functionName().getText();
-        Type returnType = TypeResolver.getFromTypeContext(ctx.type());
+        Type returnType = TypeResolver.getFromTypeContext(ctx.type(), scope);
         ParametersListContext parametersCtx = ctx.parametersList();
 
 
@@ -45,7 +45,7 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
 
         //TODO SET CORRECTLY MODIFIERS
         if (parametersCtx != null) {
-            List<Parameter> parameters = parametersCtx.accept(new ParameterExpressionListVisitor(expressionVisitor));
+            List<Parameter> parameters = parametersCtx.accept(new ParameterExpressionListVisitor(expressionVisitor, scope));
             return new FunctionSignature(functionName, parameters, returnType, Modifier.PUBLIC + modifiers, scope.getClassType());
         }
         return new FunctionSignature(functionName, Collections.emptyList(), returnType, Modifier.PUBLIC + modifiers, scope.getClassType());

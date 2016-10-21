@@ -25,7 +25,7 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
     @Override
     public Field visitField(@NotNull EnkelParser.FieldContext ctx) {
         Type owner = scope.getClassType();
-        Type type = TypeResolver.getFromTypeContext(ctx.type());
+        Type type = TypeResolver.getFromTypeContext(ctx.type(), scope);
         String name = ctx.name().getText();
         return new Field(name, owner, type, Modifier.PUBLIC);
     }

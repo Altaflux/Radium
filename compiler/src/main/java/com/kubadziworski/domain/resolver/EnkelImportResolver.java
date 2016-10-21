@@ -5,8 +5,6 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.scope.Scope;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -24,6 +22,13 @@ public class EnkelImportResolver implements BaseImportResolver {
         this.globalScope = globalScope;
     }
 
+    public List<DeclarationDescriptor> preParseClassDeclarations(String importPackage){
+        if (globalScope.scopeMap.containsKey(importPackage)) {
+            ClassEntity entity = splitDeclaration(importPackage);
+            return Collections.singletonList(new ClassDescriptor(entity.clazzName, entity.packageName));
+        }
+        return Collections.emptyList();
+    }
 
     @Override
     public List<DeclarationDescriptor> extractClazzFieldOrMethods(String importPackage) {

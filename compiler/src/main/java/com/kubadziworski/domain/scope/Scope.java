@@ -51,6 +51,10 @@ public class Scope {
         imports.parseImports();
     }
 
+    public void partialImportResolve() {
+        imports.doPreClassParse();
+    }
+
     public void addSignature(FunctionSignature signature) {
         if (isParameterLessSignatureExists(signature.getName())) {
             throw new MethodWithNameAlreadyDefinedException(signature);
