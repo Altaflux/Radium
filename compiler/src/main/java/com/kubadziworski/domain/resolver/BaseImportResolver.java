@@ -6,7 +6,9 @@ import java.util.Optional;
 
 public interface BaseImportResolver {
 
-    List<DeclarationDescriptor> extractClazzFieldOrMethods(String importPackage);
+    Optional<DeclarationDescriptor> preParseClassDeclarations(String importPackage);
+
+    List<DeclarationDescriptor> extractFieldOrMethods(String importPackage);
 
     Optional<List<DeclarationDescriptor>> getMethodsOrFields(String importPackage);
 

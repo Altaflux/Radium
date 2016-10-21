@@ -54,21 +54,26 @@ public class PhaseVisitor {
 
     public List<CompilationUnit> processAllClasses(List<CompilationData> enkelParsers) {
 
+        //Phase 1, loads to the Global Scope all the names of the Enkel files
         List<EnkelParserScope> parserScopes = enkelParsers
                 .stream()
                 .map(this::processClassDeclarations)
                 .peek(scope -> globalScope.scopeMap.put(scope.scope.getFullClassName(), scope.scope))
                 .collect(Collectors.toList());
 
+        //Phase 2 resolve all class references of the ImportResolvers of each scope
         parserScopes.stream()
-                .peek(enkelParserScope -> enkelParserScope.scope.getImportResolver().doPreClassParse())
+                .peek(enkelParserScope -> enkelParserScope.scope.getImportResolver().loadClassImports())
                 .peek(enkelParserScope -> processFieldDeclarations(enkelParserScope.compilationData, enkelParserScope.scope))
                 .forEach(enkelParserScope -> processMethodDeclarations(enkelParserScope.compilationData, enkelParserScope.scope));
 
-        return parserScopes.stream().map(enkelParserScope -> {
-            enkelParserScope.scope.getImportResolver().parseImports();
-            return processCompilationUnit(enkelParserScope.compilationData, enkelParserScope.scope);
-        }).collect(Collectors.toList());
+        //Phase 3 resolve all static methods and field references of the ImportResolvers of each scope
+        parserScopes.forEach(enkelParserScope -> enkelParserScope.scope.getImportResolver().loadMethodsAndFieldsImports());
+
+        //Phase 4 process the compilation data, all imports should already be resolved by now.
+        return parserScopes.stream()
+                .map(enkelParserScope -> processCompilationUnit(enkelParserScope.compilationData, enkelParserScope.scope))
+                .collect(Collectors.toList());
     }
 
     private static class EnkelParserScope {

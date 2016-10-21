@@ -6,6 +6,7 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.exception.BadImportException;
+import org.apache.commons.collections4.ListUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ImportResolver {
 
-    private final List<EnkelParser.ImportDeclarationContext> importDeclarationContexts;
+    private final List<ImportDeclaration> importDeclarationContexts;
     private final HashSet<DeclarationDescriptor> declarationDescriptors = new HashSet<>();
     private final ClazzImportResolver clazzImportResolver;
     private final EnkelImportResolver enkelImportResolver;
@@ -21,81 +22,83 @@ public class ImportResolver {
 
     public ImportResolver(List<EnkelParser.ImportDeclarationContext> importDeclarationContexts, GlobalScope globalScope) {
 
-        this.importDeclarationContexts = importDeclarationContexts;
+        this.importDeclarationContexts = new ArrayList<>(convertToImportDeclarations(importDeclarationContexts));
         this.clazzImportResolver = new ClazzImportResolver();
         this.enkelImportResolver = new EnkelImportResolver(globalScope);
         this.globalScope = globalScope;
 
     }
 
-    public void doPreClassParse(){
+    public void loadClassImports() {
         List<DeclarationDescriptor> imports = new ArrayList<>();
-        List<DeclarationDescriptor> classImports = importDeclarationContexts.stream().map(importDeclarationContext -> {
-            if (importDeclarationContext.singleTypeImportDeclaration() != null) {
-                return enkelImportResolver.preParseClassDeclarations(importDeclarationContext.singleTypeImportDeclaration().typeName().getText());
-            }
+        List<ImportDeclaration> missingDeclarations = new ArrayList<>();
+        for (ImportDeclaration importDeclarationContext : importDeclarationContexts) {
+            String importPackage = importDeclarationContext.importDeclaration;
+            if (!importDeclarationContext.isOnDemand) {
+                Optional<DeclarationDescriptor> descriptors =
+                        enkelImportResolver.preParseClassDeclarations(importPackage)
+                                .map(Optional::of).orElse(clazzImportResolver.preParseClassDeclarations(importPackage));
 
-            if (importDeclarationContext.typeImportOnDemandDeclaration() != null) {
-                String importPackage = importDeclarationContext.typeImportOnDemandDeclaration().packageOrTypeName().getText();
-                return enkelImportResolver.extractClassesFromPackage(importPackage);
+                if (descriptors.isPresent()) {
+                    imports.add(descriptors.get());
+                } else {
+                    missingDeclarations.add(importDeclarationContext);
+                }
+            } else {
+                List<DeclarationDescriptor> descriptors = ListUtils.sum(clazzImportResolver.extractClassesFromPackage(importPackage),
+                        enkelImportResolver.extractClassesFromPackage(importPackage));
+                imports.addAll(descriptors);
+                if (descriptors.isEmpty()) {
+                    missingDeclarations.add(importDeclarationContext);
+                }
             }
-            return null;
-        }).filter(stringStringMap -> stringStringMap != null)
-                .flatMap(Collection::stream).collect(Collectors.toList());
-
-        imports.addAll(classImports);
+        }
+        imports.addAll(clazzImportResolver.extractClassesFromPackage("java.lang"));
         declarationDescriptors.addAll(imports);
+        importDeclarationContexts.clear();
+        importDeclarationContexts.addAll(missingDeclarations);
     }
 
-    public void parseImports() {
+    public void loadMethodsAndFieldsImports() {
         List<DeclarationDescriptor> imports = new ArrayList<>();
-        imports.addAll(doOnDemandImport("java.lang"));
-        List<DeclarationDescriptor> classImports = importDeclarationContexts.stream().map(importDeclarationContext -> {
-            if (importDeclarationContext.singleTypeImportDeclaration() != null) {
-                return doSingleTypeImport(importDeclarationContext.singleTypeImportDeclaration().typeName().getText());
+        List<ImportDeclaration> missingDeclarations = new ArrayList<>();
+        for (ImportDeclaration importDeclarationContext : importDeclarationContexts) {
+            String importPackage = importDeclarationContext.importDeclaration;
+            List<DeclarationDescriptor> descriptors;
+
+            if (!importDeclarationContext.isOnDemand) {
+                descriptors = doSingleTypeImport(importPackage);
+            } else {
+                descriptors = doOnDemandImport(importPackage);
             }
 
-            if (importDeclarationContext.typeImportOnDemandDeclaration() != null) {
-                String importPackage = importDeclarationContext.typeImportOnDemandDeclaration().packageOrTypeName().getText();
-                return doOnDemandImport(importPackage);
+            imports.addAll(descriptors);
+            if (descriptors.isEmpty()) {
+                missingDeclarations.add(importDeclarationContext);
             }
-            return null;
-        }).filter(stringStringMap -> stringStringMap != null)
-                .flatMap(Collection::stream).collect(Collectors.toList());
+        }
 
-        imports.addAll(classImports);
         declarationDescriptors.addAll(imports);
+        if (!missingDeclarations.isEmpty()) {
+            throw new BadImportException(missingDeclarations.stream()
+                    .map(importDeclaration -> importDeclaration.importDeclaration)
+                    .collect(Collectors.toList()));
+        }
+
     }
 
     private List<DeclarationDescriptor> doOnDemandImport(String importPackage) {
-
-
-        List<DeclarationDescriptor> descriptors = new ArrayList<>();
-        Optional<List<DeclarationDescriptor>> enkelDescriptorList = enkelImportResolver.getMethodsOrFields(importPackage);
-        if (enkelDescriptorList.isPresent()) {
-            return enkelDescriptorList.get();
-        }
-
-        Optional<List<DeclarationDescriptor>> descriptorList = clazzImportResolver.getMethodsOrFields(importPackage);
-        if (descriptorList.isPresent()) {
-            return descriptorList.get();
-        }
-
-        descriptors.addAll(enkelImportResolver.extractClassesFromPackage(importPackage));
-        descriptors.addAll(clazzImportResolver.extractClassesFromPackage(importPackage));
-
-        return descriptors;
+        return enkelImportResolver.getMethodsOrFields(importPackage).map(Optional::of)
+                .orElse(clazzImportResolver.getMethodsOrFields(importPackage))
+                .orElse(Collections.emptyList());
     }
 
     private List<DeclarationDescriptor> doSingleTypeImport(String originalImportString) {
         List<DeclarationDescriptor> descriptors = new ArrayList<>();
 
-        descriptors.addAll(enkelImportResolver.extractClazzFieldOrMethods(originalImportString));
-        descriptors.addAll(clazzImportResolver.extractClazzFieldOrMethods(originalImportString));
+        descriptors.addAll(enkelImportResolver.extractFieldOrMethods(originalImportString));
+        descriptors.addAll(clazzImportResolver.extractFieldOrMethods(originalImportString));
 
-        if (descriptors.isEmpty()) {
-            throw new BadImportException(originalImportString);
-        }
         return descriptors;
     }
 
@@ -139,5 +142,29 @@ public class ImportResolver {
 
     public GlobalScope getGlobalScope() {
         return globalScope;
+    }
+
+    private static List<ImportDeclaration> convertToImportDeclarations(List<EnkelParser.ImportDeclarationContext> importDeclarationContexts) {
+        return importDeclarationContexts.stream()
+                .map(importDeclarationContext -> {
+                    if (importDeclarationContext.singleTypeImportDeclaration() != null) {
+                        return new ImportDeclaration(importDeclarationContext.singleTypeImportDeclaration().typeName().getText(),
+                                false);
+                    } else {
+                        return new ImportDeclaration(importDeclarationContext.typeImportOnDemandDeclaration().packageOrTypeName().getText(),
+                                true);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static class ImportDeclaration {
+        private final String importDeclaration;
+        private final boolean isOnDemand;
+
+        private ImportDeclaration(String importDeclaration, boolean isOnDemand) {
+            this.importDeclaration = importDeclaration;
+            this.isOnDemand = isOnDemand;
+        }
     }
 }

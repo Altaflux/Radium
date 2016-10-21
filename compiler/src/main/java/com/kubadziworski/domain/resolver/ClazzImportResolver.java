@@ -16,39 +16,34 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ClazzImportResolver implements BaseImportResolver {
+class ClazzImportResolver implements BaseImportResolver {
 
     private static final ClassPathScope classPathScope = new ClassPathScope();
-    private static Map<String, Reflections> packageCache = new ConcurrentHashMap<>();
+    private static final Reflections reflections = new Reflections(new ConfigurationBuilder()
+            .setScanners(new ResourcesScanner())
+            .forPackages("")
+            .setUrls(ClasspathHelper.forClassLoader()));
 
     @Override
-    public List<DeclarationDescriptor> extractClazzFieldOrMethods(String importPackage) {
+    public Optional<DeclarationDescriptor> preParseClassDeclarations(String importPackage) {
         Class clazz;
         if ((clazz = getClazz(importPackage)) != null) {
-            return Collections.singletonList(new ClassDescriptor(ClassUtils.getSimpleName(clazz), ClassUtils.getPackageName(clazz)));
+            return Optional.of(new ClassDescriptor(ClassUtils.getSimpleName(clazz), ClassUtils.getPackageName(clazz)));
         }
+        return Optional.empty();
+    }
 
+    @Override
+    public List<DeclarationDescriptor> extractFieldOrMethods(String importPackage) {
         return findSpecificMethodOrField(importPackage);
     }
 
-
     @Override
     public List<DeclarationDescriptor> extractClassesFromPackage(String importPackage) {
-
-        ResourcesScanner resourcesScanner = new ResourcesScanner();
-        Reflections reflections = packageCache.get(importPackage);
-        if (reflections == null) {
-            reflections = new Reflections(new ConfigurationBuilder()
-                    .setScanners(resourcesScanner)
-
-                    .forPackages(importPackage)
-                    .setUrls(ClasspathHelper.forClassLoader()));
-            packageCache.put(importPackage, reflections);
-        }
 
         return reflections.getResources(Pattern.compile("[^/]*.class")).stream()
                 .filter(s -> s.matches(importPackage.replace(".", "/") + "/" + "[^/]*.class"))
@@ -88,48 +83,18 @@ public class ClazzImportResolver implements BaseImportResolver {
             }
             return descriptors;
         } else {
-            if(!entity.packageName.contains(".")){
+            if (!entity.packageName.contains(".")) {
                 return Collections.emptyList();
             }
             return findSpecificMethodOrField(entity.packageName);
         }
     }
 
-    private static Class getClazz(String clazz) {
-        try {
-            return Class.forName(clazz);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-
-    private static List<DeclarationDescriptor> getFieldsFromClass(Class clazz, String fieldName) {
-        List<DeclarationDescriptor> propertyDescriptors = new ArrayList<>();
-
-
-        for (Field field : clazz.getFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                if (fieldName != null) {
-                    if (!field.getName().equals(fieldName)) {
-                        return propertyDescriptors;
-                    }
-                }
-                classPathScope.getFieldSignature(new ClassType(clazz.getName()), field.getName()).ifPresent(field1 -> {
-                    PropertyDescriptor descriptor = new PropertyDescriptor(field.getName(), field1);
-                    propertyDescriptors.add(descriptor);
-                });
-            }
-        }
-
-        return propertyDescriptors;
-    }
-
     private List<FunctionDescriptor> getFunctionDescriptorFromClass(Class clazz, String methodName) {
         Method[] methods = clazz.getDeclaredMethods();
         List<FunctionDescriptor> functionDescriptors = new ArrayList<>();
         for (Method method : methods) {
-            if (Modifier.isStatic(method.getModifiers())) {
+            if (Modifier.isStatic(method.getModifiers()) && !Modifier.isPrivate(method.getModifiers())) {
                 if (methodName == null) {
                     FunctionSignature signature = ReflectionObjectToSignatureMapper.fromMethod(method);
                     FunctionDescriptor functionDescriptor = new FunctionDescriptor(method.getName(), signature);
@@ -146,5 +111,34 @@ public class ClazzImportResolver implements BaseImportResolver {
         return functionDescriptors;
     }
 
+
+    private static Class getClazz(String clazz) {
+        try {
+            return Class.forName(clazz);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static List<DeclarationDescriptor> getFieldsFromClass(Class clazz, String fieldName) {
+        List<DeclarationDescriptor> propertyDescriptors = new ArrayList<>();
+
+
+        for (Field field : clazz.getFields()) {
+            if (Modifier.isStatic(field.getModifiers()) && !Modifier.isPrivate(field.getModifiers())) {
+                if (fieldName != null) {
+                    if (!field.getName().equals(fieldName)) {
+                        return propertyDescriptors;
+                    }
+                }
+                classPathScope.getFieldSignature(new ClassType(clazz.getName()), field.getName()).ifPresent(field1 -> {
+                    PropertyDescriptor descriptor = new PropertyDescriptor(field.getName(), field1);
+                    propertyDescriptors.add(descriptor);
+                });
+            }
+        }
+
+        return propertyDescriptors;
+    }
 
 }

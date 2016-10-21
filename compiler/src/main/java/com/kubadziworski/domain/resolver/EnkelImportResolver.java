@@ -13,29 +13,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
-public class EnkelImportResolver implements BaseImportResolver {
+class EnkelImportResolver implements BaseImportResolver {
 
     private final GlobalScope globalScope;
 
-    public EnkelImportResolver(GlobalScope globalScope) {
+    EnkelImportResolver(GlobalScope globalScope) {
         this.globalScope = globalScope;
     }
 
-    public List<DeclarationDescriptor> preParseClassDeclarations(String importPackage){
+    @Override
+    public Optional<DeclarationDescriptor> preParseClassDeclarations(String importPackage) {
         if (globalScope.scopeMap.containsKey(importPackage)) {
             ClassEntity entity = splitDeclaration(importPackage);
-            return Collections.singletonList(new ClassDescriptor(entity.clazzName, entity.packageName));
+            return Optional.of(new ClassDescriptor(entity.clazzName, entity.packageName));
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     @Override
-    public List<DeclarationDescriptor> extractClazzFieldOrMethods(String importPackage) {
-        if (globalScope.scopeMap.containsKey(importPackage)) {
-            ClassEntity entity = splitDeclaration(importPackage);
-            return Collections.singletonList(new ClassDescriptor(entity.clazzName, entity.packageName));
-        }
+    public List<DeclarationDescriptor> extractFieldOrMethods(String importPackage) {
         return findSpecificMethodOrField(importPackage);
     }
 
@@ -96,7 +92,7 @@ public class EnkelImportResolver implements BaseImportResolver {
                     .map(functionSignature -> new FunctionDescriptor(functionSignature.getName(), functionSignature))
                     .collect(Collectors.toList());
         } else {
-            if(!entity.packageName.contains(".")){
+            if (!entity.packageName.contains(".")) {
                 return Collections.emptyList();
             }
             return findSpecificMethodOrField(entity.packageName);
