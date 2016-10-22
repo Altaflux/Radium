@@ -19,7 +19,7 @@ public class EnkelScope {
 
     public Optional<FunctionSignature> getMethodSignature(Type owner, String methodName, List<Argument> arguments) {
         try {
-            return Optional.of(globalScope.scopeMap.get(owner.getName()).getMethodCallSignature(methodName, arguments));
+            return Optional.of(globalScope.getScopeByClassName(owner.getName()).getMethodCallSignature(methodName, arguments));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -27,7 +27,7 @@ public class EnkelScope {
 
     public Optional<com.kubadziworski.domain.scope.Field> getFieldSignature(Type owner, String fieldName) {
         try {
-            return Optional.of(globalScope.scopeMap.get(owner.getName()).getField(fieldName));
+            return Optional.of(globalScope.getScopeByClassName(owner.getName()).getField(fieldName));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -35,7 +35,7 @@ public class EnkelScope {
 
     public Optional<FunctionSignature> getConstructorSignature(ClassType className, List<Argument> arguments) {
         try {
-            return Optional.of(globalScope.scopeMap.get(className.getName()).getConstructorCallSignature(className.getName(), arguments));
+            return Optional.of(globalScope.getScopeByClassName(className.getName()).getConstructorCallSignature(className.getName(), arguments));
         } catch (Exception e) {
             return Optional.empty();
         }

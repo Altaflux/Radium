@@ -27,6 +27,23 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
         Type owner = scope.getClassType();
         Type type = TypeResolver.getFromTypeContext(ctx.type(), scope);
         String name = ctx.name().getText();
+
+
+        //TODO IMPLEMENT FIELD MODIFIERS
+//        int modifiers = ctx.fieldModifier().stream().map(methodModifiersContext -> {
+//            if (methodModifiersContext.getText().equals("private")) {
+//                return Modifier.PRIVATE;
+//            }
+//            if (methodModifiersContext.getText().equals("protected")) {
+//                return Modifier.PROTECTED;
+//            }
+//            if (methodModifiersContext.getText().equals("public")) {
+//                return Modifier.PUBLIC;
+//            }
+//            return 0;
+//        }).mapToInt(Integer::intValue).sum();
+
+
         return new Field(name, owner, type, Modifier.PUBLIC);
     }
 }

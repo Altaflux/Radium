@@ -102,7 +102,7 @@ packageDeclaration
 classDeclaration : className '{' classBody '}' ;
 className : qualifiedName ;
 classBody :  field* function* ;
-field : type name;
+field : fieldModifier* type name;
 function : functionDeclaration block ;
 functionDeclaration : methodModifiers* (type)? functionName '('? parametersList? ')'? ;
 parametersList:  parameter (',' parameter)*
@@ -186,6 +186,11 @@ qualifiedName : ID ('.' ID)*;
 methodModifiers
     : 'static'
     | 'public'
+    | 'private' ;
+
+fieldModifier
+    : 'public'
+    | 'protected'
     | 'private' ;
 
 

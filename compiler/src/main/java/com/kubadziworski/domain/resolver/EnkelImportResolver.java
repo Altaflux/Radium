@@ -23,7 +23,7 @@ class EnkelImportResolver implements BaseImportResolver {
 
     @Override
     public Optional<DeclarationDescriptor> preParseClassDeclarations(String importPackage) {
-        if (globalScope.scopeMap.containsKey(importPackage)) {
+        if (globalScope.getScopeByClassName(importPackage) != null) {
             ClassEntity entity = splitDeclaration(importPackage);
             return Optional.of(new ClassDescriptor(entity.clazzName, entity.packageName));
         }
@@ -38,11 +38,12 @@ class EnkelImportResolver implements BaseImportResolver {
 
     @Override
     public List<DeclarationDescriptor> extractClassesFromPackage(String importPackage) {
-        return globalScope.scopeMap.entrySet().stream()
-                .filter(stringScopeEntry -> stringScopeEntry.getKey().contains(importPackage))
-                .filter(stringScopeEntry -> stringScopeEntry.getKey().matches(importPackage + ".\\w+$"))
+
+        return globalScope.getAllScopes().stream()
+                .filter(stringScopeEntry -> stringScopeEntry.getFullClassName().contains(importPackage))
+                .filter(stringScopeEntry -> stringScopeEntry.getFullClassName().matches(importPackage + ".\\w+$"))
                 .map(stringScopeEntry -> {
-                    ClassEntity classEntity = splitDeclaration(stringScopeEntry.getKey());
+                    ClassEntity classEntity = splitDeclaration(stringScopeEntry.getFullClassName());
                     return new ClassDescriptor(classEntity.clazzName, classEntity.packageName);
                 }).collect(Collectors.toList());
     }
@@ -51,8 +52,8 @@ class EnkelImportResolver implements BaseImportResolver {
     public Optional<List<DeclarationDescriptor>> getMethodsOrFields(String importPackage) {
 
         List<DeclarationDescriptor> descriptors = new ArrayList<>();
-        if (globalScope.scopeMap.containsKey(importPackage)) {
-            Scope scope = globalScope.scopeMap.get(importPackage);
+        Scope scope;
+        if ((scope = globalScope.getScopeByClassName(importPackage)) != null) {
             List<DeclarationDescriptor> fields = scope.getFields().values()
                     .stream()
                     .filter(field -> Modifier.isStatic(field.getModifiers()))
@@ -78,7 +79,7 @@ class EnkelImportResolver implements BaseImportResolver {
 
         ClassEntity entity = splitDeclaration(importPackage);
         Scope scope;
-        if ((scope = globalScope.scopeMap.get(entity.packageName)) != null) {
+        if ((scope = globalScope.getScopeByClassName(entity.packageName)) != null) {
             Optional<Field> fieldOptional = scope.getFields().values().stream()
                     .filter(field -> field.getName().equals(entity.clazzName))
                     .filter(field -> Modifier.isStatic(field.getModifiers()))

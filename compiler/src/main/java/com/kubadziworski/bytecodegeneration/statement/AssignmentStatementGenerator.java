@@ -2,9 +2,6 @@ package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.FieldReference;
-import com.kubadziworski.domain.node.expression.LocalVariableReference;
-import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
@@ -58,20 +55,6 @@ public class AssignmentStatementGenerator {
         expression.accept(expressionGenerator);
         castIfNecessary(type, field.getType());
         methodVisitor.visitFieldInsn(Opcodes.PUTFIELD, field.getOwnerInternalName(), field.getName(), descriptor);
-    }
-
-    public void generate(Reference reference) {
-
-        if (reference instanceof LocalVariableReference) {
-            int varIndex = scope.getLocalVariableIndex(reference.getName());
-            methodVisitor.visitVarInsn(reference.getType().getStoreVariableOpcode(), varIndex);
-
-        } else if (reference instanceof FieldReference) {
-            String descriptor = ((FieldReference) reference).getField().getType().getDescriptor();
-            methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, ((FieldReference) reference).getField().getOwnerInternalName(), ((FieldReference) reference).getField().getName(), descriptor);
-        } else {
-            throw new RuntimeException("Reference of unknown type: " + reference.getClass().getSimpleName());
-        }
     }
 
     private void castIfNecessary(Type expressionType, Type variableType) {

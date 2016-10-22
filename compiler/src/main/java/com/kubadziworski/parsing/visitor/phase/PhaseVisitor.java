@@ -58,7 +58,7 @@ public class PhaseVisitor {
         List<EnkelParserScope> parserScopes = enkelParsers
                 .stream()
                 .map(this::processClassDeclarations)
-                .peek(scope -> globalScope.scopeMap.put(scope.scope.getFullClassName(), scope.scope))
+                .peek(scope -> globalScope.addScope(scope.scope.getFullClassName(), scope.scope))
                 .collect(Collectors.toList());
 
         //Phase 2 resolve all class references of the ImportResolvers of each scope
