@@ -5,7 +5,6 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.CompilationData;
 import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.domain.scope.GlobalScope;
-import com.kubadziworski.parsing.visitor.CompilationUnitVisitor;
 import com.kubadziworski.parsing.visitor.phase.PhaseVisitor;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRFileStream;

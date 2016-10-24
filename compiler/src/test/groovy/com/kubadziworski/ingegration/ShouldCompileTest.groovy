@@ -72,7 +72,7 @@ class ShouldCompileTest extends Specification {
             """
 							Fields {
 
-								int field
+								field : int
 
 								start {
 									field = 5
@@ -294,7 +294,7 @@ class ShouldCompileTest extends Specification {
     private static final unaryExpressionTest = """
 							UnaryExpressions {
 
-								int globalField
+								globalField : int
 
 								start(){
 									var x = 1
@@ -329,7 +329,7 @@ class ShouldCompileTest extends Specification {
                             """
     private static final globalLocal = """
 							GlobalLocal {
-								int x
+								x : int
 
 								start(){
 									x = 2;
