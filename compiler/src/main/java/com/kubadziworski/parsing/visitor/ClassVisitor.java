@@ -6,15 +6,18 @@ import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.domain.ClassDeclaration;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
-import com.kubadziworski.domain.node.expression.ConstructorCall;
-import com.kubadziworski.domain.node.expression.FunctionCall;
-import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Block;
+import com.kubadziworski.domain.node.statement.ReturnStatement;
+import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.util.ReflectionUtils;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
@@ -50,6 +53,9 @@ class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         if (startMethodDefined) {
             methods.add(getGeneratedMainMethod());
         }
+        scope.getFields().values().stream()
+                .peek(field -> methods.add(generateGetter(field)))
+                .forEach(field -> methods.add(generateSetter(field)));
 
         return new ClassDeclaration(scope.getClassName(), new ClassType(scope.getFullClassName()), new ArrayList<>(scope.getFields().values()), methods);
     }
@@ -59,6 +65,35 @@ class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
             FunctionSignature constructorSignature = new FunctionSignature(name, Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC, scope.getClassType());
             scope.addSignature(constructorSignature);
         }
+    }
+
+    private Function generateGetter(Field field) {
+        FunctionSignature getter = ReflectionUtils.createGetterForField(field);
+        Scope scope = new Scope(this.scope);
+        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+
+        FieldReference fieldReference = new FieldReference(field, new LocalVariableReference(scope.getLocalVariable("this")));
+        ReturnStatement returnStatement = new ReturnStatement(fieldReference);
+        Block block = new Block(scope, Collections.singletonList(returnStatement));
+        return new Function(getter, block);
+    }
+
+    private Function generateSetter(Field field) {
+        FunctionSignature getter = ReflectionUtils.createSetterForField(field);
+        Scope scope = new Scope(this.scope);
+        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+        addParametersAsLocalVariables(getter, scope);
+        LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
+        LocalVariableReference thisReference = new LocalVariableReference(scope.getLocalVariable("this"));
+
+        Assignment assignment = new Assignment(thisReference, field.getName(), localVariableReference);
+        Block block = new Block(scope, Collections.singletonList(assignment));
+        return new Function(getter, block);
+    }
+
+    private void addParametersAsLocalVariables(FunctionSignature signature, Scope scope) {
+        signature.getParameters()
+                .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
     }
 
     private Constructor getDefaultConstructor() {

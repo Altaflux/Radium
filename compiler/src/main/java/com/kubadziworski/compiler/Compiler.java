@@ -3,6 +3,7 @@ package com.kubadziworski.compiler;
 import com.kubadziworski.bytecodegeneration.BytecodeGenerator;
 import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.domain.scope.GlobalScope;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.parsing.Parser;
 import com.kubadziworski.validation.ARGUMENT_ERRORS;
 import org.apache.commons.io.FileUtils;
@@ -44,6 +45,8 @@ public class Compiler {
         LOGGER.info("Files to compile: ");
         enkelFiles.forEach(LOGGER::info);
         GlobalScope globalScope = new GlobalScope();
+        ClassTypeFactory.initialize(globalScope);
+
         Parser parser = new Parser(globalScope);
         List<CompilationUnit> compilationUnits = parser.processAllFiles(enkelFiles);
 
@@ -55,6 +58,7 @@ public class Compiler {
                 e.printStackTrace();
             }
         });
+        ClassTypeFactory.initialize(null);
     }
 
     private List<String> getListOfFiles(String path) {
@@ -78,7 +82,7 @@ public class Compiler {
         byte[] bytecode = bytecodeGenerator.generate(compilationUnit);
         String className = compilationUnit.getClassName();
 
-        File base = new File( compilationUnit.getFilePath());
+        File base = new File(compilationUnit.getFilePath());
         File compileFile = new File(base.getParentFile(), className + ".class");
 
         LOGGER.info("Finished Compiling. Saving bytecode to '{}'.", compileFile.getAbsolutePath());

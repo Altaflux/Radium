@@ -25,3 +25,10 @@ public class CompilationUnit {
         return filePath;
     }
 }
+
+/**
+
+ x.filePath= "";
+ x.setFilePath("")
+ var foo = x.getFilePath
+ **/

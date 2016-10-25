@@ -10,11 +10,14 @@ import com.kubadziworski.domain.scope.Scope;
 
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.util.ReflectionUtils;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.Optional;
 
-public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Reference> {
+public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final Scope scope;
     private final ExpressionVisitor expressionVisitor;
 
@@ -24,7 +27,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
     }
 
     @Override
-    public Reference visitVarReference(@NotNull VarReferenceContext ctx) {
+    public Expression visitVarReference(@NotNull VarReferenceContext ctx) {
         String varName = ctx.variableReference().getText();
         boolean ownerIsExplicit = ctx.owner != null;
         if (ownerIsExplicit) {
@@ -40,7 +43,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
     }
 
     @Override
-    public Reference visitVariableReference(@NotNull VariableReferenceContext ctx) {
+    public Expression visitVariableReference(@NotNull VariableReferenceContext ctx) {
 
         String varName = ctx.getText();
         return visitReference(varName, null);
@@ -52,7 +55,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
         return new FieldReference(field, new EmptyExpression(field.getOwner()));
     }
 
-    private Reference visitReference(@NotNull String varName, Expression owner) {
+    private Expression visitReference(@NotNull String varName, Expression owner) {
 
         if (owner != null) {
             Field field = scope.getField(owner.getType(), varName);
@@ -63,7 +66,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
                 //calling the owner expression, for now lets not optimize...
                 return new FieldReference(scope.getField(owner.getType(), varName), new PopExpression(owner));
             }
-            return new FieldReference(scope.getField(owner.getType(), varName), owner);
+            return generateFieldReference(field, owner);
         }
 
         if (scope.isLocalVariableExists(varName)) {
@@ -79,7 +82,17 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Referen
 
         Type thisType = scope.getClassType();
         LocalVariable thisVariable = new LocalVariable("this", thisType);
-        return new FieldReference(field, new LocalVariableReference(thisVariable));
+        LocalVariableReference thisReference = new LocalVariableReference(thisVariable);
+        return generateFieldReference(field, thisReference);
+    }
 
+    private Expression generateFieldReference(Field field, Expression owner) {
+        Optional<FunctionCall> functionCall = ReflectionUtils.getGetterFunctionSignatureForField(field)
+                .map(functionSignature -> new FunctionCall(functionSignature, Collections.emptyList(), owner));
+
+        if (functionCall.isPresent()) {
+            return functionCall.get();
+        }
+        return new FieldReference(field, owner);
     }
 }

@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.type;
 
 import com.google.common.collect.ImmutableMap;
+import com.kubadziworski.domain.scope.Scope;
 import lombok.ToString;
 import org.objectweb.asm.Opcodes;
 
@@ -13,14 +14,22 @@ import java.util.Optional;
 @ToString
 public class ClassType implements Type {
     private final String name;
+    private final Scope scope;
 
     private static final Map<String, String> shortcuts = ImmutableMap.of(
             "List", "java.util.ArrayList"
     );
 
     public ClassType(String name) {
-        this.name = Optional.ofNullable(shortcuts.get(name)).orElse(name);
+        this(name, ClassTypeFactory.getGlobalScope()
+                .map(globalScope -> globalScope.getScopeByClassName(name)).orElse(null));
     }
+
+    public ClassType(String name, Scope scope) {
+        this.name = Optional.ofNullable(shortcuts.get(name)).orElse(name);
+        this.scope = scope;
+    }
+
 
     public static ClassType Integer() {
         return new ClassType("java.lang.Integer");
@@ -114,6 +123,11 @@ public class ClassType implements Type {
     @Override
     public int getStackSize() {
         return 1;
+    }
+
+
+    public Optional<Scope> getScope() {
+        return Optional.ofNullable(scope);
     }
 
     @Override

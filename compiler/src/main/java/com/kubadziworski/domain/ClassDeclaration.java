@@ -19,7 +19,7 @@ public class ClassDeclaration {
     private final List<Function> methods;
     private final ClassType classType;
 
-    public ClassDeclaration(String name,ClassType classType, List<Field> fields, List<Function> methods) {
+    public ClassDeclaration(String name, ClassType classType, List<Field> fields, List<Function> methods) {
         this.name = name;
         this.fields = fields;
         this.methods = methods;
