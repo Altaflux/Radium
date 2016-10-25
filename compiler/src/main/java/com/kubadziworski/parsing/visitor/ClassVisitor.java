@@ -17,7 +17,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.util.ReflectionUtils;
+import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
@@ -68,7 +68,7 @@ class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
     }
 
     private Function generateGetter(Field field) {
-        FunctionSignature getter = ReflectionUtils.createGetterForField(field);
+        FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
         Scope scope = new Scope(this.scope);
         scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
 
@@ -79,7 +79,7 @@ class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
     }
 
     private Function generateSetter(Field field) {
-        FunctionSignature getter = ReflectionUtils.createSetterForField(field);
+        FunctionSignature getter = PropertyAccessorsUtil.createSetterForField(field);
         Scope scope = new Scope(this.scope);
         scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         addParametersAsLocalVariables(getter, scope);

@@ -10,7 +10,7 @@ import com.kubadziworski.domain.scope.Scope;
 
 import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.util.ReflectionUtils;
+import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
@@ -87,7 +87,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
     }
 
     private Expression generateFieldReference(Field field, Expression owner) {
-        Optional<FunctionCall> functionCall = ReflectionUtils.getGetterFunctionSignatureForField(field)
+        Optional<FunctionCall> functionCall = PropertyAccessorsUtil.getGetterFunctionSignatureForField(field)
                 .map(functionSignature -> new FunctionCall(functionSignature, Collections.emptyList(), owner));
 
         if (functionCall.isPresent()) {

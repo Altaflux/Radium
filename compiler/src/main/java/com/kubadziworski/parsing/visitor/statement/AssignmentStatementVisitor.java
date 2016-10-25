@@ -12,7 +12,7 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import com.kubadziworski.util.ReflectionUtils;
+import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.Collections;
@@ -66,7 +66,7 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
     private Statement generateAssignment(Expression owner, String varName, Expression expression) {
         Field field = scope.getField(owner.getType(), varName);
 
-        Optional<FunctionSignature> signature = ReflectionUtils.getSetterFunctionSignatureForField(field);
+        Optional<FunctionSignature> signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field);
         Optional<FunctionCall> functionCall = signature.map(functionSignature -> {
             Argument argument = new Argument(expression, Optional.empty());
             return new FunctionCall(functionSignature, Collections.singletonList(argument), owner);

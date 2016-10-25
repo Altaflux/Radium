@@ -2,17 +2,11 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
-import com.kubadziworski.domain.node.expression.FunctionCall;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
-import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.util.ReflectionUtils;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import java.util.Collections;
-import java.util.Optional;
 
 public class ReferenceExpressionGenerator {
     private final MethodVisitor methodVisitor;

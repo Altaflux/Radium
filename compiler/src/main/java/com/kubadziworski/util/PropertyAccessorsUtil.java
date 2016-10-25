@@ -8,17 +8,19 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.ClassType;
-import javassist.bytecode.SignatureAttribute;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-/**
- * Created by plozano on 10/24/2016.
- */
-public class ReflectionUtils {
+
+public class PropertyAccessorsUtil {
 
 
     private static final Set<Class<?>> ANY_TYPES = Collections.emptySet();
