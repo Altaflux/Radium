@@ -2,10 +2,7 @@ package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.domain.node.expression.Argument;
-import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.FunctionCall;
-import com.kubadziworski.domain.node.expression.LocalVariableReference;
+import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Field;
@@ -27,23 +24,6 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
         this.scope = scope;
     }
 
-//    @Override
-//    public Statement visitAssignment(@NotNull EnkelParser.AssignmentContext ctx) {
-//
-//        EnkelParser.ExpressionContext expressionCtx = ctx.postExpr;
-//        Expression expression = expressionCtx.accept(expressionVisitor);
-//        String varName = ctx.name().getText();
-//        if (ctx.preExp != null) {
-//            return new Assignment(ctx.preExp.accept(expressionVisitor), varName, expression);
-//        }
-//        if (scope.isLocalVariableExists(varName)) {
-//            return new Assignment(varName, expression);
-//        } else if (scope.isFieldExists(varName)) {
-//            return new Assignment(new LocalVariableReference(scope.getLocalVariable("this")), varName, expression);
-//        } else {
-//            throw new RuntimeException("Assignment on un-declared variable: " + varName);
-//        }
-//    }
 
     @Override
     public Statement visitAssignment(@NotNull EnkelParser.AssignmentContext ctx) {
@@ -69,7 +49,7 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
         Optional<FunctionSignature> signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field);
         Optional<FunctionCall> functionCall = signature.map(functionSignature -> {
             Argument argument = new Argument(expression, Optional.empty());
-            return new FunctionCall(functionSignature, Collections.singletonList(argument), owner);
+            return new PropertyAccessorCall(functionSignature, argument, owner, field);
         });
 
         if (functionCall.isPresent()) {

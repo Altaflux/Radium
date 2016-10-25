@@ -20,6 +20,7 @@ public class ExpressionGenerator {
     private final ParameterExpressionGenerator parameterExpressionGenerator;
     private final PrefixExpressionGenerator prefixExpressionGenerator;
     private final PopExpressionGenerator popExpressionGenerator;
+    private final DupExpressionGenerator dupExpressionGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
         referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor, scope, this);
@@ -30,6 +31,11 @@ public class ExpressionGenerator {
         parameterExpressionGenerator = new ParameterExpressionGenerator(methodVisitor, scope);
         prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor, this, scope);
         popExpressionGenerator = new PopExpressionGenerator(methodVisitor, this);
+        dupExpressionGenerator = new DupExpressionGenerator(methodVisitor, this);
+    }
+
+    public void generate(DupExpression dupExpression) {
+        dupExpressionGenerator.generate(dupExpression);
     }
 
     public void generate(FieldReference reference) {
@@ -44,7 +50,7 @@ public class ExpressionGenerator {
         referenceExpressionGenerator.generate(reference);
     }
 
-    public void generate(UnaryExpression unaryExpression){
+    public void generate(UnaryExpression unaryExpression) {
         prefixExpressionGenerator.generate(unaryExpression);
     }
 

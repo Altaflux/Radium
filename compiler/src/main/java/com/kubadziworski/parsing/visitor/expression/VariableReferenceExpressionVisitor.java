@@ -88,7 +88,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
 
     private Expression generateFieldReference(Field field, Expression owner) {
         Optional<FunctionCall> functionCall = PropertyAccessorsUtil.getGetterFunctionSignatureForField(field)
-                .map(functionSignature -> new FunctionCall(functionSignature, Collections.emptyList(), owner));
+                .map(functionSignature -> new PropertyAccessorCall(functionSignature, owner, field));
 
         if (functionCall.isPresent()) {
             return functionCall.get();
