@@ -297,23 +297,29 @@ class ShouldCompileTest extends Specification {
 								globalField : int
 
 								start(){
-									var x = 1
-									var y = 1
 
-									var preIncrement = ++x
-									var postIncrement = y++
+                                    var x = 1
+                                    var y = 1
 
-									var result = preIncrement == x
-									assert(expected -> true , actual -> result)
+                                    var preIncrement = ++x
+                                    var postIncrement = y++
 
-									var result = postIncrement < y
-									assert(expected -> true , actual -> result)
+                                    var result = preIncrement == x
+                                    assert(expected -> true , actual -> result)
 
-									globalField = 1
+                                    var result = postIncrement < y
+                                    assert(expected -> true , actual -> result)
 
-									var incGlobal = globalField++
-									var result = incGlobal < globalField
-									assert(expected -> true , actual -> result)
+                                    globalField = 1
+
+                                    var incSuffix = globalField++
+                                    var result = incSuffix < globalField
+                                    assert(expected -> true , actual -> result)
+
+                                    globalField = 1
+                                    var incPrefix = ++globalField
+                                    var result2 = incPrefix == globalField
+                                    assert(expected -> true , actual -> result2)
 
 								}
 

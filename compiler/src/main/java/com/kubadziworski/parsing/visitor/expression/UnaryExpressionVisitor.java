@@ -3,14 +3,16 @@ package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.*;
+import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
+import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
-import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 
 import java.util.Collections;
@@ -25,54 +27,101 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
         this.expressionVisitor = expressionVisitor;
     }
 
-//    public UnaryExpression visitSuffixExpression(SuffixExpressionContext ctx) {
-//        ArithmeticOperator operator = ArithmeticOperator.fromString(ctx.operation.getText());
-//        Expression expression = ctx.expr.accept(expressionVisitor);
-//        Reference ref = (Reference) expression;
-//        return new UnaryExpression(ref, false, operator);
-//    }
+
+    public Expression visitPrefixExpression(PrefixExpressionContext ctx) {
+        ArithmeticOperator operator = ArithmeticOperator.fromString(ctx.operation.getText());
+        Expression expression = ctx.expression().accept(expressionVisitor);
+        if (expression instanceof PropertyAccessorCall) {
+            Field field = ((PropertyAccessorCall) expression).getField();
+            FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
+            Expression operation;
+
+            if (operator.equals(ArithmeticOperator.INCREMENT)) {
+                operation = new DupExpression(new Addition((expression), new Value(expression.getType(), "1")));
+            } else {
+                operation = new DupExpression(new Substraction((expression), new Value(expression.getType(), "1")));
+            }
+            Argument argument = new Argument(operation, Optional.empty());
+
+            return new FakeReturnExpression(new FunctionCall(signature, Collections.singletonList(argument),
+                    ((PropertyAccessorCall) expression).getOwner()), expression.getType());
+        }
+        Reference ref = (Reference) expression;
+        return new UnaryExpression(ref, true, operator);
+    }
+
 
     public Expression visitSuffixExpression(SuffixExpressionContext ctx) {
         ArithmeticOperator operator = ArithmeticOperator.fromString(ctx.operation.getText());
         Expression expression = ctx.expr.accept(expressionVisitor);
         if (expression instanceof PropertyAccessorCall) {
-
             Field field = ((PropertyAccessorCall) expression).getField();
             FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
             Expression operation;
 
             if (operator.equals(ArithmeticOperator.INCREMENT)) {
-                operation = new Addition(new DupExpression(expression), new Value(expression.getType(), "1"));
+                operation = (new Addition((expression), new Value(expression.getType(), "1")));
             } else {
-                operation = new Substraction(new DupExpression(expression), new Value(expression.getType(), "1"));
+                operation = (new Substraction((expression), new Value(expression.getType(), "1")));
             }
             Argument argument = new Argument(operation, Optional.empty());
-            return new FunctionCall(signature, Collections.singletonList(argument), ((PropertyAccessorCall) expression).getOwner());
+            return new ComposedExpression(expression,
+                    new FakeReturnExpression(new FunctionCall(signature, Collections.singletonList(argument),
+                            ((PropertyAccessorCall) expression).getOwner()), expression.getType()));
         }
         Reference ref = (Reference) expression;
         return new UnaryExpression(ref, false, operator);
     }
 
-    public Expression visitPrefixExpression(PrefixExpressionContext ctx) {
-        ArithmeticOperator operator = ArithmeticOperator.fromString(ctx.operation.getText());
-        Expression expression = ctx.expression().accept(expressionVisitor);
+    private static class ComposedExpression implements Expression {
+        private final Expression preExpression;
+        private final Expression expression;
 
-        if (expression instanceof PropertyAccessorCall) {
-
-            Field field = ((PropertyAccessorCall) expression).getField();
-            FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
-            Expression operation;
-
-            if (operator.equals(ArithmeticOperator.INCREMENT)) {
-                operation = new Addition(expression, new Value(expression.getType(), "1"));
-            } else {
-                operation = new Substraction(expression, new Value(expression.getType(), "1"));
-            }
-            Argument argument = new Argument(operation, Optional.empty());
-            return new DupExpression(new FunctionCall(signature, Collections.singletonList(argument), ((PropertyAccessorCall) expression).getOwner()));
+        ComposedExpression(Expression preExpression, Expression expression) {
+            this.preExpression = preExpression;
+            this.expression = expression;
         }
 
-        Reference ref = (Reference) expression;
-        return new UnaryExpression(ref, true, operator);
+        @Override
+        public Type getType() {
+            return expression.getType();
+        }
+
+        @Override
+        public void accept(ExpressionGenerator generator) {
+            preExpression.accept(generator);
+            expression.accept(generator);
+        }
+
+        @Override
+        public void accept(StatementGenerator generator) {
+            preExpression.accept(generator);
+            expression.accept(generator);
+        }
+    }
+
+    private static class FakeReturnExpression implements Expression {
+        private final Expression expression;
+        private final Type type;
+
+        FakeReturnExpression(Expression expression, Type type) {
+            this.expression = expression;
+            this.type = type;
+        }
+
+        @Override
+        public Type getType() {
+            return type;
+        }
+
+        @Override
+        public void accept(ExpressionGenerator generator) {
+            expression.accept(generator);
+        }
+
+        @Override
+        public void accept(StatementGenerator generator) {
+            expression.accept(generator);
+        }
     }
 }

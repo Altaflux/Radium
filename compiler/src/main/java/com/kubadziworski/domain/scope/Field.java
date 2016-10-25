@@ -55,4 +55,14 @@ public class Field implements Variable {
     public void accept(FieldGenerator generator) {
         generator.generate(this);
     }
+
+    @Override
+    public String toString() {
+        return "Field{" +
+                "name='" + name + '\'' +
+                ", owner=" + owner +
+                ", type=" + type +
+                ", modifiers=" + modifiers +
+                '}';
+    }
 }

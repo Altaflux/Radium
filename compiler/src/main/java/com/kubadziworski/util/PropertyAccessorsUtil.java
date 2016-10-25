@@ -76,7 +76,7 @@ public class PropertyAccessorsUtil {
             }
             return Optional.empty();
         } catch (Exception e) {
-            return ((ClassType) field.getType()).getScope()
+            return ((ClassType) field.getOwner()).getScope()
                     .map(scope -> getFunctionSignatureForMethod("set", field, scope,
                             Collections.singletonList(new Argument(new EmptyExpression(field.getType()), Optional.empty()))));
         }
@@ -91,7 +91,7 @@ public class PropertyAccessorsUtil {
             }
             return Optional.empty();
         } catch (Exception e) {
-            return ((ClassType) field.getType()).getScope().map(scope -> {
+            return ((ClassType) field.getOwner()).getScope().map(scope -> {
                 if (field.getType().equals(BultInType.BOOLEAN)) {
                     return getFunctionSignatureForMethod("is", field, scope, Collections.emptyList());
                 }

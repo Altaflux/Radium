@@ -21,7 +21,8 @@ public class DupExpressionGenerator {
         expression.accept(expressionGenerator);
 
         Type type = expression.getType();
-        int dupCode = type.getDupCode();
+        System.out.println("Using dup for type: " + type);
+        int dupCode = type.getDupX1Code();
         methodVisitor.visitInsn(dupCode);
     }
 }

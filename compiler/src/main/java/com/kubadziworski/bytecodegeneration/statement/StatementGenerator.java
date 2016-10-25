@@ -47,6 +47,10 @@ public class StatementGenerator {
         variableDeclarationStatementGenerator.generate(variableDeclaration);
     }
 
+    public void generate(DupExpression dupExpression) {
+        expressionGenerator.generate(dupExpression);
+    }
+
     public void generate(UnaryExpression unaryExpression) {
         prefixExpressionGenerator.generate(unaryExpression);
     }
