@@ -41,7 +41,7 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             } else {
                 operation = new DupExpression(new Substraction((expression), new Value(expression.getType(), "1")));
             }
-            Argument argument = new Argument(operation, Optional.empty());
+            Argument argument = new Argument(operation, null);
 
             return new FakeReturnExpression(new FunctionCall(signature, Collections.singletonList(argument),
                     ((PropertyAccessorCall) expression).getOwner()), expression.getType());
@@ -64,7 +64,7 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             } else {
                 operation = (new Substraction((expression), new Value(expression.getType(), "1")));
             }
-            Argument argument = new Argument(operation, Optional.empty());
+            Argument argument = new Argument(operation, null);
             return new ComposedExpression(expression,
                     new FakeReturnExpression(new FunctionCall(signature, Collections.singletonList(argument),
                             ((PropertyAccessorCall) expression).getOwner()), expression.getType()));

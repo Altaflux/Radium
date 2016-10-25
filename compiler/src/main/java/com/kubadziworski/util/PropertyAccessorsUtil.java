@@ -78,7 +78,7 @@ public class PropertyAccessorsUtil {
         } catch (Exception e) {
             return ((ClassType) field.getOwner()).getScope()
                     .map(scope -> getFunctionSignatureForMethod("set", field, scope,
-                            Collections.singletonList(new Argument(new EmptyExpression(field.getType()), Optional.empty()))));
+                            Collections.singletonList(new Argument(new EmptyExpression(field.getType()), null))));
         }
     }
 
@@ -112,7 +112,7 @@ public class PropertyAccessorsUtil {
     }
 
     private static Method findMethodForProperty(String[] methodSuffixes, String prefix, Class<?> clazz,
-                                         boolean mustBeStatic, int numberOfParams, Set<Class<?>> requiredReturnTypes) {
+                                                boolean mustBeStatic, int numberOfParams, Set<Class<?>> requiredReturnTypes) {
 
         Method[] methods = getSortedClassMethods(clazz);
         for (String methodSuffix : methodSuffixes) {

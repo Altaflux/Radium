@@ -48,7 +48,7 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
 
         Optional<FunctionSignature> signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field);
         Optional<FunctionCall> functionCall = signature.map(functionSignature -> {
-            Argument argument = new Argument(expression, Optional.empty());
+            Argument argument = new Argument(expression, null);
             return new PropertyAccessorCall(functionSignature, argument, owner, field);
         });
 

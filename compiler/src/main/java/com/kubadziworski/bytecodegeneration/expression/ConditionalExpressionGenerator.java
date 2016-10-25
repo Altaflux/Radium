@@ -46,7 +46,7 @@ public class ConditionalExpressionGenerator {
         Parameter parameter = new Parameter("o", new ClassType("java.lang.Object"), null);
 
         List<Parameter> parameters = Collections.singletonList(parameter);
-        Argument argument = new Argument(rightExpression, Optional.empty());
+        Argument argument = new Argument(rightExpression, null);
         List<Argument> arguments = Collections.singletonList(argument);
         switch (compareSign) {
             case EQUAL:

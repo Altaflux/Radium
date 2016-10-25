@@ -11,10 +11,10 @@ import java.util.Optional;
  */
 public class Argument implements Expression {
 
-    private final Optional<String> parameterName;
+    private final String parameterName;
     private final Expression expression;
 
-    public Argument(Expression expression, Optional<String> parameterName) {
+    public Argument(Expression expression, String parameterName) {
         this.parameterName = parameterName;
         this.expression = expression;
     }
@@ -35,7 +35,7 @@ public class Argument implements Expression {
     }
 
     public Optional<String> getParameterName() {
-        return parameterName;
+        return Optional.ofNullable(parameterName);
     }
 
     @Override
