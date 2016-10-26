@@ -8,12 +8,12 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public enum TypeSpecificOpcodes {
 
-    INT(ILOAD, ISTORE, IRETURN, IADD, ISUB, IMUL, IDIV, DUP, DUP_X1), //values (-127,127) - one byte.
-    LONG(LLOAD, LSTORE, LRETURN, LADD, LSUB, LMUL, LDIV, DUP2, DUP2_X1),
-    FLOAT(FLOAD, FSTORE, FRETURN, FADD, FSUB, FMUL, FDIV, DUP, DUP_X1),
-    DOUBLE(DLOAD, DSTORE, DRETURN, DADD, DSUB, DMUL, DDIV, DUP2, DUP2_X1),
-    VOID(ALOAD, ASTORE, RETURN, 0, 0, 0, 0, 0, 0),
-    OBJECT(ALOAD, ASTORE, ARETURN, 0, 0, 0, 0, DUP, DUP_X1);
+    INT(ILOAD, ISTORE, IRETURN, IADD, ISUB, IMUL, IDIV, DUP, DUP_X1, INEG), //values (-127,127) - one byte.
+    LONG(LLOAD, LSTORE, LRETURN, LADD, LSUB, LMUL, LDIV, DUP2, DUP2_X1, LNEG),
+    FLOAT(FLOAD, FSTORE, FRETURN, FADD, FSUB, FMUL, FDIV, DUP, DUP_X1, FNEG),
+    DOUBLE(DLOAD, DSTORE, DRETURN, DADD, DSUB, DMUL, DDIV, DUP2, DUP2_X1, DNEG),
+    VOID(ALOAD, ASTORE, RETURN, 0, 0, 0, 0, 0, 0, 0),
+    OBJECT(ALOAD, ASTORE, ARETURN, 0, 0, 0, 0, DUP, DUP_X1, 0);
 
     private final int load;
     private final int store;
@@ -24,8 +24,9 @@ public enum TypeSpecificOpcodes {
     private final int div;
     private final int dup;
     private final int dupX1;
+    private final int neg;
 
-    TypeSpecificOpcodes(int load, int store, int ret, int add, int sub, int mul, int div, int dup, int dupX1) {
+    TypeSpecificOpcodes(int load, int store, int ret, int add, int sub, int mul, int div, int dup, int dupX1, int neg) {
 
         this.load = load;
         this.store = store;
@@ -36,6 +37,7 @@ public enum TypeSpecificOpcodes {
         this.div = div;
         this.dup = dup;
         this.dupX1 = dupX1;
+        this.neg = neg;
     }
 
     public int getLoad() {
@@ -66,11 +68,15 @@ public enum TypeSpecificOpcodes {
         return div;
     }
 
-    public int getDupCode(){
+    public int getDupCode() {
         return dup;
     }
 
-    public int getDupX1Code(){
+    public int getDupX1Code() {
         return dupX1;
+    }
+
+    public int getNegation() {
+        return neg;
     }
 }

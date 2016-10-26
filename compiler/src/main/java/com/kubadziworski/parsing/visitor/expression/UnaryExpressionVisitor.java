@@ -6,15 +6,22 @@ import com.kubadziworski.antlr.EnkelParser.*;
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.ArithmeticOperator;
+import com.kubadziworski.domain.UnarySign;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
+import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PropertyAccessorsUtil;
+import com.kubadziworski.util.TypeChecker;
+import com.kubadziworski.util.TypeResolver;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.util.Collections;
 
 
@@ -46,7 +53,7 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
                     ((PropertyAccessorCall) expression).getOwner()), expression.getType());
         }
         Reference ref = (Reference) expression;
-        return new UnaryExpression(ref, true, operator);
+        return new IncrementDecrementExpression(ref, true, operator);
     }
 
 
@@ -69,7 +76,30 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
                             ((PropertyAccessorCall) expression).getOwner()), expression.getType()));
         }
         Reference ref = (Reference) expression;
-        return new UnaryExpression(ref, false, operator);
+        return new IncrementDecrementExpression(ref, false, operator);
+    }
+
+    @Override
+    public Expression visitUnaryExpression(UnaryExpressionContext ctx) {
+        UnarySign unarySign = UnarySign.fromString(ctx.operation.getText());
+        Expression expression = ctx.expression().accept(expressionVisitor);
+        return new UnaryExpression(unarySign, expression);
+    }
+
+    @Override
+    public Expression visitSignExpression(SignExpressionContext ctx) {
+        UnarySign unarySign = UnarySign.fromString(ctx.operation.getText());
+        Expression expression = ctx.expression().accept(expressionVisitor);
+        if (expression instanceof Value) {
+            if (TypeChecker.isNumber(expression.getType())) {
+                if (unarySign.equals(UnarySign.ADD)) {
+                    return expression;
+                }
+                return new Value(expression.getType(), unarySign.getSign() + ((Value) expression).getValue());
+            }
+        }
+
+        return new UnaryExpression(unarySign, expression);
     }
 
     private static class ComposedExpression implements Expression {

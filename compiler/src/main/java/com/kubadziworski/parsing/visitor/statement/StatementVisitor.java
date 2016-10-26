@@ -53,6 +53,16 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     }
 
     @Override
+    public Expression visitSignExpression(EnkelParser.SignExpressionContext ctx) {
+        return expressionVisitor.visitSignExpression(ctx);
+    }
+
+    @Override
+    public Expression visitUnaryExpression(EnkelParser.UnaryExpressionContext ctx) {
+        return expressionVisitor.visitUnaryExpression(ctx);
+    }
+
+    @Override
     public Block visitFunctionContent(@NotNull EnkelParser.FunctionContentContext ctx) {
        return functionContentVisitor.visitFunctionContent(ctx);
     }

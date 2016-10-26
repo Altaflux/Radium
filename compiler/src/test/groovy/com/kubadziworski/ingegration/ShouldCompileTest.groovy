@@ -87,7 +87,7 @@ class ShouldCompileTest extends Specification {
 							NamedParamsTest {
 
 								start {
-									createRect(x1->25,x2->-25,y1->50,y2->-50)
+									createRect(x1->25,x2->-25,y1->50,y2->-0xE)
 								}
 
 								createRect (int x1,int y1,int x2, int y2) {
@@ -174,6 +174,7 @@ class ShouldCompileTest extends Specification {
 								   primitiveComparisonTest()
 								   primitiveComparisonTest2()
 								   objectComparisonTest2()
+								   booleanNegationTest()
 							 }
 
 							 primitiveComparisonTest {
@@ -199,8 +200,17 @@ class ShouldCompileTest extends Specification {
 
 								 var result = a <= b
 								 assert(expected -> true , actual -> result)
+
+
 							 }
 
+                             booleanNegationTest(){
+                                print "Doing boolean negation"
+
+                                var result = !false
+                                assert(expected -> true , actual -> result)
+
+                             }
 
 							 objectComparisonTest() {
 								 var a = new java.lang.Integer(3)

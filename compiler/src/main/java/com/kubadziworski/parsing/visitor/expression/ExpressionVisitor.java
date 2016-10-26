@@ -42,6 +42,16 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         thisExpressionVisitor = new ThisExpressionVisitor(scope);
     }
 
+    @Override
+    public Expression visitSignExpression(EnkelParser.SignExpressionContext ctx) {
+       return unaryExpressionVisitor.visitSignExpression(ctx);
+    }
+
+    @Override
+    public Expression visitUnaryExpression(EnkelParser.UnaryExpressionContext ctx) {
+        return unaryExpressionVisitor.visitUnaryExpression(ctx);
+    }
+
     public Expression visitThisReference(EnkelParser.ThisReferenceContext ctx) {
         return thisExpressionVisitor.visitThisReference(ctx);
     }

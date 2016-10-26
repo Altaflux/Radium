@@ -26,4 +26,9 @@ public final class TypeChecker {
     public static boolean isDouble(Type type) {
         return type == BultInType.DOUBLE;
     }
+
+    public static boolean isNumber(Type type) {
+        return (type == BultInType.INT || type == BultInType.LONG || type == BultInType.DOUBLE || type == BultInType.FLOAT);
+
+    }
 }

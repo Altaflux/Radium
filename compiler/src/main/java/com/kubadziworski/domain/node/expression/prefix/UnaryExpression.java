@@ -2,39 +2,24 @@ package com.kubadziworski.domain.node.expression.prefix;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.ArithmeticOperator;
+import com.kubadziworski.domain.UnarySign;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.type.Type;
 
 
 public class UnaryExpression implements Expression {
 
-    private final Reference reference;
-    private final boolean prefix;
-    private final ArithmeticOperator operator;
+    private final UnarySign unarySign;
+    private final Expression expression;
 
-    public UnaryExpression(Reference reference, boolean prefix, ArithmeticOperator operator) {
-        this.reference = reference;
-        this.prefix = prefix;
-        this.operator = operator;
-    }
-
-    public Reference getReference() {
-        return reference;
-    }
-
-    public boolean isPrefix() {
-        return prefix;
-    }
-
-    public ArithmeticOperator getOperator() {
-        return operator;
+    public UnaryExpression(UnarySign unarySign, Expression expression) {
+        this.unarySign = unarySign;
+        this.expression = expression;
     }
 
     @Override
     public Type getType() {
-        return reference.getType();
+        return expression.getType();
     }
 
     @Override
@@ -45,5 +30,13 @@ public class UnaryExpression implements Expression {
     @Override
     public void accept(StatementGenerator generator) {
         generator.generate(this);
+    }
+
+    public UnarySign getUnarySign() {
+        return unarySign;
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 }

@@ -160,8 +160,9 @@ expression : THIS #ThisReference
            //| expr=expression {!here(LineTerminator)}? operation='++'  #SuffixExpression
            | operation='--' (expression) #PrefixExpression
            | operation='++' (expression) #PrefixExpression
-           | operation='-' expression #ArithmeticExpression
-           | operation='+' expression #ArithmeticExpression
+           | operation='-' expression #SignExpression
+           | operation='+' expression #SignExpression
+           | operation='!' expression #UnaryExpression
            |  '('expression '*' expression')' #Multiply
            | expression '*' expression  #Multiply
            | '(' expression '/' expression ')' #Divide

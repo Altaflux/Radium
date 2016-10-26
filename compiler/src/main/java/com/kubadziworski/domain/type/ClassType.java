@@ -121,6 +121,11 @@ public class ClassType implements Type {
     }
 
     @Override
+    public int getNegation() {
+        throw new RuntimeException("Negation operation not (yet ;) ) supported for custom objects");
+    }
+
+    @Override
     public int getStackSize() {
         return 1;
     }

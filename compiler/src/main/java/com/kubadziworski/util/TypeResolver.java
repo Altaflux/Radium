@@ -92,14 +92,16 @@ public final class TypeResolver {
     public static Object getValueFromString(String stringValue, Type type) {
         if (TypeChecker.isInt(type)) {
             if (stringValue.startsWith("-")) {
-                return Integer.valueOf(stringValue);
+                String newValue = stringValue.substring(1);
+                return -UnsignedInts.decode(newValue);
             } else {
                 return UnsignedInts.decode(stringValue);
             }
         }
         if (TypeChecker.isLong(type)) {
             if (stringValue.startsWith("-")) {
-                return Long.valueOf(stringValue);
+                String newValue = stringValue.substring(1);
+                return -Long.decode(newValue);
             } else {
                 return UnsignedLongs.decode(stringValue);
             }

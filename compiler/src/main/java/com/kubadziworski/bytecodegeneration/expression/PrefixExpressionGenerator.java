@@ -6,7 +6,7 @@ import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Reference;
 import com.kubadziworski.domain.node.expression.Value;
-import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
+import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 
@@ -23,8 +23,8 @@ public class PrefixExpressionGenerator {
     }
 
 
-    public void generate(UnaryExpression unaryExpression) {
-        Reference reference = unaryExpression.getReference(); //x
+    public void generate(IncrementDecrementExpression incrementDecrementExpression) {
+        Reference reference = incrementDecrementExpression.getReference(); //x
 
         if (reference instanceof LocalVariableReference) {
             reference.accept(expressionGenerator);
@@ -40,13 +40,13 @@ public class PrefixExpressionGenerator {
         }
 
         int operationOpCode;
-        if (unaryExpression.getOperator().equals(ArithmeticOperator.INCREMENT)) {
+        if (incrementDecrementExpression.getOperator().equals(ArithmeticOperator.INCREMENT)) {
             operationOpCode = reference.getType().getAddOpcode();
         } else {
             operationOpCode = reference.getType().getSubstractOpcode();
         }
 
-        if (unaryExpression.isPrefix()) {
+        if (incrementDecrementExpression.isPrefix()) {
             expressionGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
             methodVisitor.visitInsn(dupsCode);

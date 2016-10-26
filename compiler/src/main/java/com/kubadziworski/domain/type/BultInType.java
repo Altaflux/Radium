@@ -111,6 +111,11 @@ public enum BultInType implements Type {
     }
 
     @Override
+    public int getNegation() {
+        return opcodes.getNegation();
+    }
+
+    @Override
     public String toString() {
         return "BultInType{" +
                 "name='" + name + '\'' +

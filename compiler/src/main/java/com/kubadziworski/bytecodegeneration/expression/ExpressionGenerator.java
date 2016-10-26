@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
@@ -21,6 +22,7 @@ public class ExpressionGenerator {
     private final PrefixExpressionGenerator prefixExpressionGenerator;
     private final PopExpressionGenerator popExpressionGenerator;
     private final DupExpressionGenerator dupExpressionGenerator;
+    private final UnaryExpressionGenerator unaryExpressionGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
         referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor, scope, this);
@@ -32,6 +34,11 @@ public class ExpressionGenerator {
         prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor, this, scope);
         popExpressionGenerator = new PopExpressionGenerator(methodVisitor, this);
         dupExpressionGenerator = new DupExpressionGenerator(methodVisitor, this);
+        unaryExpressionGenerator = new UnaryExpressionGenerator(methodVisitor, this);
+    }
+
+    public void generate(UnaryExpression unaryExpression) {
+        unaryExpressionGenerator.generate(unaryExpression);
     }
 
     public void generate(DupExpression dupExpression) {
@@ -50,8 +57,8 @@ public class ExpressionGenerator {
         referenceExpressionGenerator.generate(reference);
     }
 
-    public void generate(UnaryExpression unaryExpression) {
-        prefixExpressionGenerator.generate(unaryExpression);
+    public void generate(IncrementDecrementExpression incrementDecrementExpression) {
+        prefixExpressionGenerator.generate(incrementDecrementExpression);
     }
 
     public void generate(Parameter parameter) {

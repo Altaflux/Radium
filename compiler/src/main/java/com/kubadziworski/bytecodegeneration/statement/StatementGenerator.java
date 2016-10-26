@@ -1,12 +1,12 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
-import com.kubadziworski.bytecodegeneration.expression.PrefixExpressionGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
 import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
 import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
+import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.*;
@@ -25,7 +25,6 @@ public class StatementGenerator {
     private final ForStatementGenerator forStatementGenerator;
     private final AssignmentStatementGenerator assignmentStatementGenerator;
     private final ExpressionGenerator expressionGenerator;
-    private final PrefixExpressionGenerator prefixExpressionGenerator;
 
     public StatementGenerator(MethodVisitor methodVisitor, Scope scope) {
         expressionGenerator = new ExpressionGenerator(methodVisitor, scope);
@@ -36,7 +35,10 @@ public class StatementGenerator {
         ifStatementGenerator = new IfStatementGenerator(this, expressionGenerator, methodVisitor);
         returnStatemenetGenerator = new ReturnStatemenetGenerator(expressionGenerator, methodVisitor);
         assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor, expressionGenerator, scope);
-        prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor, expressionGenerator, scope);
+    }
+
+    public void generate(UnaryExpression unaryExpression) {
+        expressionGenerator.generate(unaryExpression);
     }
 
     public void generate(PrintStatement printStatement) {
@@ -51,8 +53,8 @@ public class StatementGenerator {
         expressionGenerator.generate(dupExpression);
     }
 
-    public void generate(UnaryExpression unaryExpression) {
-        prefixExpressionGenerator.generate(unaryExpression);
+    public void generate(IncrementDecrementExpression incrementDecrementExpression) {
+        expressionGenerator.generate(incrementDecrementExpression);
     }
 
     public void generate(FunctionCall functionCall) {
