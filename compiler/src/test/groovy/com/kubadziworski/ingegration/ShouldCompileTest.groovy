@@ -489,11 +489,13 @@ class ShouldCompileTest extends Specification {
     @Unroll
     def "Should Compile and run"() {
         expect:
-            def file = new File(filename)
-            FileUtils.writeStringToFile(file, code)
-            Compiler.main(filename)
+            boolean dirs = new File("target/enkelClasses/").mkdirs()
+            def file = new File("target/enkelClasses/" + filename)
 
-            URL u = new File(".").toURL();
+            FileUtils.writeStringToFile(file, code)
+            Compiler.main("target/enkelClasses/" + filename)
+
+            URL u = new File("target/enkelClasses/").toURL();
             URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
             Class urlClass = URLClassLoader.class;
             Method method = urlClass.getDeclaredMethod("addURL", URL.class);
