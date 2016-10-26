@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.scope;
 
 import com.kubadziworski.bytecodegeneration.FieldGenerator;
+import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.Opcodes;
 
@@ -15,6 +16,9 @@ public class Field implements Variable {
     private final Type owner;
     private final Type type;
     private final int modifiers;
+
+    private Function getterFunction;
+    private Function setterFunction;
 
     public Field(String name, Type owner, Type type, int modifiers) {
         this.name = name;
@@ -54,6 +58,22 @@ public class Field implements Variable {
 
     public void accept(FieldGenerator generator) {
         generator.generate(this);
+    }
+
+    public Function getGetterFunction() {
+        return getterFunction;
+    }
+
+    public void setGetterFunction(Function getterFunction) {
+        this.getterFunction = getterFunction;
+    }
+
+    public Function getSetterFunction() {
+        return setterFunction;
+    }
+
+    public void setSetterFunction(Function setterFunction) {
+        this.setterFunction = setterFunction;
     }
 
     @Override

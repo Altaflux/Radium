@@ -46,6 +46,11 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
     private Statement generateAssignment(Expression owner, String varName, Expression expression) {
         Field field = scope.getField(owner.getType(), varName);
 
+        //This is only to allow getter and setters field Reference
+        if(!field.getName().equals(varName)){
+            return new Assignment(owner, varName, expression);
+        }
+
         Optional<FunctionSignature> signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field);
         Optional<FunctionCall> functionCall = signature.map(functionSignature -> {
             Argument argument = new Argument(expression, null);

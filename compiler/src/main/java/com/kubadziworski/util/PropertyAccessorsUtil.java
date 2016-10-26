@@ -51,10 +51,14 @@ public class PropertyAccessorsUtil {
     }
 
 
-    public static FunctionSignature createSetterForField(Field field) {
+    public static FunctionSignature createSetterForField(Field field, String fieldName) {
         return new FunctionSignature("set" + getPropertyMethodSuffix(field.getName()),
-                Collections.singletonList(new Parameter(field.getName(), field.getType(), null)),
+                Collections.singletonList(new Parameter(fieldName, field.getType(), null)),
                 BultInType.VOID, Modifier.PUBLIC, field.getOwner());
+    }
+
+    public static FunctionSignature createSetterForField(Field field) {
+        return createSetterForField(field, field.getName());
     }
 
     public static FunctionSignature createGetterForField(Field field) {

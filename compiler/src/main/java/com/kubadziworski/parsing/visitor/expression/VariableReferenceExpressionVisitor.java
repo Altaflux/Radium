@@ -66,7 +66,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
                 //calling the owner expression, for now lets not optimize...
                 return new FieldReference(scope.getField(owner.getType(), varName), new PopExpression(owner));
             }
-            return generateFieldReference(field, owner);
+            return generateFieldReference(field, owner, varName);
         }
 
         if (scope.isLocalVariableExists(varName)) {
@@ -83,10 +83,15 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
         Type thisType = scope.getClassType();
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         LocalVariableReference thisReference = new LocalVariableReference(thisVariable);
-        return generateFieldReference(field, thisReference);
+        return generateFieldReference(field, thisReference, varName);
     }
 
-    private Expression generateFieldReference(Field field, Expression owner) {
+    private Expression generateFieldReference(Field field, Expression owner, String name) {
+        //This is only to allow getter and setters field Reference
+        if (!field.getName().equals(name)) {
+            return new FieldReference(field, owner);
+        }
+
         Optional<FunctionCall> functionCall = PropertyAccessorsUtil.getGetterFunctionSignatureForField(field)
                 .map(functionSignature -> new PropertyAccessorCall(functionSignature, owner, field));
 

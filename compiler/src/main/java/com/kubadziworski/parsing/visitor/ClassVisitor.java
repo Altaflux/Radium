@@ -54,8 +54,8 @@ class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
             methods.add(getGeneratedMainMethod());
         }
         scope.getFields().values().stream()
-                .peek(field -> methods.add(generateGetter(field)))
-                .forEach(field -> methods.add(generateSetter(field)));
+                .peek(field -> methods.add(field.getGetterFunction()))
+                .forEach(field -> methods.add(field.getSetterFunction()));
 
         return new ClassDeclaration(scope.getClassName(), new ClassType(scope.getFullClassName()), new ArrayList<>(scope.getFields().values()), methods);
     }
@@ -66,30 +66,30 @@ class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
             scope.addSignature(constructorSignature);
         }
     }
-
-    private Function generateGetter(Field field) {
-        FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
-        Scope scope = new Scope(this.scope);
-        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-
-        FieldReference fieldReference = new FieldReference(field, new LocalVariableReference(scope.getLocalVariable("this")));
-        ReturnStatement returnStatement = new ReturnStatement(fieldReference);
-        Block block = new Block(scope, Collections.singletonList(returnStatement));
-        return new Function(getter, block);
-    }
-
-    private Function generateSetter(Field field) {
-        FunctionSignature getter = PropertyAccessorsUtil.createSetterForField(field);
-        Scope scope = new Scope(this.scope);
-        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-        addParametersAsLocalVariables(getter, scope);
-        LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
-        LocalVariableReference thisReference = new LocalVariableReference(scope.getLocalVariable("this"));
-
-        Assignment assignment = new Assignment(thisReference, field.getName(), localVariableReference);
-        Block block = new Block(scope, Collections.singletonList(assignment));
-        return new Function(getter, block);
-    }
+//
+//    private Function generateGetter(Field field) {
+//        FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
+//        Scope scope = new Scope(this.scope);
+//        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+//
+//        FieldReference fieldReference = new FieldReference(field, new LocalVariableReference(scope.getLocalVariable("this")));
+//        ReturnStatement returnStatement = new ReturnStatement(fieldReference);
+//        Block block = new Block(scope, Collections.singletonList(returnStatement));
+//        return new Function(getter, block);
+//    }
+//
+//    private Function generateSetter(Field field) {
+//        FunctionSignature getter = PropertyAccessorsUtil.createSetterForField(field);
+//        Scope scope = new Scope(this.scope);
+//        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+//        addParametersAsLocalVariables(getter, scope);
+//        LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
+//        LocalVariableReference thisReference = new LocalVariableReference(scope.getLocalVariable("this"));
+//
+//        Assignment assignment = new Assignment(thisReference, field.getName(), localVariableReference);
+//        Block block = new Block(scope, Collections.singletonList(assignment));
+//        return new Function(getter, block);
+//    }
 
     private void addParametersAsLocalVariables(FunctionSignature signature, Scope scope) {
         signature.getParameters()

@@ -72,11 +72,11 @@ class ShouldCompileTest extends Specification {
             """
 							Fields {
 
-								field : int
+								myFiedld : int
 
 								start {
-									field = 5
-									print field
+									myFiedld = 5
+									print myFiedld
 								}
 
 							}
@@ -407,6 +407,35 @@ class ShouldCompileTest extends Specification {
 
 							}
 						""";
+    private final static getterSetter =
+            """
+							GetterSetter {
+								myField : int
+                                get(){
+                                    print "returning value getter"
+                                    print field
+                                    return field;
+                                }
+                                set(int value){
+                                    print "setting value"
+                                    field = value
+                                    print field
+                                }
+								start {
+									myField = 5
+                                    var result = myField == 5
+									assert(result, true)
+								}
+                                void assert(boolean actual,boolean expected) {
+                                    if (actual == expected) {
+                                        print "OK"
+                                    }
+                                    else {
+                                        print "TEST FAILED"
+                                    }
+                                }
+							}
+							"""
 
     @Unroll
     def "Should Compile and run"() {
@@ -450,6 +479,7 @@ class ShouldCompileTest extends Specification {
             staticTest               | "StaticTest.enk"
             staticFunctionTest       | "StaticFunctionTest.enk"
             importingTest            | "ImportingTest.enk"
+            getterSetter             | "GetterSetter.enk"
     }
 
 }

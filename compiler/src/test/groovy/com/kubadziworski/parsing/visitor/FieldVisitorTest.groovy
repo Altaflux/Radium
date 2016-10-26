@@ -1,6 +1,9 @@
 package com.kubadziworski.parsing.visitor
 
 import com.kubadziworski.antlr.EnkelParser
+import com.kubadziworski.domain.scope.Field
+import com.kubadziworski.domain.scope.FunctionSignature
+import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BultInType
 import com.kubadziworski.domain.type.ClassType
@@ -23,6 +26,10 @@ class FieldVisitorTest extends Specification {
             field.type == expectedType;
             field.name == name;
             1* scope.getClassType() >> new ClassType("Main")
+            2* scope.getFunctionSignatures() >> new ArrayList<FunctionSignature>()
+            2* scope.getFields() >> new org.apache.commons.collections4.map.LinkedMap<String, Field>()
+            2* scope.getLocalVariables() >> new org.apache.commons.collections4.map.LinkedMap<String, LocalVariable>()
+            2* scope.getClassType() >> new ClassType("Main")
             1* nameContext.getText() >> name
             1* fieldContext.name() >> nameContext
             1* fieldContext.type() >> typeContext

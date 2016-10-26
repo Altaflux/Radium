@@ -40,9 +40,9 @@ public class Scope {
 
     public Scope(Scope scope) {
         metaData = scope.metaData;
-        functionSignatures = Lists.newArrayList(scope.functionSignatures);
-        fields = new LinkedMap<>(scope.fields);
-        localVariables = new LinkedMap<>(scope.localVariables);
+        functionSignatures = Lists.newArrayList(scope.getFunctionSignatures());
+        fields = new LinkedMap<>(scope.getFields());
+        localVariables = new LinkedMap<>(scope.getLocalVariables());
         this.importResolver = scope.getImportResolver();
         this.enkelScope = scope.enkelScope;
     }
@@ -52,6 +52,10 @@ public class Scope {
             throw new MethodWithNameAlreadyDefinedException(signature);
         }
         functionSignatures.add(signature);
+    }
+
+    public Map<String, LocalVariable> getLocalVariables(){
+        return localVariables;
     }
 
     public boolean isParameterLessSignatureExists(String identifier) {
@@ -137,6 +141,10 @@ public class Scope {
 
     public void addField(Field field) {
         fields.put(field.getName(), field);
+    }
+
+    public void addField(String name, Field field) {
+        fields.put(name, field);
     }
 
     public Map<String, Field> getFields() {

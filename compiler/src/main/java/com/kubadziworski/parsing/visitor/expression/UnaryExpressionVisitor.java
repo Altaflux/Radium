@@ -16,7 +16,6 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 
 import java.util.Collections;
-import java.util.Optional;
 
 
 public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {

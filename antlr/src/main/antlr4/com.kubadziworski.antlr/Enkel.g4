@@ -102,7 +102,11 @@ packageDeclaration
 classDeclaration : className '{' classBody '}' ;
 className : qualifiedName ;
 classBody :  field* function* ;
-field : fieldModifier* name ':' type (EQUALS expression)? ;
+field : fieldModifier* name ':' type (EQUALS expression)? getter? setter?;
+
+getter: 'get()' block ;
+setter: 'set' '(' parameter ')' block ;
+
 function : functionDeclaration block ;
 functionDeclaration : methodModifiers* (type)? functionName '('? parametersList? ')'? ;
 parametersList:  parameter (',' parameter)*
