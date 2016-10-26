@@ -105,7 +105,7 @@ classBody :  field* function* ;
 field : fieldModifier* name ':' type (EQUALS expression)? getter? setter?;
 
 getter: 'get()' block ;
-setter: 'set' '(' parameter ')' block ;
+setter: 'set' '(' ID ')' block ;
 
 function : functionDeclaration block ;
 functionDeclaration : methodModifiers* (type)? functionName '('? parametersList? ')'? ;

@@ -416,7 +416,7 @@ class ShouldCompileTest extends Specification {
                                     print field
                                     return field;
                                 }
-                                set(int value){
+                                set(value){
                                     print "setting value"
                                     field = value
                                     print field

@@ -63,7 +63,7 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
         Field field = new Field(name, owner, type, modifiers);
 
         if (ctx.setter() != null) {
-            String fieldName = ctx.setter().parameter().ID().getText();
+            String fieldName = ctx.setter().ID().getText();
             FunctionSignature signature = PropertyAccessorsUtil.createSetterForField(field, fieldName);
             Scope functionScope = new Scope(scope);
             functionScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
