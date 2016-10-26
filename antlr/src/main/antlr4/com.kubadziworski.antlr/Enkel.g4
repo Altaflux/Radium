@@ -104,10 +104,10 @@ className : qualifiedName ;
 classBody : field* function* ;
 field : fieldModifier* name ':' type (EQUALS expression)? getter? setter?;
 
-getter: 'get()' (block | ('=' blockStatement)) ;
+getter: 'get()' functionContent ;
 setter: 'set' '(' ID ')' block ;
 
-function : functionDeclaration (block |  ('=' blockStatement))  ;
+function : functionDeclaration functionContent ;
 functionDeclaration : methodModifiers* (type)? functionName '('? parametersList? ')'? ;
 parametersList:  parameter (',' parameter)*
           |  parameter (',' parameterWithDefaultValue)*
@@ -115,6 +115,8 @@ parametersList:  parameter (',' parameter)*
 functionName : ID ;
 parameter : type ID ;
 parameterWithDefaultValue : type ID '=' defaultValue=expression ;
+
+functionContent : (block |  ('=' blockStatement)) ;
 
 block : '{' blockStatement* '}' ;
 

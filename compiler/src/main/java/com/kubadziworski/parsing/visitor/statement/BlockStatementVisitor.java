@@ -25,9 +25,8 @@ public class BlockStatementVisitor extends EnkelBaseVisitor<Block>{
         Scope newScope = new Scope(scope);
         StatementVisitor statementVisitor = new StatementVisitor(newScope);
         List<Statement> statements = blockStatementsCtx.stream()
-                .map(smtt -> {
-                   return smtt.statement().accept(statementVisitor);
-                }).collect(Collectors.toList());
+                .map(smtt -> smtt.statement().accept(statementVisitor))
+                .collect(Collectors.toList());
         return new Block(newScope, statements);
     }
 }

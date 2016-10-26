@@ -16,6 +16,7 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.WrongModifiersException;
+import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
@@ -71,9 +72,9 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
             Scope functionScope = new Scope(scope);
             functionScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
             functionScope.addField("field", field);
-            addParametersAsLocalVariables(signature, functionScope);
-            Block block = getBlock(ctx.setter().block(), functionScope);
-            field.setSetterFunction(new Function(signature, block));
+
+            FunctionGenerator generator = new FunctionGenerator(functionScope);
+            field.setSetterFunction(generator.generateFunction(signature, ctx.setter().block(), false));
         } else {
             field.setSetterFunction(generateSetter(field));
         }
@@ -83,37 +84,15 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
             Scope functionScope = new Scope(scope);
             functionScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
             functionScope.addField("field", field);
-            addParametersAsLocalVariables(signature, functionScope);
 
-            if (ctx.getter().blockStatement() != null) {
-                ExpressionVisitor visitor = new ExpressionVisitor(functionScope);
-                EnkelParser.StatementContext blockStatementContext = ctx.getter().blockStatement().statement();
-                Expression expression = blockStatementContext.accept(visitor);
-                ReturnStatement returnStatement = new ReturnStatement(expression);
-                Block block = new Block(functionScope, Collections.singletonList(returnStatement));
-                field.setGetterFunction(new Function(signature, block));
-                return field;
-            }
-
-            Block block = getBlock(ctx.getter().block(), functionScope);
-            field.setGetterFunction(new Function(signature, block));
+            FunctionGenerator generator = new FunctionGenerator(functionScope);
+            field.setGetterFunction(generator.generateFunction(signature, ctx.getter().functionContent(), false));
         } else {
             field.setGetterFunction(generateGetter(field));
         }
 
         return field;
     }
-
-    private void addParametersAsLocalVariables(FunctionSignature signature, Scope scope) {
-        signature.getParameters()
-                .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
-    }
-
-    private Block getBlock(EnkelParser.BlockContext block, Scope scope) {
-        StatementVisitor statementVisitor = new StatementVisitor(scope);
-        return (Block) block.accept(statementVisitor);
-    }
-
 
     private Function generateGetter(Field field) {
         FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
@@ -131,7 +110,8 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
         Scope newScope = new Scope(this.scope);
         newScope.addField(field);
         newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-        addParametersAsLocalVariables(getter, newScope);
+        getter.getParameters()
+                .forEach(param -> newScope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
         LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
         LocalVariableReference thisReference = new LocalVariableReference(newScope.getLocalVariable("this"));
 
