@@ -1,6 +1,7 @@
 package com.kubadziworski.parsing.visitor;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.BlockContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.domain.Constructor;
@@ -14,11 +15,13 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,7 +43,16 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
             scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         }
         addParametersAsLocalVariables(signature);
-        Block block = getBlock(ctx);
+
+        Block block;
+        if (ctx.blockStatement() != null) {
+            StatementVisitor visitor = new StatementVisitor(scope);
+            EnkelParser.StatementContext blockStatementContext = ctx.blockStatement().statement();
+            Statement expression = blockStatementContext.accept(visitor);
+            block = new Block(scope, Collections.singletonList(expression));
+        } else {
+            block = getBlock(ctx);
+        }
         if (signature.getName().equals(scope.getFullClassName())) {
             return new Constructor(signature, block);
         }

@@ -436,6 +436,55 @@ class ShouldCompileTest extends Specification {
                                 }
 							}
 							"""
+    private final static getterStatement =
+            """
+							GetterStatement {
+								myField : int
+                                get() = field
+                                set(value){
+                                    print "setting value"
+                                    field = value
+                                    print field
+                                }
+								start {
+									myField = 5
+                                    var result = myField == 5
+									assert(result, true)
+								}
+                                void assert(boolean actual,boolean expected) {
+                                    if (actual == expected) {
+                                        print "OK"
+                                    }
+                                    else {
+                                        print "TEST FAILED"
+                                    }
+                                }
+							}
+							"""
+
+    private final static functionSingleStatements =
+            """
+							FunctionSingleStatements {
+
+								start {
+								    print singleIntFunction()
+									assert(singleIntFunction() == 300, true)
+									loggingFunction("OK")
+								}
+
+                                loggingFunction(string stuff) = print stuff
+								int singleIntFunction() = 300
+
+                                void assert(boolean actual,boolean expected) {
+                                    if (actual == expected) {
+                                        print "OK"
+                                    }
+                                    else {
+                                        print "TEST FAILED"
+                                    }
+                                }
+							}
+							"""
 
     @Unroll
     def "Should Compile and run"() {
@@ -480,6 +529,8 @@ class ShouldCompileTest extends Specification {
             staticFunctionTest       | "StaticFunctionTest.enk"
             importingTest            | "ImportingTest.enk"
             getterSetter             | "GetterSetter.enk"
+            getterStatement          | "GetterStatement.enk"
+            functionSingleStatements | "FunctionSingleStatements.enk"
     }
 
 }

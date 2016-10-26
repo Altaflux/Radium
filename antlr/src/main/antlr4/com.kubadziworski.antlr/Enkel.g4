@@ -101,13 +101,13 @@ packageDeclaration
 
 classDeclaration : className '{' classBody '}' ;
 className : qualifiedName ;
-classBody :  field* function* ;
+classBody : field* function* ;
 field : fieldModifier* name ':' type (EQUALS expression)? getter? setter?;
 
-getter: 'get()' block ;
+getter: 'get()' (block | ('=' blockStatement)) ;
 setter: 'set' '(' ID ')' block ;
 
-function : functionDeclaration block ;
+function : functionDeclaration (block |  ('=' blockStatement))  ;
 functionDeclaration : methodModifiers* (type)? functionName '('? parametersList? ')'? ;
 parametersList:  parameter (',' parameter)*
           |  parameter (',' parameterWithDefaultValue)*

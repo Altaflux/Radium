@@ -3,17 +3,20 @@ package com.kubadziworski.parsing.visitor;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.Function;
+import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
+import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.WrongModifiersException;
+import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import com.kubadziworski.util.TypeResolver;
@@ -81,6 +84,17 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
             functionScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
             functionScope.addField("field", field);
             addParametersAsLocalVariables(signature, functionScope);
+
+            if (ctx.getter().blockStatement() != null) {
+                ExpressionVisitor visitor = new ExpressionVisitor(functionScope);
+                EnkelParser.StatementContext blockStatementContext = ctx.getter().blockStatement().statement();
+                Expression expression = blockStatementContext.accept(visitor);
+                ReturnStatement returnStatement = new ReturnStatement(expression);
+                Block block = new Block(functionScope, Collections.singletonList(returnStatement));
+                field.setGetterFunction(new Function(signature, block));
+                return field;
+            }
+
             Block block = getBlock(ctx.getter().block(), functionScope);
             field.setGetterFunction(new Function(signature, block));
         } else {
