@@ -93,7 +93,7 @@ typeImportOnDemandDeclaration
 	;
 
 //RULES
-compilationUnit : packageDeclaration? importDeclaration* classDeclaration EOF ;
+compilationUnit : packageDeclaration? importDeclaration* classDeclaration* EOF ;
 //
 packageDeclaration
 	:   'package' ID ('.' ID)* ';'

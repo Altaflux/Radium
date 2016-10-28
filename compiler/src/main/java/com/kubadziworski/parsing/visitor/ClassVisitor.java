@@ -28,11 +28,11 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by kuba on 01.04.16.
  */
-class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
+public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
 
     private final Scope scope;
 
-    ClassVisitor(Scope scope) {
+    public ClassVisitor(Scope scope) {
         this.scope = scope;
     }
 
@@ -66,35 +66,7 @@ class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
             scope.addSignature(constructorSignature);
         }
     }
-//
-//    private Function generateGetter(Field field) {
-//        FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
-//        Scope scope = new Scope(this.scope);
-//        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-//
-//        FieldReference fieldReference = new FieldReference(field, new LocalVariableReference(scope.getLocalVariable("this")));
-//        ReturnStatement returnStatement = new ReturnStatement(fieldReference);
-//        Block block = new Block(scope, Collections.singletonList(returnStatement));
-//        return new Function(getter, block);
-//    }
-//
-//    private Function generateSetter(Field field) {
-//        FunctionSignature getter = PropertyAccessorsUtil.createSetterForField(field);
-//        Scope scope = new Scope(this.scope);
-//        scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-//        addParametersAsLocalVariables(getter, scope);
-//        LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
-//        LocalVariableReference thisReference = new LocalVariableReference(scope.getLocalVariable("this"));
-//
-//        Assignment assignment = new Assignment(thisReference, field.getName(), localVariableReference);
-//        Block block = new Block(scope, Collections.singletonList(assignment));
-//        return new Function(getter, block);
-//    }
 
-    private void addParametersAsLocalVariables(FunctionSignature signature, Scope scope) {
-        signature.getParameters()
-                .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
-    }
 
     private Constructor getDefaultConstructor() {
         FunctionSignature signature = scope.getMethodCallSignatureWithoutParameters(scope.getFullClassName());

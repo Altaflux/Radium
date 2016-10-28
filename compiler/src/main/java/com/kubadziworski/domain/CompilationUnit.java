@@ -1,25 +1,27 @@
 package com.kubadziworski.domain;
 
+import java.util.List;
+
 /**
  * Created by kuba on 28.03.16.
  */
 public class CompilationUnit {
 
-    private final ClassDeclaration classDeclaration;
+    private final List<ClassDeclaration> classDeclaration;
     private final String filePath;
 
-    public CompilationUnit(ClassDeclaration classDeclaration, String filePath) {
+    public CompilationUnit(List<ClassDeclaration> classDeclaration, String filePath) {
         this.classDeclaration = classDeclaration;
         this.filePath = filePath;
     }
 
-    public ClassDeclaration getClassDeclaration() {
+    public List<ClassDeclaration> getClassDeclaration() {
         return classDeclaration;
     }
 
-    public String getClassName() {
-        return classDeclaration.getName();
-    }
+//    public String getClassName() {
+//        return classDeclaration.getName();
+//    }
 
     public String getFilePath() {
         return filePath;

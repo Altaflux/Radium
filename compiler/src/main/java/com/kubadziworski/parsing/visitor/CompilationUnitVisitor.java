@@ -24,10 +24,10 @@ public class CompilationUnitVisitor extends EnkelBaseVisitor<CompilationUnit> {
     @Override
     public CompilationUnit visitCompilationUnit(@NotNull CompilationUnitContext ctx) {
 
-        ClassDeclarationContext classDeclarationContext = ctx.classDeclaration();
-        ClassVisitor classVisitor = new ClassVisitor(scope);
-        ClassDeclaration classDeclaration = classDeclarationContext.accept(classVisitor);
-        return new CompilationUnit(classDeclaration, filePath);
+//        ClassDeclarationContext classDeclarationContext = ctx.classDeclaration();
+//        ClassVisitor classVisitor = new ClassVisitor(scope);
+//        ClassDeclaration classDeclaration = classDeclarationContext.accept(classVisitor);
+        return null;
     }
 
 

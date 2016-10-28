@@ -496,53 +496,92 @@ class ShouldCompileTest extends Specification {
 							}
 							"""
 
+    private final static multiFiles =
+            """
+							FirstClass {
+								start {
+								    print "Hello First Class"
+								}
+
+							}
+                            SecondClass {
+                                start {
+                                   print "Hello Second Class"
+                                }
+                            }
+							"""
+
     @Unroll
     def "Should Compile and run"() {
         expect:
-            boolean dirs = new File("target/enkelClasses/").mkdirs()
-            def file = new File("target/enkelClasses/" + filename)
+        boolean dirs = new File("target/enkelClasses/").mkdirs()
+        def file = new File("target/enkelClasses/" + filename)
 
-            FileUtils.writeStringToFile(file, code)
-            Compiler.main("target/enkelClasses/" + filename)
+        FileUtils.writeStringToFile(file, code)
+        Compiler.main("target/enkelClasses/" + filename)
 
-            URL u = new File("target/enkelClasses/").toURL();
-            URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            Class urlClass = URLClassLoader.class;
-            Method method = urlClass.getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            method.invoke(urlClassLoader, u) == null;
+        URL u = new File("target/enkelClasses/").toURL();
+        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Class urlClass = URLClassLoader.class;
+        Method method = urlClass.getDeclaredMethod("addURL", URL.class);
+        method.setAccessible(true);
+        method.invoke(urlClassLoader, u) == null;
 
-            def name = Class.forName(filename.replace(".enk", ""))
-            def method1 = name.getMethod("main", String[].class)
+        def name = Class.forName(filename.replace(".enk", ""))
+        def method1 = name.getMethod("main", String[].class)
 
-            //println(name.getMethods())
-            //String[] objs = new String[0];
-            Object[] argss = new Object[1]
-            String[] testArray = ["1", "2"]
-            argss.putAt(0, testArray as Object)
-            method1.invoke(null, argss) == null;
+        Object[] arggg = [[] as String[]]
+        method1.invoke(null, arggg) == null;
 
         where:
-            code                     | filename
-            helloWorld               | "HelloWorld.enk"
-            loopsCode                | "Loops.enk"
-            allTypes                 | "AllPrimitiveTypes.enk"
-            defaultParams            | "DefaultParamTest.enk"
-            fields                   | "Fields.enk"
-            namedParams              | "NamedParamsTest.enk"
-            sumCalculator            | "SumCalculator.enk"
-            defaultConstructor       | "DefaultConstructor.enk"
-            parameterLessConsturctor | "ParameterLessConstructor.enk"
-            construcotrWithParams    | "ConstructorWithParams.enk"
-            equalityTest             | "EqualitySyntax.enk"
-            unaryExpressionTest      | "UnaryExpressions.enk"
-            globalLocal              | "GlobalLocal.enk"
-            staticTest               | "StaticTest.enk"
-            staticFunctionTest       | "StaticFunctionTest.enk"
-            importingTest            | "ImportingTest.enk"
-            getterSetter             | "GetterSetter.enk"
-            getterStatement          | "GetterStatement.enk"
-            functionSingleStatements | "FunctionSingleStatements.enk"
+        code                     | filename
+        helloWorld               | "HelloWorld.enk"
+        loopsCode                | "Loops.enk"
+        allTypes                 | "AllPrimitiveTypes.enk"
+        defaultParams            | "DefaultParamTest.enk"
+        fields                   | "Fields.enk"
+        namedParams              | "NamedParamsTest.enk"
+        sumCalculator            | "SumCalculator.enk"
+        defaultConstructor       | "DefaultConstructor.enk"
+        parameterLessConsturctor | "ParameterLessConstructor.enk"
+        construcotrWithParams    | "ConstructorWithParams.enk"
+        equalityTest             | "EqualitySyntax.enk"
+        unaryExpressionTest      | "UnaryExpressions.enk"
+        globalLocal              | "GlobalLocal.enk"
+        staticTest               | "StaticTest.enk"
+        staticFunctionTest       | "StaticFunctionTest.enk"
+        importingTest            | "ImportingTest.enk"
+        getterSetter             | "GetterSetter.enk"
+        getterStatement          | "GetterStatement.enk"
+        functionSingleStatements | "FunctionSingleStatements.enk"
     }
 
+
+    @Unroll
+    def "Should Create Multiple files"() {
+        expect:
+        boolean dirs = new File("target/enkelClasses/").mkdirs()
+        def file = new File("target/enkelClasses/" + filename)
+
+        FileUtils.writeStringToFile(file, code)
+        Compiler.main("target/enkelClasses/" + filename)
+
+        URL u = new File("target/enkelClasses/").toURL();
+        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Class urlClass = URLClassLoader.class;
+        Method method = urlClass.getDeclaredMethod("addURL", URL.class);
+        method.setAccessible(true);
+        method.invoke(urlClassLoader, u) == null;
+
+        for (int i = 0; i < classes.size(); i++) {
+            Class name = Class.forName(classes.get(i))
+            Method method1 = name.getMethod("main", String[].class)
+            Object[] arggg = [[] as String[]]
+            method1.invoke(null, arggg);
+        }
+
+        where:
+        code       | filename           | classes
+        multiFiles | "MultiClasses.enk" | Arrays.asList("SecondClass", "FirstClass")
+    }
 }

@@ -79,15 +79,22 @@ public class Compiler {
 
     private void saveBytecodeToClassFile(CompilationUnit compilationUnit) throws IOException {
         BytecodeGenerator bytecodeGenerator = new BytecodeGenerator();
-        byte[] bytecode = bytecodeGenerator.generate(compilationUnit);
-        String className = compilationUnit.getClassName();
+        List<BytecodeGenerator.GeneratedClassHolder> bytecode = bytecodeGenerator.generate(compilationUnit);
 
-        File base = new File(compilationUnit.getFilePath());
-        File compileFile = new File(base.getParentFile(), className + ".class");
+        bytecode.forEach(generatedClassHolder -> {
+            try {
+                String className = generatedClassHolder.getName();
+                File base = new File(compilationUnit.getFilePath());
+                File compileFile = new File(base.getParentFile(), className + ".class");
+                LOGGER.info("Finished Compiling. Saving bytecode to '{}'.", compileFile.getAbsolutePath());
+                OutputStream os = new FileOutputStream(compileFile);
+                IOUtils.write(generatedClassHolder.getBytes(), os);
+                LOGGER.info("Done. To run compiled file execute: 'java {}' in current dir", className);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
-        LOGGER.info("Finished Compiling. Saving bytecode to '{}'.", compileFile.getAbsolutePath());
-        OutputStream os = new FileOutputStream(compileFile);
-        IOUtils.write(bytecode, os);
-        LOGGER.info("Done. To run compiled file execute: 'java {}' in current dir", className);
+        });
+
     }
 }
