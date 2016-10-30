@@ -107,7 +107,7 @@ field : fieldModifier* name ':' type (EQUALS expression)? getter? setter?;
 getter: 'get()' functionContent ;
 setter: 'set' '(' ID ')' block ;
 
-function : functionDeclaration functionContent ;
+function : functionDeclaration functionContent? ;
 functionDeclaration : methodModifiers* (type)? functionName '('? parametersList? ')'? ;
 parametersList:  parameter (',' parameter)*
           |  parameter (',' parameterWithDefaultValue)*
@@ -130,6 +130,8 @@ statement : block
            | returnStatement
            | ifStatement
            | expression ;
+
+returnable : block | expression ;
 
 variableDeclaration : VARIABLE name EQUALS expression;
 assignment :  (preExp=expression '.')?  name  EQUALS postExpr=expression;
@@ -158,6 +160,7 @@ expression : THIS #ThisReference
            | expr=expression operation='++'  #SuffixExpression
            //| expr=expression {!here(LineTerminator)}? operation='--'  #SuffixExpression
            //| expr=expression {!here(LineTerminator)}? operation='++'  #SuffixExpression
+           |  'if'  ('(')? expression (')')? trueStatement=returnable ('else' falseStatement=returnable) #IfExpression
            | operation='--' (expression) #PrefixExpression
            | operation='++' (expression) #PrefixExpression
            | operation='-' expression #SignExpression

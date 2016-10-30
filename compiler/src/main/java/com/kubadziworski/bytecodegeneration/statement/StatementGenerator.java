@@ -37,6 +37,14 @@ public class StatementGenerator {
         assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor, expressionGenerator, scope);
     }
 
+    public void generate(BlockExpression blockExpression) {
+        expressionGenerator.generate(blockExpression);
+    }
+
+    public void generate(IfExpression ifExpression) {
+        expressionGenerator.generate(ifExpression);
+    }
+
     public void generate(UnaryExpression unaryExpression) {
         expressionGenerator.generate(unaryExpression);
     }
@@ -70,7 +78,7 @@ public class StatementGenerator {
     }
 
     public void generate(Block block) {
-        blockStatementGenerator.generate(block);
+        blockStatementGenerator.generate(block, true);
     }
 
     public void generate(RangedForStatement rangedForStatement) {

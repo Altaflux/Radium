@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
+import com.kubadziworski.bytecodegeneration.statement.BlockStatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
@@ -23,6 +24,8 @@ public class ExpressionGenerator {
     private final PopExpressionGenerator popExpressionGenerator;
     private final DupExpressionGenerator dupExpressionGenerator;
     private final UnaryExpressionGenerator unaryExpressionGenerator;
+    private final BlockStatementGenerator blockStatementGenerator;
+    private final IfExpressionGenerator ifExpressionGenerator;
 
     public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
         referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor, scope, this);
@@ -35,6 +38,16 @@ public class ExpressionGenerator {
         popExpressionGenerator = new PopExpressionGenerator(methodVisitor, this);
         dupExpressionGenerator = new DupExpressionGenerator(methodVisitor, this);
         unaryExpressionGenerator = new UnaryExpressionGenerator(methodVisitor, this);
+        blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
+        ifExpressionGenerator = new IfExpressionGenerator(this, methodVisitor);
+    }
+
+    public void generate(IfExpression ifExpression) {
+        ifExpressionGenerator.generate(ifExpression);
+    }
+
+    public void generate(BlockExpression unaryExpression) {
+        blockStatementGenerator.generate(unaryExpression, false);
     }
 
     public void generate(UnaryExpression unaryExpression) {

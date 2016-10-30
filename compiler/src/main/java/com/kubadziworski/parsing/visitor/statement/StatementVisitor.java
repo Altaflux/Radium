@@ -64,7 +64,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
 
     @Override
     public Block visitFunctionContent(@NotNull EnkelParser.FunctionContentContext ctx) {
-       return functionContentVisitor.visitFunctionContent(ctx);
+        return functionContentVisitor.visitFunctionContent(ctx);
     }
 
     @Override

@@ -12,18 +12,25 @@ import org.objectweb.asm.Opcodes;
 import java.util.List;
 
 public class BlockStatementGenerator {
+
     private final MethodVisitor methodVisitor;
 
     public BlockStatementGenerator(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(Block block) {
+    public void generate(Block block, boolean asExpression) {
         Scope newScope = block.getScope();
         List<Statement> statements = block.getStatements();
         StatementGenerator statementGenerator = new StatementGenerator(methodVisitor, newScope);
-        statements.forEach(stmt -> {
+        for (int x = 0; x < statements.size(); x++) {
+            Statement stmt = statements.get(x);
             stmt.accept(statementGenerator);
+
+            //Leave alive the last expression
+            if (!asExpression && x == statements.size() - 1) {
+                continue;
+            }
             if (stmt instanceof Expression) {
                 if (!((Expression) stmt).getType().equals(BultInType.VOID)) {
                     if (!(stmt instanceof ConstructorCall)) {
@@ -31,6 +38,7 @@ public class BlockStatementGenerator {
                     }
                 }
             }
-        });
+
+        }
     }
 }

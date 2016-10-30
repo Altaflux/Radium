@@ -510,7 +510,46 @@ class ShouldCompileTest extends Specification {
                                 }
                             }
 							"""
+    private final static ifExpressions =
+            """
+							IfExpression {
 
+								start {
+                                    var foo = if(true){
+                                        5
+                                    } else {
+                                        6
+                                    }
+                                    assert(foo == 5, true)
+                                    var bar = if(false){
+                                        5
+                                    } else {
+                                        6
+                                    }
+                                    assert(bar == 6, true)
+
+                                    var baz = if(false){
+                                        1
+                                    }else if(true){
+                                        2
+                                    }else {
+                                        3
+                                    }
+									assert(baz == 2, true)
+
+									var blizz = if true 8 else 9
+									assert(blizz == 8, true)
+								}
+                                void assert(boolean actual,boolean expected) {
+                                    if (actual == expected) {
+                                        print "OK"
+                                    }
+                                    else {
+                                        print "TEST FAILED"
+                                    }
+                                }
+							}
+							"""
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -554,10 +593,11 @@ class ShouldCompileTest extends Specification {
         getterSetter             | "GetterSetter.enk"
         getterStatement          | "GetterStatement.enk"
         functionSingleStatements | "FunctionSingleStatements.enk"
+        ifExpressions            | "IfExpression.enk"
     }
 
 
-    @Unroll
+    //@Unroll
     def "Should Create Multiple files"() {
         expect:
         boolean dirs = new File("target/enkelClasses/").mkdirs()

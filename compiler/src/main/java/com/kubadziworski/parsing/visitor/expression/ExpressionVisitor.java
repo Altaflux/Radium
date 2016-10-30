@@ -17,6 +17,8 @@ import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.function.CallExpressionVisitor;
+import com.kubadziworski.parsing.visitor.statement.BlockStatementVisitor;
+import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
 /**
@@ -31,8 +33,10 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final ConditionalExpressionVisitor conditionalExpressionVisitor;
     private final UnaryExpressionVisitor unaryExpressionVisitor;
     private final ThisExpressionVisitor thisExpressionVisitor;
+    private final IfStatementExpressionVisitor ifStatementExpressionVisitor;
+    private final BlockStatementVisitor blockStatementVisitor;
 
-    public ExpressionVisitor(Scope scope) {
+    public ExpressionVisitor( Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
         variableReferenceExpressionVisitor = new VariableReferenceExpressionVisitor(scope, this);
         valueExpressionVisitor = new ValueExpressionVisitor();
@@ -40,11 +44,23 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         conditionalExpressionVisitor = new ConditionalExpressionVisitor(this);
         unaryExpressionVisitor = new UnaryExpressionVisitor(this);
         thisExpressionVisitor = new ThisExpressionVisitor(scope);
+        ifStatementExpressionVisitor = new IfStatementExpressionVisitor( this);
+        blockStatementVisitor = new BlockStatementVisitor(scope);
+    }
+
+    @Override
+    public Expression visitBlock(@NotNull EnkelParser.BlockContext ctx) {
+        return new BlockExpression(blockStatementVisitor.visitBlock(ctx));
+    }
+
+    @Override
+    public Expression visitIfExpression(@NotNull EnkelParser.IfExpressionContext ctx) {
+        return ifStatementExpressionVisitor.visitIfExpression(ctx);
     }
 
     @Override
     public Expression visitSignExpression(EnkelParser.SignExpressionContext ctx) {
-       return unaryExpressionVisitor.visitSignExpression(ctx);
+        return unaryExpressionVisitor.visitSignExpression(ctx);
     }
 
     @Override
