@@ -2,7 +2,9 @@ package com.kubadziworski.domain.scope
 
 import com.kubadziworski.domain.node.expression.Parameter
 import com.kubadziworski.domain.type.BultInType
-import com.kubadziworski.domain.type.ClassType
+
+import com.kubadziworski.domain.type.DefaultTypes
+import com.kubadziworski.domain.type.JavaClassType
 import spock.lang.Specification
 
 import java.lang.reflect.Modifier
@@ -24,10 +26,10 @@ class ClassPathScopeTest extends Specification {
         actualSignature.isPresent()
         actualSignature.get().equals(expectedSignature);
         where:
-        methodName     | type                              | args                                   | expectedName   | expectedParamsTypes                    | expectedReturnType
-        "equals"       | BultInType.STRING                 | [new ClassType("java.lang.Object")]    | "equals"       | [new ClassType("java.lang.Object")]    | BultInType.BOOLEAN
-        "hashCode"     | new ClassType("java.lang.Object") | []                                     | "hashCode"     | []                                     | BultInType.INT
-        "replaceFirst" | BultInType.STRING                 | [BultInType.STRING, BultInType.STRING] | "replaceFirst" | [BultInType.STRING, BultInType.STRING] | BultInType.STRING
+        methodName     | type                              | args                                         | expectedName   | expectedParamsTypes                        | expectedReturnType
+        "equals"       | DefaultTypes.STRING                 | [new JavaClassType("java.lang.Object")]    | "equals"       | [new JavaClassType("java.lang.Object")]        | BultInType.BOOLEAN
+        "hashCode"     | new JavaClassType("java.lang.Object") | []                                           | "hashCode"     | []                                         | BultInType.INT
+        "replaceFirst" | DefaultTypes.STRING                 | [DefaultTypes.STRING, DefaultTypes.STRING] | "replaceFirst" | [DefaultTypes.STRING, DefaultTypes.STRING] | DefaultTypes.STRING
     }
 
     def "GetConstructorSignature should not return private method"() {
@@ -38,7 +40,7 @@ class ClassPathScopeTest extends Specification {
         !actualSignature.isPresent()
         where:
         methodName             | type              | args
-        "indexOfSupplementary" | BultInType.STRING | [BultInType.INT, BultInType.INT]
+        "indexOfSupplementary" | DefaultTypes.STRING | [BultInType.INT, BultInType.INT]
     }
 
     def "GetConstructorSignature"() {
@@ -46,10 +48,10 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, null)
         }
-        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, BultInType.VOID, Modifier.PUBLIC, new ClassType(className));
+        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, BultInType.VOID, Modifier.PUBLIC, new JavaClassType(className));
         when:
         ClassPathScope classPathScope = new ClassPathScope();
-        def actualSignature = classPathScope.getConstructorSignature(new ClassType(className), args)
+        def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(className), args)
         then:
         actualSignature.isPresent()
         actualSignature.get().equals(expectedSignature);
@@ -63,7 +65,7 @@ class ClassPathScopeTest extends Specification {
     def "GetConstructorSignature should not return private Constructor"() {
         when:
         ClassPathScope classPathScope = new ClassPathScope();
-        def actualSignature = classPathScope.getConstructorSignature(new ClassType(className), args)
+        def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(className), args)
         then:
         !actualSignature.isPresent()
         where:

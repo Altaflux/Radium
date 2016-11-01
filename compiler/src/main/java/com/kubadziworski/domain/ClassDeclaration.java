@@ -2,10 +2,8 @@ package com.kubadziworski.domain;
 
 
 import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.Type;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,9 +15,9 @@ public class ClassDeclaration {
     private final String name;
     private final List<Field> fields;
     private final List<Function> methods;
-    private final ClassType classType;
+    private final Type classType;
 
-    public ClassDeclaration(String name, ClassType classType, List<Field> fields, List<Function> methods) {
+    public ClassDeclaration(String name, Type classType, List<Field> fields, List<Function> methods) {
         this.name = name;
         this.fields = fields;
         this.methods = methods;
@@ -30,7 +28,7 @@ public class ClassDeclaration {
         return name;
     }
 
-    public ClassType getClassType() {
+    public Type getClassType() {
         return classType;
     }
 

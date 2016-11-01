@@ -2,9 +2,9 @@ package com.kubadziworski.util
 
 import com.kubadziworski.antlr.EnkelParser
 import com.kubadziworski.domain.type.BultInType
-import com.kubadziworski.domain.type.ClassType
+import com.kubadziworski.domain.type.DefaultTypes
+import com.kubadziworski.domain.type.JavaClassType
 import org.antlr.v4.runtime.tree.TerminalNode
-import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import spock.lang.Specification
 
 /**
@@ -20,10 +20,10 @@ class TypeResolverTest extends Specification {
 
         where:
         typeName            | expectedType
-        "java.lang.Integer" | new ClassType("java.lang.Integer")
+        "java.lang.Integer" | new JavaClassType("java.lang.Integer")
         "int"               | BultInType.INT
         "boolean"           | BultInType.BOOLEAN
-        "java.lang.String"  | BultInType.STRING
+        "java.lang.String"  | DefaultTypes.STRING
         "byte[]"            | BultInType.BYTE_ARR
     }
 
@@ -40,10 +40,10 @@ class TypeResolverTest extends Specification {
 
         where:
         typeName            | expectedType
-        "java.lang.Integer" | new ClassType("java.lang.Integer")
+        "java.lang.Integer" | new JavaClassType("java.lang.Integer")
         "int"               | BultInType.INT
         "boolean"           | BultInType.BOOLEAN
-        "java.lang.String"  | BultInType.STRING
+        "java.lang.String"  | DefaultTypes.STRING
     }
 
     def "getFromTypeContext where typeContext = null should return VOID"() {
@@ -83,7 +83,7 @@ class TypeResolverTest extends Specification {
         "true"      | "boolean"   | BultInType.BOOLEAN
         "5.5f"      | "float"     | BultInType.FLOAT
         "0x20D"     | "int"       | BultInType.INT
-        "something" | "string"    | BultInType.STRING
+        "something" | "string"    | DefaultTypes.STRING
         "'c'"       | "char"    | BultInType.CHAR
     }
 

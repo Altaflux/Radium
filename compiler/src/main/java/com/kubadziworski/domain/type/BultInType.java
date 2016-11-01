@@ -1,5 +1,12 @@
 package com.kubadziworski.domain.type;
 
+import com.kubadziworski.domain.scope.Field;
+import com.kubadziworski.domain.scope.FunctionSignature;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Created by kuba on 02.04.16.
  */
@@ -38,6 +45,24 @@ public enum BultInType implements Type {
         this.descriptor = descriptor;
         this.opcodes = opcodes;
         this.stackSize = stackSize;
+    }
+
+    public Optional<Type> getSuperType() {
+        return Optional.ofNullable(typeClass.getSuperclass())
+                .map(aClass -> new JavaClassType(aClass.getName()));
+    }
+
+    public List<Field> getFields() {
+        return Collections.emptyList();
+    }
+
+    public List<FunctionSignature> getFunctionSignatures() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean inheritsFrom(Type type) {
+        return type.getName().equals(this.getName());
     }
 
     @Override

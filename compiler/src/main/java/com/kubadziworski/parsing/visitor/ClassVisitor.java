@@ -6,22 +6,22 @@ import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.domain.ClassDeclaration;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
-import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.statement.Assignment;
+import com.kubadziworski.domain.node.expression.ConstructorCall;
+import com.kubadziworski.domain.node.expression.FunctionCall;
+import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.node.statement.Block;
-import com.kubadziworski.domain.node.statement.ReturnStatement;
-import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
@@ -57,7 +57,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
                 .peek(field -> methods.add(field.getGetterFunction()))
                 .forEach(field -> methods.add(field.getSetterFunction()));
 
-        return new ClassDeclaration(scope.getClassName(), new ClassType(scope.getFullClassName()), new ArrayList<>(scope.getFields().values()), methods);
+        return new ClassDeclaration(scope.getClassName(), new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
     }
 
     private void addDefaultConstructorSignatureToScope(String name, boolean defaultConstructorExists) {

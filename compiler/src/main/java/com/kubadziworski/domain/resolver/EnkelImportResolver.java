@@ -23,7 +23,7 @@ class EnkelImportResolver implements BaseImportResolver {
 
     @Override
     public Optional<DeclarationDescriptor> preParseClassDeclarations(String importPackage) {
-        if (globalScope.getScopeByClassName(importPackage) != null) {
+        if (globalScope.classExists(importPackage)) {
             ClassEntity entity = splitDeclaration(importPackage);
             return Optional.of(new ClassDescriptor(entity.clazzName, entity.packageName));
         }

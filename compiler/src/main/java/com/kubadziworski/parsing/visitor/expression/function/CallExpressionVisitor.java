@@ -10,7 +10,8 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.EnkelType;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.FunctionNameEqualClassException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -42,8 +43,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         if (ownerIsExplicit) {
             try {
                 Expression owner = ctx.owner.accept(expressionVisitor);
-                FunctionSignature signature = scope.getMethodCallSignature(owner.getType(), functionName, arguments);
-
+                FunctionSignature signature = owner.getType().getMethodCallSignature(functionName, arguments);
                 if (Modifier.isStatic(signature.getModifiers())) {
                     //If the reference is static we can avoid calling the owning reference
                     //and simply use the class to call it.
@@ -59,12 +59,11 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         }
 
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
-
         if (Modifier.isStatic(signature.getModifiers())) {
             return new FunctionCall(signature, arguments, signature.getOwner());
         }
 
-        ClassType thisType = new ClassType(scope.getFullClassName());
+        Type thisType = new EnkelType(scope.getFullClassName(), scope);
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         return new FunctionCall(signature, arguments, new LocalVariableReference(thisVariable));
     }
@@ -72,7 +71,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     @Override
     public Call visitConstructorCall(@NotNull ConstructorCallContext ctx) {
 
-        ClassType className = scope.resolveClassName(ctx.typeName().getText());
+        Type className = scope.resolveClassName(ctx.typeName().getText());
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
         return new ConstructorCall(className.getName(), arguments);
     }
@@ -84,8 +83,9 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     }
 
     private Call visitStaticReference(String possibleClass, String functionName, List<Argument> arguments) {
-        ClassType classType = scope.resolveClassName(possibleClass);
-        FunctionSignature signature = scope.getMethodCallSignature(classType, functionName, arguments);
+        Type classType = scope.resolveClassName(possibleClass);
+        FunctionSignature signature = classType.getMethodCallSignature(functionName, arguments);
+        // FunctionSignature signature = scope.getMethodCallSignature(classType, functionName, arguments);
         return new FunctionCall(signature, arguments, classType);
     }
 

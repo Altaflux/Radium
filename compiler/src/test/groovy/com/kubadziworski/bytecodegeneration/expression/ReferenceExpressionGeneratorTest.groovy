@@ -9,7 +9,8 @@ import com.kubadziworski.domain.scope.GlobalScope
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BultInType
-import com.kubadziworski.domain.type.ClassType
+import com.kubadziworski.domain.type.DefaultTypes
+import com.kubadziworski.domain.type.JavaClassType
 import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes
 import org.objectweb.asm.MethodVisitor
 import spock.lang.Specification
@@ -22,7 +23,7 @@ import java.lang.reflect.Modifier
 class ReferenceExpressionGeneratorTest extends Specification {
     def "should generate field reference"() {
         given:
-            MetaData metaData = new MetaData("Main", "")
+            MetaData metaData = new MetaData("Main", "", "java.lang.Object", Collections.emptyList())
             Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList(), new GlobalScope()))
             MethodVisitor methodVisitor = Mock()
             ExpressionGenerator expressionGenerator = new ExpressionGenerator(methodVisitor, scope)
@@ -38,9 +39,9 @@ class ReferenceExpressionGeneratorTest extends Specification {
             1* methodVisitor.visitFieldInsn(Opcodes.GETFIELD,field.ownerInternalName,field.name,field.type.descriptor)
         where:
             name        | owner                 | type
-            "intVar"    | new ClassType("Main") | BultInType.INT
-            "stringVar" | new ClassType("Main") | BultInType.STRING
-            "objVar"    | new ClassType("Main") | new ClassType("java.lang.Object")
+            "intVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | BultInType.INT
+            "stringVar" | new JavaClassType("com.kubadziworski.test.DummyClass") | DefaultTypes.STRING
+            "objVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | new JavaClassType("java.lang.Object")
     }
 
     def "should generate local variable reference"() {
@@ -56,9 +57,9 @@ class ReferenceExpressionGeneratorTest extends Specification {
             1* scope.getLocalVariableIndex(name) >> 3
             1* methodVisitor.visitVarInsn(expectedOpcode,3)
         where:
-            name        | owner                 | type                              | expectedOpcode
-            "objVar"    | new ClassType("Main") | new ClassType("java.lang.Object") | Opcodes.ALOAD
-            "intVar"    | new ClassType("Main") | BultInType.INT                    | Opcodes.ILOAD
-            "stringVar" | new ClassType("Main") | BultInType.STRING                 | Opcodes.ALOAD
+            name        | owner                 | type                                  | expectedOpcode
+            "objVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | new JavaClassType("java.lang.Object") | Opcodes.ALOAD
+            "intVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | BultInType.INT                        | Opcodes.ILOAD
+            "stringVar" | new JavaClassType("com.kubadziworski.test.DummyClass") | DefaultTypes.STRING                   | Opcodes.ALOAD
     }
 }

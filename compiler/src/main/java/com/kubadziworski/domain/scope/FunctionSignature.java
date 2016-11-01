@@ -2,12 +2,10 @@ package com.kubadziworski.domain.scope;
 
 import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.node.expression.Parameter;
-import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ParameterForNameNotFoundException;
 import org.objectweb.asm.Opcodes;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
@@ -70,7 +68,7 @@ public class FunctionSignature {
                 .allMatch(i -> {
                     Type argumentType = arguments.get(i).getType();
                     Type parameterType = parameters.get(i).getType();
-                    return argumentType.equals(parameterType);
+                    return argumentType.inheritsFrom(parameterType);
                 });
     }
 

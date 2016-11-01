@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.type;
 
 import com.kubadziworski.domain.scope.GlobalScope;
+import com.kubadziworski.domain.scope.Scope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,18 +15,18 @@ public class ClassTypeFactory {
 
     public static void initialize(GlobalScope globalScope) {
         synchronized (ClassTypeFactory.class) {
-//            if (ClassTypeFactory.globalScope == null) {
-//                logger.warn("The globalScope instance has already been assigned", new RuntimeException());
-//            }
             ClassTypeFactory.globalScope = globalScope;
         }
     }
 
-    public static ClassType createClassType(String name) {
+    public static Type createClassType(String name) {
         if (globalScope != null) {
-            return new ClassType(name, globalScope.getScopeByClassName(name));
+            Scope scope = globalScope.getScopeByClassName(name);
+            if(scope != null) {
+                return new EnkelType(name, scope);
+            }
         }
-        return new ClassType(name);
+        return new JavaClassType(name);
     }
 
     public static Optional<GlobalScope> getGlobalScope() {

@@ -7,7 +7,8 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.EnkelType;
+
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
@@ -80,7 +81,7 @@ public class PropertyAccessorsUtil {
             }
             return Optional.empty();
         } catch (Exception e) {
-            return ((ClassType) field.getOwner()).getScope()
+            return ((EnkelType) field.getOwner()).getScope()
                     .map(scope -> getFunctionSignatureForMethod("set", field, scope,
                             Collections.singletonList(new Argument(new EmptyExpression(field.getType()), null))));
         }
@@ -95,7 +96,7 @@ public class PropertyAccessorsUtil {
             }
             return Optional.empty();
         } catch (Exception e) {
-            return ((ClassType) field.getOwner()).getScope().map(scope -> {
+            return ((EnkelType) field.getOwner()).getScope().map(scope -> {
                 if (field.getType().equals(BultInType.BOOLEAN)) {
                     return getFunctionSignatureForMethod("is", field, scope, Collections.emptyList());
                 }

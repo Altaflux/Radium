@@ -5,7 +5,9 @@ import com.kubadziworski.domain.MetaData;
 import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.resolver.ImportResolver;
 import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.ClassType;
+
+import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
@@ -54,7 +56,7 @@ public class Scope {
         functionSignatures.add(signature);
     }
 
-    public Map<String, LocalVariable> getLocalVariables(){
+    public Map<String, LocalVariable> getLocalVariables() {
         return localVariables;
     }
 
@@ -79,8 +81,8 @@ public class Scope {
         if (isDifferentThanCurrentClass) {
 
             List<Type> argumentsTypes = arguments.stream().map(Argument::getType).collect(toList());
-            ClassType resolvedClass = resolveClassName(className);
-           return enkelScope.getConstructorSignature(resolvedClass, arguments).map(Optional::of)
+            Type resolvedClass = resolveClassName(className);
+            return enkelScope.getConstructorSignature(resolvedClass, arguments).map(Optional::of)
                     .orElse(new ClassPathScope().getConstructorSignature(resolvedClass, argumentsTypes))
                     .orElseThrow(() -> new MethodSignatureNotFoundException(this, resolvedClass.getName(), arguments));
         }
@@ -91,12 +93,12 @@ public class Scope {
         return getMethodCallSignature(null, getFullClassName(), arguments);
     }
 
-    public FunctionSignature getMethodCallSignature(Type owner, String methodName, List<Argument> arguments) {
+    private FunctionSignature getMethodCallSignature(Type owner, String methodName, List<Argument> arguments) {
         boolean isDifferentThanCurrentClass = owner != null && !owner.equals(getClassType());
         if (isDifferentThanCurrentClass) {
 
             List<Type> argumentsTypes = arguments.stream().map(Argument::getType).collect(toList());
-           return enkelScope.getMethodSignature(owner, methodName, arguments).map(Optional::of)
+            return enkelScope.getMethodSignature(owner, methodName, arguments).map(Optional::of)
                     .orElse(new ClassPathScope().getMethodSignature(owner, methodName, argumentsTypes))
                     .orElseThrow(() -> new MethodSignatureNotFoundException(this, methodName, arguments));
         }
@@ -105,8 +107,8 @@ public class Scope {
 
     public FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
         if (identifier.equals("super")) {
-            //TODO Set modifiers correctly
-            return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC, new ClassType(getSuperClassName()));
+            return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC,
+                    ClassTypeFactory.createClassType(getSuperClassName()));
         }
         Optional<FunctionSignature> function = functionSignatures.stream()
                 .filter(signature -> signature.matches(identifier, arguments))
@@ -117,9 +119,8 @@ public class Scope {
 
     }
 
-    private String getSuperClassName() {
-        //TODO SET CORRECTLY
-        return "java.lang.Object";
+    public String getSuperClassName() {
+        return metaData.getSuperClass();
     }
 
     public void addLocalVariable(LocalVariable variable) {
@@ -160,7 +161,7 @@ public class Scope {
         if (!isDifferentThanCurrentClass) {
             return getField(fieldName);
         }
-       return enkelScope.getFieldSignature(owner, fieldName).map(Optional::of)
+        return enkelScope.getFieldSignature(owner, fieldName).map(Optional::of)
                 .orElse(new ClassPathScope().getFieldSignature(owner, fieldName))
                 .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
     }
@@ -186,12 +187,12 @@ public class Scope {
     }
 
     public String getSuperClassInternalName() {
-        return new ClassType(getSuperClassName()).getInternalName();
+        return ClassTypeFactory.createClassType(getSuperClassName()).getInternalName();
     }
 
     public Type getClassType() {
         String className = getFullClassName();
-        return new ClassType(className);
+        return new EnkelType(className, this);
     }
 
     public String getClassInternalName() {
@@ -202,8 +203,18 @@ public class Scope {
         return importResolver;
     }
 
-    public ClassType resolveClassName(String className) {
-        return importResolver.getClass(className).orElse(new ClassType(className));
+    public Type resolveClassName(String className) {
+        Optional<Type> clazz = importResolver.getClass(className);
+        if (clazz.isPresent()) {
+            return clazz.get();
+        }
+        return ClassTypeFactory.createClassType(className);
     }
 
+    @Override
+    public String toString() {
+        return "Scope{" +
+                "name=" + getClassType().getName() +
+                '}';
+    }
 }

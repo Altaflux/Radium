@@ -4,7 +4,7 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -12,7 +12,6 @@ import org.objectweb.asm.Opcodes;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class ConditionalExpressionGenerator {
     private final ExpressionGenerator expressionGenerator;
@@ -43,7 +42,7 @@ public class ConditionalExpressionGenerator {
     }
 
     private void generateObjectsComparison(Expression leftExpression, Expression rightExpression, CompareSign compareSign) {
-        Parameter parameter = new Parameter("o", new ClassType("java.lang.Object"), null);
+        Parameter parameter = new Parameter("o", ClassTypeFactory.createClassType("java.lang.Object"), null);
 
         List<Parameter> parameters = Collections.singletonList(parameter);
         Argument argument = new Argument(rightExpression, null);

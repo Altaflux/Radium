@@ -3,6 +3,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
 import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -17,7 +18,7 @@ public class ArithmeticExpressionGenerator {
     }
 
     public void generate(Addition expression) {
-        if (expression.getType().equals(BultInType.STRING)) {
+        if (expression.getType().equals(DefaultTypes.STRING)) {
             generateStringAppend(expression);
             return;
         }

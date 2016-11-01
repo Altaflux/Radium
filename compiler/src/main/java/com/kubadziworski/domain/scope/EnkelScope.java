@@ -1,7 +1,6 @@
 package com.kubadziworski.domain.scope;
 
 import com.kubadziworski.domain.node.expression.Argument;
-import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public class EnkelScope {
         }
     }
 
-    public Optional<FunctionSignature> getConstructorSignature(ClassType className, List<Argument> arguments) {
+    public Optional<FunctionSignature> getConstructorSignature(Type className, List<Argument> arguments) {
         try {
             return Optional.of(globalScope.getScopeByClassName(className.getName()).getConstructorCallSignature(className.getName(), arguments));
         } catch (Exception e) {

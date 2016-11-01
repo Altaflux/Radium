@@ -7,7 +7,8 @@ import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BultInType
-import com.kubadziworski.domain.type.ClassType
+import com.kubadziworski.domain.type.DefaultTypes
+import com.kubadziworski.domain.type.JavaClassType
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import spock.lang.Specification
@@ -37,7 +38,7 @@ class AssignmentStatementGeneratorTest extends Specification {
         where:
             varName  | assignmentExpression                    | expectedOpcode
             "var"    | new Value(BultInType.INT, "25")         | Opcodes.ISTORE
-            "strVar" | new Value(BultInType.STRING, "somestr") | Opcodes.ASTORE
+            "strVar" | new Value(DefaultTypes.STRING, "somestr") | Opcodes.ASTORE
     }
 
     def "should generate bytecode for assignment if field for name exists in scope but local variable does not"() {
@@ -54,8 +55,8 @@ class AssignmentStatementGeneratorTest extends Specification {
             1*scope.getField(varName) >> field
             1* methodVisitor.visitFieldInsn(Opcodes.PUTFIELD,field.ownerInternalName,field.name,field.type.descriptor)
         where:
-            varName     | variableOwner         | variableType      | assignmentExpression
-            "var"       | new ClassType("Main") | BultInType.INT    | new Value(BultInType.INT, "25")
-            "stringVar" | new ClassType("Main") | BultInType.STRING | new Value(BultInType.STRING, "someString")
+            varName     | variableOwner             | variableType        | assignmentExpression
+            "var"       | new JavaClassType("Main")     | BultInType.INT      | new Value(BultInType.INT, "25")
+            "stringVar" | new JavaClassType("Main") | DefaultTypes.STRING | new Value(DefaultTypes.STRING, "someString")
     }
 }

@@ -33,7 +33,14 @@ public class AssignmentStatementGenerator {
         String descriptor;
         Optional<Expression> preExpression = assignment.getPreExpression();
         if (preExpression.isPresent()) {
-            field = scope.getField(preExpression.get().getType(), varName);
+            //TODO CHECK
+            Expression exp = preExpression.get();
+            if (exp.getType().equals(scope.getClassType())) {
+                field = scope.getField(varName);
+            } else {
+                field = exp.getType().getField(varName);
+            }
+
             descriptor = field.getType().getDescriptor();
             preExpression.get().accept(expressionGenerator);
         } else {

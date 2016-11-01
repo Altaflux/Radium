@@ -60,7 +60,7 @@ class ShouldCompileTest extends Specification {
 									greet("andrew")
 								}
 
-								greet (string name,string favouriteLanguage="java") {
+								greet (String name, String favouriteLanguage="java") {
 									print "Hello my name is "
 									print name
 									print "and my favourite langugage is "
@@ -482,7 +482,7 @@ class ShouldCompileTest extends Specification {
 									loggingFunction("OK")
 								}
 
-                                loggingFunction(string stuff) = print stuff
+                                loggingFunction(String stuff) = print stuff
 								int singleIntFunction() = 300
 
                                 void assert(boolean actual,boolean expected) {

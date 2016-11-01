@@ -1,54 +1,22 @@
 package com.kubadziworski.domain.type;
 
-import com.google.common.collect.ImmutableMap;
+import com.kubadziworski.domain.scope.Field;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
-import lombok.ToString;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by kuba on 02.04.16.
- */
-@ToString
-public class ClassType implements Type {
+public class EnkelType implements Type {
     private final String name;
     private final Scope scope;
 
-    private static final Map<String, String> shortcuts = ImmutableMap.of(
-            "List", "java.util.ArrayList"
-    );
-
-    public ClassType(String name) {
-        this(name, ClassTypeFactory.getGlobalScope()
-                .map(globalScope -> globalScope.getScopeByClassName(name)).orElse(null));
-    }
-
-    public ClassType(String name, Scope scope) {
-        this.name = Optional.ofNullable(shortcuts.get(name)).orElse(name);
+    public EnkelType(String name, Scope scope) {
+        this.name = name;
         this.scope = scope;
-    }
-
-
-    public static ClassType Integer() {
-        return new ClassType("java.lang.Integer");
-    }
-
-    public static ClassType Double() {
-        return new ClassType("java.lang.Double");
-    }
-
-    public static ClassType Boolean() {
-        return new ClassType("java.lang.Boolean");
-    }
-
-    public static ClassType Float() {
-        return new ClassType("java.lang.Float");
-    }
-
-    public static Type String() {
-        return new ClassType("java.lang.String");
     }
 
     @Override
@@ -57,12 +25,51 @@ public class ClassType implements Type {
     }
 
     @Override
-    public Class<?> getTypeClass() {
-        try {
-            return Class.forName(name);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException();
+    public List<Field> getFields() {
+        List<Field> fields = new ArrayList<>();
+        fields.addAll(scope.getFields().values());
+        fields.addAll(getSuperType().map(Type::getFields).orElse(Collections.emptyList()));
+        return fields;
+    }
+
+    @Override
+    public Optional<Type> getSuperType() {
+        return Optional.ofNullable(scope.getSuperClassName())
+                .map(s -> ClassTypeFactory.createClassType(scope.getSuperClassName()));
+
+    }
+
+    @Override
+    public List<FunctionSignature> getFunctionSignatures() {
+        List<FunctionSignature> signatures = new ArrayList<>();
+        signatures.addAll(scope.getFunctionSignatures());
+        signatures.addAll(getSuperType().map(Type::getFunctionSignatures).orElse(Collections.emptyList()));
+
+        return signatures;
+    }
+
+    public Optional<Scope> getScope() {
+        return Optional.ofNullable(scope);
+    }
+
+    @Override
+    public boolean inheritsFrom(Type type) {
+        if(type.getName().equals(this.getName())){
+            return true;
         }
+        Type type1 = this;
+        while (type1 != null) {
+            if (type1.getName().equals(type.getName())) {
+                return true;
+            }
+            type1 = type1.getSuperType().orElse(null);
+        }
+        return false;
+    }
+
+    @Override
+    public Class<?> getTypeClass() {
+        throw new RuntimeException("Enkel class " + name + " do not have a clazz instance");
     }
 
     @Override
@@ -130,30 +137,25 @@ public class ClassType implements Type {
         return 1;
     }
 
-
-    public Optional<Scope> getScope() {
-        return Optional.ofNullable(scope);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ClassType classType = (ClassType) o;
+        EnkelType enkelType = (EnkelType) o;
 
-        return !(name != null ? !name.equals(classType.name) : classType.name != null);
+        return name.equals(enkelType.name);
 
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return name.hashCode();
     }
 
     @Override
     public String toString() {
-        return "ClassType{" +
+        return "EnkelType{" +
                 "name='" + name + '\'' +
                 '}';
     }

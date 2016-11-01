@@ -1,7 +1,9 @@
 package com.kubadziworski.domain.resolver;
 
 
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.Type;
+import org.apache.commons.lang3.StringUtils;
 
 public class ClassDescriptor implements DeclarationDescriptor {
 
@@ -13,8 +15,15 @@ public class ClassDescriptor implements DeclarationDescriptor {
         this.classPackage = classPackage;
     }
 
-    public ClassType getType() {
-        return new ClassType(classPackage + "." + name);
+    public Type getType() {
+        return ClassTypeFactory.createClassType(getFullClassName());
+    }
+
+    public String getFullClassName() {
+        if (StringUtils.isNotEmpty(classPackage)) {
+            return classPackage + "." + name;
+        }
+        return name;
     }
 
     @Override

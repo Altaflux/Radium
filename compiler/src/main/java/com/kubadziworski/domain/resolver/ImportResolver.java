@@ -4,7 +4,7 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.GlobalScope;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.BadImportException;
 import org.apache.commons.collections4.ListUtils;
 
@@ -128,16 +128,24 @@ public class ImportResolver {
         return Optional.empty();
     }
 
-    public Optional<ClassType> getClass(String clazzName) {
+    public Optional<Type> getClass(String clazzName) {
+        return getClassInternal(clazzName).map(ClassDescriptor::getType);
+    }
+
+    public Optional<ClassDescriptor> getClassInternal(String clazzName) {
         Optional<DeclarationDescriptor> descriptor = declarationDescriptors.stream()
                 .filter(declarationDescriptor -> declarationDescriptor instanceof ClassDescriptor)
                 .filter(declarationDescriptor -> declarationDescriptor.getName().equals(clazzName))
                 .findAny();
 
         if (descriptor.isPresent()) {
-            return Optional.of(((ClassDescriptor) descriptor.get()).getType());
+            return Optional.of(((ClassDescriptor) descriptor.get()));
         }
         return Optional.empty();
+    }
+
+    public Optional<String> getClassName(String clazzName) {
+        return getClassInternal(clazzName).map(ClassDescriptor::getFullClassName);
     }
 
     public GlobalScope getGlobalScope() {

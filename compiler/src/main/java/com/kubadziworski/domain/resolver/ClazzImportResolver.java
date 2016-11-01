@@ -3,7 +3,9 @@ package com.kubadziworski.domain.resolver;
 import com.kubadziworski.domain.scope.ClassPathScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
 
-import com.kubadziworski.domain.type.ClassType;
+
+import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -131,7 +133,7 @@ class ClazzImportResolver implements BaseImportResolver {
                         return propertyDescriptors;
                     }
                 }
-                classPathScope.getFieldSignature(new ClassType(clazz.getName()), field.getName()).ifPresent(field1 -> {
+                classPathScope.getFieldSignature(new JavaClassType(clazz.getName()), field.getName()).ifPresent(field1 -> {
                     PropertyDescriptor descriptor = new PropertyDescriptor(field.getName(), field1);
                     propertyDescriptors.add(descriptor);
                 });

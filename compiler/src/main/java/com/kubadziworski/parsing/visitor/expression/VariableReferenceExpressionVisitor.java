@@ -7,14 +7,12 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
-import java.util.Collections;
 import java.util.Optional;
 
 public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Expression> {
@@ -50,15 +48,15 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
     }
 
     private Reference visitStaticReference(String possibleClass, VarReferenceContext ctx) {
-        ClassType classType = new ClassType(possibleClass);
-        Field field = scope.getField(classType, ctx.variableReference().getText());
+        Type classType = ClassTypeFactory.createClassType(possibleClass);
+        Field field = classType.getField(ctx.variableReference().getText());
         return new FieldReference(field, new EmptyExpression(field.getOwner()));
     }
 
     private Expression visitReference(@NotNull String varName, Expression owner) {
 
         if (owner != null) {
-            Field field = scope.getField(owner.getType(), varName);
+            Field field = owner.getType().getField(varName);
             if (Modifier.isStatic(field.getModifiers())) {
                 //If the reference is static we can avoid calling the owning reference
                 //and simply use the class to call it.

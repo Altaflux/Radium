@@ -2,7 +2,7 @@ package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import lombok.ToString;
 
@@ -23,7 +23,7 @@ public class ConstructorCall implements Call {
     }
 
     public ConstructorCall(String className, List<Argument> arguments) {
-        this.type = new ClassType(className);
+        this.type = ClassTypeFactory.createClassType(className);
         this.arguments = arguments;
         this.identifier = type.getName();
     }

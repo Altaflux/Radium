@@ -2,6 +2,7 @@ package com.kubadziworski.domain.node.expression.arthimetic;
 
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
 
 /**
@@ -20,7 +21,7 @@ public abstract class ArthimeticExpression implements Expression {
     }
 
     private static Type getCommonType(Expression leftExpression, Expression rightExpression) {
-        if(rightExpression.getType() == BultInType.STRING) return BultInType.STRING;
+        if(rightExpression.getType() == DefaultTypes.STRING) return DefaultTypes.STRING;
         return leftExpression.getType();
     }
 

@@ -4,7 +4,8 @@ import com.kubadziworski.domain.Function
 import com.kubadziworski.domain.node.expression.Parameter
 import com.kubadziworski.domain.scope.FunctionSignature
 import com.kubadziworski.domain.type.BultInType
-import com.kubadziworski.domain.type.ClassType
+import com.kubadziworski.domain.type.DefaultTypes
+import com.kubadziworski.domain.type.JavaClassType
 
 /**
  * Created by kuba on 10.04.16.
@@ -26,10 +27,10 @@ class DescriptorFactoryTest extends spock.lang.Specification {
             descr.equals(descriptor)
 
         where:
-            paramType                         | retType           | descriptor
-            BultInType.INT                    | BultInType.INT    | "(I)I"
-            BultInType.STRING                 | BultInType.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
-            new ClassType("java.lang.String") | BultInType.INT    | "(Ljava/lang/String;)I"
+            paramType                             | retType           | descriptor
+            BultInType.INT                        | BultInType.INT    | "(I)I"
+            DefaultTypes.STRING                   | DefaultTypes.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
+            new JavaClassType("java.lang.String") | BultInType.INT    | "(Ljava/lang/String;)I"
     }
 
     def "test descriptor factory with signature"() {
@@ -50,7 +51,7 @@ class DescriptorFactoryTest extends spock.lang.Specification {
         where:
             paramType                         | retType           | descriptor
             BultInType.INT                    | BultInType.INT    | "(I)I"
-            BultInType.STRING                 | BultInType.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
-            new ClassType("java.lang.String") | BultInType.INT    | "(Ljava/lang/String;)I"
+            DefaultTypes.STRING                 | DefaultTypes.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
+            new JavaClassType("java.lang.String") | BultInType.INT    | "(Ljava/lang/String;)I"
     }
 }

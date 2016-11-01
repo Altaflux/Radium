@@ -1,6 +1,5 @@
 package com.kubadziworski.domain.scope;
 
-import com.kubadziworski.domain.type.ClassType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -38,7 +37,7 @@ public class ClassPathScope {
         }
     }
 
-    public Optional<FunctionSignature> getConstructorSignature(ClassType className, List<Type> arguments) {
+    public Optional<FunctionSignature> getConstructorSignature(Type className, List<Type> arguments) {
         try {
             Class<?> methodOwnerClass = className.getTypeClass();
             Class<?>[] params = arguments.stream()

@@ -6,7 +6,8 @@ import com.kubadziworski.domain.scope.FunctionSignature
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BultInType
-import com.kubadziworski.domain.type.ClassType
+import com.kubadziworski.domain.type.DefaultTypes
+import com.kubadziworski.domain.type.JavaClassType
 import spock.lang.Specification
 
 /**
@@ -25,24 +26,23 @@ class FieldVisitorTest extends Specification {
             field.ownerInternalName == expectedOwnerInternalName;
             field.type == expectedType;
             field.name == name;
-            1* scope.getClassType() >> new ClassType("Main")
+            1* scope.getClassType() >> new JavaClassType("com.kubadziworski.test.DummyClass")
             2* scope.getFunctionSignatures() >> new ArrayList<FunctionSignature>()
             2* scope.getFields() >> new org.apache.commons.collections4.map.LinkedMap<String, Field>()
             2* scope.getLocalVariables() >> new org.apache.commons.collections4.map.LinkedMap<String, LocalVariable>()
-            2* scope.getClassType() >> new ClassType("Main")
+            2* scope.getClassType() >> new JavaClassType("com.kubadziworski.test.DummyClass")
             1* nameContext.getText() >> name
             1* fieldContext.name() >> nameContext
             1* fieldContext.type() >> typeContext
             1* typeContext.getText() >> typeName
 
             if(typeName == "java.lang.Integer"){
-                1* scope.resolveClassName(typeName) >> new ClassType("java.lang.Integer")
+                1* scope.resolveClassName(typeName) >> new JavaClassType("java.lang.Integer")
             }
         where:
-        name        | typeName            | expectedType                       | expectedOwnerInternalName
-        "var"       | "int"               | BultInType.INT                     | "Main"
-        "otherVar"  | "string"            | BultInType.STRING                  | "Main"
-        "stringVar" | "java.lang.String"  | BultInType.STRING                  | "Main"
-        "objVar"    | "java.lang.Integer" | new ClassType("java.lang.Integer") | "Main"
+        name        | typeName            | expectedType                           | expectedOwnerInternalName
+        "var"       | "int"               | BultInType.INT                         | "com/kubadziworski/test/DummyClass"
+        "stringVar" | "java.lang.String"  | DefaultTypes.STRING                    | "com/kubadziworski/test/DummyClass"
+        "objVar"    | "java.lang.Integer" | new JavaClassType("java.lang.Integer") | "com/kubadziworski/test/DummyClass"
     }
 }

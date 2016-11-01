@@ -4,7 +4,7 @@ import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
 
 import java.lang.reflect.Constructor;
@@ -26,7 +26,7 @@ public final class ReflectionObjectToSignatureMapper {
                 .map(p -> new Parameter(p.getName(), TypeResolver.getFromTypeName(p.getType().getCanonicalName()), null))
                 .collect(toList());
         Class<?> returnType = method.getReturnType();
-        ClassType owner = new ClassType(method.getDeclaringClass().getName());
+        JavaClassType owner = new JavaClassType(method.getDeclaringClass().getName());
         return new FunctionSignature(name, parameters, TypeResolver.getFromTypeName(returnType.getCanonicalName()), method.getModifiers(), owner);
     }
 

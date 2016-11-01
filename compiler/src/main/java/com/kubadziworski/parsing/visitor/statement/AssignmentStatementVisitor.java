@@ -12,7 +12,6 @@ import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.misc.NotNull;
 
-import java.util.Collections;
 import java.util.Optional;
 
 public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
@@ -44,10 +43,16 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
     }
 
     private Statement generateAssignment(Expression owner, String varName, Expression expression) {
-        Field field = scope.getField(owner.getType(), varName);
+        Field field;
+        //This is only to allow getter and setters field Reference
+        if (scope.getClassType().equals(owner.getType())) {
+            field = scope.getField(owner.getType(), varName);
+        } else {
+            field = owner.getType().getField(varName);
+        }
 
         //This is only to allow getter and setters field Reference
-        if(!field.getName().equals(varName)){
+        if (!field.getName().equals(varName)) {
             return new Assignment(owner, varName, expression);
         }
 

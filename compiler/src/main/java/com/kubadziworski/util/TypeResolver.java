@@ -5,7 +5,8 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.TypeContext;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.DefaultTypes;
+import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,17 +27,17 @@ public final class TypeResolver {
         if (typeContext == null) return BultInType.VOID;
         String typeName = typeContext.getText();
 
-        if (typeName.equals("java.lang.String")) return BultInType.STRING;
+        if (typeName.equals("java.lang.String")) return DefaultTypes.STRING;
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
         if (builtInType.isPresent()) return builtInType.get();
         return scope.resolveClassName(typeName);
     }
 
     public static Type getFromTypeName(String typeName) {
-        if (typeName.equals("java.lang.String")) return BultInType.STRING;
+        if (typeName.equals("java.lang.String")) return DefaultTypes.STRING;
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
         if (builtInType.isPresent()) return builtInType.get();
-        return new ClassType(typeName);
+        return new JavaClassType(typeName);
     }
 
     public static Type getFromValue(EnkelParser.ValueContext value) {
@@ -85,7 +86,7 @@ public final class TypeResolver {
             return BultInType.CHAR;
         }
 
-        return BultInType.STRING;
+        return DefaultTypes.STRING;
     }
 
 
@@ -121,7 +122,7 @@ public final class TypeResolver {
             stringValue = StringUtils.removeEnd(stringValue, "'");
             return stringValue;
         }
-        if (type == BultInType.STRING) {
+        if (type == DefaultTypes.STRING) {
             stringValue = StringUtils.removeStart(stringValue, "\"");
             stringValue = StringUtils.removeEnd(stringValue, "\"");
             return stringValue;

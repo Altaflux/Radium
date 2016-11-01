@@ -4,7 +4,7 @@ import com.google.common.collect.Ordering;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.ClassType;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
@@ -27,7 +27,7 @@ public class CallExpressionGenerator {
 
     public void generate(ConstructorCall constructorCall) {
         FunctionSignature signature = scope.getConstructorCallSignature(constructorCall.getIdentifier(), constructorCall.getArguments());
-        String ownerDescriptor = new ClassType(signature.getName()).getDescriptor();
+        String ownerDescriptor = ClassTypeFactory.createClassType(signature.getName()).getDescriptor();
         methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
         methodVisitor.visitInsn(Opcodes.DUP);
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
@@ -55,7 +55,8 @@ public class CallExpressionGenerator {
     }
 
     private void generateArguments(FunctionCall call) {
-        FunctionSignature signature = scope.getMethodCallSignature(call.getOwnerType(), call.getIdentifier(), call.getArguments());
+        FunctionSignature signature = call.getOwnerType()
+                .getMethodCallSignature(call.getIdentifier(), call.getArguments());
         generateArguments(call, signature);
     }
 
