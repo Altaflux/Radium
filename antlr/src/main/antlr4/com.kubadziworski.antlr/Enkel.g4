@@ -457,4 +457,4 @@ EQUALS : '=' ;
 BOOL : 'true' | 'false' ;
 STRING : '"'~('\r' | '\n' | '"')*'"' ;
 ID : [a-zA-Z0-9]+ ;
-//WS: [ \t\n\r]+ -> skip ;
+
