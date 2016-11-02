@@ -7,6 +7,7 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.IncompatibleTypesException;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -49,6 +50,11 @@ public class AssignmentStatementGenerator {
                 int index = scope.getLocalVariableIndex(varName);
                 LocalVariable localVariable = scope.getLocalVariable(varName);
                 Type localVariableType = localVariable.getType();
+
+                if (expression.getType().inheritsFrom(localVariableType) < 0) {
+                    throw new IncompatibleTypesException(varName, localVariableType, expression.getType());
+                }
+
                 castIfNecessary(type, localVariableType);
                 methodVisitor.visitVarInsn(type.getStoreVariableOpcode(), index);
                 return;

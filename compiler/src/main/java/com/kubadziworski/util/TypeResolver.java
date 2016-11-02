@@ -6,7 +6,7 @@ import com.kubadziworski.antlr.EnkelParser.TypeContext;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
@@ -21,12 +21,12 @@ import java.util.stream.IntStream;
 public final class TypeResolver {
 
     public static Type getFromTypeContext(TypeContext typeContext) {
-        if (typeContext == null) return BultInType.VOID;
+        if (typeContext == null) return BuiltInType.VOID;
         return getFromTypeName(typeContext.getText());
     }
 
     public static Type getFromTypeContext(TypeContext typeContext, Scope scope) {
-        if (typeContext == null) return BultInType.VOID;
+        if (typeContext == null) return BuiltInType.VOID;
         String typeName = typeContext.getText();
 
         if (typeName.equals("java.lang.String")) return DefaultTypes.STRING;
@@ -44,48 +44,48 @@ public final class TypeResolver {
 
     public static Type getFromValue(EnkelParser.ValueContext value) {
         String stringValue = value.getText();
-        if (StringUtils.isEmpty(stringValue)) return BultInType.VOID;
+        if (StringUtils.isEmpty(stringValue)) return BuiltInType.VOID;
 
         if (value.IntegerLiteral() != null) {
             stringValue = stringValue.replace("_", "");
             if (stringValue.startsWith("0x") || stringValue.startsWith("0X") || stringValue.startsWith("0")) {
                 if (tryInteger(stringValue) != null) {
-                    return BultInType.INT;
+                    return BuiltInType.INT;
                 }
             }
 
             if (stringValue.endsWith("l") || stringValue.endsWith("L")) {
-                return BultInType.LONG;
+                return BuiltInType.LONG;
             }
             if (Ints.tryParse(stringValue) != null) {
-                return BultInType.INT;
+                return BuiltInType.INT;
             } else if (Longs.tryParse(stringValue) != null) {
-                return BultInType.LONG;
+                return BuiltInType.LONG;
             }
         } else if (value.FloatingPointLiteral() != null) {
             stringValue = stringValue.replace("_", "");
 
             if (stringValue.startsWith("0x") || stringValue.startsWith("0X") || stringValue.startsWith("0")) {
                 if (tryLongHex(stringValue) != null) {
-                    return BultInType.LONG;
+                    return BuiltInType.LONG;
                 }
             }
 
             if (stringValue.endsWith("f") || stringValue.endsWith("F")) {
-                return BultInType.FLOAT;
+                return BuiltInType.FLOAT;
             }
             if (Doubles.tryParse(stringValue) != null) {
-                return BultInType.DOUBLE;
+                return BuiltInType.DOUBLE;
             } else if (Floats.tryParse(stringValue) != null) {
-                return BultInType.FLOAT;
+                return BuiltInType.FLOAT;
             }
 
         } else if (value.BOOL() != null) {
-            return BultInType.BOOLEAN;
+            return BuiltInType.BOOLEAN;
         }
 
         if (value.CharacterLiteral() != null) {
-            return BultInType.CHAR;
+            return BuiltInType.CHAR;
         }
 
         return DefaultTypes.STRING;
@@ -119,7 +119,7 @@ public final class TypeResolver {
         if (TypeChecker.isBool(type)) {
             return Boolean.valueOf(stringValue);
         }
-        if (type == BultInType.CHAR) {
+        if (type == BuiltInType.CHAR) {
             stringValue = StringUtils.removeStart(stringValue, "'");
             stringValue = StringUtils.removeEnd(stringValue, "'");
             return stringValue;
@@ -148,8 +148,8 @@ public final class TypeResolver {
         }
     }
 
-    private static Optional<BultInType> getBuiltInType(String typeName) {
-        return Arrays.stream(BultInType.values())
+    private static Optional<BuiltInType> getBuiltInType(String typeName) {
+        return Arrays.stream(BuiltInType.values())
                 .filter(type -> type.getName().equals(typeName))
                 .findFirst();
     }

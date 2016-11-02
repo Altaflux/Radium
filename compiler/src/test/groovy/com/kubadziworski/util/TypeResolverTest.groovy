@@ -1,7 +1,7 @@
 package com.kubadziworski.util
 
 import com.kubadziworski.antlr.EnkelParser
-import com.kubadziworski.domain.type.BultInType
+import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
 import org.antlr.v4.runtime.tree.TerminalNode
@@ -21,10 +21,10 @@ class TypeResolverTest extends Specification {
         where:
         typeName            | expectedType
         "java.lang.Integer" | new JavaClassType("java.lang.Integer")
-        "int"               | BultInType.INT
-        "boolean"           | BultInType.BOOLEAN
+        "int"               | BuiltInType.INT
+        "boolean"           | BuiltInType.BOOLEAN
         "java.lang.String"  | DefaultTypes.STRING
-        "byte[]"            | BultInType.BYTE_ARR
+        "byte[]"            | BuiltInType.BYTE_ARR
     }
 
     def "getFromTypeContext"() {
@@ -41,8 +41,8 @@ class TypeResolverTest extends Specification {
         where:
         typeName            | expectedType
         "java.lang.Integer" | new JavaClassType("java.lang.Integer")
-        "int"               | BultInType.INT
-        "boolean"           | BultInType.BOOLEAN
+        "int"               | BuiltInType.INT
+        "boolean"           | BuiltInType.BOOLEAN
         "java.lang.String"  | DefaultTypes.STRING
     }
 
@@ -51,7 +51,7 @@ class TypeResolverTest extends Specification {
         def actualType = TypeResolver.getFromTypeContext(null)
 
         then:
-        actualType.equals(BultInType.VOID)
+        actualType.equals(BuiltInType.VOID)
     }
 
     def "GetFromValue"() {
@@ -80,11 +80,11 @@ class TypeResolverTest extends Specification {
 
         where:
         stringValue | contextType | expectedType
-        "true"      | "boolean"   | BultInType.BOOLEAN
-        "5.5f"      | "float"     | BultInType.FLOAT
-        "0x20D"     | "int"       | BultInType.INT
+        "true"      | "boolean"   | BuiltInType.BOOLEAN
+        "5.5f"      | "float"     | BuiltInType.FLOAT
+        "0x20D"     | "int"       | BuiltInType.INT
         "something" | "string"    | DefaultTypes.STRING
-        "'c'"       | "char"    | BultInType.CHAR
+        "'c'"       | "char"    | BuiltInType.CHAR
     }
 
 }

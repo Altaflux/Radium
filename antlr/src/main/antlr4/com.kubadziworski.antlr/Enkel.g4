@@ -133,7 +133,7 @@ statement : block
 
 returnable : block | expression ;
 
-variableDeclaration : VARIABLE name EQUALS expression;
+variableDeclaration : VARIABLE name (':' type)? EQUALS expression;
 assignment :  (preExp=expression '.')?  name  EQUALS postExpr=expression;
 printStatement : PRINT expression ;
 returnStatement : 'return' expression #ReturnWithValue

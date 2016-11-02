@@ -3,7 +3,7 @@ package com.kubadziworski.domain;
 import com.kubadziworski.bytecodegeneration.MethodGenerator;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.Type;
 
 /**
@@ -16,7 +16,7 @@ public class Constructor extends Function {
 
     @Override
     public Type getReturnType() {
-        return BultInType.VOID;
+        return BuiltInType.VOID;
     }
 
     @Override

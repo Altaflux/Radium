@@ -14,14 +14,10 @@ import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpress
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import com.kubadziworski.util.TypeChecker;
-import com.kubadziworski.util.TypeResolver;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.util.Collections;
 
 

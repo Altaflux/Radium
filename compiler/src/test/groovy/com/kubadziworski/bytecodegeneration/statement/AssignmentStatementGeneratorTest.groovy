@@ -6,7 +6,8 @@ import com.kubadziworski.domain.node.statement.Assignment
 import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
-import com.kubadziworski.domain.type.BultInType
+import com.kubadziworski.domain.type.BuiltInType
+import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
 import org.objectweb.asm.MethodVisitor
@@ -36,8 +37,8 @@ class AssignmentStatementGeneratorTest extends Specification {
             1* localVariable.getType() >> assignmentExpression.getType()
             1*methodVisitor.visitVarInsn(expectedOpcode,3)
         where:
-            varName  | assignmentExpression                    | expectedOpcode
-            "var"    | new Value(BultInType.INT, "25")         | Opcodes.ISTORE
+            varName  | assignmentExpression                      | expectedOpcode
+            "var"    | new Value(BuiltInType.INT, "25")          | Opcodes.ISTORE
             "strVar" | new Value(DefaultTypes.STRING, "somestr") | Opcodes.ASTORE
     }
 
@@ -56,7 +57,7 @@ class AssignmentStatementGeneratorTest extends Specification {
             1* methodVisitor.visitFieldInsn(Opcodes.PUTFIELD,field.ownerInternalName,field.name,field.type.descriptor)
         where:
             varName     | variableOwner             | variableType        | assignmentExpression
-            "var"       | new JavaClassType("Main")     | BultInType.INT      | new Value(BultInType.INT, "25")
+            "var"       | new JavaClassType("Main")     | BuiltInType.INT | new Value(BuiltInType.INT, "25")
             "stringVar" | new JavaClassType("Main") | DefaultTypes.STRING | new Value(DefaultTypes.STRING, "someString")
     }
 }

@@ -3,7 +3,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -50,7 +50,7 @@ public class ConditionalExpressionGenerator {
         switch (compareSign) {
             case EQUAL:
             case NOT_EQUAL:
-                FunctionSignature equalsSignature = new FunctionSignature("equals", parameters, BultInType.BOOLEAN, Modifier.PUBLIC, leftExpression.getType());
+                FunctionSignature equalsSignature = new FunctionSignature("equals", parameters, BuiltInType.BOOLEAN, Modifier.PUBLIC, leftExpression.getType());
                 FunctionCall equalsCall = new FunctionCall(equalsSignature, arguments, leftExpression);
                 equalsCall.accept(expressionGenerator);
                 methodVisitor.visitInsn(Opcodes.ICONST_1);
@@ -60,7 +60,7 @@ public class ConditionalExpressionGenerator {
             case GREATER:
             case LESS_OR_EQUAL:
             case GRATER_OR_EQAL:
-                FunctionSignature compareToSignature = new FunctionSignature("compareTo", parameters, BultInType.INT, Modifier.PUBLIC, leftExpression.getType());
+                FunctionSignature compareToSignature = new FunctionSignature("compareTo", parameters, BuiltInType.INT, Modifier.PUBLIC, leftExpression.getType());
                 FunctionCall compareToCall = new FunctionCall(compareToSignature, arguments, leftExpression);
                 compareToCall.accept(expressionGenerator);
                 break;

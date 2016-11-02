@@ -11,7 +11,7 @@ import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class FunctionGenerator {
 
             } else if (!(lastStatement instanceof ReturnStatement)) {
                 List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size()));
-                ReturnStatement returnStatement = new ReturnStatement(new EmptyExpression(BultInType.VOID));
+                ReturnStatement returnStatement = new ReturnStatement(new EmptyExpression(BuiltInType.VOID));
                 statements.add(returnStatement);
                 block = new Block(block.getScope(), statements);
             }
@@ -68,7 +68,7 @@ public class FunctionGenerator {
     }
 
     private void verifyBlockReturn(FunctionSignature signature, Block block) {
-        if (!signature.getReturnType().equals(BultInType.VOID)) {
+        if (!signature.getReturnType().equals(BuiltInType.VOID)) {
 
             if (block.getStatements().isEmpty()) {
                 throw new RuntimeException("No return specified for method with return type: " + signature.getReturnType());
@@ -87,7 +87,7 @@ public class FunctionGenerator {
         if (!block.getStatements().isEmpty()) {
             Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
             if (lastStatement instanceof ReturnStatement &&
-                    ((ReturnStatement) lastStatement).getExpression().getType() != BultInType.VOID) {
+                    ((ReturnStatement) lastStatement).getExpression().getType() != BuiltInType.VOID) {
                 throw new RuntimeException("The return type of the expression is not the same as the function signature: " + signature.getReturnType() + " " +
                         "Expression return type: " + ((ReturnStatement) lastStatement).getExpression().getType());
             }

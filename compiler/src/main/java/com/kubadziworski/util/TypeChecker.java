@@ -1,6 +1,6 @@
 package com.kubadziworski.util;
 
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.Type;
 
 /**
@@ -8,27 +8,27 @@ import com.kubadziworski.domain.type.Type;
  */
 public final class TypeChecker {
     public static boolean isInt(Type type) {
-        return type == BultInType.INT;
+        return type == BuiltInType.INT;
     }
 
     public static boolean isBool(Type type) {
-        return type == BultInType.BOOLEAN;
+        return type == BuiltInType.BOOLEAN;
     }
 
     public static boolean isFloat(Type type) {
-        return type == BultInType.FLOAT;
+        return type == BuiltInType.FLOAT;
     }
 
     public static boolean isLong(Type type) {
-        return type == BultInType.LONG;
+        return type == BuiltInType.LONG;
     }
 
     public static boolean isDouble(Type type) {
-        return type == BultInType.DOUBLE;
+        return type == BuiltInType.DOUBLE;
     }
 
     public static boolean isNumber(Type type) {
-        return (type == BultInType.INT || type == BultInType.LONG || type == BultInType.DOUBLE || type == BultInType.FLOAT);
+        return (type == BuiltInType.INT || type == BuiltInType.LONG || type == BuiltInType.DOUBLE || type == BuiltInType.FLOAT);
 
     }
 }

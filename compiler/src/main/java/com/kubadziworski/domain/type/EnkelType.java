@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.kubadziworski.domain.type.BultInType.NONE;
+import static com.kubadziworski.domain.type.BuiltInType.NONE;
 
 public class EnkelType implements Type {
     private final String name;

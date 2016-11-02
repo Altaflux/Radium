@@ -35,15 +35,15 @@ public class ForStatementVisitor extends EnkelBaseVisitor<RangedForStatement> {
         VariableReferenceContext iterator = forExpressionContext.iterator;
         StatementVisitor statementVisitor = new StatementVisitor(newScope);
         String varName = iterator.getText();
-        if(newScope.isLocalVariableExists(varName)) {
+        if (newScope.isLocalVariableExists(varName)) {
             Statement iteratorVariable = new Assignment(varName, startExpression);
             Statement statement = ctx.statement().accept(statementVisitor);
-            return new RangedForStatement(iteratorVariable, startExpression, endExpression,statement, varName, newScope);
+            return new RangedForStatement(iteratorVariable, startExpression, endExpression, statement, varName, newScope);
         } else {
-            newScope.addLocalVariable(new LocalVariable(varName,startExpression.getType()));
-            Statement iteratorVariable = new VariableDeclaration(varName,startExpression);
+            newScope.addLocalVariable(new LocalVariable(varName, startExpression.getType()));
+            Statement iteratorVariable = new VariableDeclaration(varName, startExpression, startExpression.getType());
             Statement statement = ctx.statement().accept(statementVisitor);
-            return new RangedForStatement(iteratorVariable, startExpression, endExpression,statement, varName,newScope);
+            return new RangedForStatement(iteratorVariable, startExpression, endExpression, statement, varName, newScope);
         }
     }
 

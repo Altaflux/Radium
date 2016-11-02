@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.kubadziworski.domain.type.BultInType.NONE;
+import static com.kubadziworski.domain.type.BuiltInType.NONE;
 
 
 public class JavaClassType implements Type {

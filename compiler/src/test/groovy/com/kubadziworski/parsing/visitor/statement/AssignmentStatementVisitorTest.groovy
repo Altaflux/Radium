@@ -4,7 +4,8 @@ import com.kubadziworski.antlr.EnkelParser
 import com.kubadziworski.domain.node.expression.EmptyExpression
 import com.kubadziworski.domain.node.expression.Value
 import com.kubadziworski.domain.scope.Scope
-import com.kubadziworski.domain.type.BultInType
+import com.kubadziworski.domain.type.BuiltInType
+import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor
 import spock.lang.Specification
 
@@ -33,7 +34,7 @@ class AssignmentStatementVisitorTest extends Specification {
             assignment.varName == name
         where:
             name | expression
-            "cos" | new EmptyExpression(BultInType.VOID)
-            "int assignment" | new Value(BultInType.INT,"255")
+            "cos" | new EmptyExpression(BuiltInType.VOID)
+            "int assignment" | new Value(BuiltInType.INT,"255")
     }
 }

@@ -3,7 +3,7 @@ package com.kubadziworski.util;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
 
@@ -15,18 +15,18 @@ import java.util.Optional;
  */
 public class PrimitiveTypesWrapperFactory {
 
-    private final static BiMap<BultInType,Type> types = ImmutableBiMap.of(
-            BultInType.INT, DefaultTypes.Integer(),
-            BultInType.BOOLEAN,DefaultTypes.Boolean(),
-            BultInType.FLOAT,DefaultTypes.Float(),
-            BultInType.DOUBLE,DefaultTypes.Double()
+    private final static BiMap<BuiltInType,Type> types = ImmutableBiMap.of(
+            BuiltInType.INT, DefaultTypes.Integer(),
+            BuiltInType.BOOLEAN,DefaultTypes.Boolean(),
+            BuiltInType.FLOAT,DefaultTypes.Float(),
+            BuiltInType.DOUBLE,DefaultTypes.Double()
     );
 
     private final static Map<Type,String> toPrimitiveMethodName = ImmutableMap.of(
             DefaultTypes.Integer(),"intValue"
     );
 
-    public static Optional<BultInType> getPrimitiveForWrapper(Type type) {
+    public static Optional<BuiltInType> getPrimitiveForWrapper(Type type) {
         return Optional.ofNullable(types.inverse().get(type));
     }
 

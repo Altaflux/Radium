@@ -5,7 +5,7 @@ import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.FunctionSignature
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
-import com.kubadziworski.domain.type.BultInType
+import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
 import spock.lang.Specification
@@ -41,7 +41,7 @@ class FieldVisitorTest extends Specification {
             }
         where:
         name        | typeName            | expectedType                           | expectedOwnerInternalName
-        "var"       | "int"               | BultInType.INT                         | "com/kubadziworski/test/DummyClass"
+        "var"       | "int"               | BuiltInType.INT                        | "com/kubadziworski/test/DummyClass"
         "stringVar" | "java.lang.String"  | DefaultTypes.STRING                    | "com/kubadziworski/test/DummyClass"
         "objVar"    | "java.lang.Integer" | new JavaClassType("java.lang.Integer") | "com/kubadziworski/test/DummyClass"
     }

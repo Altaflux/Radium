@@ -5,7 +5,7 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -32,7 +32,7 @@ public class BlockStatementGenerator {
                 continue;
             }
             if (stmt instanceof Expression) {
-                if (!((Expression) stmt).getType().equals(BultInType.VOID)) {
+                if (!((Expression) stmt).getType().equals(BuiltInType.VOID)) {
                     if (!(stmt instanceof ConstructorCall)) {
                         methodVisitor.visitInsn(Opcodes.POP);
                     }

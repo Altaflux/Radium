@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Created by kuba on 02.04.16.
  */
-public enum BultInType implements Type {
+public enum BuiltInType implements Type {
 
     BOOLEAN("boolean", boolean.class, "Z", TypeSpecificOpcodes.INT, 1),
     INT("int", int.class, "I", TypeSpecificOpcodes.INT, 1),
@@ -39,7 +39,7 @@ public enum BultInType implements Type {
     private final TypeSpecificOpcodes opcodes;
     private final int stackSize;
 
-    BultInType(String name, Class<?> typeClass, String descriptor, TypeSpecificOpcodes opcodes, int stackSize) {
+    BuiltInType(String name, Class<?> typeClass, String descriptor, TypeSpecificOpcodes opcodes, int stackSize) {
         this.name = name;
         this.typeClass = typeClass;
         this.descriptor = descriptor;
@@ -145,7 +145,7 @@ public enum BultInType implements Type {
 
     @Override
     public String toString() {
-        return "BultInType{" +
+        return "BuiltInType{" +
                 "name='" + name + '\'' +
                 ", descriptor='" + descriptor + '\'' +
                 '}';

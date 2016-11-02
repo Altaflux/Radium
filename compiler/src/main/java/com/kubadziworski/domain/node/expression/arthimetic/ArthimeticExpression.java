@@ -1,7 +1,6 @@
 package com.kubadziworski.domain.node.expression.arthimetic;
 
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
 

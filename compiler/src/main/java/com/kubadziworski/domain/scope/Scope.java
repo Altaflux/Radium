@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.kubadziworski.domain.MetaData;
 import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.resolver.ImportResolver;
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
@@ -13,7 +13,6 @@ import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
 import com.kubadziworski.exception.MethodWithNameAlreadyDefinedException;
-import com.kubadziworski.util.TypeChecker;
 import com.kubadziworski.util.TypeResolver;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -112,7 +111,7 @@ public class Scope {
 
     public FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
         if (identifier.equals("super")) {
-            return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC,
+            return new FunctionSignature("super", Collections.emptyList(), BuiltInType.VOID, Modifier.PUBLIC,
                     ClassTypeFactory.createClassType(getSuperClassName()));
         }
 

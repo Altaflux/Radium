@@ -2,7 +2,6 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
-import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;

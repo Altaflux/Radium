@@ -178,8 +178,8 @@ class ShouldCompileTest extends Specification {
 							 }
 
 							 primitiveComparisonTest {
-								 var a = 3
-								 var b = 3
+								 var a:int = 3
+								 var b:int = 3
 
 								 print "Comparing primitive " + a +" and " + b
 

@@ -3,7 +3,7 @@ package com.kubadziworski.domain.node.expression;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
-import com.kubadziworski.domain.type.BultInType;
+import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.MixedComparisonNotAllowedException;
 
@@ -19,7 +19,7 @@ public class ConditionalExpression implements Expression {
     private final boolean isPrimitiveComparison;
 
     public ConditionalExpression(Expression leftExpression, Expression rightExpression,CompareSign compareSign) {
-        this.type = BultInType.BOOLEAN;
+        this.type = BuiltInType.BOOLEAN;
         this.compareSign = compareSign;
         this.leftExpression = leftExpression;
         this.rightExpression = rightExpression;
