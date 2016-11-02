@@ -3,6 +3,8 @@ package com.kubadziworski.util;
 import com.google.common.primitives.*;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.TypeContext;
+import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BultInType;
 import com.kubadziworski.domain.type.DefaultTypes;
@@ -10,8 +12,8 @@ import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * Created by kuba on 02.04.16.
@@ -151,4 +153,47 @@ public final class TypeResolver {
                 .filter(type -> type.getName().equals(typeName))
                 .findFirst();
     }
+
+    public static Optional<FunctionSignature> resolveArity(Type owner, Map<Integer, List<FunctionSignature>> functions) {
+        SortedMap<Integer, List<FunctionSignature>> maps = new TreeMap<>(functions);
+
+        maps = maps.subMap(0, Integer.MAX_VALUE);
+        if (maps.isEmpty()) {
+            return Optional.empty();
+        }
+        List<FunctionSignature> signatures = maps.get(maps.firstKey());
+        if (signatures == null) return Optional.empty();
+
+        if (signatures.size() > 1) {
+            if (owner == null) {
+                throw new RuntimeException("Arity issue");
+            }
+            return signatures.stream().reduce((functionSignature, functionSignature2) -> {
+                boolean sameArguments = compareArguments(functionSignature.getParameters(), functionSignature2.getParameters());
+                if (!sameArguments) {
+                    throw new RuntimeException("Arity issue");
+                }
+                int arity1 = owner.inheritsFrom(functionSignature.getOwner());
+                int arity2 = owner.inheritsFrom(functionSignature2.getOwner());
+                if (arity1 > arity2) {
+                    return functionSignature;
+                } else {
+                    return functionSignature2;
+                }
+            });
+
+        }
+        return Optional.of(signatures.get(0));
+    }
+
+    public static boolean compareArguments(List<Parameter> list1, List<Parameter> list2) {
+        int result = IntStream.range(0, list1.size()).map(operand -> {
+            if (list1.get(operand).getType().equals(list2.get(operand).getType())) {
+                return 1;
+            }
+            return 0;
+        }).min().orElse(1);
+        return result == 1;
+    }
 }
+

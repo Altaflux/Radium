@@ -61,8 +61,11 @@ public enum BultInType implements Type {
     }
 
     @Override
-    public boolean inheritsFrom(Type type) {
-        return type.getName().equals(this.getName());
+    public int inheritsFrom(Type type) {
+        if (type.getName().equals(this.getName())) {
+            return 0;
+        }
+        return -1;
     }
 
     @Override
@@ -147,4 +150,6 @@ public enum BultInType implements Type {
                 ", descriptor='" + descriptor + '\'' +
                 '}';
     }
+
+
 }

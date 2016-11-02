@@ -23,7 +23,7 @@ public class PrintStatementGenerator {
         expression.accept(expressionGenerator);
         Type type = expression.getType();
 
-        if ((type.inheritsFrom(new JavaClassType("java.lang.Object")))) {
+        if ((type.inheritsFrom(new JavaClassType("java.lang.Object"))) > 0) {
             type = new JavaClassType("java.lang.Object");
         }
 

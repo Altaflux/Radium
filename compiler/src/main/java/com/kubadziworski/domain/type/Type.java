@@ -5,9 +5,10 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
+import com.kubadziworski.util.TypeResolver;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by kuba on 28.03.16.
@@ -27,7 +28,7 @@ public interface Type {
 
     List<FunctionSignature> getFunctionSignatures();
 
-    boolean inheritsFrom(Type type);
+    int inheritsFrom(Type type);
 
     int getDupCode();
 
@@ -54,15 +55,15 @@ public interface Type {
 
     default FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
         List<FunctionSignature> signatures = getFunctionSignatures();
-        return signatures.stream()
-                .filter(signature -> signature.matches(identifier, arguments))
-                .findFirst().orElseThrow(() -> new MethodSignatureNotFoundException(identifier, arguments));
+        Map<Integer, List<FunctionSignature>> functions = signatures.stream()
+                .collect(Collectors.groupingBy(signature -> signature.matches(identifier, arguments)));
+
+        return TypeResolver.resolveArity(this, functions).orElseThrow(() -> new MethodSignatureNotFoundException(identifier, arguments));
     }
 
     default Field getField(String fieldName) {
         List<Field> fields = getFields();
         return fields.stream().filter(field -> field.getName().equals(fieldName))
                 .findAny().orElseThrow(() -> new FieldNotFoundException(this, fieldName));
-
     }
 }

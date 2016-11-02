@@ -13,11 +13,14 @@ import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
 import com.kubadziworski.exception.MethodWithNameAlreadyDefinedException;
+import com.kubadziworski.util.TypeChecker;
+import com.kubadziworski.util.TypeResolver;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -67,8 +70,10 @@ public class Scope {
     public boolean isSignatureExists(String identifier, List<Argument> arguments) {
         if (identifier.equals("super")) return true;
 
-        return functionSignatures.stream()
-                .anyMatch(signature -> signature.matches(identifier, arguments));
+        Map<Integer, List<FunctionSignature>> functions = functionSignatures.stream()
+                .collect(Collectors.groupingBy(signature -> signature.matches(identifier, arguments)));
+
+        return TypeResolver.resolveArity(this.getClassType(), functions).isPresent();
     }
 
     public FunctionSignature getMethodCallSignatureWithoutParameters(String identifier) {
@@ -110,13 +115,12 @@ public class Scope {
             return new FunctionSignature("super", Collections.emptyList(), BultInType.VOID, Modifier.PUBLIC,
                     ClassTypeFactory.createClassType(getSuperClassName()));
         }
-        Optional<FunctionSignature> function = functionSignatures.stream()
-                .filter(signature -> signature.matches(identifier, arguments))
-                .findFirst();
 
-        return function.map(Optional::of).orElse(importResolver.getMethod(identifier, arguments))
+        Map<Integer, List<FunctionSignature>> functions = functionSignatures.stream()
+                .collect(Collectors.groupingBy(signature -> signature.matches(identifier, arguments)));
+
+        return TypeResolver.resolveArity(getClassType(), functions).map(Optional::of).orElseGet(() -> importResolver.getMethod(identifier, arguments))
                 .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier, arguments));
-
     }
 
     public String getSuperClassName() {
@@ -210,6 +214,8 @@ public class Scope {
         }
         return ClassTypeFactory.createClassType(className);
     }
+
+
 
     @Override
     public String toString() {

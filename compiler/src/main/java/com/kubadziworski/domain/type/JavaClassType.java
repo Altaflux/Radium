@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.kubadziworski.domain.type.BultInType.NONE;
+
 
 public class JavaClassType implements Type {
 
@@ -56,19 +58,23 @@ public class JavaClassType implements Type {
     }
 
     @Override
-    public boolean inheritsFrom(Type type) {
+    public int inheritsFrom(Type type) {
+        int arity = 0;
         if(type.getName().equals(this.getName())){
-            return true;
+            return arity;
         }
-
+        if (type.getName().equals(NONE.getName())) {
+            return 0;
+        }
         Class iteratedClass = getTypeClass();
         while (iteratedClass != null) {
             if (iteratedClass.getName().equals(type.getName())) {
-                return true;
+                return arity;
             }
             iteratedClass = iteratedClass.getSuperclass();
+            arity++;
         }
-        return false;
+        return -1;
     }
 
     @Override

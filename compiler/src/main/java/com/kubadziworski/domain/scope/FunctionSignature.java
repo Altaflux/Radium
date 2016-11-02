@@ -9,6 +9,7 @@ import org.objectweb.asm.Opcodes;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -49,27 +50,45 @@ public class FunctionSignature {
         return parameters.indexOf(parameter);
     }
 
-    public boolean matches(String otherSignatureName, List<Argument> arguments) {
+    public int matches(String otherSignatureName, List<Argument> arguments) {
         boolean namesAreEqual = this.name.equals(otherSignatureName);
-        if (!namesAreEqual) return false;
+        if (!namesAreEqual) return -1;
         long nonDefaultParametersCount = parameters.stream()
                 .filter(p -> !p.getDefaultValue().isPresent())
                 .count();
-        if (nonDefaultParametersCount > arguments.size()) return false;
+        if (nonDefaultParametersCount > arguments.size()) return -1;
         boolean isNamedArgList = arguments.stream().anyMatch(a -> a.getParameterName().isPresent());
         if (isNamedArgList) {
-            return areArgumentsAndParamsMatchedByName(arguments);
+            if (areArgumentsAndParamsMatchedByName(arguments)) return 0;
+            else return -1;
         }
         return areArgumentsAndParamsMatchedByIndex(arguments);
     }
 
-    private boolean areArgumentsAndParamsMatchedByIndex(List<Argument> arguments) {
-        return IntStream.range(0, arguments.size())
-                .allMatch(i -> {
-                    Type argumentType = arguments.get(i).getType();
-                    Type parameterType = parameters.get(i).getType();
-                    return argumentType.inheritsFrom(parameterType);
-                });
+    private int areArgumentsAndParamsMatchedByIndex(List<Argument> arguments) {
+
+        List<Parameter> nonDefault = parameters.stream()
+                .filter(parameter -> !parameter.getDefaultValue().isPresent()).collect(Collectors.toList());
+        if(arguments.size()== 0 && parameters.size() == 0){
+            return 0;
+        }
+        if(arguments.size() != parameters.size()){
+            if(arguments.size() != nonDefault.size()){
+                return -1;
+            }
+        }
+        List<Integer> list = IntStream.range(0, arguments.size()).map(i -> {
+            Type argumentType = arguments.get(i).getType();
+            Type parameterType = parameters.get(i).getType();
+            return argumentType.inheritsFrom(parameterType);
+        }).boxed().collect(Collectors.toList());
+
+        if (list.contains(-1)) {
+            return -1;
+        } else {
+            return list.stream().mapToInt(Integer::intValue).max().orElse(0);
+        }
+
     }
 
     private boolean areArgumentsAndParamsMatchedByName(List<Argument> arguments) {

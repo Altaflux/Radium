@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.kubadziworski.domain.type.BultInType.NONE;
+
 public class EnkelType implements Type {
     private final String name;
     private final Scope scope;
@@ -53,18 +55,24 @@ public class EnkelType implements Type {
     }
 
     @Override
-    public boolean inheritsFrom(Type type) {
-        if(type.getName().equals(this.getName())){
-            return true;
+    public int inheritsFrom(Type type) {
+        int arity = 0;
+        if (type.getName().equals(this.getName())) {
+            return arity;
         }
+        if (type.getName().equals(NONE.getName())) {
+            return 0;
+        }
+
         Type type1 = this;
         while (type1 != null) {
             if (type1.getName().equals(type.getName())) {
-                return true;
+                return arity;
             }
             type1 = type1.getSuperType().orElse(null);
+            arity++;
         }
-        return false;
+        return -1;
     }
 
     @Override

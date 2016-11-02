@@ -6,6 +6,7 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.BadImportException;
+import com.kubadziworski.util.TypeResolver;
 import org.apache.commons.collections4.ListUtils;
 
 import java.util.*;
@@ -116,23 +117,20 @@ public class ImportResolver {
     }
 
     public Optional<FunctionSignature> getMethod(String methodName, List<Argument> arguments) {
-        Optional<DeclarationDescriptor> descriptor = declarationDescriptors.stream()
+        Map<Integer, List<FunctionSignature>> descs = declarationDescriptors.stream()
                 .filter(declarationDescriptor -> declarationDescriptor instanceof FunctionDescriptor)
                 .filter(declarationDescriptor -> declarationDescriptor.getName().equals(methodName))
-                .filter(declarationDescriptor -> ((FunctionDescriptor) declarationDescriptor).getFunctionSignature().matches(methodName, arguments))
-                .findAny();
+                .map(declarationDescriptor -> ((FunctionDescriptor) declarationDescriptor).getFunctionSignature())
+                .collect(Collectors.groupingBy(o -> o.matches(methodName, arguments)));
 
-        if (descriptor.isPresent()) {
-            return Optional.of(((FunctionDescriptor) descriptor.get()).getFunctionSignature());
-        }
-        return Optional.empty();
+        return TypeResolver.resolveArity(null, descs);
     }
 
     public Optional<Type> getClass(String clazzName) {
         return getClassInternal(clazzName).map(ClassDescriptor::getType);
     }
 
-    public Optional<ClassDescriptor> getClassInternal(String clazzName) {
+    private Optional<ClassDescriptor> getClassInternal(String clazzName) {
         Optional<DeclarationDescriptor> descriptor = declarationDescriptors.stream()
                 .filter(declarationDescriptor -> declarationDescriptor instanceof ClassDescriptor)
                 .filter(declarationDescriptor -> declarationDescriptor.getName().equals(clazzName))
