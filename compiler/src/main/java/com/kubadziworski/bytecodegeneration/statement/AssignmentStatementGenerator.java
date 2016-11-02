@@ -7,6 +7,8 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.CompilationException;
+import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -34,7 +36,8 @@ public class AssignmentStatementGenerator {
         String descriptor;
         Optional<Expression> preExpression = assignment.getPreExpression();
         if (preExpression.isPresent()) {
-            //TODO CHECK
+
+            //TODO USE SCOPE
             Expression exp = preExpression.get();
             if (exp.getType().equals(scope.getClassType())) {
                 field = scope.getField(varName);
@@ -49,8 +52,10 @@ public class AssignmentStatementGenerator {
             if (scope.isLocalVariableExists(varName)) {
                 int index = scope.getLocalVariableIndex(varName);
                 LocalVariable localVariable = scope.getLocalVariable(varName);
+                if (!localVariable.isMutable()) {
+                    throw new FinalFieldModificationException("Cannot modify final variable: " + localVariable.getName());
+                }
                 Type localVariableType = localVariable.getType();
-
                 if (expression.getType().inheritsFrom(localVariableType) < 0) {
                     throw new IncompatibleTypesException(varName, localVariableType, expression.getType());
                 }

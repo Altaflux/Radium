@@ -8,10 +8,20 @@ import com.kubadziworski.domain.type.Type;
 public class LocalVariable implements Variable {
     private final String name;
     private final Type type;
+    private final boolean mutable;
 
     public LocalVariable(String name, Type type) {
+        this(name, type, true);
+    }
+
+    public LocalVariable(String name, Type type, boolean mutable) {
         this.type = type;
         this.name = name;
+        this.mutable = mutable;
+    }
+
+    public boolean isMutable() {
+        return mutable;
     }
 
     @Override

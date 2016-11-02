@@ -133,7 +133,7 @@ statement : block
 
 returnable : block | expression ;
 
-variableDeclaration : VARIABLE name (':' type)? EQUALS expression;
+variableDeclaration : (VARIABLE | IMMUTABLE) name (':' type)? EQUALS expression;
 assignment :  (preExp=expression '.')?  name  EQUALS postExpr=expression;
 printStatement : PRINT expression ;
 returnStatement : 'return' expression #ReturnWithValue
@@ -452,6 +452,7 @@ Sign
 STATIC : 'static' ;
 THIS : 'this' ;
 VARIABLE : 'var' ;
+IMMUTABLE : 'val' ;
 PRINT : 'print' ;
 EQUALS : '=' ;
 BOOL : 'true' | 'false' ;

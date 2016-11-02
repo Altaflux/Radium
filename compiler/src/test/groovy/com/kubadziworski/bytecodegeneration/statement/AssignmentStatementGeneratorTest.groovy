@@ -34,6 +34,7 @@ class AssignmentStatementGeneratorTest extends Specification {
             1*scope.isLocalVariableExists(varName) >> true
             1*scope.getLocalVariableIndex(varName) >> 3
             1* scope.getLocalVariable(varName) >> localVariable
+            1* localVariable.isMutable() >> true
             1* localVariable.getType() >> assignmentExpression.getType()
             1*methodVisitor.visitVarInsn(expectedOpcode,3)
         where:

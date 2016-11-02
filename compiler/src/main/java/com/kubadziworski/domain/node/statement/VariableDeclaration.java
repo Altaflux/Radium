@@ -12,11 +12,13 @@ public class VariableDeclaration implements Statement {
     private final String name;
     private final Expression expression;
     private final Type variableType;
+    private final boolean mutable;
 
-    public VariableDeclaration(String name, Expression expression, Type variableType) {
+    public VariableDeclaration(String name, Expression expression, Type variableType, boolean mutable) {
         this.expression = expression;
         this.name = name;
         this.variableType = variableType;
+        this.mutable = mutable;
     }
 
     public String getName() {
@@ -25,6 +27,14 @@ public class VariableDeclaration implements Statement {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public Type getVariableType() {
+        return variableType;
+    }
+
+    public boolean isMutable() {
+        return mutable;
     }
 
     @Override

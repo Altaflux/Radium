@@ -1,7 +1,6 @@
 package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.VariableDeclarationContext;
 import com.kubadziworski.domain.node.expression.Expression;
@@ -29,6 +28,13 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
         ExpressionContext expressionCtx = ctx.expression();
         Expression expression = expressionCtx.accept(expressionVisitor);
 
+        boolean mutable = true;
+        if (ctx.IMMUTABLE() != null) {
+            mutable = false;
+        } else if (ctx.VARIABLE() != null) {
+            mutable = true;
+        }
+
         Type declarationType = expression.getType();
         if (ctx.type() != null) {
             declarationType = TypeResolver.getFromTypeContext(ctx.type(), scope);
@@ -36,7 +42,7 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
         if (expression.getType().inheritsFrom(declarationType) < 0) {
             throw new IncompatibleTypesException(varName, declarationType, expression.getType());
         }
-        scope.addLocalVariable(new LocalVariable(varName, declarationType));
-        return new VariableDeclaration(varName, expression, declarationType);
+        scope.addLocalVariable(new LocalVariable(varName, declarationType, mutable));
+        return new VariableDeclaration(varName, expression, declarationType, mutable);
     }
 }
