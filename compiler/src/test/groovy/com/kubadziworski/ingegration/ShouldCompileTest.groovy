@@ -550,6 +550,52 @@ class ShouldCompileTest extends Specification {
                                 }
 							}
 							"""
+    private static final tryStatement = """
+							TryStatement {
+
+								start(){
+									try{
+									    com.kubadziworski.test.Library.thrower();
+									    print "TEST FAILED"
+									}catch(e: RuntimeException){
+
+									    print "OK"
+									}
+
+									
+									try{
+                                        com.kubadziworski.test.Library.thrower();
+                                        print "TEST FAILED"
+
+                                    } catch(e: RuntimeException){
+                                        print "OK"
+                                    }catch(e: Exception){
+                                        print "FAILED"
+                                    }
+
+                                    try{
+                                        com.kubadziworski.test.Library.thrower();
+                                        print "TEST FAILED"
+
+                                    } catch(e: RuntimeException){
+                                        print "OK"
+                                    }catch(e: Exception){
+                                        print "FAILED"
+                                    }finally {
+                                        print "finally called OK"
+                                    }
+								}
+								void assert(boolean actual,boolean expected) {
+									if (actual == expected) {
+										print "OK"
+									}
+									else {
+										print "TEST FAILED"
+									}
+								}
+							}
+						""";
+
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -594,6 +640,7 @@ class ShouldCompileTest extends Specification {
         getterStatement          | "GetterStatement.enk"
         functionSingleStatements | "FunctionSingleStatements.enk"
         ifExpressions            | "IfExpression.enk"
+        tryStatement            | "TryStatement.enk"
     }
 
 

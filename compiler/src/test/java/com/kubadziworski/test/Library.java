@@ -7,4 +7,10 @@ public class Library {
     public static void execute(String hola) {
         System.out.println("EXECUTED!! " + hola);
     }
+
+    public static void thrower() {
+        throw new RuntimeException();
+    }
+
+
 }

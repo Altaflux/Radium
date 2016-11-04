@@ -129,6 +129,7 @@ statement : block
            | forStatement
            | returnStatement
            | ifStatement
+           | tryStatement
            | expression ;
 
 returnable : block | expression ;
@@ -141,6 +142,12 @@ returnStatement : 'return' expression #ReturnWithValue
 ifStatement :  'if'  ('(')? expression (')')? trueStatement=statement ('else' falseStatement=statement)?;
 forStatement : 'for' ('(')? forConditions (')')? statement ;
 forConditions : iterator=variableReference  'from' startExpr=expression range='to' endExpr=expression ;
+
+tryStatement : 'try' block ((catchBlock+ | finallyBlock)  finallyBlock?);
+catchBlock :  'catch'  '(' name ':' type  ')' block ;
+finallyBlock : 'finally' block ;
+
+
 name : ID ;
 
 argumentList : argument? (',' a=argument)* #UnnamedArgumentsList

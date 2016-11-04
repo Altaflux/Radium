@@ -24,6 +24,7 @@ public class StatementGenerator {
     private final BlockStatementGenerator blockStatementGenerator;
     private final ForStatementGenerator forStatementGenerator;
     private final AssignmentStatementGenerator assignmentStatementGenerator;
+    private final TryCatchStatementGenerator tryCatchStatementGenerator;
     private final ExpressionGenerator expressionGenerator;
 
     public StatementGenerator(MethodVisitor methodVisitor, Scope scope) {
@@ -35,6 +36,10 @@ public class StatementGenerator {
         ifStatementGenerator = new IfStatementGenerator(this, expressionGenerator, methodVisitor);
         returnStatemenetGenerator = new ReturnStatemenetGenerator(expressionGenerator, methodVisitor);
         assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor, expressionGenerator, scope);
+        tryCatchStatementGenerator = new TryCatchStatementGenerator(this, methodVisitor, scope);
+    }
+    public void generate(TryCatchStatement tryCatchStatement) {
+        tryCatchStatementGenerator.generate(tryCatchStatement);
     }
 
     public void generate(BlockExpression blockExpression) {
