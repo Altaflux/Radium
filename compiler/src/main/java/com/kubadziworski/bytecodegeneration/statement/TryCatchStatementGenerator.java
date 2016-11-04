@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
+import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.node.statement.TryCatchStatement;
 import com.kubadziworski.domain.scope.Scope;
@@ -31,6 +32,8 @@ public class TryCatchStatementGenerator {
 
         methodVisitor.visitLabel(lTryBlockStart);
         Statement tryExpression = tryCatchStatement.getStatement();
+
+
         tryExpression.accept(statementGenerator);
         methodVisitor.visitJumpInsn(GOTO, lCatchBlockEnd);
         methodVisitor.visitLabel(lTryBlockEnd);
@@ -45,6 +48,7 @@ public class TryCatchStatementGenerator {
             methodVisitor.visitTryCatchBlock(lTryBlockStart, lTryBlockEnd, catchStartLabel, catchBlock.getParameter().getType().getInternalName());
             methodVisitor.visitJumpInsn(GOTO, lCatchBlockEnd);
         });
+
     //TODO IMPLEMENT FINALLY BLOCK
 //        if (hasFinally) {
 //            tryCatchStatement.getFinallyBlock().ifPresent(statement -> {
@@ -66,4 +70,16 @@ public class TryCatchStatementGenerator {
         methodVisitor.visitLabel(lCatchBlockEnd);
     }
 
+
+    private class ReturnChangerGenerator extends StatementGeneratorFilter {
+
+        public ReturnChangerGenerator(StatementGenerator next) {
+            super(next);
+        }
+
+        public void generate(ReturnStatement returnStatement) {
+
+        }
+
+    }
 }

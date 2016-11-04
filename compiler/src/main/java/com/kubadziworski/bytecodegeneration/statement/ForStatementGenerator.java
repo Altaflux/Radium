@@ -23,7 +23,7 @@ public class ForStatementGenerator {
 
     public void generate(RangedForStatement rangedForStatement) {
         Scope newScope = rangedForStatement.getScope();
-        StatementGenerator scopeGeneratorWithNewScope = new StatementGenerator(methodVisitor, newScope);
+        StatementGenerator scopeGeneratorWithNewScope = new StatementGeneratorFilter(new BaseStatementGenerator(methodVisitor, newScope));
         ExpressionGenerator exprGeneratorWithNewScope = new ExpressionGenerator(methodVisitor, newScope);
         Statement iterator = rangedForStatement.getIteratorVariableStatement();
         Label incrementationSection = new Label();

@@ -22,7 +22,7 @@ public class BlockStatementGenerator {
     public void generate(Block block, boolean asExpression) {
         Scope newScope = block.getScope();
         List<Statement> statements = block.getStatements();
-        StatementGenerator statementGenerator = new StatementGenerator(methodVisitor, newScope);
+        StatementGenerator statementGenerator = new StatementGeneratorFilter(new BaseStatementGenerator(methodVisitor, newScope));
         for (int x = 0; x < statements.size(); x++) {
             Statement stmt = statements.get(x);
             stmt.accept(statementGenerator);

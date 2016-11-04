@@ -1,6 +1,5 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
@@ -8,141 +7,61 @@ import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
 import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.*;
-import org.objectweb.asm.MethodVisitor;
 
-/**
- * Created by kuba on 29.03.16.
- */
-public class StatementGenerator {
+public interface StatementGenerator {
 
-    private final PrintStatementGenerator printStatementGenerator;
-    private final VariableDeclarationStatementGenerator variableDeclarationStatementGenerator;
-    private final ReturnStatemenetGenerator returnStatemenetGenerator;
-    private final IfStatementGenerator ifStatementGenerator;
-    private final BlockStatementGenerator blockStatementGenerator;
-    private final ForStatementGenerator forStatementGenerator;
-    private final AssignmentStatementGenerator assignmentStatementGenerator;
-    private final TryCatchStatementGenerator tryCatchStatementGenerator;
-    private final ExpressionGenerator expressionGenerator;
+    void generate(TryCatchStatement tryCatchStatement);
 
-    public StatementGenerator(MethodVisitor methodVisitor, Scope scope) {
-        expressionGenerator = new ExpressionGenerator(methodVisitor, scope);
-        printStatementGenerator = new PrintStatementGenerator(expressionGenerator, methodVisitor);
-        variableDeclarationStatementGenerator = new VariableDeclarationStatementGenerator(this, expressionGenerator);
-        forStatementGenerator = new ForStatementGenerator(methodVisitor);
-        blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
-        ifStatementGenerator = new IfStatementGenerator(this, expressionGenerator, methodVisitor);
-        returnStatemenetGenerator = new ReturnStatemenetGenerator(expressionGenerator, methodVisitor);
-        assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor, expressionGenerator, scope);
-        tryCatchStatementGenerator = new TryCatchStatementGenerator(this, methodVisitor, scope);
-    }
-    public void generate(TryCatchStatement tryCatchStatement) {
-        tryCatchStatementGenerator.generate(tryCatchStatement);
-    }
+    void generate(BlockExpression blockExpression);
 
-    public void generate(BlockExpression blockExpression) {
-        expressionGenerator.generate(blockExpression);
-    }
+    void generate(IfExpression ifExpression);
 
-    public void generate(IfExpression ifExpression) {
-        expressionGenerator.generate(ifExpression);
-    }
+    void generate(UnaryExpression unaryExpression);
 
-    public void generate(UnaryExpression unaryExpression) {
-        expressionGenerator.generate(unaryExpression);
-    }
+    void generate(PrintStatement printStatement);
 
-    public void generate(PrintStatement printStatement) {
-        printStatementGenerator.generate(printStatement);
-    }
+    void generate(VariableDeclaration variableDeclaration);
 
-    public void generate(VariableDeclaration variableDeclaration) {
-        variableDeclarationStatementGenerator.generate(variableDeclaration);
-    }
+    void generate(DupExpression dupExpression);
 
-    public void generate(DupExpression dupExpression) {
-        expressionGenerator.generate(dupExpression);
-    }
+    void generate(IncrementDecrementExpression incrementDecrementExpression);
 
-    public void generate(IncrementDecrementExpression incrementDecrementExpression) {
-        expressionGenerator.generate(incrementDecrementExpression);
-    }
+    void generate(FunctionCall functionCall);
 
-    public void generate(FunctionCall functionCall) {
-        functionCall.accept(expressionGenerator);
-    }
+    void generate(ReturnStatement returnStatement);
 
-    public void generate(ReturnStatement returnStatement) {
-        returnStatemenetGenerator.generate(returnStatement);
-    }
+    void generate(IfStatement ifStatement);
 
-    public void generate(IfStatement ifStatement) {
-        ifStatementGenerator.generate(ifStatement);
-    }
+    void generate(Block block);
 
-    public void generate(Block block) {
-        blockStatementGenerator.generate(block, true);
-    }
+    void generate(RangedForStatement rangedForStatement);
 
-    public void generate(RangedForStatement rangedForStatement) {
-        forStatementGenerator.generate(rangedForStatement);
-    }
+    void generate(Assignment assignment);
 
-    public void generate(Assignment assignment) {
-        assignmentStatementGenerator.generate(assignment);
-    }
+    void generate(SuperCall superCall);
 
-    public void generate(SuperCall superCall) {
-        expressionGenerator.generate(superCall);
-    }
+    void generate(ConstructorCall constructorCall);
 
-    public void generate(ConstructorCall constructorCall) {
-        expressionGenerator.generate(constructorCall);
-    }
+    void generate(Addition addition);
 
-    public void generate(Addition addition) {
-        expressionGenerator.generate(addition);
-    }
+    void generate(Parameter parameter);
 
-    public void generate(Parameter parameter) {
-        expressionGenerator.generate(parameter);
-    }
+    void generate(ConditionalExpression conditionalExpression);
 
-    public void generate(ConditionalExpression conditionalExpression) {
-        expressionGenerator.generate(conditionalExpression);
-    }
+    void generate(Multiplication multiplication);
 
-    public void generate(Multiplication multiplication) {
-        expressionGenerator.generate(multiplication);
-    }
+    void generate(Value value);
 
-    public void generate(Value value) {
-        expressionGenerator.generate(value);
-    }
+    void generate(Substraction substraction);
 
-    public void generate(Substraction substraction) {
-        expressionGenerator.generate(substraction);
-    }
+    void generate(Division division);
 
-    public void generate(Division division) {
-        expressionGenerator.generate(division);
-    }
+    void generate(EmptyExpression emptyExpression);
 
-    public void generate(EmptyExpression emptyExpression) {
-        expressionGenerator.generate(emptyExpression);
-    }
+    void generate(LocalVariableReference localVariableReference);
 
-    public void generate(LocalVariableReference localVariableReference) {
-        expressionGenerator.generate(localVariableReference);
-    }
+    void generate(FieldReference fieldReference);
 
-    public void generate(FieldReference fieldReference) {
-        expressionGenerator.generate(fieldReference);
-    }
-
-    public void generate(PopExpression popExpression) {
-        expressionGenerator.generate(popExpression);
-    }
+    void generate(PopExpression popExpression);
 }

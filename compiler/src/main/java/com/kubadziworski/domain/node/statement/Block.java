@@ -2,6 +2,7 @@ package com.kubadziworski.domain.node.statement;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.scope.Scope;
+import lombok.ToString;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,4 +35,6 @@ public class Block implements Statement {
     public List<Statement> getStatements() {
         return Collections.unmodifiableList(statements);
     }
+
+
 }
