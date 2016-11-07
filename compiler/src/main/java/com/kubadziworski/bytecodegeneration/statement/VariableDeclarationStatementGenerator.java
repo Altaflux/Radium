@@ -6,12 +6,6 @@ import com.kubadziworski.domain.node.statement.VariableDeclaration;
 
 public class VariableDeclarationStatementGenerator {
 
-
-
-    public VariableDeclarationStatementGenerator() {
-
-    }
-
     public void generate(VariableDeclaration variableDeclaration, StatementGenerator statementGenerator) {
         Expression expression = variableDeclaration.getExpression();
         expression.accept(statementGenerator);

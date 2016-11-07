@@ -6,12 +6,11 @@ import com.kubadziworski.domain.node.expression.Expression;
 /**
  * Created by kuba on 10.04.16.
  */
-public class Substraction extends ArthimeticExpression {
-    public Substraction(Expression leftExpress, Expression rightExpress) {
+public class Subtraction extends ArthimeticExpression {
+
+    public Subtraction(Expression leftExpress, Expression rightExpress) {
         super(leftExpress,rightExpress);
     }
-
-
 
     @Override
     public void accept(StatementGenerator generator) {

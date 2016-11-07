@@ -5,12 +5,11 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
 
-public class ParameterExpressionGenerator{
+public class ParameterExpressionGenerator {
+
     private final MethodVisitor methodVisitor;
 
-
     public ParameterExpressionGenerator(MethodVisitor methodVisitor) {
-
         this.methodVisitor = methodVisitor;
     }
 

@@ -5,7 +5,7 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
 import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
-import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
+import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
@@ -17,7 +17,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     private final PrintStatementGenerator printStatementGenerator;
     private final VariableDeclarationStatementGenerator variableDeclarationStatementGenerator;
-    private final ReturnStatemenetGenerator returnStatemenetGenerator;
+    private final ReturnStatementGenerator returnStatementGenerator;
     private final IfStatementGenerator ifStatementGenerator;
     private final BlockStatementGenerator blockStatementGenerator;
     private final ForStatementGenerator forStatementGenerator;
@@ -32,13 +32,13 @@ public class BaseStatementGenerator implements StatementGenerator {
     public BaseStatementGenerator(StatementGenerator generator, MethodVisitor methodVisitor) {
         parent = generator;
         expressionGenerator = new ExpressionGenerator(generator, methodVisitor);
-        printStatementGenerator = new PrintStatementGenerator(expressionGenerator, methodVisitor);
+        printStatementGenerator = new PrintStatementGenerator(methodVisitor);
         variableDeclarationStatementGenerator = new VariableDeclarationStatementGenerator();
-        forStatementGenerator = new ForStatementGenerator(generator, methodVisitor);
+        forStatementGenerator = new ForStatementGenerator(methodVisitor);
         blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
-        ifStatementGenerator = new IfStatementGenerator( methodVisitor);
-        returnStatemenetGenerator = new ReturnStatemenetGenerator(methodVisitor);
-        assignmentStatementGenerator = new AssignmentStatementGenerator( methodVisitor);
+        ifStatementGenerator = new IfStatementGenerator(methodVisitor);
+        returnStatementGenerator = new ReturnStatementGenerator(methodVisitor);
+        assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor);
         tryCatchStatementGenerator = new TryCatchStatementGenerator(methodVisitor);
         this.methodVisitor = methodVisitor;
     }
@@ -125,12 +125,12 @@ public class BaseStatementGenerator implements StatementGenerator {
     }
 
     public void generate(ReturnStatement returnStatement) {
-        returnStatemenetGenerator.generate(returnStatement, this);
+        returnStatementGenerator.generate(returnStatement, this);
     }
 
     @Override
     public void generate(ReturnStatement returnStatement, StatementGenerator generator) {
-        returnStatemenetGenerator.generate(returnStatement, generator);
+        returnStatementGenerator.generate(returnStatement, generator);
     }
 
     public void generate(IfStatement ifStatement) {
@@ -232,13 +232,13 @@ public class BaseStatementGenerator implements StatementGenerator {
         expressionGenerator.generate(value);
     }
 
-    public void generate(Substraction substraction) {
-        expressionGenerator.generate(substraction, this);
+    public void generate(Subtraction subtraction) {
+        expressionGenerator.generate(subtraction, this);
     }
 
     @Override
-    public void generate(Substraction substraction, StatementGenerator generator) {
-        expressionGenerator.generate(substraction, generator);
+    public void generate(Subtraction subtraction, StatementGenerator generator) {
+        expressionGenerator.generate(subtraction, generator);
     }
 
     public void generate(Division division) {
@@ -295,14 +295,6 @@ public class BaseStatementGenerator implements StatementGenerator {
         expressionGenerator.generate(popExpression, generator);
     }
 
-
-    @Override
-    public StatementGenerator getGenerator() {
-        if (parent != null) {
-            return parent;
-        }
-        return this;
-    }
 
     public Scope getScope() {
         return parent.getScope();

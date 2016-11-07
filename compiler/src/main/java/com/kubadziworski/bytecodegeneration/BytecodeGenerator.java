@@ -21,7 +21,7 @@ public class BytecodeGenerator {
         private final byte[] bytes;
         private final String name;
 
-        public GeneratedClassHolder(byte[] bytes, String name) {
+        GeneratedClassHolder(byte[] bytes, String name) {
             this.bytes = bytes;
             this.name = name;
         }

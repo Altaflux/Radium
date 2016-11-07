@@ -132,7 +132,7 @@ public class JavaClassType implements Type {
 
     @Override
     public int getSubstractOpcode() {
-        throw new RuntimeException("Substraction operation not (yet ;) ) supported for custom objects");
+        throw new RuntimeException("Subtraction operation not (yet ;) ) supported for custom objects");
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
 import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
-import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
+import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.statement.*;
@@ -14,12 +14,12 @@ import org.objectweb.asm.MethodVisitor;
 
 public class StatementGeneratorFilter implements StatementGenerator {
 
-    protected StatementGenerator next;
-    private StatementGenerator parent;
-
+    protected final StatementGenerator next;
+    private final StatementGenerator parent;
     private final Scope scope;
 
     public StatementGeneratorFilter(MethodVisitor methodVisitor, Scope scope) {
+        this.parent = null;
         this.scope = scope;
         this.next = new BaseStatementGenerator(this, methodVisitor);
     }
@@ -201,11 +201,11 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     @Override
-    final public void generate(Substraction substraction) {
+    final public void generate(Subtraction subtraction) {
         if (parent != null) {
-            parent.generate(substraction);
+            parent.generate(subtraction);
         }
-        generate(substraction, this);
+        generate(subtraction, this);
     }
 
     @Override
@@ -365,8 +365,8 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     @Override
-    public void generate(Substraction substraction, StatementGenerator generator) {
-        next.generate(substraction, generator);
+    public void generate(Subtraction subtraction, StatementGenerator generator) {
+        next.generate(subtraction, generator);
     }
 
     @Override
@@ -398,16 +398,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
     public void generate(PopExpression popExpression, StatementGenerator generator) {
         next.generate(popExpression, generator);
     }
-
-
-    @Override
-    public StatementGenerator getGenerator() {
-        if (parent != null) {
-            return parent;
-        }
-        return this;
-    }
-
 
     @Override
     public Scope getScope() {

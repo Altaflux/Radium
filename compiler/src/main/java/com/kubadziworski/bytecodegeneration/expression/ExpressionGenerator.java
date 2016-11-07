@@ -7,7 +7,7 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
 import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
-import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
+import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
@@ -103,7 +103,7 @@ public class ExpressionGenerator {
         arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
-    public void generate(Substraction expression,  StatementGenerator statementGenerator) {
+    public void generate(Subtraction expression, StatementGenerator statementGenerator) {
         arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 

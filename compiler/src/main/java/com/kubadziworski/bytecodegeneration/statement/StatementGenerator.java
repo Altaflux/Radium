@@ -4,7 +4,7 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
 import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
-import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
+import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.statement.*;
@@ -82,8 +82,8 @@ public interface StatementGenerator {
     void generate(Value value);
     void generate(Value value, StatementGenerator generator);
 
-    void generate(Substraction substraction);
-    void generate(Substraction substraction, StatementGenerator generator);
+    void generate(Subtraction subtraction);
+    void generate(Subtraction subtraction, StatementGenerator generator);
 
     void generate(Division division);
     void generate(Division division, StatementGenerator generator);
@@ -102,7 +102,7 @@ public interface StatementGenerator {
     void generate(PopExpression popExpression, StatementGenerator generator);
 
     Scope getScope();
-    StatementGenerator getGenerator();
+
 
     StatementGenerator copy(StatementGenerator generator);
 }

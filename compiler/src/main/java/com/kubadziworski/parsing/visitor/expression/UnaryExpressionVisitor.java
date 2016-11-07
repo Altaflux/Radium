@@ -11,7 +11,7 @@ import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.UnarySign;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
+import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Field;
@@ -43,7 +43,7 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             if (operator.equals(ArithmeticOperator.INCREMENT)) {
                 operation = new DupExpression(new Addition((expression), new Value(expression.getType(), "1")));
             } else {
-                operation = new DupExpression(new Substraction((expression), new Value(expression.getType(), "1")));
+                operation = new DupExpression(new Subtraction((expression), new Value(expression.getType(), "1")));
             }
             Argument argument = new Argument(operation, null);
 
@@ -66,7 +66,7 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             if (operator.equals(ArithmeticOperator.INCREMENT)) {
                 operation = (new Addition((expression), new Value(expression.getType(), "1")));
             } else {
-                operation = (new Substraction((expression), new Value(expression.getType(), "1")));
+                operation = (new Subtraction((expression), new Value(expression.getType(), "1")));
             }
             Argument argument = new Argument(operation, null);
             return new ComposedExpression(expression,

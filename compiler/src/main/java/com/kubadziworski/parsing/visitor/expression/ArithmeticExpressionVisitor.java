@@ -1,7 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.AddContext;
 import com.kubadziworski.antlr.EnkelParser.DivideContext;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
@@ -48,7 +47,7 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<ArthimeticExpr
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-        return new Substraction(leftExpress, rightExpress);
+        return new Subtraction(leftExpress, rightExpress);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.PrintStatement;
 import com.kubadziworski.domain.type.JavaClassType;
@@ -10,12 +9,9 @@ import org.objectweb.asm.Opcodes;
 
 public class PrintStatementGenerator  {
     private final MethodVisitor methodVisitor;
-    private final ExpressionGenerator expressionGeneratorr;
 
-    public PrintStatementGenerator( ExpressionGenerator expressionGenerator, MethodVisitor methodVisitor) {
-
+    public PrintStatementGenerator(  MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
-        this.expressionGeneratorr = expressionGenerator;
     }
 
     public void generate(PrintStatement printStatement, StatementGenerator generator) {

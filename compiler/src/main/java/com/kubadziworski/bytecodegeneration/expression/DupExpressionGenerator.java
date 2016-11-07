@@ -8,9 +8,7 @@ import org.objectweb.asm.MethodVisitor;
 
 
 public class DupExpressionGenerator{
-
     private final MethodVisitor methodVisitor;
-
 
     public DupExpressionGenerator(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;

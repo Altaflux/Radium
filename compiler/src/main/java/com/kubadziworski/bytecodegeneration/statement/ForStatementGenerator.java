@@ -12,12 +12,10 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class ForStatementGenerator{
+public class ForStatementGenerator {
     private final MethodVisitor methodVisitor;
-    private final StatementGenerator generadtor;
 
-    public ForStatementGenerator(StatementGenerator generator ,MethodVisitor methodVisitor) {
-        this.generadtor = generator;
+    public ForStatementGenerator(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
@@ -26,15 +24,13 @@ public class ForStatementGenerator{
         Scope newScope = rangedForStatement.getScope();
         StatementGenerator nGenerator = new StatementGeneratorFilter(null, generatord, newScope);
 
-//
-//        ExpressionGenerator exprGeneratorWithNewScope = new ExpressionGenerator(next,methodVisitor, newScope);
         Statement iterator = rangedForStatement.getIteratorVariableStatement();
         Label incrementationSection = new Label();
         Label decrementationSection = new Label();
         Label endLoopSection = new Label();
         String iteratorVarName = rangedForStatement.getIteratorVarName();
         Expression endExpression = rangedForStatement.getEndExpression();
-        LocalVariable variable = new LocalVariable(iteratorVarName,rangedForStatement.getType());
+        LocalVariable variable = new LocalVariable(iteratorVarName, rangedForStatement.getType());
         Expression iteratorVariable = new LocalVariableReference(variable);
         ConditionalExpression iteratorGreaterThanEndConditional = new ConditionalExpression(iteratorVariable, endExpression, CompareSign.GREATER);
         ConditionalExpression iteratorLessThanEndConditional = new ConditionalExpression(iteratorVariable, endExpression, CompareSign.LESS);

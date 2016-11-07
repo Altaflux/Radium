@@ -15,7 +15,6 @@ public class IfExpressionGenerator {
     private final MethodVisitor methodVisitor;
 
     public IfExpressionGenerator( MethodVisitor methodVisitor) {
-
         this.methodVisitor = methodVisitor;
     }
 

@@ -13,9 +13,7 @@ public class TryCatchStatementGenerator  {
     private final MethodVisitor methodVisitor;
 
     public TryCatchStatementGenerator(MethodVisitor methodVisitor) {
-
         this.methodVisitor = methodVisitor;
-
     }
 
     public void generate(TryCatchStatement tryCatchStatement, StatementGenerator statementGenerator) {

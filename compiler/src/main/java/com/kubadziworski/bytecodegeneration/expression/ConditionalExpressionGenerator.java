@@ -19,7 +19,6 @@ public class ConditionalExpressionGenerator {
     private final MethodVisitor methodVisitor;
 
     public ConditionalExpressionGenerator( MethodVisitor methodVisitor) {
-
         this.methodVisitor = methodVisitor;
     }
 

@@ -27,7 +27,7 @@ public class ArithmeticExpressionGenerator {
         methodVisitor.visitInsn(type.getAddOpcode());
     }
 
-    public void generate(Substraction expression, StatementGenerator statementGenerator) {
+    public void generate(Subtraction expression, StatementGenerator statementGenerator) {
         Type type = expression.getType();
         evaluateArithmeticComponents(expression, statementGenerator);
         methodVisitor.visitInsn(type.getSubstractOpcode());
