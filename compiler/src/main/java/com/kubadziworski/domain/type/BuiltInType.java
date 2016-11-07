@@ -69,6 +69,14 @@ public enum BuiltInType implements Type {
     }
 
     @Override
+    public Optional<Type> nearestDenominator(Type type) {
+        if (type.getName().equals(this.getName())) {
+            return Optional.of(type);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public String getName() {
         return name;
     }

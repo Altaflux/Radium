@@ -30,6 +30,8 @@ public interface Type {
 
     int inheritsFrom(Type type);
 
+    Optional<Type> nearestDenominator(Type type);
+
     int getDupCode();
 
     int getDupX1Code();

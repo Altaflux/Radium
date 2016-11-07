@@ -1,8 +1,12 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.type.BuiltInType;
+import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
+
+import java.util.Optional;
 
 /**
  * Created by plozano on 10/30/2016.
@@ -26,8 +30,14 @@ public class IfExpression implements Expression {
 
     @Override
     public Type getType() {
-        //TODO WHEN DOING SUBCLASSES THIS NEEDS TO CHANGE TO LOWEST COMMON DENOMINATOR
-        return trueStatement.getType();
+        Optional<Type> type = trueStatement.getType().nearestDenominator(falseStatement.getType());
+        if(type.isPresent()){
+            return type.get();
+        }
+        if(trueStatement.getType() instanceof BuiltInType || falseStatement.getType() instanceof BuiltInType){
+            throw new ComparisonBetweenDiferentTypesException(trueStatement, falseStatement);
+        }
+        return new JavaClassType("java.lang.Object");
     }
 
     @Override

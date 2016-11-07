@@ -76,6 +76,22 @@ public class EnkelType implements Type {
     }
 
     @Override
+    public Optional<Type> nearestDenominator(Type type) {
+        if (type.getName().equals(this.getName())) {
+            return Optional.of(type);
+        }
+
+        Type type1 = this;
+        while (type1 != null) {
+            if (type1.getName().equals(type.getName())) {
+                return Optional.of(type1);
+            }
+            type1 = type1.getSuperType().orElse(null);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Class<?> getTypeClass() {
         throw new RuntimeException("Enkel class " + name + " do not have a clazz instance");
     }

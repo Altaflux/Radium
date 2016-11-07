@@ -78,6 +78,22 @@ public class JavaClassType implements Type {
     }
 
     @Override
+    public Optional<Type> nearestDenominator(Type type) {
+        if(type.getName().equals(this.getName())){
+            return Optional.of(type);
+        }
+
+        Class iteratedClass = getTypeClass();
+        while (iteratedClass != null) {
+            if (iteratedClass.getName().equals(type.getName())) {
+                return Optional.of(new JavaClassType(iteratedClass.getName()));
+            }
+            iteratedClass = iteratedClass.getSuperclass();
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public List<FunctionSignature> getFunctionSignatures() {
         Class iteratedClass = getTypeClass();
         List<Method> result = new ArrayList<>();
