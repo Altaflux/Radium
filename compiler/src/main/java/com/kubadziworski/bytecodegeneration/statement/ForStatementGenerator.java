@@ -1,30 +1,33 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
+import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
-import com.kubadziworski.domain.CompareSign;
-import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.RangedForStatement;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.scope.Variable;
+import com.kubadziworski.domain.scope.LocalVariable;
+import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class ForStatementGenerator {
+public class ForStatementGenerator{
     private final MethodVisitor methodVisitor;
+    private final StatementGenerator generadtor;
 
-    public ForStatementGenerator(MethodVisitor methodVisitor) {
+    public ForStatementGenerator(StatementGenerator generator ,MethodVisitor methodVisitor) {
+        this.generadtor = generator;
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(RangedForStatement rangedForStatement) {
+    public void generate(RangedForStatement rangedForStatement, StatementGenerator generatord) {
+
         Scope newScope = rangedForStatement.getScope();
-        StatementGenerator scopeGeneratorWithNewScope = new StatementGeneratorFilter(new BaseStatementGenerator(methodVisitor, newScope));
-        ExpressionGenerator exprGeneratorWithNewScope = new ExpressionGenerator(methodVisitor, newScope);
+        StatementGenerator nGenerator = new StatementGeneratorFilter(null, generatord, newScope);
+
+//
+//        ExpressionGenerator exprGeneratorWithNewScope = new ExpressionGenerator(next,methodVisitor, newScope);
         Statement iterator = rangedForStatement.getIteratorVariableStatement();
         Label incrementationSection = new Label();
         Label decrementationSection = new Label();
@@ -36,27 +39,28 @@ public class ForStatementGenerator {
         ConditionalExpression iteratorGreaterThanEndConditional = new ConditionalExpression(iteratorVariable, endExpression, CompareSign.GREATER);
         ConditionalExpression iteratorLessThanEndConditional = new ConditionalExpression(iteratorVariable, endExpression, CompareSign.LESS);
 
-        iterator.accept(scopeGeneratorWithNewScope);
+        iterator.accept(nGenerator);
 
-        iteratorLessThanEndConditional.accept(exprGeneratorWithNewScope);
+        iteratorLessThanEndConditional.accept(nGenerator);
         methodVisitor.visitJumpInsn(Opcodes.IFNE, incrementationSection);
 
-        iteratorGreaterThanEndConditional.accept(exprGeneratorWithNewScope);
+        iteratorGreaterThanEndConditional.accept(nGenerator);
         methodVisitor.visitJumpInsn(Opcodes.IFNE, decrementationSection);
 
         methodVisitor.visitLabel(incrementationSection);
-        rangedForStatement.getStatement().accept(scopeGeneratorWithNewScope);
+        rangedForStatement.getStatement().accept(nGenerator);
         methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName), 1);
-        iteratorGreaterThanEndConditional.accept(exprGeneratorWithNewScope);
+        iteratorGreaterThanEndConditional.accept(nGenerator);
         methodVisitor.visitJumpInsn(Opcodes.IFEQ, incrementationSection);
         methodVisitor.visitJumpInsn(Opcodes.GOTO, endLoopSection);
 
         methodVisitor.visitLabel(decrementationSection);
-        rangedForStatement.getStatement().accept(scopeGeneratorWithNewScope);
+        rangedForStatement.getStatement().accept(nGenerator);
         methodVisitor.visitIincInsn(newScope.getLocalVariableIndex(iteratorVarName), -1);
-        iteratorLessThanEndConditional.accept(exprGeneratorWithNewScope);
+        iteratorLessThanEndConditional.accept(nGenerator);
         methodVisitor.visitJumpInsn(Opcodes.IFEQ, decrementationSection);
 
         methodVisitor.visitLabel(endLoopSection);
+
     }
 }

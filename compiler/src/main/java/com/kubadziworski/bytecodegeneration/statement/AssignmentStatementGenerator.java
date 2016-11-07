@@ -1,13 +1,11 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.exception.CompilationException;
 import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import org.objectweb.asm.MethodVisitor;
@@ -17,16 +15,14 @@ import java.util.Optional;
 
 public class AssignmentStatementGenerator {
     private final MethodVisitor methodVisitor;
-    private final ExpressionGenerator expressionGenerator;
-    private final Scope scope;
 
-    public AssignmentStatementGenerator(MethodVisitor methodVisitor, ExpressionGenerator expressionGenerator, Scope scope) {
+
+    public AssignmentStatementGenerator(MethodVisitor methodVisitor ) {
         this.methodVisitor = methodVisitor;
-        this.expressionGenerator = expressionGenerator;
-        this.scope = scope;
     }
 
-    public void generate(Assignment assignment) {
+    public void generate(Assignment assignment, Scope scope, StatementGenerator generator) {
+
         String varName = assignment.getVarName();
         Expression expression = assignment.getAssignmentExpression();
         Type type = expression.getType();
@@ -46,7 +42,7 @@ public class AssignmentStatementGenerator {
             }
 
             descriptor = field.getType().getDescriptor();
-            preExpression.get().accept(expressionGenerator);
+            preExpression.get().accept(generator);
         } else {
 
             if (scope.isLocalVariableExists(varName)) {
@@ -59,7 +55,7 @@ public class AssignmentStatementGenerator {
                 if (expression.getType().inheritsFrom(localVariableType) < 0) {
                     throw new IncompatibleTypesException(varName, localVariableType, expression.getType());
                 }
-
+                expression.accept(generator);
                 castIfNecessary(type, localVariableType);
                 methodVisitor.visitVarInsn(type.getStoreVariableOpcode(), index);
                 return;
@@ -70,9 +66,10 @@ public class AssignmentStatementGenerator {
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
         }
 
-        expression.accept(expressionGenerator);
+        expression.accept(generator);
         castIfNecessary(type, field.getType());
         methodVisitor.visitFieldInsn(Opcodes.PUTFIELD, field.getOwnerInternalName(), field.getName(), descriptor);
+
     }
 
     private void castIfNecessary(Type expressionType, Type variableType) {

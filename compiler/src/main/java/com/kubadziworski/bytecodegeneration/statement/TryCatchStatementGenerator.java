@@ -1,6 +1,5 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
-import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.node.statement.TryCatchStatement;
 import com.kubadziworski.domain.scope.Scope;
@@ -9,18 +8,17 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class TryCatchStatementGenerator {
-    private final StatementGenerator statementGenerator;
-    private final MethodVisitor methodVisitor;
-    private final Scope scope;
+public class TryCatchStatementGenerator  {
 
-    public TryCatchStatementGenerator(StatementGenerator statementGenerator, MethodVisitor methodVisitor, Scope scope) {
-        this.statementGenerator = statementGenerator;
+    private final MethodVisitor methodVisitor;
+
+    public TryCatchStatementGenerator(MethodVisitor methodVisitor) {
+
         this.methodVisitor = methodVisitor;
-        this.scope = scope;
+
     }
 
-    public void generate(TryCatchStatement tryCatchStatement) {
+    public void generate(TryCatchStatement tryCatchStatement, StatementGenerator statementGenerator) {
 
         Label lTryBlockStart = new Label();
         Label lTryBlockEnd = new Label();
@@ -49,7 +47,7 @@ public class TryCatchStatementGenerator {
             methodVisitor.visitJumpInsn(GOTO, lCatchBlockEnd);
         });
 
-    //TODO IMPLEMENT FINALLY BLOCK
+        //TODO IMPLEMENT FINALLY BLOCK
 //        if (hasFinally) {
 //            tryCatchStatement.getFinallyBlock().ifPresent(statement -> {
 //                Label finallyLabel = new Label();
@@ -68,18 +66,7 @@ public class TryCatchStatementGenerator {
 //            methodVisitor.visitLabel(lCatchBlockEnd);
 //        }
         methodVisitor.visitLabel(lCatchBlockEnd);
-    }
-
-
-    private class ReturnChangerGenerator extends StatementGeneratorFilter {
-
-        public ReturnChangerGenerator(StatementGenerator next) {
-            super(next);
-        }
-
-        public void generate(ReturnStatement returnStatement) {
-
-        }
 
     }
+
 }

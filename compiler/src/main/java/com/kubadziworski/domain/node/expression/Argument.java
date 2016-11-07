@@ -1,6 +1,5 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.type.Type;
 
@@ -22,11 +21,6 @@ public class Argument implements Expression {
     @Override
     public Type getType() {
         return expression.getType();
-    }
-
-    @Override
-    public void accept(ExpressionGenerator genrator) {
-        expression.accept(genrator);
     }
 
     @Override

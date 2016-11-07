@@ -1,6 +1,5 @@
 package com.kubadziworski.domain.node.expression.prefix;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.node.expression.Expression;
@@ -37,10 +36,6 @@ public class IncrementDecrementExpression implements Expression {
         return reference.getType();
     }
 
-    @Override
-    public void accept(ExpressionGenerator generator) {
-        generator.generate(this);
-    }
 
     @Override
     public void accept(StatementGenerator generator) {

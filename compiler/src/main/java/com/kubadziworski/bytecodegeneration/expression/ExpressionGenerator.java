@@ -1,16 +1,18 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
+
 import com.kubadziworski.bytecodegeneration.statement.BlockStatementGenerator;
+import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.arthimetic.Addition;
+import com.kubadziworski.domain.node.expression.arthimetic.Division;
+import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
+import com.kubadziworski.domain.node.expression.arthimetic.Substraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
 
-/**
- * Created by kuba on 02.04.16.
- */
 public class ExpressionGenerator {
 
 
@@ -27,98 +29,105 @@ public class ExpressionGenerator {
     private final BlockStatementGenerator blockStatementGenerator;
     private final IfExpressionGenerator ifExpressionGenerator;
 
-    public ExpressionGenerator(MethodVisitor methodVisitor, Scope scope) {
-        referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor, scope, this);
-        valueExpressionGenerator = new ValueExpressionGenerator(methodVisitor);
-        callExpressionGenerator = new CallExpressionGenerator(this, scope, methodVisitor);
-        arithmeticExpressionGenerator = new ArithmeticExpressionGenerator(this, methodVisitor);
-        conditionalExpressionGenerator = new ConditionalExpressionGenerator(this, methodVisitor);
-        parameterExpressionGenerator = new ParameterExpressionGenerator(methodVisitor, scope);
-        prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor, this, scope);
-        popExpressionGenerator = new PopExpressionGenerator(methodVisitor, this);
-        dupExpressionGenerator = new DupExpressionGenerator(methodVisitor, this);
-        unaryExpressionGenerator = new UnaryExpressionGenerator(methodVisitor, this);
-        blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
-        ifExpressionGenerator = new IfExpressionGenerator(this, methodVisitor);
+    private final StatementGenerator generator;
+
+    public ExpressionGenerator(StatementGenerator generator, MethodVisitor methodVisitor) {
+        referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor);
+        valueExpressionGenerator = new ValueExpressionGenerator( methodVisitor);
+        callExpressionGenerator = new CallExpressionGenerator(  methodVisitor);
+        arithmeticExpressionGenerator = new ArithmeticExpressionGenerator( methodVisitor);
+        conditionalExpressionGenerator = new ConditionalExpressionGenerator( methodVisitor);
+        parameterExpressionGenerator = new ParameterExpressionGenerator( methodVisitor);
+        prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor);
+        popExpressionGenerator = new PopExpressionGenerator(methodVisitor);
+        dupExpressionGenerator = new DupExpressionGenerator(methodVisitor);
+        unaryExpressionGenerator = new UnaryExpressionGenerator(methodVisitor);
+        blockStatementGenerator = new BlockStatementGenerator( methodVisitor);
+        ifExpressionGenerator = new IfExpressionGenerator( methodVisitor);
+        this.generator = generator;
     }
 
-    public void generate(IfExpression ifExpression) {
-        ifExpressionGenerator.generate(ifExpression);
+    public void generate(IfExpression ifExpression,  StatementGenerator statementGenerator) {
+        ifExpressionGenerator.generate(ifExpression, statementGenerator);
     }
 
-    public void generate(BlockExpression unaryExpression) {
-        blockStatementGenerator.generate(unaryExpression, false);
+    public void generate(BlockExpression unaryExpression, StatementGenerator generator) {
+        blockStatementGenerator.generate(unaryExpression, false, generator);
     }
 
-    public void generate(UnaryExpression unaryExpression) {
-        unaryExpressionGenerator.generate(unaryExpression);
+    public void generate(UnaryExpression unaryExpression, StatementGenerator generator) {
+        unaryExpressionGenerator.generate(unaryExpression, generator);
     }
 
-    public void generate(DupExpression dupExpression) {
-        dupExpressionGenerator.generate(dupExpression);
+    public void generate(DupExpression dupExpression,  StatementGenerator statementGenerator) {
+        dupExpressionGenerator.generate(dupExpression, statementGenerator);
     }
 
-    public void generate(FieldReference reference) {
-        referenceExpressionGenerator.generate(reference);
+    public void generate(FieldReference reference, StatementGenerator generator) {
+        referenceExpressionGenerator.generate(reference, generator);
     }
 
-    public void generateDup(FieldReference reference) {
-        referenceExpressionGenerator.generateDup(reference);
+    public void generateDup(FieldReference reference, StatementGenerator generator) {
+        referenceExpressionGenerator.generateDup(reference, generator);
     }
 
     public void generate(LocalVariableReference reference) {
-        referenceExpressionGenerator.generate(reference);
+        referenceExpressionGenerator.generate(reference, getScope());
     }
 
-    public void generate(IncrementDecrementExpression incrementDecrementExpression) {
-        prefixExpressionGenerator.generate(incrementDecrementExpression);
+    public void generate(IncrementDecrementExpression incrementDecrementExpression,  StatementGenerator statementGenerator) {
+        prefixExpressionGenerator.generate(incrementDecrementExpression, getScope(), statementGenerator);
     }
 
     public void generate(Parameter parameter) {
-        parameterExpressionGenerator.generate(parameter);
+        parameterExpressionGenerator.generate(parameter, getScope());
     }
 
     public void generate(Value value) {
         valueExpressionGenerator.generate(value);
     }
 
-    public void generate(ConstructorCall constructorCall) {
-        callExpressionGenerator.generate(constructorCall);
+    public void generate(ConstructorCall constructorCall,  StatementGenerator statementGenerator) {
+        callExpressionGenerator.generate(constructorCall, getScope(), statementGenerator);
     }
 
-    public void generate(SuperCall superCall) {
-        callExpressionGenerator.generate(superCall);
+    public void generate(SuperCall superCall,  StatementGenerator statementGenerator) {
+        callExpressionGenerator.generate(superCall, getScope(), statementGenerator);
     }
 
-    public void generate(FunctionCall functionCall) {
-        callExpressionGenerator.generate(functionCall);
+    public void generate(FunctionCall functionCall,  StatementGenerator statementGenerator) {
+        callExpressionGenerator.generate(functionCall, statementGenerator);
     }
 
-    public void generate(Addition expression) {
-        arithmeticExpressionGenerator.generate(expression);
+    public void generate(Addition expression,  StatementGenerator statementGenerator) {
+        arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
-    public void generate(Substraction expression) {
-        arithmeticExpressionGenerator.generate(expression);
+    public void generate(Substraction expression,  StatementGenerator statementGenerator) {
+        arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
-    public void generate(Multiplication expression) {
-        arithmeticExpressionGenerator.generate(expression);
+    public void generate(Multiplication expression,  StatementGenerator statementGenerator) {
+        arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
-    public void generate(Division expression) {
-        arithmeticExpressionGenerator.generate(expression);
+    public void generate(Division expression,  StatementGenerator statementGenerator) {
+        arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
-    public void generate(ConditionalExpression conditionalExpression) {
-        conditionalExpressionGenerator.generate(conditionalExpression);
+    public void generate(ConditionalExpression conditionalExpression, StatementGenerator statementGenerator) {
+        conditionalExpressionGenerator.generate(conditionalExpression, statementGenerator);
     }
 
-    public void generate(PopExpression popExpression) {
-        popExpressionGenerator.generate(popExpression);
+    public void generate(PopExpression popExpression, StatementGenerator generator) {
+        popExpressionGenerator.generate(popExpression, generator);
     }
 
     public void generate(EmptyExpression emptyExpression) {
         //do nothing ;)
+    }
+
+    public Scope getScope() {
+        return generator.getScope();
     }
 }

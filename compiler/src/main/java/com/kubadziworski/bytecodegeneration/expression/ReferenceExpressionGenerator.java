@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
+import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
@@ -10,16 +11,13 @@ import org.objectweb.asm.Opcodes;
 
 public class ReferenceExpressionGenerator {
     private final MethodVisitor methodVisitor;
-    private final Scope scope;
-    private final ExpressionGenerator expressionGenerator;
 
-    public ReferenceExpressionGenerator(MethodVisitor methodVisitor, Scope scope, ExpressionGenerator expressionGenerator) {
+
+    public ReferenceExpressionGenerator(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
-        this.scope = scope;
-        this.expressionGenerator = expressionGenerator;
     }
 
-    public void generate(LocalVariableReference localVariableReference) {
+    public void generate(LocalVariableReference localVariableReference, Scope scope) {
         String varName = localVariableReference.getName();
         int index = scope.getLocalVariableIndex(varName);
         Type type = localVariableReference.getType();
@@ -27,7 +25,7 @@ public class ReferenceExpressionGenerator {
     }
 
 
-    public void generate(FieldReference fieldReference) {
+    public void generate(FieldReference fieldReference, StatementGenerator expressionGenerator) {
         String varName = fieldReference.getName();
         Type type = fieldReference.getType();
         String ownerInternalName = fieldReference.getOwnerInternalName();
@@ -38,7 +36,7 @@ public class ReferenceExpressionGenerator {
         methodVisitor.visitFieldInsn(fieldReference.getField().getInvokeOpcode(), ownerInternalName, varName, descriptor);
     }
 
-    public void generateDup(FieldReference fieldReference) {
+    public void generateDup(FieldReference fieldReference, StatementGenerator expressionGenerator) {
         String varName = fieldReference.getName();
         Type type = fieldReference.getType();
         String ownerInternalName = fieldReference.getOwnerInternalName();

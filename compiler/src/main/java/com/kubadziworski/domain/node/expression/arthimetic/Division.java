@@ -1,6 +1,5 @@
 package com.kubadziworski.domain.node.expression.arthimetic;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 
@@ -10,11 +9,6 @@ import com.kubadziworski.domain.node.expression.Expression;
 public class Division extends ArthimeticExpression {
     public Division(Expression leftExpress, Expression rightExpress) {
         super(leftExpress,rightExpress);
-    }
-
-    @Override
-    public void accept(ExpressionGenerator genrator) {
-        genrator.generate(this);
     }
 
     @Override

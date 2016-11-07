@@ -46,6 +46,8 @@ class ShouldCompileTest extends Specification {
 									var integerVar = 2745
 									var doubleVar = 2343.05
 
+                                    integerVar = 1234
+
 									print "stringVar=" + stringVar + ", booleanVar=" + booleanVar + ", integerVar=" + integerVar + ", doubleVar=" + doubleVar
 									print 2.5+2.5 + " is the sum of 2.5 and 2.5"
 								}

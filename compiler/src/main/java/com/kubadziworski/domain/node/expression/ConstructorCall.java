@@ -28,10 +28,6 @@ public class ConstructorCall implements Call {
         this.identifier = type.getName();
     }
 
-    @Override
-    public void accept(ExpressionGenerator genrator) {
-        genrator.generate(this);
-    }
 
     @Override
     public List<Argument> getArguments() {

@@ -38,10 +38,6 @@ public class SuperCall implements Call {
         return BuiltInType.VOID;
     }
 
-    @Override
-    public void accept(ExpressionGenerator genrator) {
-        genrator.generate(this);
-    }
 
     @Override
     public void accept(StatementGenerator generator) {

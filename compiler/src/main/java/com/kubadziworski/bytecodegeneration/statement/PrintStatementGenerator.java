@@ -8,19 +8,20 @@ import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class PrintStatementGenerator {
+public class PrintStatementGenerator  {
     private final MethodVisitor methodVisitor;
-    private final ExpressionGenerator expressionGenerator;
+    private final ExpressionGenerator expressionGeneratorr;
 
-    public PrintStatementGenerator(ExpressionGenerator expressionGenerator, MethodVisitor methodVisitor) {
+    public PrintStatementGenerator( ExpressionGenerator expressionGenerator, MethodVisitor methodVisitor) {
+
         this.methodVisitor = methodVisitor;
-        this.expressionGenerator = expressionGenerator;
+        this.expressionGeneratorr = expressionGenerator;
     }
 
-    public void generate(PrintStatement printStatement) {
+    public void generate(PrintStatement printStatement, StatementGenerator generator) {
         Expression expression = printStatement.getExpression();
         methodVisitor.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-        expression.accept(expressionGenerator);
+        expression.accept(generator);
         Type type = expression.getType();
 
         if ((type.inheritsFrom(new JavaClassType("java.lang.Object"))) > 0) {
@@ -31,5 +32,7 @@ public class PrintStatementGenerator {
         JavaClassType owner = new JavaClassType("java.io.PrintStream");
         String fieldDescriptor = owner.getDescriptor();
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, fieldDescriptor, "println", descriptor, false);
+
     }
+
 }

@@ -1,9 +1,7 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Variable;
 import com.kubadziworski.domain.type.Type;
 
 /**
@@ -22,10 +20,6 @@ public class LocalVariableReference implements Reference {
         return variable.getName();
     }
 
-    @Override
-    public void accept(ExpressionGenerator generator) {
-        generator.generate(this);
-    }
 
     @Override
     public Type getType() {

@@ -1,6 +1,7 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
 
+import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
@@ -13,23 +14,22 @@ import org.objectweb.asm.MethodVisitor;
 public class PrefixExpressionGenerator {
 
     private final MethodVisitor methodVisitor;
-    private final ExpressionGenerator expressionGenerator;
-    private final Scope scope;
 
-    public PrefixExpressionGenerator(MethodVisitor methodVisitor, ExpressionGenerator expressionGenerator, Scope scope) {
+
+    public PrefixExpressionGenerator(MethodVisitor methodVisitor) {
+
         this.methodVisitor = methodVisitor;
-        this.expressionGenerator = expressionGenerator;
-        this.scope = scope;
+
     }
 
 
-    public void generate(IncrementDecrementExpression incrementDecrementExpression) {
+    public void generate(IncrementDecrementExpression incrementDecrementExpression, Scope scope, StatementGenerator statementGenerator) {
         Reference reference = incrementDecrementExpression.getReference(); //x
 
         if (reference instanceof LocalVariableReference) {
-            reference.accept(expressionGenerator);
+            reference.accept(statementGenerator);
         } else if (reference instanceof FieldReference) {
-            ((FieldReference) reference).acceptDup(expressionGenerator);
+            ((FieldReference) reference).acceptDup(statementGenerator);
         }
 
         int dupsCode;
@@ -47,13 +47,13 @@ public class PrefixExpressionGenerator {
         }
 
         if (incrementDecrementExpression.isPrefix()) {
-            expressionGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
+            statementGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
             methodVisitor.visitInsn(dupsCode);
 
         } else {
             methodVisitor.visitInsn(dupsCode);
-            expressionGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
+            statementGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
         }
 

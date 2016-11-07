@@ -1,6 +1,7 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
 import com.google.common.collect.Ordering;
+import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
@@ -15,37 +16,34 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CallExpressionGenerator {
-    private final ExpressionGenerator expressionGenerator;
-    private final Scope scope;
+
     private final MethodVisitor methodVisitor;
 
-    public CallExpressionGenerator(ExpressionGenerator expressionGenerator, Scope scope, MethodVisitor methodVisitor) {
-        this.expressionGenerator = expressionGenerator;
-        this.scope = scope;
+    public CallExpressionGenerator(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(ConstructorCall constructorCall) {
+    public void generate(ConstructorCall constructorCall, Scope scope, StatementGenerator statementGenerator) {
         FunctionSignature signature = scope.getConstructorCallSignature(constructorCall.getIdentifier(), constructorCall.getArguments());
         String ownerDescriptor = ClassTypeFactory.createClassType(signature.getName()).getDescriptor();
         methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
         methodVisitor.visitInsn(Opcodes.DUP);
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
-        generateArguments(constructorCall, signature);
+        generateArguments(constructorCall, signature, statementGenerator);
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
     }
 
-    public void generate(SuperCall superCall) {
+    public void generate(SuperCall superCall, Scope scope, StatementGenerator statementGenerator) {
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
-        generateArguments(superCall);
+        generateArguments(superCall, scope, statementGenerator);
         String ownerDescriptor = scope.getSuperClassInternalName();
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V" /*TODO Handle super calls with arguments*/, false);
     }
 
-    public void generate(FunctionCall functionCall) {
+    public void generate(FunctionCall functionCall, StatementGenerator statementGenerator) {
         Expression owner = functionCall.getOwner();
-        owner.accept(expressionGenerator);
-        generateArguments(functionCall);
+        owner.accept(statementGenerator);
+        generateArguments(functionCall, statementGenerator);
         String functionName = functionCall.getIdentifier();
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(functionCall.getSignature());
         String ownerDescriptor = functionCall.getOwnerType().getInternalName();
@@ -54,32 +52,32 @@ public class CallExpressionGenerator {
         methodVisitor.visitMethodInsn(callOpCode, ownerDescriptor, functionName, methodDescriptor, false);
     }
 
-    private void generateArguments(FunctionCall call) {
+    private void generateArguments(FunctionCall call, StatementGenerator statementGenerator) {
         FunctionSignature signature = call.getOwnerType()
                 .getMethodCallSignature(call.getIdentifier(), call.getArguments());
-        generateArguments(call, signature);
+        generateArguments(call, signature, statementGenerator);
     }
 
-    private void generateArguments(SuperCall call) {
+    private void generateArguments(SuperCall call, Scope scope, StatementGenerator statementGenerator) {
         FunctionSignature signature = scope.getMethodCallSignature(call.getIdentifier(), call.getArguments());
-        generateArguments(call, signature);
+        generateArguments(call, signature, statementGenerator);
     }
 
-    private void generateArguments(ConstructorCall call) {
+    private void generateArguments(ConstructorCall call, Scope scope, StatementGenerator statementGenerator) {
         FunctionSignature signature = scope.getConstructorCallSignature(call.getIdentifier(), call.getArguments());
-        generateArguments(call, signature);
+        generateArguments(call, signature, statementGenerator);
     }
 
 
-    private void generateArguments(Call call, FunctionSignature signature) {
+    private void generateArguments(Call call, FunctionSignature signature, StatementGenerator statementGenerator) {
         List<Parameter> parameters = signature.getParameters();
         List<Argument> arguments = call.getArguments();
         if (arguments.size() > parameters.size()) {
             throw new BadArgumentsToFunctionCallException(call);
         }
         arguments = getSortedArguments(arguments, parameters);
-        arguments.forEach(argument -> argument.accept(expressionGenerator));
-        generateDefaultParameters(call, parameters, arguments);
+        arguments.forEach(argument -> argument.accept(statementGenerator));
+        generateDefaultParameters(call, parameters, arguments, statementGenerator);
     }
 
     private List<Argument> getSortedArguments(List<Argument> arguments, List<Parameter> parameters) {
@@ -99,11 +97,11 @@ public class CallExpressionGenerator {
                 .orElseThrow(() -> new WrongArgumentNameException(argument, parameters));
     }
 
-    private void generateDefaultParameters(Call call, List<Parameter> parameters, List<Argument> arguments) {
+    private void generateDefaultParameters(Call call, List<Parameter> parameters, List<Argument> arguments, StatementGenerator statementGenerator) {
         for (int i = arguments.size(); i < parameters.size(); i++) {
             Expression defaultParameter = parameters.get(i).getDefaultValue()
                     .orElseThrow(() -> new BadArgumentsToFunctionCallException(call));
-            defaultParameter.accept(expressionGenerator);
+            defaultParameter.accept(statementGenerator);
         }
     }
 }

@@ -30,10 +30,6 @@ public class Parameter implements Expression {
         return Optional.ofNullable(defaultValue);
     }
 
-    @Override
-    public void accept(ExpressionGenerator genrator) {
-        genrator.generate(this);
-    }
 
     @Override
     public void accept(StatementGenerator generator) {

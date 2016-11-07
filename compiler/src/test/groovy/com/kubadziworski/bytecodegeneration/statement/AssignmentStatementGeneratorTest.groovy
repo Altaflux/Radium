@@ -1,12 +1,10 @@
 package com.kubadziworski.bytecodegeneration.statement
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator
 import com.kubadziworski.domain.node.expression.Value
 import com.kubadziworski.domain.node.statement.Assignment
 import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
-import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
@@ -15,7 +13,6 @@ import org.objectweb.asm.Opcodes
 import spock.lang.Specification
 
 import java.lang.reflect.Modifier
-
 /**
  * Created by kuba on 13.05.16.
  */
@@ -26,10 +23,10 @@ class AssignmentStatementGeneratorTest extends Specification {
             def assignment = new Assignment(varName,assignmentExpression)
             def localVariable = Mock(LocalVariable)
             MethodVisitor methodVisitor = Mock()
-            ExpressionGenerator expressionGenerator = Mock()
+            StatementGenerator expressionGenerator = Mock()
             Scope scope = Mock()
         when:
-            new AssignmentStatementGenerator(methodVisitor,expressionGenerator,scope).generate(assignment)
+            new AssignmentStatementGenerator(methodVisitor).generate(assignment, scope, expressionGenerator)
         then :
             1*scope.isLocalVariableExists(varName) >> true
             1*scope.getLocalVariableIndex(varName) >> 3
@@ -48,10 +45,10 @@ class AssignmentStatementGeneratorTest extends Specification {
             def assignment = new Assignment(varName,assignmentExpression)
             def field = new Field(varName, variableOwner, variableType,  Modifier.PUBLIC)
             MethodVisitor methodVisitor = Mock()
-            ExpressionGenerator expressionGenerator = Mock()
+            StatementGenerator expressionGenerator = Mock()
             Scope scope = Mock()
         when:
-            new AssignmentStatementGenerator(methodVisitor,expressionGenerator,scope).generate(assignment)
+            new AssignmentStatementGenerator(methodVisitor).generate(assignment, scope, expressionGenerator)
             then :
             1*scope.isLocalVariableExists(varName) >> false
             1*scope.getField(varName) >> field

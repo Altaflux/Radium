@@ -15,10 +15,6 @@ public class EmptyExpression implements Expression {
         this.type = type;
     }
 
-    @Override
-    public void accept(ExpressionGenerator generator) {
-        generator.generate(this);
-    }
 
     @Override
     public Type getType() {

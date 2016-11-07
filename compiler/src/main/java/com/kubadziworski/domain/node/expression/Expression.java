@@ -10,7 +10,8 @@ import com.kubadziworski.domain.type.Type;
  */
 public interface Expression extends Statement {
     Type getType();
-    void accept(ExpressionGenerator genrator);
+
+
     @Override
     void accept(StatementGenerator generator);
 }

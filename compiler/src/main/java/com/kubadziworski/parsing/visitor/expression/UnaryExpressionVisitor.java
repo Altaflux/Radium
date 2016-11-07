@@ -2,8 +2,10 @@ package com.kubadziworski.parsing.visitor.expression;
 
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser.*;
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
+import com.kubadziworski.antlr.EnkelParser.PrefixExpressionContext;
+import com.kubadziworski.antlr.EnkelParser.SignExpressionContext;
+import com.kubadziworski.antlr.EnkelParser.SuffixExpressionContext;
+import com.kubadziworski.antlr.EnkelParser.UnaryExpressionContext;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.UnarySign;
@@ -112,11 +114,6 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             return expression.getType();
         }
 
-        @Override
-        public void accept(ExpressionGenerator generator) {
-            preExpression.accept(generator);
-            expression.accept(generator);
-        }
 
         @Override
         public void accept(StatementGenerator generator) {
@@ -139,10 +136,6 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             return type;
         }
 
-        @Override
-        public void accept(ExpressionGenerator generator) {
-            expression.accept(generator);
-        }
 
         @Override
         public void accept(StatementGenerator generator) {

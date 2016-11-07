@@ -23,11 +23,6 @@ public class PopExpression implements Expression {
     }
 
     @Override
-    public void accept(ExpressionGenerator generator) {
-        generator.generate(this);
-    }
-
-    @Override
     public void accept(StatementGenerator generator) {
         generator.generate(this);
     }

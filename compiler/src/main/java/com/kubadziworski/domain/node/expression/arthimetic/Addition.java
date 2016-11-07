@@ -1,6 +1,5 @@
 package com.kubadziworski.domain.node.expression.arthimetic;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 
@@ -12,10 +11,6 @@ public class Addition extends ArthimeticExpression {
         super(leftExpress,rightExpress);
     }
 
-    @Override
-    public void accept(ExpressionGenerator genrator) {
-        genrator.generate(this);
-    }
 
     @Override
     public void accept(StatementGenerator generator) {

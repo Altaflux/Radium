@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
+import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.IfExpression;
 import org.objectweb.asm.Label;
@@ -11,25 +12,24 @@ import org.objectweb.asm.Opcodes;
  */
 public class IfExpressionGenerator {
 
-    private final ExpressionGenerator expressionGenerator;
     private final MethodVisitor methodVisitor;
 
-    public IfExpressionGenerator(ExpressionGenerator expressionGenerator, MethodVisitor methodVisitor) {
-        this.expressionGenerator = expressionGenerator;
+    public IfExpressionGenerator( MethodVisitor methodVisitor) {
+
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(IfExpression ifStatement) {
+    public void generate(IfExpression ifStatement, StatementGenerator statementGenerator) {
         Expression condition = ifStatement.getCondition();
-        condition.accept(expressionGenerator);
+        condition.accept(statementGenerator);
         Label trueLabel = new Label();
         Label endLabel = new Label();
         methodVisitor.visitJumpInsn(Opcodes.IFNE, trueLabel);
         Expression falseStatement = ifStatement.getFalseStatement();
-        falseStatement.accept(expressionGenerator);
+        falseStatement.accept(statementGenerator);
         methodVisitor.visitJumpInsn(Opcodes.GOTO, endLabel);
         methodVisitor.visitLabel(trueLabel);
-        ifStatement.getTrueStatement().accept(expressionGenerator);
+        ifStatement.getTrueStatement().accept(statementGenerator);
         methodVisitor.visitLabel(endLabel);
     }
 }

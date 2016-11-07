@@ -50,11 +50,6 @@ public class ConditionalExpression implements Expression {
     }
 
     @Override
-    public void accept(ExpressionGenerator genrator) {
-        genrator.generate(this);
-    }
-
-    @Override
     public Type getType() {
         return type;
     }

@@ -16,16 +16,18 @@ public class BlockStatementGenerator {
     private final MethodVisitor methodVisitor;
 
     public BlockStatementGenerator(MethodVisitor methodVisitor) {
+
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(Block block, boolean asExpression) {
+    public void generate(Block block, boolean asExpression, StatementGenerator next) {
         Scope newScope = block.getScope();
         List<Statement> statements = block.getStatements();
-        StatementGenerator statementGenerator = new StatementGeneratorFilter(new BaseStatementGenerator(methodVisitor, newScope));
+
+        StatementGenerator generator = new StatementGeneratorFilter(null, next, newScope);
         for (int x = 0; x < statements.size(); x++) {
             Statement stmt = statements.get(x);
-            stmt.accept(statementGenerator);
+            stmt.accept(generator);
 
             //Leave alive the last expression
             if (!asExpression && x == statements.size() - 1) {
@@ -40,5 +42,6 @@ public class BlockStatementGenerator {
             }
 
         }
+
     }
 }

@@ -1,6 +1,5 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.type.Type;
 
@@ -21,10 +20,6 @@ public class Value implements Expression {
         return value;
     }
 
-    @Override
-    public void accept(ExpressionGenerator genrator) {
-        genrator.generate(this);
-    }
 
     @Override
     public void accept(StatementGenerator generator) {

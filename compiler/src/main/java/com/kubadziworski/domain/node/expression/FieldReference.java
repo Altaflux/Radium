@@ -1,6 +1,5 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.type.Type;
@@ -23,10 +22,6 @@ public class FieldReference implements Reference {
         return field.getName();
     }
 
-    @Override
-    public void accept(ExpressionGenerator generator) {
-        generator.generate(this);
-    }
 
     @Override
     public Type getType() {
@@ -38,7 +33,7 @@ public class FieldReference implements Reference {
         generator.generate(this);
     }
 
-    public void acceptDup(ExpressionGenerator generator){
+    public void acceptDup(StatementGenerator generator){
         generator.generateDup(this);
     }
 
