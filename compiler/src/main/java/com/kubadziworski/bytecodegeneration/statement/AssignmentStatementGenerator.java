@@ -17,7 +17,7 @@ public class AssignmentStatementGenerator {
     private final MethodVisitor methodVisitor;
 
 
-    public AssignmentStatementGenerator(MethodVisitor methodVisitor ) {
+    public AssignmentStatementGenerator(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
@@ -49,7 +49,9 @@ public class AssignmentStatementGenerator {
                 int index = scope.getLocalVariableIndex(varName);
                 LocalVariable localVariable = scope.getLocalVariable(varName);
                 if (!localVariable.isMutable()) {
-                    throw new FinalFieldModificationException("Cannot modify final variable: " + localVariable.getName());
+                    if (!assignment.isVariableDeclaration()) {
+                        throw new FinalFieldModificationException("Cannot modify final variable: " + localVariable.getName());
+                    }
                 }
                 Type localVariableType = localVariable.getType();
                 if (expression.getType().inheritsFrom(localVariableType) < 0) {

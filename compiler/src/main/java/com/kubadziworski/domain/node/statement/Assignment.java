@@ -12,23 +12,27 @@ public class Assignment implements Statement {
     private final String varName;
     private final Expression assignmentExpression;
     private final Expression preExpression;
+    private final boolean isVariableDeclaration;
 
     public Assignment(Expression preExpression, String varName, Expression assignmentExpression) {
         this.preExpression = preExpression;
         this.varName = varName;
         this.assignmentExpression = assignmentExpression;
+        isVariableDeclaration = false;
     }
 
     public Assignment(String varName, Expression assignmentExpression) {
         this.preExpression = null;
         this.varName = varName;
         this.assignmentExpression = assignmentExpression;
+        isVariableDeclaration = false;
     }
 
-    public Assignment(VariableDeclaration declarationStatement) {
+    public Assignment(VariableDeclaration declarationStatement, boolean isVariableDeclaration) {
         this.preExpression = null;
         this.varName = declarationStatement.getName();
         this.assignmentExpression = declarationStatement.getExpression();
+        this.isVariableDeclaration = isVariableDeclaration;
     }
 
     public String getVarName() {
@@ -41,6 +45,10 @@ public class Assignment implements Statement {
 
     public Optional<Expression> getPreExpression() {
         return Optional.ofNullable(preExpression);
+    }
+
+    public boolean isVariableDeclaration() {
+        return isVariableDeclaration;
     }
 
     @Override
