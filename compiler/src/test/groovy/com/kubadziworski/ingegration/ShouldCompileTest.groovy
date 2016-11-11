@@ -597,6 +597,50 @@ class ShouldCompileTest extends Specification {
 								}
 							}
 						""";
+    private final static fieldInitializing =
+            """
+							FieldInitializing {
+								myField : int = 10
+
+								start {
+                                    var result = myField == 10
+									assert(result, true)
+								}
+                                void assert(boolean actual,boolean expected) {
+                                    if (actual == expected) {
+                                        print "OK"
+                                    }
+                                    else {
+                                        print "TEST FAILED"
+                                    }
+                                }
+							}
+							"""
+
+    private final static fieldInitializingWithConstructor =
+            """
+							FieldInitializingWithConstructor {
+                                myField : int = 10
+
+                                FieldInitializingWithConstructor() {
+                                    print myField
+                                }
+
+                                start() {
+                                    var result = myField == 10
+                                    assert(result, true)
+                                }
+
+                             void assert(boolean actual,boolean expected) {
+                                    if (actual == expected) {
+                                        print "OK"
+                                    }
+                                    else {
+                                        print "TEST FAILED"
+                                    }
+                             }
+							}
+            """
 
     @Unroll
     def "Should Compile and run"() {
@@ -642,7 +686,9 @@ class ShouldCompileTest extends Specification {
         getterStatement          | "GetterStatement.enk"
         functionSingleStatements | "FunctionSingleStatements.enk"
         ifExpressions            | "IfExpression.enk"
-        tryStatement            | "TryStatement.enk"
+        tryStatement             | "TryStatement.enk"
+        fieldInitializing        | "FieldInitializing.enk"
+        fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
     }
 
 

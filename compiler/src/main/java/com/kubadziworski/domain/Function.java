@@ -43,6 +43,10 @@ public class Function {
         return functionSignature.getModifiers();
     }
 
+    public FunctionSignature getFunctionSignature() {
+        return functionSignature;
+    }
+
     public void accept(MethodGenerator generator) {
         generator.generate(this);
     }

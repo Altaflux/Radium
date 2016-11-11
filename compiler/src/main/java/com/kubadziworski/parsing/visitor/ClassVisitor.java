@@ -9,19 +9,24 @@ import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.ConstructorCall;
 import com.kubadziworski.domain.node.expression.FunctionCall;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Block;
+import com.kubadziworski.domain.node.statement.Statement;
+import com.kubadziworski.domain.node.statement.VariableDeclaration;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.apache.commons.collections4.ListUtils;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -44,7 +49,19 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         boolean defaultConstructorExists = scope.isParameterLessSignatureExists(scope.getFullClassName());
         addDefaultConstructorSignatureToScope(scope.getFullClassName(), defaultConstructorExists);
         List<Function> methods = methodsCtx.stream()
-                .map(method -> method.accept(new FunctionVisitor(scope)))
+                .map(method -> {
+                    //TODO DONT PROCESS FIELDS IF THIS() exists
+
+                    Function function = method.accept(new FunctionVisitor(scope));
+                    if (function instanceof Constructor) {
+                        Block block = (Block) function.getRootStatement();
+                        //Check for first statement TODO
+                        Block block1 = new Block(block.getScope(), ListUtils.sum(getFieldsInitializers(), block.getStatements()));
+                        return new Constructor(function.getFunctionSignature(), block1);
+                    }
+
+                    return method.accept(new FunctionVisitor(scope));
+                })
                 .collect(toList());
         if (!defaultConstructorExists) {
             methods.add(getDefaultConstructor());
@@ -57,6 +74,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
                 .peek(field -> methods.add(field.getGetterFunction()))
                 .forEach(field -> methods.add(field.getSetterFunction()));
 
+
         return new ClassDeclaration(scope.getClassName(), new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
     }
 
@@ -67,10 +85,19 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         }
     }
 
-
     private Constructor getDefaultConstructor() {
         FunctionSignature signature = scope.getMethodCallSignatureWithoutParameters(scope.getFullClassName());
-        return new Constructor(signature, Block.empty(scope));
+        Block block = new Block(scope, getFieldsInitializers());
+        return new Constructor(signature, block);
+    }
+
+    private List<Statement> getFieldsInitializers() {
+        return scope.getFields().values().stream()
+                .filter(stringFieldEntry -> stringFieldEntry.getInitialExpression().isPresent())
+                .map(field -> {
+                    VariableDeclaration declaration = new VariableDeclaration(field.getName(), field.getInitialExpression().get(), field.getType(), false);
+                    return new Assignment(declaration, true);
+                }).collect(Collectors.toList());
     }
 
     private Function getGeneratedMainMethod() {

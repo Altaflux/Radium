@@ -9,7 +9,6 @@ import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
-import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
@@ -18,15 +17,12 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.WrongModifiersException;
 import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
 
 /**
  * Created by kuba on 13.05.16.
@@ -64,7 +60,16 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
                 return 0;
             }).findAny().orElse(Modifier.PUBLIC);
         }
-        Field field = new Field(name, owner, type, modifiers);
+
+        Field field;
+        ExpressionVisitor statementVisitor = new ExpressionVisitor(scope);
+        if (ctx.expression() != null) {
+            Expression expression = ctx.expression().accept(statementVisitor);
+            field = new Field(name, owner, type, expression, modifiers);
+        } else {
+            field = new Field(name, owner, type, modifiers);
+        }
+
 
         if (ctx.setter() != null) {
             String fieldName = ctx.setter().ID().getText();

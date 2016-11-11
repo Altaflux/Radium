@@ -10,6 +10,7 @@ import com.kubadziworski.domain.type.Type;
  * Created by kuba on 07.05.16.
  */
 public class Constructor extends Function {
+
     public Constructor(FunctionSignature signature, Statement block) {
         super(signature, block);
     }
