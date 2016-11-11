@@ -2,13 +2,11 @@ package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.bytecodegeneration.statement.BlockStatementGenerator;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.TryCatchStatement;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -32,7 +30,7 @@ public class TryCatchStatementVisitor extends EnkelBaseVisitor<TryCatchStatement
         Block finallyBlock = null;
         if (!ctx.finallyBlock().isEmpty()) {
             finallyBlock = (Block) ctx.finallyBlock().get(0).accept(statementVisitor);
-            finallyBlock.getScope().addLocalVariable(new LocalVariable("$$", new JavaClassType("java.lang.Throwable"), false));
+            //finallyBlock.getScope().addLocalVariable(new LocalVariable("$$", new JavaClassType("java.lang.Throwable"), false));
         }
         List<TryCatchStatement.CatchBlock> catchBlocks = ctx.catchBlock().stream()
                 .map(this::processCatchBlock).collect(Collectors.toList());
