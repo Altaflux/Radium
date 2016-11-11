@@ -31,6 +31,29 @@ public class TryCatchStatement implements Statement {
     }
 
     @Override
+    public boolean isReturnComplete() {
+        if (finallyBlock != null) {
+            if (finallyBlock.isReturnComplete()) {
+                return true;
+            }
+        }
+        if (!statement.isReturnComplete()) {
+            return false;
+        }
+        if (catchBlocks.isEmpty() && !statement.isReturnComplete()) {
+            return false;
+        }
+
+        int result = catchBlocks.stream().mapToInt(catchBlock -> {
+            if (catchBlock.isReturnComplete()) {
+                return 1;
+            }
+            return 0;
+        }).min().orElse(0);
+        return result == 1;
+    }
+
+    @Override
     public void accept(StatementGenerator generator) {
         generator.generate(this);
     }
@@ -42,6 +65,10 @@ public class TryCatchStatement implements Statement {
         public CatchBlock(Block block, Parameter parameter) {
             this.block = block;
             this.parameter = parameter;
+        }
+
+        public boolean isReturnComplete() {
+            return block.isReturnComplete();
         }
 
         public Block getBlock() {

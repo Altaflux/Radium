@@ -56,7 +56,7 @@ public class MethodGenerator {
         boolean isLastStatementReturn = false;
         if (!block.getStatements().isEmpty()) {
             Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
-            isLastStatementReturn = lastStatement instanceof ReturnStatement;
+            isLastStatementReturn = lastStatement.isReturnComplete();
         }
         if (!isLastStatementReturn) {
             EmptyExpression emptyExpression = new EmptyExpression(function.getReturnType());

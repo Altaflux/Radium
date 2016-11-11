@@ -2,7 +2,6 @@ package com.kubadziworski.domain.node.statement;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.scope.Scope;
-import lombok.ToString;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +20,15 @@ public class Block implements Statement {
 
     public static Block empty(Scope scope) {
         return new Block(scope, Collections.emptyList());
+    }
+
+    @Override
+    public boolean isReturnComplete() {
+        if (!statements.isEmpty()) {
+            Statement lastStatement = statements.get(statements.size() - 1);
+            return lastStatement.isReturnComplete();
+        }
+        return false;
     }
 
     @Override

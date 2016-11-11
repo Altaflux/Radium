@@ -19,6 +19,11 @@ public class ReturnStatement implements Statement {
         generator.generate(this);
     }
 
+    @Override
+    public boolean isReturnComplete() {
+        return true;
+    }
+
     public Expression getExpression() {
         return expression;
     }

@@ -9,4 +9,8 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 @FunctionalInterface
 public interface Statement extends Node {
     void accept(StatementGenerator generator);
+
+    default boolean isReturnComplete() {
+        return false;
+    }
 }

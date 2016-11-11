@@ -38,6 +38,11 @@ public class IfStatement implements Statement {
     }
 
     @Override
+    public boolean isReturnComplete() {
+        return falseStatement != null && (falseStatement.isReturnComplete() && trueStatement.isReturnComplete());
+    }
+
+    @Override
     public void accept(StatementGenerator generator) {
         generator.generate(this);
     }

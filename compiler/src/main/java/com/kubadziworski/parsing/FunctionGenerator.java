@@ -3,7 +3,6 @@ package com.kubadziworski.parsing;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
-import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
@@ -14,8 +13,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 
 public class FunctionGenerator {
@@ -28,7 +26,16 @@ public class FunctionGenerator {
 
     public Function generateFunction(FunctionSignature signature, EnkelParser.FunctionContentContext ctx, boolean isConstructor) {
         addParametersAsLocalVariables(signature);
-        return generateFunction(signature, getBlock(ctx), isConstructor);
+        Statement statement = getBlock(ctx);
+
+        if (statement instanceof Block) {
+            return generateFunction(signature, (Block) statement, isConstructor);
+        }
+        if (!signature.getReturnType().equals(BuiltInType.VOID) && statement instanceof Expression) {
+            ReturnStatement returnStatement = new ReturnStatement((Expression) statement);
+            return generateFunction(signature, new Block(new Scope(scope), Collections.singletonList(returnStatement)), isConstructor);
+        }
+        return generateFunction(signature, new Block(new Scope(scope), Collections.singletonList(statement)), isConstructor);
     }
 
     public Function generateFunction(FunctionSignature signature, EnkelParser.BlockContext ctx, boolean isConstructor) {
@@ -40,32 +47,31 @@ public class FunctionGenerator {
         if (isConstructor) {
             return new Constructor(signature, block);
         }
-        block = addAutoReturnStatement(signature, block);
-        verifyBlockReturn(signature, block);
 
+        verifyBlockReturn(signature, block);
         return new Function(signature, block);
     }
 
 
-    private Block addAutoReturnStatement(FunctionSignature signature, Block incomingBlock) {
-        Block block = incomingBlock;
-        if (!block.getStatements().isEmpty()) {
-            Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
-            if (lastStatement instanceof Expression && ((Expression) lastStatement).getType().equals(signature.getReturnType())) {
-                List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size() - 1));
-                ReturnStatement returnStatement = new ReturnStatement((Expression) lastStatement);
-                statements.add(returnStatement);
-                block = new Block(block.getScope(), statements);
-
-            } else if (!(lastStatement instanceof ReturnStatement)) {
-                List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size()));
-                ReturnStatement returnStatement = new ReturnStatement(new EmptyExpression(BuiltInType.VOID));
-                statements.add(returnStatement);
-                block = new Block(block.getScope(), statements);
-            }
-        }
-        return block;
-    }
+//    private Block addAutoReturnStatement(FunctionSignature signature, Block incomingBlock) {
+//        Block block = incomingBlock;
+//        if (!block.getStatements().isEmpty()) {
+//            Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
+//            if (lastStatement instanceof Expression && ((Expression) lastStatement).getType().equals(signature.getReturnType())) {
+//                List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size() - 1));
+//                ReturnStatement returnStatement = new ReturnStatement((Expression) lastStatement);
+//                statements.add(returnStatement);
+//                block = new Block(block.getScope(), statements);
+//
+//            } else if (!(lastStatement instanceof ReturnStatement)) {
+//                List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size()));
+//                ReturnStatement returnStatement = new ReturnStatement(new EmptyExpression(BuiltInType.VOID));
+//                statements.add(returnStatement);
+//                block = new Block(block.getScope(), statements);
+//            }
+//        }
+//        return block;
+//    }
 
     private void verifyBlockReturn(FunctionSignature signature, Block block) {
         if (!signature.getReturnType().equals(BuiltInType.VOID)) {
@@ -80,7 +86,9 @@ public class FunctionGenerator {
                 }
                 return;
             } else {
-                throw new RuntimeException("No return specified for method with return type: " + signature.getReturnType());
+                if (!block.isReturnComplete()) {
+                    throw new RuntimeException("No return specified for method with return type: " + signature.getReturnType());
+                }
             }
         }
 
@@ -99,9 +107,9 @@ public class FunctionGenerator {
                 .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
     }
 
-    private Block getBlock(EnkelParser.FunctionContentContext functionContentContext) {
+    private Statement getBlock(EnkelParser.FunctionContentContext functionContentContext) {
         StatementVisitor statementVisitor = new StatementVisitor(scope);
-        return (Block) functionContentContext.accept(statementVisitor);
+        return functionContentContext.accept(statementVisitor);
     }
 
     private Block getBlock(EnkelParser.BlockContext functionContentContext) {

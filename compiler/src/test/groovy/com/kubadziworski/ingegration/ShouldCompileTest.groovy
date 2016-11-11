@@ -115,7 +115,7 @@ class ShouldCompileTest extends Specification {
 								int sum (int x ,int y) {
 									print x
 									print y
-									x+y
+									return x+y
 								}
 							}
 							"""
@@ -604,7 +604,7 @@ class ShouldCompileTest extends Specification {
 
 								start {
                                     var result = myField == 10
-									assert(result, true)
+                                    assert(result, true)
 								}
                                 void assert(boolean actual,boolean expected) {
                                     if (actual == expected) {
@@ -640,6 +640,32 @@ class ShouldCompileTest extends Specification {
                                     }
                              }
 							}
+            """
+    private static final detectReturnCompleteStatement =
+            """
+                    DetectReturnCompleteStatement {
+                        myField : int = 10
+
+                        start(){
+                            assert(foo(), true);
+                        }
+
+                        boolean foo(){
+                            if(myField == 10){
+                                return true;
+                            }else {
+                                return false;
+                            }
+                        }
+                         void assert(boolean actual,boolean expected) {
+                                if (actual == expected) {
+                                    print "OK"
+                                }
+                                else {
+                                    print "TEST FAILED"
+                                }
+                         }
+                    }
             """
 
     @Unroll
@@ -686,13 +712,14 @@ class ShouldCompileTest extends Specification {
         getterStatement          | "GetterStatement.enk"
         functionSingleStatements | "FunctionSingleStatements.enk"
         ifExpressions            | "IfExpression.enk"
-        tryStatement             | "TryStatement.enk"
+       // tryStatement             | "TryStatement.enk"
         fieldInitializing        | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
+        detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
     }
 
 
-    //@Unroll
+    @Unroll
     def "Should Create Multiple files"() {
         expect:
         boolean dirs = new File("target/enkelClasses/").mkdirs()
