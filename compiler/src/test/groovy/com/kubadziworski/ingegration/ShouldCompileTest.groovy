@@ -550,13 +550,35 @@ class ShouldCompileTest extends Specification {
                                 }
 							}
 							"""
-    private static final tryStatement = """
+    private static final myTryStatement = """
 							TryStatement {
+                                myTrue : boolean = true
 
 								start(){
+								    process();
 								    val y = foo();
                                     print y
+
+                                    print finReturn()
 								}
+
+                                int finReturn(){
+
+                                    try{
+                                        return throwingMethod();
+                                    }catch(e: Exception){
+                                        return 2
+                                    }finally {
+                                        if(myTrue){
+                                            return 1
+                                        }
+                                    }
+
+                                }
+
+                                int throwingMethod(){
+                                    throw new RuntimeException()
+                                }
 
 								int foo(){
 
@@ -580,6 +602,34 @@ class ShouldCompileTest extends Specification {
 
 								}
 
+								process(){
+                                          try {
+                                                throw new RuntimeException()
+
+                                            } catch (e:RuntimeException){
+                                                print "OK"
+                                            }
+
+                                            try {
+                                               throw new RuntimeException()
+
+                                            } catch (e:RuntimeException){
+                                                print "OK"
+                                            }catch(e:Exception){
+                                                print "FAILED"
+                                            }
+                                            try {
+                                                throw new RuntimeException()
+
+                                            } catch (e:RuntimeException){
+                                                print "OK"
+                                            }catch(e:Exception){
+                                                print "FAILED"
+                                            }finally{
+                                                print "finally called OK"
+                                          }
+						        }
+
 								void assert(boolean actual,boolean expected) {
 									if (actual == expected) {
 										print "OK"
@@ -589,7 +639,7 @@ class ShouldCompileTest extends Specification {
 									}
 								}
 							}
-						""";
+						"""
     private static final fieldInitializing =
             """
 							FieldInitializing {
@@ -720,7 +770,7 @@ class ShouldCompileTest extends Specification {
         getterStatement          | "GetterStatement.enk"
         functionSingleStatements | "FunctionSingleStatements.enk"
         ifExpressions            | "IfExpression.enk"
-        tryStatement             | "TryStatement.enk"
+        myTryStatement             | "TryStatement.enk"
         fieldInitializing        | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
         detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"

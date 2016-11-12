@@ -89,14 +89,17 @@ public class TryCatchStatementGenerator {
             methodVisitor.visitLabel(finalLabel);
 
             Block finallyBlock = finalBlock.get();
+
             Scope catchBlockScope = finallyBlock.getScope();
             catchBlockScope.addLocalVariable(new LocalVariable(FINALLY_THROWABLE_NAME, new JavaClassType("java.lang.Throwable"), true));
             methodVisitor.visitVarInsn(ASTORE, catchBlockScope.getLocalVariableIndex(FINALLY_THROWABLE_NAME));
-
             finallyBlock.accept(statementGenerator);
 
-            methodVisitor.visitVarInsn(ALOAD, catchBlockScope.getLocalVariableIndex(FINALLY_THROWABLE_NAME));
-            methodVisitor.visitInsn(ATHROW);
+            if (!finallyBlock.isReturnComplete()) {
+                methodVisitor.visitVarInsn(ALOAD, catchBlockScope.getLocalVariableIndex(FINALLY_THROWABLE_NAME));
+                methodVisitor.visitInsn(ATHROW);
+            }
+
             Stream.concat(catchLabels.stream().map(catchPack -> catchPack.labelPacks).flatMap(Collection::stream), finalGenerator.labelPacks.stream())
                     .forEach(labelPack -> methodVisitor.visitTryCatchBlock(labelPack.firstLabel, labelPack.lastLabel, finalLabel, null));
 
