@@ -663,6 +663,21 @@ class ShouldCompileTest extends Specification {
                     }
             """
 
+    private static final throwStatement =
+            """
+                    ThrowStatement {
+
+                        start(){
+                            try {
+                                throw new RuntimeException();
+                            }catch(e : Exception){
+                                print "CATCH SUCCESS"
+                            }
+                        }
+
+                    }
+            """
+
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -711,6 +726,7 @@ class ShouldCompileTest extends Specification {
         fieldInitializing        | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
         detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
+        throwStatement          | "ThrowStatement.enk"
     }
 
 

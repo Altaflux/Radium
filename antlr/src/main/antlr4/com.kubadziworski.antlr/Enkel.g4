@@ -130,6 +130,7 @@ statement : block
            | returnStatement
            | ifStatement
            | tryStatement
+           | throwStatement
            | expression ;
 
 returnable : block | expression ;
@@ -146,7 +147,7 @@ forConditions : iterator=variableReference  'from' startExpr=expression range='t
 tryStatement : 'try' block ((catchBlock+ | finallyBlock)  finallyBlock?);
 catchBlock :  'catch'  '(' name ':' type  ')' block ;
 finallyBlock : 'finally' block ;
-
+throwStatement : 'throw' expression ;
 
 name : ID ;
 

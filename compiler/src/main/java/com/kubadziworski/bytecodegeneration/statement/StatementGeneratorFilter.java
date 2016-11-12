@@ -31,6 +31,14 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     @Override
+    final public void generate(ThrowStatement throwStatement) {
+        if(parent != null){
+            parent.generate(throwStatement);
+        }
+        generate(throwStatement, this);
+    }
+
+    @Override
     final public void generate(TryCatchStatement tryCatchStatement) {
         if (parent != null) {
             parent.generate(tryCatchStatement);
@@ -257,6 +265,11 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     /////////////
+    @Override
+    public void generate(ThrowStatement throwStatement, StatementGenerator statementGenerator) {
+        next.generate(throwStatement, statementGenerator);
+    }
+
     @Override
     public void generate(TryCatchStatement tryCatchStatement, StatementGenerator generator) {
         next.generate(tryCatchStatement, generator);

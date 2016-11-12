@@ -12,6 +12,9 @@ import com.kubadziworski.domain.scope.Scope;
 
 public interface StatementGenerator {
 
+    void generate(ThrowStatement throwStatement);
+    void generate(ThrowStatement throwStatement, StatementGenerator statementGenerator);
+
     void generate(TryCatchStatement tryCatchStatement);
 
     void generate(TryCatchStatement tryCatchStatement, StatementGenerator generator);

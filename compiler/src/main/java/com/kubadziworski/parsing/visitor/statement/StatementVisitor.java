@@ -1,4 +1,4 @@
-package com.kubadziworski.parsing.visitor.statement;
+package com.kubadziworski.parsing.visitor.statement;;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
@@ -40,6 +40,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     private final AssignmentStatementVisitor assignmentStatementVisitor;
     private final FunctionContentVisitor functionContentVisitor;
     private final TryCatchStatementVisitor tryCatchStatementVisitor;
+    private final ThrowStatementVisitor throwStatementVisitor;
 
     public StatementVisitor(Scope scope) {
         expressionVisitor = new ExpressionVisitor(scope);
@@ -52,6 +53,12 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
         assignmentStatementVisitor = new AssignmentStatementVisitor(expressionVisitor, scope);
         functionContentVisitor = new FunctionContentVisitor(scope);
         tryCatchStatementVisitor = new TryCatchStatementVisitor(this, scope);
+        throwStatementVisitor = new ThrowStatementVisitor(expressionVisitor);
+    }
+
+    @Override
+    public Statement visitThrowStatement(@NotNull EnkelParser.ThrowStatementContext ctx) {
+        return throwStatementVisitor.visitThrowStatement(ctx);
     }
 
     @Override

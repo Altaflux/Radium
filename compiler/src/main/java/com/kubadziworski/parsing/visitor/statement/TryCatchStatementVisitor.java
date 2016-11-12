@@ -30,7 +30,6 @@ public class TryCatchStatementVisitor extends EnkelBaseVisitor<TryCatchStatement
         Block finallyBlock = null;
         if (!ctx.finallyBlock().isEmpty()) {
             finallyBlock = (Block) ctx.finallyBlock().get(0).accept(statementVisitor);
-            //finallyBlock.getScope().addLocalVariable(new LocalVariable("$$", new JavaClassType("java.lang.Throwable"), false));
         }
         List<TryCatchStatement.CatchBlock> catchBlocks = ctx.catchBlock().stream()
                 .map(this::processCatchBlock).collect(Collectors.toList());

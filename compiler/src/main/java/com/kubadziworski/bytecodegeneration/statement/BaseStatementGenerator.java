@@ -24,6 +24,7 @@ public class BaseStatementGenerator implements StatementGenerator {
     private final AssignmentStatementGenerator assignmentStatementGenerator;
     private final TryCatchStatementGenerator tryCatchStatementGenerator;
     private final ExpressionGenerator expressionGenerator;
+    private final ThrowStatementGenerator throwStatementGenerator;
 
     private final StatementGenerator parent;
     private final MethodVisitor methodVisitor;
@@ -40,7 +41,17 @@ public class BaseStatementGenerator implements StatementGenerator {
         returnStatementGenerator = new ReturnStatementGenerator(methodVisitor);
         assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor);
         tryCatchStatementGenerator = new TryCatchStatementGenerator(methodVisitor);
+        throwStatementGenerator = new ThrowStatementGenerator(methodVisitor);
+
         this.methodVisitor = methodVisitor;
+    }
+
+    public void generate(ThrowStatement throwStatement) {
+        throwStatementGenerator.generate(throwStatement, this);
+    }
+
+    public void generate(ThrowStatement throwStatement, StatementGenerator statementGenerator) {
+        throwStatementGenerator.generate(throwStatement, statementGenerator);
     }
 
     public void generate(TryCatchStatement tryCatchStatement) {
