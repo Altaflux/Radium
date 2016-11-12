@@ -6,10 +6,7 @@ import com.kubadziworski.antlr.EnkelParser.TypeContext;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.BuiltInType;
-import com.kubadziworski.domain.type.DefaultTypes;
-import com.kubadziworski.domain.type.JavaClassType;
-import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -45,6 +42,8 @@ public final class TypeResolver {
     public static Type getFromValue(EnkelParser.ValueContext value) {
         String stringValue = value.getText();
         if (StringUtils.isEmpty(stringValue)) return BuiltInType.VOID;
+
+        if(stringValue.equals("null")) return NullType.INSTANCE;
 
         if (value.IntegerLiteral() != null) {
             stringValue = stringValue.replace("_", "");
@@ -93,6 +92,9 @@ public final class TypeResolver {
 
 
     public static Object getValueFromString(String stringValue, Type type) {
+
+        if(type.equals(NullType.INSTANCE)) return null;
+
         if (TypeChecker.isInt(type)) {
             if (stringValue.startsWith("-")) {
                 String newValue = stringValue.substring(1);

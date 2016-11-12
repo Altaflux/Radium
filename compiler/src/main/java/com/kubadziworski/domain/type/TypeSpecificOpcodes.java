@@ -8,12 +8,12 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public enum TypeSpecificOpcodes {
 
-    INT(ILOAD, ISTORE, IRETURN, IADD, ISUB, IMUL, IDIV, DUP, DUP_X1, INEG), //values (-127,127) - one byte.
-    LONG(LLOAD, LSTORE, LRETURN, LADD, LSUB, LMUL, LDIV, DUP2, DUP2_X1, LNEG),
-    FLOAT(FLOAD, FSTORE, FRETURN, FADD, FSUB, FMUL, FDIV, DUP, DUP_X1, FNEG),
-    DOUBLE(DLOAD, DSTORE, DRETURN, DADD, DSUB, DMUL, DDIV, DUP2, DUP2_X1, DNEG),
-    VOID(ALOAD, ASTORE, RETURN, 0, 0, 0, 0, 0, 0, 0),
-    OBJECT(ALOAD, ASTORE, ARETURN, 0, 0, 0, 0, DUP, DUP_X1, 0);
+    INT(ILOAD, ISTORE, IRETURN, IADD, ISUB, IMUL, IDIV, DUP, DUP_X1, INEG, true), //values (-127,127) - one byte.
+    LONG(LLOAD, LSTORE, LRETURN, LADD, LSUB, LMUL, LDIV, DUP2, DUP2_X1, LNEG, true),
+    FLOAT(FLOAD, FSTORE, FRETURN, FADD, FSUB, FMUL, FDIV, DUP, DUP_X1, FNEG, true),
+    DOUBLE(DLOAD, DSTORE, DRETURN, DADD, DSUB, DMUL, DDIV, DUP2, DUP2_X1, DNEG, false),
+    VOID(ALOAD, ASTORE, RETURN, 0, 0, 0, 0, 0, 0, 0, true),
+    OBJECT(ALOAD, ASTORE, ARETURN, 0, 0, 0, 0, DUP, DUP_X1, 0, false);
 
     private final int load;
     private final int store;
@@ -25,8 +25,9 @@ public enum TypeSpecificOpcodes {
     private final int dup;
     private final int dupX1;
     private final int neg;
+    private final boolean isPrimitive;
 
-    TypeSpecificOpcodes(int load, int store, int ret, int add, int sub, int mul, int div, int dup, int dupX1, int neg) {
+    TypeSpecificOpcodes(int load, int store, int ret, int add, int sub, int mul, int div, int dup, int dupX1, int neg, boolean isPrimitive) {
 
         this.load = load;
         this.store = store;
@@ -38,6 +39,7 @@ public enum TypeSpecificOpcodes {
         this.dup = dup;
         this.dupX1 = dupX1;
         this.neg = neg;
+        this.isPrimitive = isPrimitive;
     }
 
     public int getLoad() {
@@ -78,5 +80,9 @@ public enum TypeSpecificOpcodes {
 
     public int getNegation() {
         return neg;
+    }
+
+    public boolean isPrimitive() {
+        return isPrimitive;
     }
 }

@@ -2,7 +2,6 @@ package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.CompareSign;
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.MixedComparisonNotAllowedException;
@@ -23,8 +22,8 @@ public class ConditionalExpression implements Expression {
         this.compareSign = compareSign;
         this.leftExpression = leftExpression;
         this.rightExpression = rightExpression;
-        boolean leftExpressionIsPrimitive = leftExpression.getType().getTypeClass().isPrimitive();
-        boolean rightExpressionIsPrimitive = rightExpression.getType().getTypeClass().isPrimitive();
+        boolean leftExpressionIsPrimitive = leftExpression.getType().isPrimitive();
+        boolean rightExpressionIsPrimitive = rightExpression.getType().isPrimitive();
         isPrimitiveComparison = leftExpressionIsPrimitive && rightExpressionIsPrimitive;
         boolean isObjectsComparison =  !leftExpressionIsPrimitive && !rightExpressionIsPrimitive;
         boolean isMixedComparison = !isPrimitiveComparison && !isObjectsComparison;

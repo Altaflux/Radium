@@ -726,6 +726,22 @@ class ShouldCompileTest extends Specification {
                     }
             """
 
+    private static final nullValue =
+            """
+                    NullValue {
+                        start(){
+                            var foo:String = null
+                            print foo
+
+                            try{
+                                foo.intern()
+                            }catch(e: NullPointerException){
+                                print "SUCCESS"
+                            }
+                        }
+                    }
+            """
+
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -775,6 +791,7 @@ class ShouldCompileTest extends Specification {
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
         detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
         throwStatement          | "ThrowStatement.enk"
+        nullValue               | "NullValue.enk"
     }
 
 

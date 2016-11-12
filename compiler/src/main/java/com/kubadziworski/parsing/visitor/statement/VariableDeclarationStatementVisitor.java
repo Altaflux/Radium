@@ -4,9 +4,10 @@ import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.VariableDeclarationContext;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.statement.VariableDeclaration;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.node.statement.VariableDeclaration;
+import com.kubadziworski.domain.type.NullType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
@@ -39,8 +40,15 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
         if (ctx.type() != null) {
             declarationType = TypeResolver.getFromTypeContext(ctx.type(), scope);
         }
-        if (expression.getType().inheritsFrom(declarationType) < 0) {
-            throw new IncompatibleTypesException(varName, declarationType, expression.getType());
+
+        if (declarationType.equals(NullType.INSTANCE)) {
+            throw new RuntimeException("Type needs to be declared if assigned expression is null");
+        }
+
+        if (!expression.getType().equals(NullType.INSTANCE)) {
+            if (expression.getType().inheritsFrom(declarationType) < 0) {
+                throw new IncompatibleTypesException(varName, declarationType, expression.getType());
+            }
         }
         scope.addLocalVariable(new LocalVariable(varName, declarationType, mutable));
         return new VariableDeclaration(varName, expression, declarationType, mutable);

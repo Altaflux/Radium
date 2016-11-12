@@ -54,6 +54,8 @@ public class AssignmentStatementGenerator {
                     }
                 }
                 Type localVariableType = localVariable.getType();
+
+
                 if (expression.getType().inheritsFrom(localVariableType) < 0) {
                     throw new IncompatibleTypesException(varName, localVariableType, expression.getType());
                 }

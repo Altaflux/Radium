@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.kubadziworski.domain.type.BuiltInType.NONE;
-
 public class EnkelType implements Type {
     private final String name;
     private final Scope scope;
@@ -59,9 +57,6 @@ public class EnkelType implements Type {
         int arity = 0;
         if (type.getName().equals(this.getName())) {
             return arity;
-        }
-        if (type.getName().equals(NONE.getName())) {
-            return 0;
         }
 
         Type type1 = this;
@@ -154,6 +149,11 @@ public class EnkelType implements Type {
     @Override
     public int getNegation() {
         throw new RuntimeException("Negation operation not (yet ;) ) supported for custom objects");
+    }
+
+    @Override
+    public boolean isPrimitive(){
+        return false;
     }
 
     @Override

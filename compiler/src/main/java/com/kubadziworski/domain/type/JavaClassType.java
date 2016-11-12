@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.kubadziworski.domain.type.BuiltInType.NONE;
-
 
 public class JavaClassType implements Type {
 
@@ -62,9 +60,6 @@ public class JavaClassType implements Type {
         int arity = 0;
         if(type.getName().equals(this.getName())){
             return arity;
-        }
-        if (type.getName().equals(NONE.getName())) {
-            return 0;
         }
         Class iteratedClass = getTypeClass();
         while (iteratedClass != null) {
@@ -169,6 +164,11 @@ public class JavaClassType implements Type {
     @Override
     public int getStackSize() {
         return 1;
+    }
+
+    @Override
+    public boolean isPrimitive(){
+        return false;
     }
 
     @Override

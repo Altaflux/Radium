@@ -198,6 +198,7 @@ value : IntegerLiteral
       |	FloatingPointLiteral
       | CharacterLiteral
       | BOOL
+      | NULL
       | STRING ;
 qualifiedName : ID ('.' ID)*;
 
@@ -464,5 +465,6 @@ IMMUTABLE : 'val' ;
 PRINT : 'print' ;
 EQUALS : '=' ;
 BOOL : 'true' | 'false' ;
+NULL : 'null' ;
 STRING : '"'~('\r' | '\n' | '"')*'"' ;
 ID : [a-zA-Z0-9]+ ;

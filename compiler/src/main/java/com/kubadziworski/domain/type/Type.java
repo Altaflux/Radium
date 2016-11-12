@@ -54,6 +54,7 @@ public interface Type {
 
     int getStackSize();
 
+    boolean isPrimitive();
 
     default FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
         List<FunctionSignature> signatures = getFunctionSignatures();
