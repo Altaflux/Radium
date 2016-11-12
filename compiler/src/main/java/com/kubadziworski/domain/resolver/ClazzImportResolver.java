@@ -29,8 +29,8 @@ class ClazzImportResolver implements BaseImportResolver {
     private static final List<URL> bootClassPath;
 
     static {
-        System.out.println("Boot Paths: " + ManagementFactory.getRuntimeMXBean().getBootClassPath());
-        List<URL> bootList = Arrays.stream(ManagementFactory.getRuntimeMXBean().getBootClassPath().split(";"))
+        List<URL> bootList = Arrays.stream(ManagementFactory.getRuntimeMXBean()
+                .getBootClassPath().split(java.io.File.pathSeparator))
                 .map(s -> {
                     try {
                         File jar = new File(s);
