@@ -2,11 +2,9 @@ package com.kubadziworski.domain.resolver;
 
 import com.kubadziworski.domain.scope.ClassPathScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
-
-
-import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -14,21 +12,43 @@ import org.reflections.scanners.ResourcesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
+import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.*;
-
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 class ClazzImportResolver implements BaseImportResolver {
 
     private static final ClassPathScope classPathScope = new ClassPathScope();
+
+    private static final List<URL> bootClassPath;
+
+    static {
+
+        List<URL> bootList = Arrays.stream(ManagementFactory.getRuntimeMXBean().getBootClassPath().split(";"))
+                .map(s -> {
+                    try {
+                        File jar = new File(s);
+                        if (jar.exists()) {
+                            return jar.toURI().toURL();
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    return null;
+                }).filter(url -> url != null).collect(Collectors.toList());
+        bootClassPath = ListUtils.sum(bootList, ClasspathHelper.forClassLoader().stream().collect(Collectors.toList()));
+    }
+
     private static final Reflections reflections = new Reflections(new ConfigurationBuilder()
             .setScanners(new ResourcesScanner())
             .forPackages("")
-            .setUrls(ClasspathHelper.forClassLoader()));
+            .setUrls(bootClassPath));
 
     @Override
     public Optional<DeclarationDescriptor> preParseClassDeclarations(String importPackage) {

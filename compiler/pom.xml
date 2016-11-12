@@ -6,26 +6,26 @@
     <packaging>jar</packaging>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <useManifestOnlyJar>false</useManifestOnlyJar>
-                    <useSystemClassLoader>true</useSystemClassLoader>
-                </configuration>
-            </plugin>
-        </plugins>
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>2.19.1</version>-->
+                <!--<configuration>-->
+                    <!--<useManifestOnlyJar>false</useManifestOnlyJar>-->
+                    <!--<useSystemClassLoader>true</useSystemClassLoader>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
     </build>
     <dependencies>
-        <dependency>
-            <groupId>dummy</groupId>
-            <artifactId>dummy</artifactId>
-            <version>1</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/lib/rt.jar</systemPath>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>dummy</groupId>-->
+            <!--<artifactId>dummy</artifactId>-->
+            <!--<version>1</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${java.home}/lib/rt.jar</systemPath>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.kuba.dziworski</groupId>
             <artifactId>antlr</artifactId>

@@ -14,8 +14,8 @@ import com.kubadziworski.parsing.visitor.ClassVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
-
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class PhaseVisitor {

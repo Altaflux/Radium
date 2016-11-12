@@ -386,8 +386,6 @@ class ShouldCompileTest extends Specification {
 							}
 						""";
     private static final staticFunctionTest = """
-							import org.apache.commons.beanutils.locale.*;
-							import org.apache.log4j.CategoryKey;
 
 							StaticFunctionTest {
 
