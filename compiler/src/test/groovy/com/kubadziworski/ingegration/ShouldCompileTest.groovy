@@ -556,37 +556,32 @@ class ShouldCompileTest extends Specification {
 							TryStatement {
 
 								start(){
-									try{
-									    com.kubadziworski.test.Library.thrower();
-									    print "TEST FAILED"
-									}catch(e: RuntimeException){
-
-									    print "OK"
-									}
-
-									
-									try{
-                                        com.kubadziworski.test.Library.thrower();
-                                        print "TEST FAILED"
-
-                                    } catch(e: RuntimeException){
-                                        print "OK"
-                                    }catch(e: Exception){
-                                        print "FAILED"
-                                    }
-
-                                    try{
-                                        com.kubadziworski.test.Library.thrower();
-                                        print "TEST FAILED"
-
-                                    } catch(e: RuntimeException){
-                                        print "OK"
-                                    }catch(e: Exception){
-                                        print "FAILED"
-                                    }finally {
-                                        print "finally called OK"
-                                    }
+								    val y = foo();
+                                    print y
 								}
+
+								int foo(){
+
+								   try {
+								        if(true){
+								            print "primer"
+								            return 1;
+								        }
+								        print "segundo"
+								        return 2;
+								   }
+								   catch(e:RuntimeException){
+								        print "tercer"
+								        return 3;
+								   }catch(e: Exception){
+								     print "cuarto"
+								     return 5;
+								   }finally {
+								        print "hola"
+								   }
+
+								}
+
 								void assert(boolean actual,boolean expected) {
 									if (actual == expected) {
 										print "OK"
@@ -597,7 +592,7 @@ class ShouldCompileTest extends Specification {
 								}
 							}
 						""";
-    private final static fieldInitializing =
+    private static final fieldInitializing =
             """
 							FieldInitializing {
 								myField : int = 10
@@ -712,7 +707,7 @@ class ShouldCompileTest extends Specification {
         getterStatement          | "GetterStatement.enk"
         functionSingleStatements | "FunctionSingleStatements.enk"
         ifExpressions            | "IfExpression.enk"
-       // tryStatement             | "TryStatement.enk"
+        tryStatement             | "TryStatement.enk"
         fieldInitializing        | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
         detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
