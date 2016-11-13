@@ -15,6 +15,7 @@
     <modules>
         <module>compiler</module>
         <module>antlr</module>
+        <module>runtime-lib</module>
     </modules>
     <dependencies>
         <dependency>
@@ -89,16 +90,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>19.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.18</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.18</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>

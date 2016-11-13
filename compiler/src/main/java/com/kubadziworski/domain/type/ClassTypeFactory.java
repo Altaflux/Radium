@@ -2,16 +2,26 @@ package com.kubadziworski.domain.type;
 
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.scope.Scope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 
 public class ClassTypeFactory {
     private static volatile GlobalScope globalScope;
+    private static final Map<String, Type> syntheticTypes;
 
-    private static final Logger logger = LoggerFactory.getLogger(ClassTypeFactory.class);
+    static {
+        //TODO DECLARING "radium.Any" on here is needed for now
+        //as subclass declaration needs to occur before types are formally loaded
+        //I need to check if at this moment GlobalScope really needs a scope
+        //given that Types right now encapsulate almost all functionality
+        Map<String, Type> typeMap = new HashMap<>();
+        typeMap.put("radium.Any", AnyType.INSTANCE);
+        syntheticTypes = Collections.unmodifiableMap(typeMap);
+    }
 
     public static void initialize(GlobalScope globalScope) {
         synchronized (ClassTypeFactory.class) {
@@ -20,9 +30,13 @@ public class ClassTypeFactory {
     }
 
     public static Type createClassType(String name) {
+        if (syntheticTypes.containsKey(name)) {
+            return syntheticTypes.get(name);
+        }
+
         if (globalScope != null) {
             Scope scope = globalScope.getScopeByClassName(name);
-            if(scope != null) {
+            if (scope != null) {
                 return new EnkelType(name, scope);
             }
         }

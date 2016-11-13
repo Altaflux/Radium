@@ -51,8 +51,8 @@ public class PhaseVisitor {
         ImportResolver importResolver = enkelParser.value1;
         List<Holder> scopes = enkelParser.value2.stream().map(holderOfClasses -> holderOfClasses)
                 .map(ctx -> {
-                    String superClass = importResolver.getClassName("Object")
-                            .orElseThrow(() -> new ClassNotFoundForNameException("Object"));
+                    String superClass = importResolver.getClassName("Any")
+                            .orElseThrow(() -> new ClassNotFoundForNameException("Any"));
                     return new Holder(ctx.value1, new Scope(new MetaData(ctx.value2, ctx.value3, superClass, Collections.emptyList()),
                             importResolver));
                 }).collect(Collectors.toList());
