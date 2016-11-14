@@ -8,7 +8,7 @@ package radium;
  */
 public class Unit {
 
-    public static Unit INSTANCE = new Unit();
+    public static final Unit INSTANCE = new Unit();
 
     private Unit() {
     }
