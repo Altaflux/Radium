@@ -5,7 +5,7 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.UnitType;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 

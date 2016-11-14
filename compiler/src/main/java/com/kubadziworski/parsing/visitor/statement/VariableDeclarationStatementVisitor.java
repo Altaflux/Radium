@@ -8,7 +8,7 @@ import com.kubadziworski.domain.node.statement.VariableDeclaration;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
-import com.kubadziworski.domain.type.NullType;
+import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;

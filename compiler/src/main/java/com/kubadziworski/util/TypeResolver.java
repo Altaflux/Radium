@@ -7,6 +7,8 @@ import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.*;
+import com.kubadziworski.domain.type.intrinsic.NullType;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;

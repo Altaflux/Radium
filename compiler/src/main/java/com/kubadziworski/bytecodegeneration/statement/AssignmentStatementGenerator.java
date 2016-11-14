@@ -6,7 +6,7 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.UnitType;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import org.objectweb.asm.MethodVisitor;

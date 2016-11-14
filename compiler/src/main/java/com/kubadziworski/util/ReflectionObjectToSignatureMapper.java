@@ -5,7 +5,7 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.UnitType;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

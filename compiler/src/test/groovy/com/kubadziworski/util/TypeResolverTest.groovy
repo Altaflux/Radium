@@ -4,7 +4,7 @@ import com.kubadziworski.antlr.EnkelParser
 import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
-import com.kubadziworski.domain.type.UnitType
+import com.kubadziworski.domain.type.intrinsic.UnitType
 import org.antlr.v4.runtime.tree.TerminalNode
 import spock.lang.Specification
 

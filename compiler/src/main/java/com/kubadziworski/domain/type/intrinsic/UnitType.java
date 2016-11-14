@@ -1,4 +1,4 @@
-package com.kubadziworski.domain.type;
+package com.kubadziworski.domain.type.intrinsic;
 
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
@@ -6,6 +6,8 @@ import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.scope.Field;
+import com.kubadziworski.domain.type.JavaClassType;
+import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Modifier;

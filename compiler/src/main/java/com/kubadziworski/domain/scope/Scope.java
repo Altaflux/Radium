@@ -6,6 +6,7 @@ import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.resolver.ImportResolver;
 import com.kubadziworski.domain.type.*;
 
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;

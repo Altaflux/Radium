@@ -5,7 +5,7 @@ import com.kubadziworski.domain.node.expression.EmptyExpression
 import com.kubadziworski.domain.node.expression.Value
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BuiltInType
-import com.kubadziworski.domain.type.UnitType
+import com.kubadziworski.domain.type.intrinsic.UnitType
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor
 import spock.lang.Specification
 /**

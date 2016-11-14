@@ -9,7 +9,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.EnkelType;
 
-import com.kubadziworski.domain.type.UnitType;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;

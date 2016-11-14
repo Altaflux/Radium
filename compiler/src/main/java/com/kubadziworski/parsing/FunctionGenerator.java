@@ -10,7 +10,7 @@ import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.UnitType;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 
 import java.util.Collections;

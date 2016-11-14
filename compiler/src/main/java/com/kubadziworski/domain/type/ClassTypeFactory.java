@@ -2,6 +2,8 @@ package com.kubadziworski.domain.type;
 
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 
 import java.util.Collections;
 import java.util.HashMap;

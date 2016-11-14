@@ -4,6 +4,7 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.PrintStatement;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -20,9 +21,8 @@ public class PrintStatementGenerator {
         expression.accept(generator);
         Type type = expression.getType();
 
-        if (((type.inheritsFrom(ClassTypeFactory.createClassType("radium.Any"))) > 0) ||
-                ((type.inheritsFrom(ClassTypeFactory.createClassType("java.lang.Object"))) > 0)) {
-            type = ClassTypeFactory.createClassType("radium.Any");
+        if (((type.inheritsFrom(AnyType.INSTANCE) > 0))) {
+            type = AnyType.INSTANCE;
         }
 
         String descriptor = "(" + type.getDescriptor() + ")V";

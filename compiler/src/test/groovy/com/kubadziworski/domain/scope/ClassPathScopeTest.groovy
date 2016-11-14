@@ -4,7 +4,7 @@ import com.kubadziworski.domain.node.expression.Parameter
 import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
-import com.kubadziworski.domain.type.UnitType
+import com.kubadziworski.domain.type.intrinsic.UnitType
 import spock.lang.Specification
 
 import java.lang.reflect.Modifier

@@ -1,7 +1,7 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.domain.node.expression.Value;
-import com.kubadziworski.domain.type.NullType;
+import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.TypeResolver;
 import org.objectweb.asm.MethodVisitor;

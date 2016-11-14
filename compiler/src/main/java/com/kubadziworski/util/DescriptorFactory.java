@@ -4,7 +4,7 @@ import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.UnitType;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

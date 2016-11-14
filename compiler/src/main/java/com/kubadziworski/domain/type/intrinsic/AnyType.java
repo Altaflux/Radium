@@ -1,9 +1,12 @@
-package com.kubadziworski.domain.type;
+package com.kubadziworski.domain.type.intrinsic;
 
 
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.type.BuiltInType;
+import com.kubadziworski.domain.type.JavaClassType;
+import com.kubadziworski.domain.type.Type;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;

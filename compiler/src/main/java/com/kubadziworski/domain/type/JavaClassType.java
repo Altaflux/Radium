@@ -58,12 +58,12 @@ public class JavaClassType implements Type {
     @Override
     public int inheritsFrom(Type type) {
         int arity = 0;
-        if(type.getName().equals(this.getName())){
+        if(type.getDescriptor().equals(this.getDescriptor())){
             return arity;
         }
         Class iteratedClass = getTypeClass();
         while (iteratedClass != null) {
-            if (iteratedClass.getName().equals(type.getName())) {
+            if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getDescriptor())) {
                 return arity;
             }
             iteratedClass = iteratedClass.getSuperclass();
@@ -74,13 +74,13 @@ public class JavaClassType implements Type {
 
     @Override
     public Optional<Type> nearestDenominator(Type type) {
-        if(type.getName().equals(this.getName())){
+        if(type.getDescriptor().equals(this.getDescriptor())){
             return Optional.of(type);
         }
 
         Class iteratedClass = getTypeClass();
         while (iteratedClass != null) {
-            if (iteratedClass.getName().equals(type.getName())) {
+            if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getDescriptor())) {
                 return Optional.of(new JavaClassType(iteratedClass.getName()));
             }
             iteratedClass = iteratedClass.getSuperclass();
