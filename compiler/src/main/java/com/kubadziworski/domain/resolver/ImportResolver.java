@@ -4,7 +4,6 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.GlobalScope;
-import com.kubadziworski.domain.type.AnyType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.BadImportException;
 import com.kubadziworski.util.TypeResolver;
@@ -29,13 +28,7 @@ public class ImportResolver {
         this.enkelImportResolver = new EnkelImportResolver(globalScope);
         this.globalScope = globalScope;
 
-        declarationDescriptors.add(new ClassDescriptor("Any", "radium") {
-            @Override
-            public Type getType() {
-                return AnyType.INSTANCE;
-            }
 
-        });
     }
 
     public void loadClassImports() {

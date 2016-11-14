@@ -1,9 +1,8 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.UnitType;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +34,7 @@ public class SuperCall implements Call {
 
     @Override
     public Type getType() {
-        return BuiltInType.VOID;
+        return UnitType.INSTANCE;
     }
 
 

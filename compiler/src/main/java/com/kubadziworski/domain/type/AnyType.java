@@ -13,23 +13,27 @@ import java.util.Optional;
 
 public class AnyType implements Type {
 
-    private static final Type objectClass = new JavaClassType("java.lang.Object");
+    private final Type objectClass = new JavaClassType("java.lang.Object");
     private final List<FunctionSignature> functionSignatures;
 
     public static AnyType INSTANCE = new AnyType();
 
     private AnyType() {
+
         Parameter parameter = new Parameter("other", this, null);
         FunctionSignature equalsSignature = new FunctionSignature("equals", Collections.singletonList(parameter),
                 BuiltInType.BOOLEAN, Modifier.PUBLIC, this);
         FunctionSignature constructorSignature = new FunctionSignature("Any", Collections.emptyList(),
                 this, Modifier.PUBLIC, this);
+        FunctionSignature toString = new FunctionSignature("toString", Collections.emptyList(),
+               UnitType.INSTANCE, Modifier.PUBLIC, this);
+        FunctionSignature hashCode = new FunctionSignature("hashCode", Collections.emptyList(),
+                BuiltInType.INT, Modifier.PUBLIC, this);
 
-
-        functionSignatures = Arrays.asList(equalsSignature, constructorSignature,
-                objectClass.getMethodCallSignature("toString", Collections.emptyList()),
-                objectClass.getMethodCallSignature("hashCode", Collections.emptyList()));
+        functionSignatures = Arrays.asList(equalsSignature, constructorSignature, toString, hashCode);
     }
+
+
 
     @Override
     public String getName() {

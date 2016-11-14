@@ -7,6 +7,7 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.VariableDeclaration;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.NullType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.IncompatibleTypesException;
@@ -42,7 +43,7 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
         }
 
         if (declarationType.equals(NullType.INSTANCE)) {
-            throw new RuntimeException("Type needs to be declared if assigned expression is null");
+            declarationType = ClassTypeFactory.createClassType("radium.Nothing");
         }
 
         if (!expression.getType().equals(NullType.INSTANCE)) {

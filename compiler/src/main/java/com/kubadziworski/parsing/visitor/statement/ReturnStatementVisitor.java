@@ -6,7 +6,7 @@ import com.kubadziworski.antlr.EnkelParser.ReturnWithValueContext;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
-import com.kubadziworski.domain.type.BuiltInType;
+import com.kubadziworski.domain.type.UnitType;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -19,7 +19,7 @@ public class ReturnStatementVisitor extends EnkelBaseVisitor<ReturnStatement> {
 
     @Override
     public ReturnStatement visitReturnVoid(@NotNull ReturnVoidContext ctx) {
-        return new ReturnStatement(new EmptyExpression(BuiltInType.VOID));
+        return new ReturnStatement(new EmptyExpression(UnitType.INSTANCE));
     }
 
     @Override

@@ -20,6 +20,7 @@ public class ClassTypeFactory {
         //given that Types right now encapsulate almost all functionality
         Map<String, Type> typeMap = new HashMap<>();
         typeMap.put("radium.Any", AnyType.INSTANCE);
+        typeMap.put("radium.Unit", UnitType.INSTANCE);
         syntheticTypes = Collections.unmodifiableMap(typeMap);
     }
 

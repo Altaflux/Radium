@@ -9,6 +9,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.EnkelType;
 
+import com.kubadziworski.domain.type.UnitType;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
@@ -55,7 +56,7 @@ public class PropertyAccessorsUtil {
     public static FunctionSignature createSetterForField(Field field, String fieldName) {
         return new FunctionSignature("set" + getPropertyMethodSuffix(field.getName()),
                 Collections.singletonList(new Parameter(fieldName, field.getType(), null)),
-                BuiltInType.VOID, Modifier.PUBLIC, field.getOwner());
+                UnitType.INSTANCE, Modifier.PUBLIC, field.getOwner());
     }
 
     public static FunctionSignature createSetterForField(Field field) {

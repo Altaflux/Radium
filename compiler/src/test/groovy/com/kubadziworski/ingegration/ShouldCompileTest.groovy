@@ -292,7 +292,7 @@ class ShouldCompileTest extends Specification {
 								  assert(actual -> result, expected -> true )
 							  }
 
-							  void assert(boolean actual,boolean expected) {
+							  Unit assert(boolean actual,boolean expected) {
 								if (actual == expected) {
 									print "OK"
 								}
@@ -335,7 +335,7 @@ class ShouldCompileTest extends Specification {
 
 								}
 
-								void assert(boolean actual,boolean expected) {
+								Unit assert(boolean actual,boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -358,7 +358,7 @@ class ShouldCompileTest extends Specification {
 									assert(expected -> true , actual -> x == 1);
 									assert(expected -> true , actual -> this.x == 2);
 								}
-								void assert(boolean actual,boolean expected) {
+								Unit assert(boolean actual,boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -375,7 +375,7 @@ class ShouldCompileTest extends Specification {
 									print java.lang.System.out.hashCode();
 									com.kubadziworski.test.Library.execute("Hello!!");
 								}
-								void assert(boolean actual,boolean expected) {
+								Unit assert(boolean actual,boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -394,7 +394,7 @@ class ShouldCompileTest extends Specification {
 									assert(expected -> true , actual -> 1 == 1);
 									this.assert(expected -> true , actual -> 1 == 1);
 								}
-								static void assert(boolean actual,boolean expected) {
+								static Unit assert(boolean actual,boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -436,7 +436,7 @@ class ShouldCompileTest extends Specification {
                                     var result = myField == 5
 									assert(result, true)
 								}
-                                void assert(boolean actual,boolean expected) {
+                                Unit assert(boolean actual,boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -461,7 +461,7 @@ class ShouldCompileTest extends Specification {
                                     var result = myField == 5
 									assert(result, true)
 								}
-                                void assert(boolean actual,boolean expected) {
+                                Unit assert(boolean actual,boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -485,7 +485,7 @@ class ShouldCompileTest extends Specification {
                                 loggingFunction(String stuff) = print stuff
 								int singleIntFunction() = 300
 
-                                void assert(boolean actual,boolean expected) {
+                                Unit assert(boolean actual,boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -540,7 +540,7 @@ class ShouldCompileTest extends Specification {
 									var blizz = if true 8 else 9
 									assert(blizz == 8, true)
 								}
-                                void assert(boolean actual,boolean expected) {
+                                Unit assert(boolean actual,boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -630,7 +630,7 @@ class ShouldCompileTest extends Specification {
                                           }
 						        }
 
-								void assert(boolean actual,boolean expected) {
+								Unit assert(boolean actual,boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -649,7 +649,7 @@ class ShouldCompileTest extends Specification {
                                     var result = myField == 10
                                     assert(result, true)
 								}
-                                void assert(boolean actual,boolean expected) {
+                                Unit assert(boolean actual,boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -674,7 +674,7 @@ class ShouldCompileTest extends Specification {
                                     assert(result, true)
                                 }
 
-                             void assert(boolean actual,boolean expected) {
+                             Unit assert(boolean actual,boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -700,7 +700,7 @@ class ShouldCompileTest extends Specification {
                                 return false;
                             }
                         }
-                         void assert(boolean actual,boolean expected) {
+                         Unit assert(boolean actual,boolean expected) {
                                 if (actual == expected) {
                                     print "OK"
                                 }
@@ -740,6 +740,27 @@ class ShouldCompileTest extends Specification {
                             }
                         }
                     }
+            """
+
+    private static final returnUnit =
+            """
+                ReturnUnit {
+
+                    start{
+                        var x = foo();
+                        print x
+                        var y = bar();
+                        print y
+                    }
+
+                    foo(){
+                        print "Called method without return"
+                    }
+                    bar(){
+                        return Unit.INSTANCE
+                    }
+
+                }
             """
 
     @Unroll
@@ -792,6 +813,7 @@ class ShouldCompileTest extends Specification {
         detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
         throwStatement          | "ThrowStatement.enk"
         nullValue               | "NullValue.enk"
+        returnUnit              | "ReturnUnit.enk"
     }
 
 

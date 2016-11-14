@@ -10,7 +10,7 @@ import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.BuiltInType;
+import com.kubadziworski.domain.type.UnitType;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class FunctionGenerator {
         if (statement instanceof Block) {
             return generateFunction(signature, (Block) statement, isConstructor);
         }
-        if (!signature.getReturnType().equals(BuiltInType.VOID) && statement instanceof Expression) {
+        if (!signature.getReturnType().equals(UnitType.INSTANCE) && statement instanceof Expression) {
             ReturnStatement returnStatement = new ReturnStatement((Expression) statement);
             return generateFunction(signature, new Block(new Scope(scope), Collections.singletonList(returnStatement)), isConstructor);
         }
@@ -74,7 +74,7 @@ public class FunctionGenerator {
 //    }
 
     private void verifyBlockReturn(FunctionSignature signature, Block block) {
-        if (!signature.getReturnType().equals(BuiltInType.VOID)) {
+        if (!signature.getReturnType().equals(UnitType.INSTANCE)) {
 
             if (block.getStatements().isEmpty()) {
                 throw new RuntimeException("No return specified for method with return type: " + signature.getReturnType());
@@ -95,7 +95,7 @@ public class FunctionGenerator {
         if (!block.getStatements().isEmpty()) {
             Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
             if (lastStatement instanceof ReturnStatement &&
-                    ((ReturnStatement) lastStatement).getExpression().getType() != BuiltInType.VOID) {
+                    !((ReturnStatement) lastStatement).getExpression().getType().equals(UnitType.INSTANCE)) {
                 throw new RuntimeException("The return type of the expression is not the same as the function signature: " + signature.getReturnType() + " " +
                         "Expression return type: " + ((ReturnStatement) lastStatement).getExpression().getType());
             }

@@ -18,12 +18,12 @@ import java.util.stream.IntStream;
 public final class TypeResolver {
 
     public static Type getFromTypeContext(TypeContext typeContext) {
-        if (typeContext == null) return BuiltInType.VOID;
+        if (typeContext == null) return UnitType.INSTANCE;
         return getFromTypeName(typeContext.getText());
     }
 
     public static Type getFromTypeContext(TypeContext typeContext, Scope scope) {
-        if (typeContext == null) return BuiltInType.VOID;
+        if (typeContext == null) return UnitType.INSTANCE;
         String typeName = typeContext.getText();
 
         if (typeName.equals("java.lang.String")) return DefaultTypes.STRING;
@@ -33,15 +33,17 @@ public final class TypeResolver {
     }
 
     public static Type getFromTypeName(String typeName) {
+        if(typeName.equals("void")) return UnitType.INSTANCE;
         if (typeName.equals("java.lang.String")) return DefaultTypes.STRING;
+
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
         if (builtInType.isPresent()) return builtInType.get();
-        return new JavaClassType(typeName);
+        return ClassTypeFactory.createClassType(typeName);
     }
 
     public static Type getFromValue(EnkelParser.ValueContext value) {
         String stringValue = value.getText();
-        if (StringUtils.isEmpty(stringValue)) return BuiltInType.VOID;
+        if (StringUtils.isEmpty(stringValue)) return UnitType.INSTANCE;
 
         if(stringValue.equals("null")) return NullType.INSTANCE;
 
@@ -188,7 +190,7 @@ public final class TypeResolver {
         return Optional.of(signatures.get(0));
     }
 
-    public static boolean compareArguments(List<Parameter> list1, List<Parameter> list2) {
+    private static boolean compareArguments(List<Parameter> list1, List<Parameter> list2) {
         int result = IntStream.range(0, list1.size()).map(operand -> {
             if (list1.get(operand).getType().equals(list2.get(operand).getType())) {
                 return 1;

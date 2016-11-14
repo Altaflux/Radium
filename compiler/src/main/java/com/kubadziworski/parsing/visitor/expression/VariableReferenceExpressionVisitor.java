@@ -7,7 +7,6 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -48,7 +47,8 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
     }
 
     private Reference visitStaticReference(String possibleClass, VarReferenceContext ctx) {
-        Type classType = ClassTypeFactory.createClassType(possibleClass);
+        Type classType = scope.resolveClassName(possibleClass);
+//        Type classType = ClassTypeFactory.createClassType(possibleClass);
         Field field = classType.getField(ctx.variableReference().getText());
         return new FieldReference(field, new EmptyExpression(field.getOwner()));
     }

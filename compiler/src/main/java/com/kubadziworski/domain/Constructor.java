@@ -1,10 +1,10 @@
 package com.kubadziworski.domain;
 
 import com.kubadziworski.bytecodegeneration.MethodGenerator;
-import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.type.BuiltInType;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.UnitType;
 
 /**
  * Created by kuba on 07.05.16.
@@ -17,7 +17,7 @@ public class Constructor extends Function {
 
     @Override
     public Type getReturnType() {
-        return BuiltInType.VOID;
+        return UnitType.INSTANCE;
     }
 
     @Override

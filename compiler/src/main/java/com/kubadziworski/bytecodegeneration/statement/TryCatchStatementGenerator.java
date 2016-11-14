@@ -6,7 +6,7 @@ import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.node.statement.TryCatchStatement;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.JavaClassType;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -91,7 +91,7 @@ public class TryCatchStatementGenerator {
             Block finallyBlock = finalBlock.get();
 
             Scope catchBlockScope = finallyBlock.getScope();
-            catchBlockScope.addLocalVariable(new LocalVariable(FINALLY_THROWABLE_NAME, new JavaClassType("java.lang.Throwable"), true));
+            catchBlockScope.addLocalVariable(new LocalVariable(FINALLY_THROWABLE_NAME, ClassTypeFactory.createClassType("java.lang.Throwable"), true));
             methodVisitor.visitVarInsn(ASTORE, catchBlockScope.getLocalVariableIndex(FINALLY_THROWABLE_NAME));
             finallyBlock.accept(statementGenerator);
 

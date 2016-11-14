@@ -2,14 +2,12 @@ package com.kubadziworski.domain.scope
 
 import com.kubadziworski.domain.node.expression.Parameter
 import com.kubadziworski.domain.type.BuiltInType
-import com.kubadziworski.domain.type.BuiltInType
-
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
+import com.kubadziworski.domain.type.UnitType
 import spock.lang.Specification
 
 import java.lang.reflect.Modifier
-
 /**
  * Created by kuba on 11.05.16.
  */
@@ -49,7 +47,7 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, null)
         }
-        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, BuiltInType.VOID, Modifier.PUBLIC, new JavaClassType(className));
+        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, UnitType.INSTANCE, Modifier.PUBLIC, new JavaClassType(className));
         when:
         ClassPathScope classPathScope = new ClassPathScope();
         def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(className), args)

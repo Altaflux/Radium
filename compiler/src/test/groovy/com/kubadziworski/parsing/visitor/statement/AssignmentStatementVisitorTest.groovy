@@ -5,10 +5,9 @@ import com.kubadziworski.domain.node.expression.EmptyExpression
 import com.kubadziworski.domain.node.expression.Value
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.BuiltInType
-import com.kubadziworski.domain.type.BuiltInType
+import com.kubadziworski.domain.type.UnitType
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor
 import spock.lang.Specification
-
 /**
  * Created by kuba on 13.05.16.
  */
@@ -34,7 +33,7 @@ class AssignmentStatementVisitorTest extends Specification {
             assignment.varName == name
         where:
             name | expression
-            "cos" | new EmptyExpression(BuiltInType.VOID)
+            "cos" | new EmptyExpression(UnitType.INSTANCE)
             "int assignment" | new Value(BuiltInType.INT,"255")
     }
 }

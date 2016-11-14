@@ -2,7 +2,7 @@ package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.type.BuiltInType;
-import com.kubadziworski.domain.type.JavaClassType;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
 
@@ -37,7 +37,7 @@ public class IfExpression implements Expression {
         if(trueStatement.getType() instanceof BuiltInType || falseStatement.getType() instanceof BuiltInType){
             throw new ComparisonBetweenDiferentTypesException(trueStatement, falseStatement);
         }
-        return new JavaClassType("java.lang.Object");
+        return ClassTypeFactory.createClassType("radium.Any");
     }
 
     @Override

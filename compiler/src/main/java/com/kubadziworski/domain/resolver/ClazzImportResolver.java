@@ -2,7 +2,7 @@ package com.kubadziworski.domain.resolver;
 
 import com.kubadziworski.domain.scope.ClassPathScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.type.JavaClassType;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -31,18 +31,12 @@ class ClazzImportResolver implements BaseImportResolver {
     static {
         List<URL> bootList = Arrays.stream(ManagementFactory.getRuntimeMXBean()
                 .getBootClassPath().split(java.io.File.pathSeparator))
-                .map(s -> {
-                    try {
-                        File jar = new File(s);
-                        if (jar.exists()) {
-                            return jar.toURI().toURL();
-                        }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    return null;
-                }).filter(url -> url != null).collect(Collectors.toList());
-        bootClassPath = ListUtils.sum(bootList, ClasspathHelper.forClassLoader().stream().collect(Collectors.toList()));
+                .map(ClazzImportResolver::pathToUrl).filter(url -> url != null).collect(Collectors.toList());
+        List<URL> systemPathList = Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
+                .map(ClazzImportResolver::pathToUrl).filter(url -> url != null).collect(Collectors.toList());
+
+        bootClassPath = ListUtils.sum(systemPathList,
+                ListUtils.sum(bootList, ClasspathHelper.forClassLoader().stream().collect(Collectors.toList())));
     }
 
     private static final Reflections reflections = new Reflections(new ConfigurationBuilder()
@@ -153,7 +147,7 @@ class ClazzImportResolver implements BaseImportResolver {
                         return propertyDescriptors;
                     }
                 }
-                classPathScope.getFieldSignature(new JavaClassType(clazz.getName()), field.getName()).ifPresent(field1 -> {
+                classPathScope.getFieldSignature(ClassTypeFactory.createClassType(clazz.getName()), field.getName()).ifPresent(field1 -> {
                     PropertyDescriptor descriptor = new PropertyDescriptor(field.getName(), field1);
                     propertyDescriptors.add(descriptor);
                 });
@@ -161,6 +155,18 @@ class ClazzImportResolver implements BaseImportResolver {
         }
 
         return propertyDescriptors;
+    }
+
+    private static URL pathToUrl(String path) {
+        try {
+            File jar = new File(path);
+            if (jar.exists()) {
+                return jar.toURI().toURL();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
 }

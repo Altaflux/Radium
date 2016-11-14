@@ -49,4 +49,12 @@ public class ClassDescriptor implements DeclarationDescriptor {
         result = 31 * result + classPackage.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ClassDescriptor{" +
+                "name='" + name + '\'' +
+                ", classPackage='" + classPackage + '\'' +
+                '}';
+    }
 }
