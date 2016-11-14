@@ -1,16 +1,13 @@
 package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
 
 import java.util.Optional;
 
-/**
- * Created by plozano on 10/30/2016.
- */
+
 public class IfExpression implements Expression {
 
     private final Expression condition;
@@ -31,10 +28,13 @@ public class IfExpression implements Expression {
     @Override
     public Type getType() {
         Optional<Type> type = trueStatement.getType().nearestDenominator(falseStatement.getType());
-        if(type.isPresent()){
+        if (type.isPresent()) {
             return type.get();
         }
-        if(trueStatement.getType() instanceof BuiltInType || falseStatement.getType() instanceof BuiltInType){
+        if (trueStatement.getType().isPrimitive() == falseStatement.getType().isPrimitive()) {
+            throw new ComparisonBetweenDiferentTypesException(trueStatement, falseStatement);
+        }
+        if (trueStatement.getType().isPrimitive() && falseStatement.getType().isPrimitive()) {
             throw new ComparisonBetweenDiferentTypesException(trueStatement, falseStatement);
         }
         return ClassTypeFactory.createClassType("radium.Any");
@@ -45,6 +45,10 @@ public class IfExpression implements Expression {
         generator.generate(this);
     }
 
+    @Override
+    public boolean isReturnComplete() {
+        return (falseStatement.isReturnComplete() && trueStatement.isReturnComplete());
+    }
     public Expression getCondition() {
         return condition;
     }

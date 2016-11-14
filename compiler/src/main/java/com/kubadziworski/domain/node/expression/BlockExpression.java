@@ -3,7 +3,9 @@ package com.kubadziworski.domain.node.expression;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
+import com.kubadziworski.domain.type.RadiumBuiltIns;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 
 
 public class BlockExpression extends Block implements Expression {
@@ -12,10 +14,15 @@ public class BlockExpression extends Block implements Expression {
     public BlockExpression(Block block) {
         super(block.getScope(), block.getStatements());
         Statement statement = block.getStatements().get(block.getStatements().size() - 1);
-        if (statement instanceof Expression) {
-            type = ((Expression) statement).getType();
+
+        if (super.isReturnComplete()) {
+            type = RadiumBuiltIns.NOTHING_TYPE;
         } else {
-            throw new RuntimeException("Last statement is not an expression");
+            if (statement instanceof Expression) {
+                type = ((Expression) statement).getType();
+            } else {
+                type = UnitType.INSTANCE;
+            }
         }
     }
 

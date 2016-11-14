@@ -5,10 +5,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 public class ClassTypeFactory {

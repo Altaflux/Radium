@@ -2,23 +2,14 @@ package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.antlr.EnkelParser.AddContext;
-import com.kubadziworski.antlr.EnkelParser.ConditionalExpressionContext;
-import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
-import com.kubadziworski.antlr.EnkelParser.DivideContext;
-import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
-import com.kubadziworski.antlr.EnkelParser.MultiplyContext;
-import com.kubadziworski.antlr.EnkelParser.SubstractContext;
-import com.kubadziworski.antlr.EnkelParser.SupercallContext;
-import com.kubadziworski.antlr.EnkelParser.ValueContext;
-import com.kubadziworski.antlr.EnkelParser.PrefixExpressionContext;
-import com.kubadziworski.antlr.EnkelParser.SuffixExpressionContext;
-import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
-import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.antlr.EnkelParser.*;
+import com.kubadziworski.domain.node.expression.BlockExpression;
+import com.kubadziworski.domain.node.expression.ConditionalExpression;
+import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.function.CallExpressionVisitor;
 import com.kubadziworski.parsing.visitor.statement.BlockStatementVisitor;
-import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
 /**
@@ -36,7 +27,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final IfStatementExpressionVisitor ifStatementExpressionVisitor;
     private final BlockStatementVisitor blockStatementVisitor;
 
-    public ExpressionVisitor( Scope scope) {
+    public ExpressionVisitor(Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
         variableReferenceExpressionVisitor = new VariableReferenceExpressionVisitor(scope, this);
         valueExpressionVisitor = new ValueExpressionVisitor();
@@ -44,7 +35,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         conditionalExpressionVisitor = new ConditionalExpressionVisitor(this);
         unaryExpressionVisitor = new UnaryExpressionVisitor(this);
         thisExpressionVisitor = new ThisExpressionVisitor(scope);
-        ifStatementExpressionVisitor = new IfStatementExpressionVisitor( this);
+        ifStatementExpressionVisitor = new IfStatementExpressionVisitor(this);
         blockStatementVisitor = new BlockStatementVisitor(scope);
     }
 
@@ -55,7 +46,11 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
     @Override
     public Expression visitIfExpression(@NotNull EnkelParser.IfExpressionContext ctx) {
-        return ifStatementExpressionVisitor.visitIfExpression(ctx);
+        Statement statement = ifStatementExpressionVisitor.visitIfExpression(ctx);
+        if (!(statement instanceof Expression)) {
+            throw new RuntimeException("'If' not declared as an expression, both branches are needed");
+        }
+        return (Expression) statement;
     }
 
     @Override

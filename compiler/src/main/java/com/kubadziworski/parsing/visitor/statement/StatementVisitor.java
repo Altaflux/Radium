@@ -1,29 +1,16 @@
-package com.kubadziworski.parsing.visitor.statement;;
+package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.antlr.EnkelParser.AddContext;
-import com.kubadziworski.antlr.EnkelParser.BlockContext;
-import com.kubadziworski.antlr.EnkelParser.ConditionalExpressionContext;
-import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
-import com.kubadziworski.antlr.EnkelParser.DivideContext;
-import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
-import com.kubadziworski.antlr.EnkelParser.IfStatementContext;
-import com.kubadziworski.antlr.EnkelParser.MultiplyContext;
-import com.kubadziworski.antlr.EnkelParser.PrintStatementContext;
-import com.kubadziworski.antlr.EnkelParser.ReturnVoidContext;
-import com.kubadziworski.antlr.EnkelParser.ReturnWithValueContext;
-import com.kubadziworski.antlr.EnkelParser.SubstractContext;
-import com.kubadziworski.antlr.EnkelParser.SupercallContext;
-import com.kubadziworski.antlr.EnkelParser.ValueContext;
-import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
-import com.kubadziworski.antlr.EnkelParser.VariableDeclarationContext;
+import com.kubadziworski.antlr.EnkelParser.*;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.node.statement.*;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
+import com.kubadziworski.parsing.visitor.expression.IfStatementExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
+
 
 /**
  * Created by kuba on 01.04.16.
@@ -35,7 +22,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     private final VariableDeclarationStatementVisitor variableDeclarationStatementVisitor;
     private final ReturnStatementVisitor returnStatementVisitor;
     private final BlockStatementVisitor blockStatementVisitor;
-    private final IfStatementVisitor ifStatementVisitor;
+    private final IfStatementExpressionVisitor ifStatementVisitor;
     private final ForStatementVisitor forStatementVisitor;
     private final AssignmentStatementVisitor assignmentStatementVisitor;
     private final FunctionContentVisitor functionContentVisitor;
@@ -48,7 +35,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
         variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor(expressionVisitor, scope);
         returnStatementVisitor = new ReturnStatementVisitor(expressionVisitor);
         blockStatementVisitor = new BlockStatementVisitor(scope);
-        ifStatementVisitor = new IfStatementVisitor(this, expressionVisitor);
+        ifStatementVisitor = new IfStatementExpressionVisitor(expressionVisitor);
         forStatementVisitor = new ForStatementVisitor(scope);
         assignmentStatementVisitor = new AssignmentStatementVisitor(expressionVisitor, scope);
         functionContentVisitor = new FunctionContentVisitor(scope);
@@ -107,8 +94,8 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     }
 
     @Override
-    public Statement visitIfStatement(@NotNull IfStatementContext ctx) {
-        return ifStatementVisitor.visitIfStatement(ctx);
+    public Statement visitIfExpression(@NotNull EnkelParser.IfExpressionContext ctx) {
+        return ifStatementVisitor.visitIfExpression(ctx);
     }
 
     @Override

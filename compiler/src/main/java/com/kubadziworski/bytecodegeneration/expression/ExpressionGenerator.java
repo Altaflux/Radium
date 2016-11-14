@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 
 import com.kubadziworski.bytecodegeneration.statement.BlockStatementGenerator;
+import com.kubadziworski.bytecodegeneration.statement.IfStatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
@@ -15,7 +16,6 @@ import org.objectweb.asm.MethodVisitor;
 
 public class ExpressionGenerator {
 
-
     private final ReferenceExpressionGenerator referenceExpressionGenerator;
     private final ValueExpressionGenerator valueExpressionGenerator;
     private final CallExpressionGenerator callExpressionGenerator;
@@ -27,7 +27,7 @@ public class ExpressionGenerator {
     private final DupExpressionGenerator dupExpressionGenerator;
     private final UnaryExpressionGenerator unaryExpressionGenerator;
     private final BlockStatementGenerator blockStatementGenerator;
-    private final IfExpressionGenerator ifExpressionGenerator;
+    private final IfStatementGenerator ifExpressionGenerator;
 
     private final StatementGenerator generator;
 
@@ -43,7 +43,7 @@ public class ExpressionGenerator {
         dupExpressionGenerator = new DupExpressionGenerator(methodVisitor);
         unaryExpressionGenerator = new UnaryExpressionGenerator(methodVisitor);
         blockStatementGenerator = new BlockStatementGenerator( methodVisitor);
-        ifExpressionGenerator = new IfExpressionGenerator( methodVisitor);
+        ifExpressionGenerator = new IfStatementGenerator( methodVisitor);
         this.generator = generator;
     }
 

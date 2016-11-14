@@ -128,7 +128,6 @@ statement : block
            | printStatement
            | forStatement
            | returnStatement
-           | ifStatement
            | tryStatement
            | throwStatement
            | expression ;
@@ -140,7 +139,6 @@ assignment :  (preExp=expression '.')?  name  EQUALS postExpr=expression;
 printStatement : PRINT expression ;
 returnStatement : 'return' expression #ReturnWithValue
                 | 'return' #ReturnVoid ;
-ifStatement :  'if'  ('(')? expression (')')? trueStatement=statement ('else' falseStatement=statement)?;
 forStatement : 'for' ('(')? forConditions (')')? statement ;
 forConditions : iterator=variableReference  'from' startExpr=expression range='to' endExpr=expression ;
 
@@ -168,7 +166,7 @@ expression : THIS #ThisReference
            | expr=expression operation='++'  #SuffixExpression
            //| expr=expression {!here(LineTerminator)}? operation='--'  #SuffixExpression
            //| expr=expression {!here(LineTerminator)}? operation='++'  #SuffixExpression
-           |  'if'  ('(')? expression (')')? trueStatement=returnable ('else' falseStatement=returnable) #IfExpression
+           |  'if'  ('(')? expression (')')? trueStatement=returnable ('else' falseStatement=returnable)? #IfExpression
            | operation='--' (expression) #PrefixExpression
            | operation='++' (expression) #PrefixExpression
            | operation='-' expression #SignExpression
