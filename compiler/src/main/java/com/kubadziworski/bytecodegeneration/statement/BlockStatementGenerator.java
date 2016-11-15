@@ -5,6 +5,8 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.type.RadiumBuiltIns;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -34,7 +36,8 @@ public class BlockStatementGenerator {
                 continue;
             }
             if (stmt instanceof Expression) {
-                if (!((Expression) stmt).getType().equals(UnitType.INSTANCE)) {
+                Type type = ((Expression) stmt).getType();
+                if (!type.equals(UnitType.INSTANCE) && !type.equals(RadiumBuiltIns.NOTHING_TYPE)) {
                     if (!(stmt instanceof ConstructorCall)) {
                         methodVisitor.visitInsn(Opcodes.POP);
                     }
@@ -44,4 +47,6 @@ public class BlockStatementGenerator {
         }
 
     }
+//    Type type = ((Expression) stmt).getType();
+//                if (!type.equals(UnitType.INSTANCE) && !type.equals(RadiumBuiltIns.NOTHING_TYPE)) {
 }

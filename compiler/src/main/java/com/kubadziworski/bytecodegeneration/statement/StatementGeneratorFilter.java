@@ -7,6 +7,7 @@ import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
 import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
+import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.*;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
@@ -44,6 +45,14 @@ public class StatementGeneratorFilter implements StatementGenerator {
             parent.generate(tryCatchStatement);
         }
         generate(tryCatchStatement, this);
+    }
+
+    @Override
+    final public void generate(TryCatchExpression tryCatchExpression) {
+        if (parent != null) {
+            parent.generate(tryCatchExpression);
+        }
+        generate(tryCatchExpression, this);
     }
 
 
@@ -275,6 +284,10 @@ public class StatementGeneratorFilter implements StatementGenerator {
         next.generate(tryCatchStatement, generator);
     }
 
+    @Override
+    public void generate(TryCatchExpression tryCatchExpression, StatementGenerator generator) {
+        next.generate(tryCatchExpression, generator);
+    }
 
     @Override
     public void generate(BlockExpression blockExpression, StatementGenerator generator) {

@@ -733,11 +733,12 @@ class ShouldCompileTest extends Specification {
                             var foo:String = null
                             print foo
 
-                            try{
-                                foo.intern()
+                          var bla = try{
+                                throw new NullPointerException();
                             }catch(e: NullPointerException){
-                                print "SUCCESS"
+                                print "hola"
                             }
+                            print bla
                         }
                     }
             """

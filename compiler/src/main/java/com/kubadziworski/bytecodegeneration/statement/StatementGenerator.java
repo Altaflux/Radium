@@ -7,6 +7,7 @@ import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
 import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
+import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.*;
 import com.kubadziworski.domain.scope.Scope;
 
@@ -18,6 +19,10 @@ public interface StatementGenerator {
     void generate(TryCatchStatement tryCatchStatement);
 
     void generate(TryCatchStatement tryCatchStatement, StatementGenerator generator);
+
+    void generate(TryCatchExpression tryCatchExpression);
+
+    void generate(TryCatchExpression tryCatchExpression, StatementGenerator generator);
 
     void generate(BlockExpression blockExpression);
 

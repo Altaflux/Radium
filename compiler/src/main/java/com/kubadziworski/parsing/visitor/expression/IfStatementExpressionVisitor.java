@@ -17,9 +17,6 @@ public class IfStatementExpressionVisitor extends EnkelBaseVisitor<Statement> {
         this.expressionVisitor = expressionVisitor;
     }
 
-
-
-
     @Override
     public Statement visitIfExpression(@NotNull EnkelParser.IfExpressionContext ctx) {
         EnkelParser.ExpressionContext conditionalExpressionContext = ctx.expression();

@@ -26,6 +26,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final ThisExpressionVisitor thisExpressionVisitor;
     private final IfStatementExpressionVisitor ifStatementExpressionVisitor;
     private final BlockStatementVisitor blockStatementVisitor;
+    private final TryCatchExpressionVisitor tryCatchExpressionVisitor;
 
     public ExpressionVisitor(Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
@@ -37,11 +38,21 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         thisExpressionVisitor = new ThisExpressionVisitor(scope);
         ifStatementExpressionVisitor = new IfStatementExpressionVisitor(this);
         blockStatementVisitor = new BlockStatementVisitor(scope);
+        tryCatchExpressionVisitor = new TryCatchExpressionVisitor(this, scope);
     }
 
     @Override
     public Expression visitBlock(@NotNull EnkelParser.BlockContext ctx) {
         return new BlockExpression(blockStatementVisitor.visitBlock(ctx));
+    }
+
+    @Override
+    public Expression visitTryExpression(@NotNull EnkelParser.TryExpressionContext ctx) {
+        Statement statement = tryCatchExpressionVisitor.visitTryExpression(ctx);
+        if (!(statement instanceof Expression)) {
+            throw new RuntimeException("'TryCatch' not declared as an expression, at least one catch is needed");
+        }
+        return (Expression) statement;
     }
 
     @Override

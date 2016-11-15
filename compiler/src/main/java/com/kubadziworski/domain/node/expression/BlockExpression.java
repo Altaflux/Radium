@@ -10,20 +10,30 @@ import com.kubadziworski.domain.type.intrinsic.UnitType;
 
 public class BlockExpression extends Block implements Expression {
     private final Type type;
+    private final Block block;
 
     public BlockExpression(Block block) {
         super(block.getScope(), block.getStatements());
-        Statement statement = block.getStatements().get(block.getStatements().size() - 1);
+        this.block = block;
 
-        if (super.isReturnComplete()) {
-            type = RadiumBuiltIns.NOTHING_TYPE;
+        if (block.getStatements().isEmpty()) {
+            type = UnitType.INSTANCE;
         } else {
-            if (statement instanceof Expression) {
-                type = ((Expression) statement).getType();
+            Statement statement = block.getStatements().get(block.getStatements().size() - 1);
+            if (super.isReturnComplete()) {
+                type = RadiumBuiltIns.NOTHING_TYPE;
             } else {
-                type = UnitType.INSTANCE;
+                if (statement instanceof Expression) {
+                    type = ((Expression) statement).getType();
+                } else {
+                    type = UnitType.INSTANCE;
+                }
             }
         }
+    }
+
+    public Block getStatementBlock() {
+        return block;
     }
 
     @Override

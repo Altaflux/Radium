@@ -9,6 +9,7 @@ import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.IfStatementExpressionVisitor;
+import com.kubadziworski.parsing.visitor.expression.TryCatchExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
 
@@ -26,8 +27,8 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     private final ForStatementVisitor forStatementVisitor;
     private final AssignmentStatementVisitor assignmentStatementVisitor;
     private final FunctionContentVisitor functionContentVisitor;
-    private final TryCatchStatementVisitor tryCatchStatementVisitor;
     private final ThrowStatementVisitor throwStatementVisitor;
+    private final TryCatchExpressionVisitor tryCatchExpressionVisitor;
 
     public StatementVisitor(Scope scope) {
         expressionVisitor = new ExpressionVisitor(scope);
@@ -39,8 +40,8 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
         forStatementVisitor = new ForStatementVisitor(scope);
         assignmentStatementVisitor = new AssignmentStatementVisitor(expressionVisitor, scope);
         functionContentVisitor = new FunctionContentVisitor(scope);
-        tryCatchStatementVisitor = new TryCatchStatementVisitor(this, scope);
         throwStatementVisitor = new ThrowStatementVisitor(expressionVisitor);
+        tryCatchExpressionVisitor = new TryCatchExpressionVisitor(expressionVisitor, scope);
     }
 
     @Override
@@ -49,9 +50,14 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     }
 
     @Override
-    public Statement visitTryStatement(@NotNull EnkelParser.TryStatementContext ctx) {
-        return tryCatchStatementVisitor.visitTryStatement(ctx);
+    public Statement visitTryExpression(@NotNull EnkelParser.TryExpressionContext ctx) {
+        return tryCatchExpressionVisitor.visitTryExpression(ctx);
     }
+
+//    @Override
+//    public Statement visitTryStatement(@NotNull EnkelParser.TryStatementContext ctx) {
+//        return tryCatchStatementVisitor.visitTryStatement(ctx);
+//    }
 
     @Override
     public Expression visitSignExpression(EnkelParser.SignExpressionContext ctx) {

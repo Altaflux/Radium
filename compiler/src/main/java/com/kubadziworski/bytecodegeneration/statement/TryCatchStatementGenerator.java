@@ -1,5 +1,7 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
+import com.kubadziworski.domain.node.expression.trycatch.CatchBlock;
+import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
@@ -8,13 +10,14 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -32,17 +35,24 @@ public class TryCatchStatementGenerator {
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(TryCatchStatement tryCatchStatement, StatementGenerator statementGenerator) {
 
+    public void generate(TryCatchStatement tryCatchStatement, StatementGenerator statementGenerator) {
+        generateStuff(tryCatchStatement.getFinallyBlock().orElse(null), tryCatchStatement.getStatement(), Collections.emptyList(), statementGenerator);
+    }
+
+    public void generate(TryCatchExpression tryCatchStatement, StatementGenerator statementGenerator) {
+        generateStuff(tryCatchStatement.getFinallyBlock().orElse(null), tryCatchStatement.getStatement(), tryCatchStatement.getCatchBlocks(), statementGenerator);
+    }
+
+    private void generateStuff(Block finalBlock, Statement tryExpression, List<CatchBlock> catchBlocks, StatementGenerator statementGenerator) {
         Label startOfTryBlock = new Label();
         Label endOfTryBlock = new Label();
         Label fullEndOfTryCatchStatementLabel = new Label();
         methodVisitor.visitLabel(startOfTryBlock);
 
-        Optional<Block> finalBlock = tryCatchStatement.getFinallyBlock();
-        TryCatchFilter finalGenerator = new TryCatchFilter(finalBlock.orElse(null), startOfTryBlock, null, statementGenerator, statementGenerator.getScope());
 
-        Statement tryExpression = tryCatchStatement.getStatement();
+        TryCatchFilter finalGenerator = new TryCatchFilter(finalBlock, startOfTryBlock, null, statementGenerator, statementGenerator.getScope());
+
         tryExpression.accept(finalGenerator);
 
         if (!tryExpression.isReturnComplete()) {
@@ -54,7 +64,7 @@ public class TryCatchStatementGenerator {
             finalGenerator.labelPacks.add(new LabelPack(startOfTryBlock, endOfTryBlock));
         }
 
-        List<CatchPack> catchLabels = tryCatchStatement.getCatchBlocks().stream()
+        List<CatchPack> catchLabels = catchBlocks.stream()
                 .map(catchBlock -> {
                     Label catchStartLabel = new Label();
                     methodVisitor.visitLabel(catchStartLabel);
@@ -63,8 +73,8 @@ public class TryCatchStatementGenerator {
 
                     List<LabelPack> labelPacks = new ArrayList<>();
 
-                    if (finalBlock.isPresent()) {
-                        TryCatchFilter catchGenerator = new TryCatchFilter(finalBlock.get(), catchStartLabel, null, statementGenerator, statementGenerator.getScope());
+                    if (finalBlock != null) {
+                        TryCatchFilter catchGenerator = new TryCatchFilter(finalBlock, catchStartLabel, null, statementGenerator, statementGenerator.getScope());
                         catchBlock.getBlock().accept(catchGenerator);
                         labelPacks.addAll(catchGenerator.labelPacks);
                     } else {
@@ -72,6 +82,9 @@ public class TryCatchStatementGenerator {
                     }
 
                     if (!catchBlock.isReturnComplete()) {
+                        if (catchBlock.getType().equals(UnitType.INSTANCE)) {
+                            UnitType.expression().accept(statementGenerator);
+                        }
                         methodVisitor.visitJumpInsn(GOTO, fullEndOfTryCatchStatementLabel);
                     }
                     return new CatchPack(catchStartLabel, catchBlock.getParameter().getType(), labelPacks);
@@ -84,18 +97,17 @@ public class TryCatchStatementGenerator {
                                 label.firstLabel, label.type.getInternalName())));
 
 
-        if (finalBlock.isPresent()) {
+        if (finalBlock != null) {
             Label finalLabel = new Label();
             methodVisitor.visitLabel(finalLabel);
 
-            Block finallyBlock = finalBlock.get();
 
-            Scope catchBlockScope = finallyBlock.getScope();
+            Scope catchBlockScope = finalBlock.getScope();
             catchBlockScope.addLocalVariable(new LocalVariable(FINALLY_THROWABLE_NAME, ClassTypeFactory.createClassType("java.lang.Throwable"), true));
             methodVisitor.visitVarInsn(ASTORE, catchBlockScope.getLocalVariableIndex(FINALLY_THROWABLE_NAME));
-            finallyBlock.accept(statementGenerator);
+            finalBlock.accept(statementGenerator);
 
-            if (!finallyBlock.isReturnComplete()) {
+            if (!finalBlock.isReturnComplete()) {
                 methodVisitor.visitVarInsn(ALOAD, catchBlockScope.getLocalVariableIndex(FINALLY_THROWABLE_NAME));
                 methodVisitor.visitInsn(ATHROW);
             }

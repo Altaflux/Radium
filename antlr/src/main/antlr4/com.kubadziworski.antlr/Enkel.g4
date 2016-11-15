@@ -128,7 +128,7 @@ statement : block
            | printStatement
            | forStatement
            | returnStatement
-           | tryStatement
+           //| tryStatement
            | throwStatement
            | expression ;
 
@@ -142,7 +142,6 @@ returnStatement : 'return' expression #ReturnWithValue
 forStatement : 'for' ('(')? forConditions (')')? statement ;
 forConditions : iterator=variableReference  'from' startExpr=expression range='to' endExpr=expression ;
 
-tryStatement : 'try' block ((catchBlock+ | finallyBlock)  finallyBlock?);
 catchBlock :  'catch'  '(' name ':' type  ')' block ;
 finallyBlock : 'finally' block ;
 throwStatement : 'throw' expression ;
@@ -166,6 +165,7 @@ expression : THIS #ThisReference
            | expr=expression operation='++'  #SuffixExpression
            //| expr=expression {!here(LineTerminator)}? operation='--'  #SuffixExpression
            //| expr=expression {!here(LineTerminator)}? operation='++'  #SuffixExpression
+           | 'try' block ((catchBlock+ | finallyBlock)  finallyBlock?) #TryExpression
            |  'if'  ('(')? expression (')')? trueStatement=returnable ('else' falseStatement=returnable)? #IfExpression
            | operation='--' (expression) #PrefixExpression
            | operation='++' (expression) #PrefixExpression

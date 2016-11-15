@@ -7,11 +7,13 @@ import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.*;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -35,7 +37,7 @@ public final class TypeResolver {
     }
 
     public static Type getFromTypeName(String typeName) {
-        if(typeName.equals("void")) return UnitType.INSTANCE;
+        if (typeName.equals("void")) return UnitType.INSTANCE;
         if (typeName.equals("java.lang.String")) return DefaultTypes.STRING;
 
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
@@ -47,7 +49,7 @@ public final class TypeResolver {
         String stringValue = value.getText();
         if (StringUtils.isEmpty(stringValue)) return UnitType.INSTANCE;
 
-        if(stringValue.equals("null")) return NullType.INSTANCE;
+        if (stringValue.equals("null")) return NullType.INSTANCE;
 
         if (value.IntegerLiteral() != null) {
             stringValue = stringValue.replace("_", "");
@@ -97,7 +99,7 @@ public final class TypeResolver {
 
     public static Object getValueFromString(String stringValue, Type type) {
 
-        if(type.equals(NullType.INSTANCE)) return null;
+        if (type.equals(NullType.INSTANCE)) return null;
 
         if (TypeChecker.isInt(type)) {
             if (stringValue.startsWith("-")) {
@@ -200,6 +202,30 @@ public final class TypeResolver {
             return 0;
         }).min().orElse(1);
         return result == 1;
+    }
+
+    public static Type getCommonType(List<Type> types) {
+        if (types.isEmpty()) {
+            return UnitType.INSTANCE;
+        }
+
+//        int result = IntStream.range(0, types.size()).map(operand -> {
+//            if (types.get(operand).isPrimitive()) {
+//                return 0;
+//            }
+//            return 1;
+//        }).min().orElse(1);
+
+        List<Type> commonTypesList = types.stream()
+                .filter(type -> !type.equals(RadiumBuiltIns.NOTHING_TYPE))
+                .collect(Collectors.toList());
+        if(commonTypesList.isEmpty()){
+            return RadiumBuiltIns.NOTHING_TYPE;
+        }
+        return commonTypesList.stream()
+                .reduce((type, type2) -> type.nearestDenominator(type2).orElse(AnyType.INSTANCE))
+                .orElse(AnyType.INSTANCE);
+
     }
 }
 

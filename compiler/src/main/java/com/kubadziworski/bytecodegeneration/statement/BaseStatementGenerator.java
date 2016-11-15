@@ -8,6 +8,7 @@ import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
 import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
+import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.*;
 import org.objectweb.asm.MethodVisitor;
@@ -46,14 +47,17 @@ public class BaseStatementGenerator implements StatementGenerator {
         this.methodVisitor = methodVisitor;
     }
 
+    @Override
     public void generate(ThrowStatement throwStatement) {
         throwStatementGenerator.generate(throwStatement, this);
     }
 
+    @Override
     public void generate(ThrowStatement throwStatement, StatementGenerator statementGenerator) {
         throwStatementGenerator.generate(throwStatement, statementGenerator);
     }
 
+    @Override
     public void generate(TryCatchStatement tryCatchStatement) {
         tryCatchStatementGenerator.generate(tryCatchStatement, this);
     }
@@ -63,6 +67,17 @@ public class BaseStatementGenerator implements StatementGenerator {
         tryCatchStatementGenerator.generate(tryCatchStatement, generator);
     }
 
+    @Override
+    public void generate(TryCatchExpression tryCatchExpression) {
+        tryCatchStatementGenerator.generate(tryCatchExpression, this);
+    }
+
+    @Override
+    public void generate(TryCatchExpression tryCatchExpression, StatementGenerator generator) {
+        tryCatchStatementGenerator.generate(tryCatchExpression, generator);
+    }
+
+    @Override
     public void generate(BlockExpression blockExpression) {
         expressionGenerator.generate(blockExpression, this);
     }
