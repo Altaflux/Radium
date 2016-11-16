@@ -130,7 +130,7 @@ class ClazzImportResolver implements BaseImportResolver {
 
     private static Class getClazz(String clazz) {
         try {
-            return Class.forName(clazz);
+            return Class.forName(clazz, false, ClazzImportResolver.class.getClassLoader());
         } catch (Exception e) {
             return null;
         }

@@ -37,14 +37,14 @@ public class TryCatchStatementGenerator {
 
 
     public void generate(TryCatchStatement tryCatchStatement, StatementGenerator statementGenerator) {
-        generateStuff(tryCatchStatement.getFinallyBlock().orElse(null), tryCatchStatement.getStatement(), Collections.emptyList(), statementGenerator);
+        generateStuff(tryCatchStatement.getFinallyBlock().orElse(null), tryCatchStatement.getStatement(), Collections.emptyList(), statementGenerator, UnitType.INSTANCE);
     }
 
     public void generate(TryCatchExpression tryCatchStatement, StatementGenerator statementGenerator) {
-        generateStuff(tryCatchStatement.getFinallyBlock().orElse(null), tryCatchStatement.getStatement(), tryCatchStatement.getCatchBlocks(), statementGenerator);
+        generateStuff(tryCatchStatement.getFinallyBlock().orElse(null), tryCatchStatement.getStatement(), tryCatchStatement.getCatchBlocks(), statementGenerator, tryCatchStatement.getType());
     }
 
-    private void generateStuff(Block finalBlock, Statement tryExpression, List<CatchBlock> catchBlocks, StatementGenerator statementGenerator) {
+    private void generateStuff(Block finalBlock, Statement tryExpression, List<CatchBlock> catchBlocks, StatementGenerator statementGenerator, Type expectedType) {
         Label startOfTryBlock = new Label();
         Label endOfTryBlock = new Label();
         Label fullEndOfTryCatchStatementLabel = new Label();
@@ -82,7 +82,8 @@ public class TryCatchStatementGenerator {
                     }
 
                     if (!catchBlock.isReturnComplete()) {
-                        if (catchBlock.getType().equals(UnitType.INSTANCE)) {
+
+                        if (catchBlock.getType().equals(UnitType.INSTANCE) && !expectedType.equals(UnitType.INSTANCE)) {
                             UnitType.expression().accept(statementGenerator);
                         }
                         methodVisitor.visitJumpInsn(GOTO, fullEndOfTryCatchStatementLabel);

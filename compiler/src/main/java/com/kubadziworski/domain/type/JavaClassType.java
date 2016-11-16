@@ -30,7 +30,7 @@ public class JavaClassType implements Type {
     @Override
     public Class<?> getTypeClass() {
         try {
-            return Class.forName(name);
+            return Class.forName(name, false, getClass().getClassLoader());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -58,7 +58,7 @@ public class JavaClassType implements Type {
     @Override
     public int inheritsFrom(Type type) {
         int arity = 0;
-        if(type.getDescriptor().equals(this.getDescriptor())){
+        if (type.getDescriptor().equals(this.getDescriptor())) {
             return arity;
         }
         Class iteratedClass = getTypeClass();
@@ -74,7 +74,7 @@ public class JavaClassType implements Type {
 
     @Override
     public Optional<Type> nearestDenominator(Type type) {
-        if(type.getDescriptor().equals(this.getDescriptor())){
+        if (type.getDescriptor().equals(this.getDescriptor())) {
             return Optional.of(type);
         }
 
@@ -167,7 +167,7 @@ public class JavaClassType implements Type {
     }
 
     @Override
-    public boolean isPrimitive(){
+    public boolean isPrimitive() {
         return false;
     }
 
