@@ -3,6 +3,7 @@ package com.kubadziworski.parsing.visitor.expression;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.*;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.BlockExpression;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
 import com.kubadziworski.domain.node.expression.Expression;
@@ -43,7 +44,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
     @Override
     public Expression visitBlock(@NotNull EnkelParser.BlockContext ctx) {
-        return new BlockExpression(blockStatementVisitor.visitBlock(ctx));
+        return new BlockExpression(new RuleContextElementImpl(ctx), blockStatementVisitor.visitBlock(ctx));
     }
 
     @Override

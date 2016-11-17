@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.type.Type;
 
 import java.util.Optional;
@@ -8,7 +9,7 @@ import java.util.Optional;
 /**
  * Created by kuba on 09.05.16.
  */
-public class Argument implements Expression {
+public class Argument extends ElementImpl implements Expression {
 
     private final String parameterName;
     private final Expression expression;

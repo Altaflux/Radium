@@ -1,6 +1,8 @@
 package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 
@@ -10,7 +12,7 @@ import java.util.List;
 /**
  * Created by kuba on 05.05.16.
  */
-public class SuperCall implements Call {
+public class SuperCall extends ElementImpl implements Call {
     public static final String SUPER_IDETIFIER = "super";
     private final List<Argument> arguments;
 
@@ -19,6 +21,11 @@ public class SuperCall implements Call {
     }
 
     public SuperCall(List<Argument> arguments) {
+        this.arguments = arguments;
+    }
+
+    public SuperCall(NodeData element, List<Argument> arguments) {
+        super(element);
         this.arguments = arguments;
     }
 

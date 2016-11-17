@@ -1,7 +1,7 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.type.Type;
 import lombok.ToString;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
  * Created by kuba on 02.04.16.
  */
 @ToString
-public class Parameter implements Expression {
+public class Parameter extends ElementImpl implements Expression {
     private final String name;
     private final Expression defaultValue;
     private final Type type;

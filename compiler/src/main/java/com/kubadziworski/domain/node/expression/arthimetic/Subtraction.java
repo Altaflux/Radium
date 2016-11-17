@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.node.expression.arthimetic;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.node.expression.Expression;
 
 /**
@@ -9,7 +10,11 @@ import com.kubadziworski.domain.node.expression.Expression;
 public class Subtraction extends ArthimeticExpression {
 
     public Subtraction(Expression leftExpress, Expression rightExpress) {
-        super(leftExpress,rightExpress);
+        this(null, leftExpress, rightExpress);
+    }
+
+    public Subtraction(NodeData nodeData, Expression leftExpress, Expression rightExpress) {
+        super(nodeData, leftExpress, rightExpress);
     }
 
     @Override

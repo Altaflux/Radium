@@ -1,9 +1,9 @@
 package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.PrintStatementContext;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.PrintStatement;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
@@ -20,6 +20,6 @@ public class PrintStatementVisitor extends EnkelBaseVisitor<PrintStatement> {
     public PrintStatement visitPrintStatement(@NotNull PrintStatementContext ctx) {
         ExpressionContext expressionCtx = ctx.expression();
         Expression expression = expressionCtx.accept(expressionVisitor);
-        return new PrintStatement(expression);
+        return new PrintStatement(new RuleContextElementImpl(ctx), expression);
     }
 }

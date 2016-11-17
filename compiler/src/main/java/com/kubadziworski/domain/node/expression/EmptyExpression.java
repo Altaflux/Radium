@@ -1,13 +1,13 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.type.Type;
 
 /**
  * Created by kuba on 14.04.16.
  */
-public class EmptyExpression implements Expression {
+public class EmptyExpression extends ElementImpl implements Expression {
 
     private final Type type;
 

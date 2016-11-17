@@ -2,6 +2,7 @@ package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.BlockExpression;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.node.expression.trycatch.CatchBlock;
@@ -31,6 +32,7 @@ public class TryCatchExpressionVisitor extends EnkelBaseVisitor<Statement> {
     }
 
     public Statement visitTryExpression(@NotNull EnkelParser.TryExpressionContext ctx) {
+
         BlockExpression block = (BlockExpression) ctx.block().accept(expressionVisitor);
 
         Block finallyBlock = null;
@@ -42,15 +44,15 @@ public class TryCatchExpressionVisitor extends EnkelBaseVisitor<Statement> {
         List<CatchBlock> catchBlocks = ctx.catchBlock().stream()
                 .map(this::processCatchBlock).collect(Collectors.toList());
 
-        if(catchBlocks.isEmpty() && finallyBlock == null){
+        if (catchBlocks.isEmpty() && finallyBlock == null) {
             throw new RuntimeException("Catch or finally needs to be declared");
         }
 
         if (catchBlocks.isEmpty()) {
-            return new TryCatchStatement(block.getStatementBlock(), finallyBlock);
+            return new TryCatchStatement(new RuleContextElementImpl(ctx), block.getStatementBlock(), finallyBlock);
         }
 
-        return new TryCatchExpression(block, catchBlocks, finallyBlock);
+        return new TryCatchExpression(new RuleContextElementImpl(ctx), block, catchBlocks, finallyBlock);
     }
 
     private CatchBlock processCatchBlock(EnkelParser.CatchBlockContext context) {
@@ -65,6 +67,6 @@ public class TryCatchExpressionVisitor extends EnkelBaseVisitor<Statement> {
         BlockStatementVisitor statementGenerator = new BlockStatementVisitor(newScope);
         Block block = context.block().accept(statementGenerator);
 
-        return new CatchBlock(new BlockExpression(block), parameter);
+        return new CatchBlock(new BlockExpression(new RuleContextElementImpl(context), block), parameter);
     }
 }

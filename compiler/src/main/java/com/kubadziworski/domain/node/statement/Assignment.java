@@ -1,6 +1,8 @@
 package com.kubadziworski.domain.node.statement;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.node.expression.Expression;
 
 import java.util.Optional;
@@ -8,13 +10,18 @@ import java.util.Optional;
 /**
  * Created by kuba on 23.04.16.
  */
-public class Assignment implements Statement {
+public class Assignment extends ElementImpl implements Statement {
     private final String varName;
     private final Expression assignmentExpression;
     private final Expression preExpression;
     private final boolean isVariableDeclaration;
 
     public Assignment(Expression preExpression, String varName, Expression assignmentExpression) {
+        this(null, preExpression, varName, assignmentExpression);
+    }
+
+    public Assignment(NodeData element, Expression preExpression, String varName, Expression assignmentExpression) {
+        super(element);
         this.preExpression = preExpression;
         this.varName = varName;
         this.assignmentExpression = assignmentExpression;
@@ -22,6 +29,11 @@ public class Assignment implements Statement {
     }
 
     public Assignment(String varName, Expression assignmentExpression) {
+        this((NodeData) null, varName, assignmentExpression);
+    }
+
+    public Assignment(NodeData element, String varName, Expression assignmentExpression) {
+        super(element);
         this.preExpression = null;
         this.varName = varName;
         this.assignmentExpression = assignmentExpression;

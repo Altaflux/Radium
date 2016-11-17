@@ -1,11 +1,12 @@
 package com.kubadziworski.domain.node.expression;
 
-import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
+
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.type.Type;
 
 
-public class PopExpression implements Expression {
+public class PopExpression extends ElementImpl implements Expression {
 
     private final Expression owner;
 

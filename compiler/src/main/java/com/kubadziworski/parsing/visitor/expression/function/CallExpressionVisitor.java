@@ -6,6 +6,7 @@ import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
 import com.kubadziworski.antlr.EnkelParser.SupercallContext;
 
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
@@ -73,13 +74,13 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
 
         Type className = scope.resolveClassName(ctx.typeName().getText());
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
-        return new ConstructorCall(className.getName(), arguments);
+        return new ConstructorCall(new RuleContextElementImpl(ctx), className.getName(), arguments);
     }
 
     @Override
     public Call visitSupercall(@NotNull SupercallContext ctx) {
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
-        return new SuperCall(arguments);
+        return new SuperCall(new RuleContextElementImpl(ctx), arguments);
     }
 
     private Call visitStaticReference(String possibleClass, String functionName, List<Argument> arguments) {

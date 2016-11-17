@@ -1,6 +1,8 @@
 package com.kubadziworski.domain.node.expression.trycatch;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.node.expression.BlockExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Block;
@@ -15,13 +17,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-public class TryCatchExpression implements Expression {
+public class TryCatchExpression extends ElementImpl implements Expression {
 
     private final BlockExpression statement;
     private final List<CatchBlock> catchBlocks;
     private final Block finallyBlock;
 
     public TryCatchExpression(BlockExpression statement, List<CatchBlock> catchBlocks, Block finallyBlock) {
+        this(null, statement, catchBlocks, finallyBlock);
+    }
+
+    public TryCatchExpression(NodeData nodeData, BlockExpression statement, List<CatchBlock> catchBlocks, Block finallyBlock) {
+        super(nodeData);
         this.statement = statement;
         this.catchBlocks = catchBlocks;
         this.finallyBlock = finallyBlock;

@@ -3,6 +3,7 @@ package com.kubadziworski.parsing.visitor.statement;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.BlockContext;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
@@ -36,6 +37,6 @@ public class BlockStatementVisitor extends EnkelBaseVisitor<Block> {
             statements.add(statementContext.statement().accept(statementVisitor));
             hasReturnCompleted = statement.isReturnComplete();
         }
-        return new Block(newScope, statements);
+        return new Block(new RuleContextElementImpl(ctx), newScope, statements);
     }
 }

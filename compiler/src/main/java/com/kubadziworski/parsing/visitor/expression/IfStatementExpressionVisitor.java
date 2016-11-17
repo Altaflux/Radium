@@ -2,6 +2,7 @@ package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.IfExpression;
 import com.kubadziworski.domain.node.statement.IfStatement;
@@ -26,9 +27,9 @@ public class IfStatementExpressionVisitor extends EnkelBaseVisitor<Statement> {
 
         if(ctx.falseStatement != null) {
             Expression falseExpression = getReturnable(ctx.falseStatement);
-            return new IfExpression(condition, trueExpression, falseExpression);
+            return new IfExpression(new RuleContextElementImpl(ctx), condition, trueExpression, falseExpression);
         }
-        return new IfStatement(condition, trueExpression);
+        return new IfStatement(new RuleContextElementImpl(ctx), condition, trueExpression);
     }
 
     private Expression getReturnable(EnkelParser.ReturnableContext ctx) {

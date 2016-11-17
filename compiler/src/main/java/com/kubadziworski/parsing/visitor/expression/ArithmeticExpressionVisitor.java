@@ -6,6 +6,7 @@ import com.kubadziworski.antlr.EnkelParser.DivideContext;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.MultiplyContext;
 import com.kubadziworski.antlr.EnkelParser.SubstractContext;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -25,7 +26,7 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<ArthimeticExpr
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-        return new Addition(leftExpress, rightExpress);
+        return new Addition(new RuleContextElementImpl(ctx),leftExpress, rightExpress);
     }
 
     @Override
@@ -36,7 +37,7 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<ArthimeticExpr
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-        return new Multiplication(leftExpress, rightExpress);
+        return new Multiplication(new RuleContextElementImpl(ctx), leftExpress, rightExpress);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<ArthimeticExpr
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-        return new Subtraction(leftExpress, rightExpress);
+        return new Subtraction(new RuleContextElementImpl(ctx), leftExpress, rightExpress);
     }
 
     @Override
@@ -58,6 +59,6 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<ArthimeticExpr
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-        return new Division(leftExpress, rightExpress);
+        return new Division(new RuleContextElementImpl(ctx), leftExpress, rightExpress);
     }
 }

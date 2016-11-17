@@ -1,6 +1,8 @@
 package com.kubadziworski.domain.node.statement;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.scope.Scope;
 
 import java.util.Collections;
@@ -9,13 +11,18 @@ import java.util.List;
 /**
  * Created by kuba on 13.04.16.
  */
-public class Block implements Statement {
+public class Block extends ElementImpl implements Statement {
     private final List<Statement> statements;
     private final Scope scope;
 
-    public Block(Scope scope, List<Statement> statements) {
+    public Block(NodeData element, Scope scope, List<Statement> statements) {
+        super(element);
         this.scope = scope;
         this.statements = statements;
+    }
+
+    public Block(Scope scope, List<Statement> statements) {
+        this(null, scope, statements);
     }
 
     public static Block empty(Scope scope) {

@@ -1,16 +1,18 @@
 package com.kubadziworski.domain.node.statement;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.util.TypeChecker;
 import com.kubadziworski.exception.UnsupportedRangedLoopTypes;
+import com.kubadziworski.util.TypeChecker;
 
 /**
  * Created by kuba on 23.04.16.
  */
-public class RangedForStatement implements Statement {
+public class RangedForStatement extends ElementImpl implements Statement {
     private final Statement iteratorVariable;
     private final Expression startExpression;
     private final Expression endExpression;
@@ -18,7 +20,8 @@ public class RangedForStatement implements Statement {
     private final String iteratorVarName;
     private final Scope scope;
 
-    public RangedForStatement(Statement iteratorVariable, Expression startExpression, Expression endExpression, Statement statement, String iteratorVarName, Scope scope) {
+    public RangedForStatement(NodeData element, Statement iteratorVariable, Expression startExpression, Expression endExpression, Statement statement, String iteratorVarName, Scope scope) {
+        super(element);
         this.scope = scope;
         Type startExpressionType = startExpression.getType();
         Type endExpressionType = endExpression.getType();
@@ -31,6 +34,10 @@ public class RangedForStatement implements Statement {
         this.endExpression = endExpression;
         this.statement = statement;
         this.iteratorVarName = iteratorVarName;
+    }
+
+    public RangedForStatement(Statement iteratorVariable, Expression startExpression, Expression endExpression, Statement statement, String iteratorVarName, Scope scope) {
+        this(null, iteratorVariable, startExpression, endExpression,statement, iteratorVarName, scope);
     }
 
     public Statement getIteratorVariableStatement() {

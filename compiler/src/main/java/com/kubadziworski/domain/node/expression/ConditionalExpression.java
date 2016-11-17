@@ -2,6 +2,8 @@ package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.CompareSign;
+import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.MixedComparisonNotAllowedException;
@@ -9,7 +11,7 @@ import com.kubadziworski.exception.MixedComparisonNotAllowedException;
 /**
  * Created by kuba on 12.04.16.
  */
-public class ConditionalExpression implements Expression {
+public class ConditionalExpression extends ElementImpl implements Expression {
 
     private final CompareSign compareSign;
     private final Expression leftExpression;
@@ -17,7 +19,12 @@ public class ConditionalExpression implements Expression {
     private final Type type;
     private final boolean isPrimitiveComparison;
 
-    public ConditionalExpression(Expression leftExpression, Expression rightExpression,CompareSign compareSign) {
+    public ConditionalExpression(Expression leftExpression, Expression rightExpression, CompareSign compareSign) {
+        this(null, leftExpression, rightExpression, compareSign);
+    }
+
+    public ConditionalExpression(NodeData element, Expression leftExpression, Expression rightExpression, CompareSign compareSign) {
+        super(element);
         this.type = BuiltInType.BOOLEAN;
         this.compareSign = compareSign;
         this.leftExpression = leftExpression;
@@ -25,7 +32,7 @@ public class ConditionalExpression implements Expression {
         boolean leftExpressionIsPrimitive = leftExpression.getType().isPrimitive();
         boolean rightExpressionIsPrimitive = rightExpression.getType().isPrimitive();
         isPrimitiveComparison = leftExpressionIsPrimitive && rightExpressionIsPrimitive;
-        boolean isObjectsComparison =  !leftExpressionIsPrimitive && !rightExpressionIsPrimitive;
+        boolean isObjectsComparison = !leftExpressionIsPrimitive && !rightExpressionIsPrimitive;
         boolean isMixedComparison = !isPrimitiveComparison && !isObjectsComparison;
         if (isMixedComparison) {
             throw new MixedComparisonNotAllowedException(leftExpression.getType(), rightExpression.getType());

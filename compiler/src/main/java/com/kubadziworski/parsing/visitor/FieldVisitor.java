@@ -120,7 +120,7 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
         LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
         LocalVariableReference thisReference = new LocalVariableReference(newScope.getLocalVariable("this"));
 
-        Assignment assignment = new Assignment(thisReference, field.getName(), localVariableReference);
+        Assignment assignment = new Assignment((Expression) thisReference, field.getName(), localVariableReference);
         Block block = new Block(newScope, Collections.singletonList(assignment));
         return new Function(getter, block);
     }

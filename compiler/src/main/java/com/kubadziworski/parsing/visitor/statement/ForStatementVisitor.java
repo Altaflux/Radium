@@ -4,6 +4,7 @@ import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ForConditionsContext;
 import com.kubadziworski.antlr.EnkelParser.ForStatementContext;
 import com.kubadziworski.antlr.EnkelParser.VariableReferenceContext;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.RangedForStatement;
 import com.kubadziworski.domain.scope.LocalVariable;
@@ -38,12 +39,12 @@ public class ForStatementVisitor extends EnkelBaseVisitor<RangedForStatement> {
         if (newScope.isLocalVariableExists(varName)) {
             Statement iteratorVariable = new Assignment(varName, startExpression);
             Statement statement = ctx.statement().accept(statementVisitor);
-            return new RangedForStatement(iteratorVariable, startExpression, endExpression, statement, varName, newScope);
+            return new RangedForStatement(new RuleContextElementImpl(ctx), iteratorVariable, startExpression, endExpression, statement, varName, newScope);
         } else {
             newScope.addLocalVariable(new LocalVariable(varName, startExpression.getType()));
             Statement iteratorVariable = new VariableDeclaration(varName, startExpression, startExpression.getType(), true);
             Statement statement = ctx.statement().accept(statementVisitor);
-            return new RangedForStatement(iteratorVariable, startExpression, endExpression, statement, varName, newScope);
+            return new RangedForStatement(new RuleContextElementImpl(ctx), iteratorVariable, startExpression, endExpression, statement, varName, newScope);
         }
     }
 

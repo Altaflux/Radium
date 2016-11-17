@@ -9,6 +9,8 @@ import com.kubadziworski.antlr.EnkelParser.UnaryExpressionContext;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.UnarySign;
+import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
@@ -51,7 +53,7 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
                     ((PropertyAccessorCall) expression).getOwner()), expression.getType());
         }
         Reference ref = (Reference) expression;
-        return new IncrementDecrementExpression(ref, true, operator);
+        return new IncrementDecrementExpression(new RuleContextElementImpl(ctx), ref, true, operator);
     }
 
 
@@ -74,14 +76,14 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
                             ((PropertyAccessorCall) expression).getOwner()), expression.getType()));
         }
         Reference ref = (Reference) expression;
-        return new IncrementDecrementExpression(ref, false, operator);
+        return new IncrementDecrementExpression(new RuleContextElementImpl(ctx), ref, false, operator);
     }
 
     @Override
     public Expression visitUnaryExpression(UnaryExpressionContext ctx) {
         UnarySign unarySign = UnarySign.fromString(ctx.operation.getText());
         Expression expression = ctx.expression().accept(expressionVisitor);
-        return new UnaryExpression(unarySign, expression);
+        return new UnaryExpression(new RuleContextElementImpl(ctx), unarySign, expression);
     }
 
     @Override
@@ -93,14 +95,14 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
                 if (unarySign.equals(UnarySign.ADD)) {
                     return expression;
                 }
-                return new Value(expression.getType(), unarySign.getSign() + ((Value) expression).getValue());
+                return new Value(new RuleContextElementImpl(ctx), expression.getType(), unarySign.getSign() + ((Value) expression).getValue());
             }
         }
 
-        return new UnaryExpression(unarySign, expression);
+        return new UnaryExpression(new RuleContextElementImpl(ctx), unarySign, expression);
     }
 
-    private static class ComposedExpression implements Expression {
+    private static class ComposedExpression extends ElementImpl implements Expression {
         private final Expression preExpression;
         private final Expression expression;
 

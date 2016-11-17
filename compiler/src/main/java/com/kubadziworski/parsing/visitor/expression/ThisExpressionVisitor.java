@@ -3,6 +3,7 @@ package com.kubadziworski.parsing.visitor.expression;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.scope.Scope;
 
@@ -15,6 +16,6 @@ public class ThisExpressionVisitor extends EnkelBaseVisitor<LocalVariableReferen
     }
 
     public LocalVariableReference visitThisReference(EnkelParser.ThisReferenceContext ctx) {
-        return new LocalVariableReference(scope.getLocalVariable("this"));
+        return new LocalVariableReference(new RuleContextElementImpl(ctx), scope.getLocalVariable("this"));
     }
 }

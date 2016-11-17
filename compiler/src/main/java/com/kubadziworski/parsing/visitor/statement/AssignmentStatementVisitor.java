@@ -2,6 +2,7 @@ package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Statement;
@@ -10,6 +11,7 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.Optional;
@@ -31,18 +33,18 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
         Expression expression = expressionCtx.accept(expressionVisitor);
         String varName = ctx.name().getText();
         if (ctx.preExp != null) {
-            return generateAssignment(ctx.preExp.accept(expressionVisitor), varName, expression);
+            return generateAssignment(ctx, ctx.preExp.accept(expressionVisitor), varName, expression);
         }
         if (scope.isLocalVariableExists(varName)) {
-            return new Assignment(varName, expression);
+            return new Assignment(new RuleContextElementImpl(ctx), varName, expression);
         } else if (scope.isFieldExists(varName)) {
-            return generateAssignment(new LocalVariableReference(scope.getLocalVariable("this")), varName, expression);
+            return generateAssignment(ctx, new LocalVariableReference(scope.getLocalVariable("this")), varName, expression);
         } else {
             throw new RuntimeException("Assignment on un-declared variable: " + varName);
         }
     }
 
-    private Statement generateAssignment(Expression owner, String varName, Expression expression) {
+    private Statement generateAssignment(ParserRuleContext ctx, Expression owner, String varName, Expression expression) {
         Field field;
         //This is only to allow getter and setters field Reference
         if (scope.getClassType().equals(owner.getType())) {
@@ -65,6 +67,6 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
         if (functionCall.isPresent()) {
             return functionCall.get();
         }
-        return new Assignment(owner, varName, expression);
+        return new Assignment(new RuleContextElementImpl(ctx), owner, varName, expression);
     }
 }

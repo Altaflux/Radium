@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.type.RadiumBuiltIns;
@@ -13,7 +14,11 @@ public class BlockExpression extends Block implements Expression {
     private final Block block;
 
     public BlockExpression(Block block) {
-        super(block.getScope(), block.getStatements());
+        this(null, block);
+    }
+
+    public BlockExpression(NodeData nodeData, Block block) {
+        super(nodeData, block.getScope(), block.getStatements());
         this.block = block;
 
         if (block.getStatements().isEmpty()) {
@@ -31,6 +36,7 @@ public class BlockExpression extends Block implements Expression {
             }
         }
     }
+
 
     public Block getStatementBlock() {
         return block;

@@ -1,6 +1,7 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
+import com.kubadziworski.domain.node.RdElement;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.Division;
@@ -11,6 +12,7 @@ import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.*;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 
@@ -30,6 +32,7 @@ public class BaseStatementGenerator implements StatementGenerator {
     private final StatementGenerator parent;
     private final MethodVisitor methodVisitor;
 
+    private int lastLine = 0;
 
     public BaseStatementGenerator(StatementGenerator generator, MethodVisitor methodVisitor) {
         parent = generator;
@@ -47,6 +50,11 @@ public class BaseStatementGenerator implements StatementGenerator {
         this.methodVisitor = methodVisitor;
     }
 
+    private BaseStatementGenerator(StatementGenerator generator, MethodVisitor methodVisitor, int lastLine) {
+        this(generator, methodVisitor);
+        this.lastLine = lastLine;
+    }
+
     @Override
     public void generate(ThrowStatement throwStatement) {
         throwStatementGenerator.generate(throwStatement, this);
@@ -54,6 +62,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(ThrowStatement throwStatement, StatementGenerator statementGenerator) {
+        generateLineNumber(throwStatement);
         throwStatementGenerator.generate(throwStatement, statementGenerator);
     }
 
@@ -64,6 +73,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(TryCatchStatement tryCatchStatement, StatementGenerator generator) {
+        generateLineNumber(tryCatchStatement);
         tryCatchStatementGenerator.generate(tryCatchStatement, generator);
     }
 
@@ -74,6 +84,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(TryCatchExpression tryCatchExpression, StatementGenerator generator) {
+        generateLineNumber(tryCatchExpression);
         tryCatchStatementGenerator.generate(tryCatchExpression, generator);
     }
 
@@ -84,6 +95,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(BlockExpression blockExpression, StatementGenerator generator) {
+        generateLineNumber(blockExpression);
         expressionGenerator.generate(blockExpression, generator);
     }
 
@@ -93,6 +105,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(IfExpression ifExpression, StatementGenerator generator) {
+        generateLineNumber(ifExpression);
         expressionGenerator.generate(ifExpression, generator);
     }
 
@@ -102,6 +115,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(UnaryExpression unaryExpression, StatementGenerator generator) {
+        generateLineNumber(unaryExpression);
         expressionGenerator.generate(unaryExpression, generator);
     }
 
@@ -111,6 +125,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(PrintStatement printStatement, StatementGenerator generator) {
+        generateLineNumber(printStatement);
         printStatementGenerator.generate(printStatement, generator);
     }
 
@@ -120,6 +135,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(VariableDeclaration variableDeclaration, StatementGenerator generator) {
+        generateLineNumber(variableDeclaration);
         variableDeclarationStatementGenerator.generate(variableDeclaration, generator);
     }
 
@@ -129,15 +145,18 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(DupExpression dupExpression, StatementGenerator generator) {
+        generateLineNumber(dupExpression);
         expressionGenerator.generate(dupExpression, generator);
     }
 
     public void generate(IncrementDecrementExpression incrementDecrementExpression) {
+        generateLineNumber(incrementDecrementExpression);
         expressionGenerator.generate(incrementDecrementExpression, this);
     }
 
     @Override
     public void generate(IncrementDecrementExpression incrementDecrementExpression, StatementGenerator generator) {
+        generateLineNumber(incrementDecrementExpression);
         expressionGenerator.generate(incrementDecrementExpression, generator);
     }
 
@@ -147,6 +166,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(FunctionCall functionCall, StatementGenerator generator) {
+        generateLineNumber(functionCall);
         expressionGenerator.generate(functionCall, generator);
     }
 
@@ -156,6 +176,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(ReturnStatement returnStatement, StatementGenerator generator) {
+        generateLineNumber(returnStatement);
         returnStatementGenerator.generate(returnStatement, generator);
     }
 
@@ -165,6 +186,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(IfStatement ifStatement, StatementGenerator generator) {
+        generateLineNumber(ifStatement);
         ifStatementGenerator.generate(ifStatement, generator);
     }
 
@@ -174,6 +196,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(Block block, StatementGenerator generator) {
+        generateLineNumber(block);
         blockStatementGenerator.generate(block, true, generator);
     }
 
@@ -183,6 +206,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(RangedForStatement rangedForStatement, StatementGenerator generator) {
+        generateLineNumber(rangedForStatement);
         forStatementGenerator.generate(rangedForStatement, generator);
     }
 
@@ -192,6 +216,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(Assignment assignment, StatementGenerator generator) {
+        generateLineNumber(assignment);
         assignmentStatementGenerator.generate(assignment, getScope(), generator);
     }
 
@@ -201,6 +226,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(SuperCall superCall, StatementGenerator generator) {
+        generateLineNumber(superCall);
         expressionGenerator.generate(superCall, generator);
     }
 
@@ -210,6 +236,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(ConstructorCall constructorCall, StatementGenerator generator) {
+        generateLineNumber(constructorCall);
         expressionGenerator.generate(constructorCall, generator);
     }
 
@@ -219,6 +246,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(Addition addition, StatementGenerator generator) {
+        generateLineNumber(addition);
         expressionGenerator.generate(addition, generator);
     }
 
@@ -228,6 +256,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(Parameter parameter, StatementGenerator generator) {
+        generateLineNumber(parameter);
         expressionGenerator.generate(parameter);
     }
 
@@ -237,6 +266,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(ConditionalExpression conditionalExpression, StatementGenerator generator) {
+        generateLineNumber(conditionalExpression);
         expressionGenerator.generate(conditionalExpression, generator);
     }
 
@@ -246,6 +276,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(Multiplication multiplication, StatementGenerator generator) {
+        generateLineNumber(multiplication);
         expressionGenerator.generate(multiplication, generator);
     }
 
@@ -255,6 +286,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(Value value, StatementGenerator generator) {
+        generateLineNumber(value);
         expressionGenerator.generate(value);
     }
 
@@ -264,6 +296,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(Subtraction subtraction, StatementGenerator generator) {
+        generateLineNumber(subtraction);
         expressionGenerator.generate(subtraction, generator);
     }
 
@@ -273,6 +306,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(Division division, StatementGenerator generator) {
+        generateLineNumber(division);
         expressionGenerator.generate(division, generator);
     }
 
@@ -291,7 +325,9 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(LocalVariableReference localVariableReference, StatementGenerator generator) {
+        generateLineNumber(localVariableReference);
         expressionGenerator.generate(localVariableReference);
+
     }
 
     public void generate(FieldReference fieldReference) {
@@ -304,11 +340,13 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(FieldReference fieldReference, StatementGenerator generator) {
+        generateLineNumber(fieldReference);
         expressionGenerator.generate(fieldReference, generator);
     }
 
     @Override
     public void generateDup(FieldReference fieldReference, StatementGenerator generator) {
+        generateLineNumber(fieldReference);
         expressionGenerator.generateDup(fieldReference, generator);
     }
 
@@ -318,6 +356,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     @Override
     public void generate(PopExpression popExpression, StatementGenerator generator) {
+        generateLineNumber(popExpression);
         expressionGenerator.generate(popExpression, generator);
     }
 
@@ -327,6 +366,20 @@ public class BaseStatementGenerator implements StatementGenerator {
     }
 
     public StatementGenerator copy(StatementGenerator generator) {
-        return new BaseStatementGenerator(generator, this.methodVisitor);
+        return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine);
+    }
+
+
+    private void generateLineNumber(Statement statement) {
+        if (statement instanceof RdElement) {
+            if (((RdElement) statement).shouldAnalyze()) {
+                if (((RdElement) statement).getStartLine() != lastLine) {
+                    Label label = new Label();
+                    methodVisitor.visitLabel(label);
+                    methodVisitor.visitLineNumber(((RdElement) statement).getStartLine(), label);
+                    lastLine = ((RdElement) statement).getStartLine();
+                }
+            }
+        }
     }
 }

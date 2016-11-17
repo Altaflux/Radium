@@ -1,18 +1,25 @@
 package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.type.Type;
 
 /**
  * Created by kuba on 09.04.16.
  */
-public class FieldReference implements Reference {
+public class FieldReference extends ElementImpl implements Reference {
 
     private final Field field;
     private final Expression owner;
 
     public FieldReference(Field field, Expression owner) {
+        this(null, field, owner);
+    }
+
+    public FieldReference(NodeData element, Field field, Expression owner) {
+        super(element);
         this.field = field;
         this.owner = owner;
     }
@@ -33,7 +40,7 @@ public class FieldReference implements Reference {
         generator.generate(this);
     }
 
-    public void acceptDup(StatementGenerator generator){
+    public void acceptDup(StatementGenerator generator) {
         generator.generateDup(this);
     }
 
@@ -45,7 +52,7 @@ public class FieldReference implements Reference {
         return owner;
     }
 
-    public Field getField(){
+    public Field getField() {
         return field;
     }
 }

@@ -2,6 +2,7 @@ package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.ThrowStatement;
 import com.kubadziworski.domain.type.ClassTypeFactory;
@@ -29,6 +30,6 @@ public class ThrowStatementVisitor extends EnkelBaseVisitor<ThrowStatement> {
             throw new IncompatibleTypesException("throw statement", throwableType, expression.getType());
         }
 
-        return new ThrowStatement(expression);
+        return new ThrowStatement(new RuleContextElementImpl(ctx), expression);
     }
 }

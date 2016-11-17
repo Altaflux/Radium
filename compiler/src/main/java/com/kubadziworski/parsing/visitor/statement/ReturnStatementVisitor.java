@@ -3,6 +3,7 @@ package com.kubadziworski.parsing.visitor.statement;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ReturnVoidContext;
 import com.kubadziworski.antlr.EnkelParser.ReturnWithValueContext;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
@@ -19,12 +20,12 @@ public class ReturnStatementVisitor extends EnkelBaseVisitor<ReturnStatement> {
 
     @Override
     public ReturnStatement visitReturnVoid(@NotNull ReturnVoidContext ctx) {
-        return new ReturnStatement(new EmptyExpression(UnitType.INSTANCE));
+        return new ReturnStatement(new RuleContextElementImpl(ctx), new EmptyExpression(UnitType.INSTANCE));
     }
 
     @Override
     public ReturnStatement visitReturnWithValue(@NotNull ReturnWithValueContext ctx) {
         Expression expression = ctx.expression().accept(expressionVisitor);
-        return new ReturnStatement(expression);
+        return new ReturnStatement(new RuleContextElementImpl(ctx), expression);
     }
 }

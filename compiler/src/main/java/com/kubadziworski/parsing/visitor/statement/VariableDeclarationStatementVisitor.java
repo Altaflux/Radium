@@ -3,6 +3,7 @@ package com.kubadziworski.parsing.visitor.statement;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.VariableDeclarationContext;
+import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.VariableDeclaration;
 import com.kubadziworski.domain.scope.LocalVariable;
@@ -52,6 +53,6 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
             }
         }
         scope.addLocalVariable(new LocalVariable(varName, declarationType, mutable));
-        return new VariableDeclaration(varName, expression, declarationType, mutable);
+        return new VariableDeclaration(new RuleContextElementImpl(ctx), varName, expression, declarationType, mutable);
     }
 }

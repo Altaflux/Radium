@@ -83,6 +83,8 @@ public class TryCatchStatementGenerator {
 
                     if (!catchBlock.isReturnComplete()) {
 
+                        //If the whole tryCatch expression is of Unit type then we should not create a Unit instance,
+                        //assignment and parameter declarations must instantiate their own Unit instances.
                         if (catchBlock.getType().equals(UnitType.INSTANCE) && !expectedType.equals(UnitType.INSTANCE)) {
                             UnitType.expression().accept(statementGenerator);
                         }
