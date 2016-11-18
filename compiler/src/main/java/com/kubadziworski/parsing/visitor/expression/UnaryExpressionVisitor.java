@@ -124,7 +124,7 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
         }
     }
 
-    private static class FakeReturnExpression implements Expression {
+    private static class FakeReturnExpression extends ElementImpl implements Expression {
         private final Expression expression;
         private final Type type;
 

@@ -53,25 +53,6 @@ public class FunctionGenerator {
     }
 
 
-//    private Block addAutoReturnStatement(FunctionSignature signature, Block incomingBlock) {
-//        Block block = incomingBlock;
-//        if (!block.getStatements().isEmpty()) {
-//            Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
-//            if (lastStatement instanceof Expression && ((Expression) lastStatement).getType().equals(signature.getReturnType())) {
-//                List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size() - 1));
-//                ReturnStatement returnStatement = new ReturnStatement((Expression) lastStatement);
-//                statements.add(returnStatement);
-//                block = new Block(block.getScope(), statements);
-//
-//            } else if (!(lastStatement instanceof ReturnStatement)) {
-//                List<Statement> statements = new ArrayList<>(block.getStatements().subList(0, block.getStatements().size()));
-//                ReturnStatement returnStatement = new ReturnStatement(new EmptyExpression(BuiltInType.VOID));
-//                statements.add(returnStatement);
-//                block = new Block(block.getScope(), statements);
-//            }
-//        }
-//        return block;
-//    }
 
     private void verifyBlockReturn(FunctionSignature signature, Block block) {
         if (!signature.getReturnType().equals(UnitType.INSTANCE)) {

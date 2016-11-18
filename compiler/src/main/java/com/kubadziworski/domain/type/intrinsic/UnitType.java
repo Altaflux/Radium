@@ -2,6 +2,7 @@ package com.kubadziworski.domain.type.intrinsic;
 
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
@@ -42,7 +43,7 @@ public class UnitType extends JavaClassType {
         return "UnitType{} " + super.toString();
     }
 
-    private static class UnitExpression implements Expression {
+    private static class UnitExpression extends ElementImpl implements Expression {
 
         private final Expression expression;
 
