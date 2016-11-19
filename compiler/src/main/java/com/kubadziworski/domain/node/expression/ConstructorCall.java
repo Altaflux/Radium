@@ -6,6 +6,7 @@ import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import lombok.ToString;
+import org.objectweb.asm.Opcodes;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,11 @@ public class ConstructorCall extends ElementImpl implements Call {
     @Override
     public String getIdentifier() {
         return identifier;
+    }
+
+    @Override
+    public int getInvokeOpcode() {
+        return Opcodes.INVOKESPECIAL;
     }
 
     @Override

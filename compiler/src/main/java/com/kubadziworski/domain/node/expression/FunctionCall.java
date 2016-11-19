@@ -48,6 +48,11 @@ public class FunctionCall extends ElementImpl implements Call {
         return signature.getName();
     }
 
+    @Override
+    public int getInvokeOpcode() {
+        return signature.getInvokeOpcode();
+    }
+
     public Type getOwnerType() {
         return owner.getType();
     }
@@ -59,8 +64,6 @@ public class FunctionCall extends ElementImpl implements Call {
     public FunctionSignature getSignature() {
         return signature;
     }
-
-
 
     @Override
     public void accept(StatementGenerator generator) {

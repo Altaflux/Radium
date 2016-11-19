@@ -156,6 +156,7 @@ namedArgument : name '->' expression ;
 expression : THIS #ThisReference
            | variableReference #VarReference
            | owner=expression '.' variableReference  #VarReference
+           | SUPER '.' functionName '(' argumentList ')' #FunctionCall
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
            | functionName '(' argumentList ')' #FunctionCall
            | superCall='super' '('argumentList ')' #Supercall
@@ -458,6 +459,7 @@ Sign
 //TOKENS
 STATIC : 'static' ;
 THIS : 'this' ;
+SUPER: 'super' ;
 VARIABLE : 'var' ;
 IMMUTABLE : 'val' ;
 PRINT : 'print' ;

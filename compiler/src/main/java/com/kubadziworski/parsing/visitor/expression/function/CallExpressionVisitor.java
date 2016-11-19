@@ -11,6 +11,7 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.FunctionNameEqualClassException;
@@ -40,6 +41,12 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
             throw new FunctionNameEqualClassException(functionName);
         }
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
+
+        if(ctx.SUPER() != null){
+            return createSuperFunctionCall(ctx, functionName, arguments);
+        }
+
+
         boolean ownerIsExplicit = ctx.owner != null;
         if (ownerIsExplicit) {
             try {
@@ -50,9 +57,9 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                     //and simply use the class to call it.
                     //We may need to check if this doesn't causes trouble, else we use a POP after
                     //calling the owner expression, for now lets not optimize...
-                    return new FunctionCall(signature, arguments, new PopExpression(owner));
+                    return new FunctionCall(new RuleContextElementImpl(ctx), signature, arguments, new PopExpression(owner));
                 }
-                return new FunctionCall(signature, arguments, owner);
+                return new FunctionCall(new RuleContextElementImpl(ctx), signature, arguments, owner);
             } catch (Exception e) {
                 String possibleClass = ctx.owner.getText();
                 return visitStaticReference(possibleClass, functionName, arguments);
@@ -61,12 +68,12 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
 
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
         if (Modifier.isStatic(signature.getModifiers())) {
-            return new FunctionCall(signature, arguments, signature.getOwner());
+            return new FunctionCall(new RuleContextElementImpl(ctx), signature, arguments, signature.getOwner());
         }
 
         Type thisType = new EnkelType(scope.getFullClassName(), scope);
         LocalVariable thisVariable = new LocalVariable("this", thisType);
-        return new FunctionCall(signature, arguments, new LocalVariableReference(thisVariable));
+        return new FunctionCall(new RuleContextElementImpl(ctx), signature, arguments, new LocalVariableReference(thisVariable));
     }
 
     @Override
@@ -83,10 +90,18 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         return new SuperCall(new RuleContextElementImpl(ctx), arguments);
     }
 
+    private SuperFunctionCall createSuperFunctionCall(FunctionCallContext ctx, String functionName, List<Argument> arguments) {
+
+        FunctionSignature signature = ClassTypeFactory.createClassType(scope.getSuperClassName()).getMethodCallSignature(functionName, arguments);
+        Type thisType = new EnkelType(scope.getFullClassName(), scope);
+        LocalVariable thisVariable = new LocalVariable("this", thisType);
+
+        return new SuperFunctionCall(new RuleContextElementImpl(ctx), signature, arguments, new LocalVariableReference(thisVariable));
+    }
+
     private Call visitStaticReference(String possibleClass, String functionName, List<Argument> arguments) {
         Type classType = scope.resolveClassName(possibleClass);
         FunctionSignature signature = classType.getMethodCallSignature(functionName, arguments);
-        // FunctionSignature signature = scope.getMethodCallSignature(classType, functionName, arguments);
         return new FunctionCall(signature, arguments, classType);
     }
 

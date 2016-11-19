@@ -47,7 +47,7 @@ public class CallExpressionGenerator {
         String functionName = functionCall.getIdentifier();
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(functionCall.getSignature());
         String ownerDescriptor = functionCall.getOwnerType().getInternalName();
-        int callOpCode = functionCall.getSignature().getInvokeOpcode();
+        int callOpCode = functionCall.getInvokeOpcode();
 
         methodVisitor.visitMethodInsn(callOpCode, ownerDescriptor, functionName, methodDescriptor, false);
     }

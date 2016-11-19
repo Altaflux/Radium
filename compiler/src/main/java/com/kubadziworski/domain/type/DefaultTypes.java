@@ -6,11 +6,12 @@ public class DefaultTypes {
     private DefaultTypes() {
     }
 
-    public static Type STRING = ClassTypeFactory.createClassType("java.lang.String");
+    public static JavaClassType STRING = new JavaClassType("java.lang.String");
 
     public static JavaClassType Integer() {
         return new JavaClassType("java.lang.Integer");
     }
+
     public static JavaClassType Double() {
         return new JavaClassType("java.lang.Double");
     }

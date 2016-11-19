@@ -5,6 +5,7 @@ import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
+import org.objectweb.asm.Opcodes;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +14,9 @@ import java.util.List;
  * Created by kuba on 05.05.16.
  */
 public class SuperCall extends ElementImpl implements Call {
-    public static final String SUPER_IDETIFIER = "super";
+
+    public static final String SUPER_IDENTIFIER = "super";
+
     private final List<Argument> arguments;
 
     public SuperCall() {
@@ -36,7 +39,12 @@ public class SuperCall extends ElementImpl implements Call {
 
     @Override
     public String getIdentifier() {
-        return SUPER_IDETIFIER;
+        return SUPER_IDENTIFIER;
+    }
+
+    @Override
+    public int getInvokeOpcode() {
+        return Opcodes.INVOKESPECIAL;
     }
 
     @Override

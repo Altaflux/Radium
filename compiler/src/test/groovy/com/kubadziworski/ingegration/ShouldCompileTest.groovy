@@ -767,6 +767,32 @@ class ShouldCompileTest extends Specification {
                 }
             """
 
+    private static final superCall = """
+                CallParentClass {
+
+                    start(){
+                        print toString();
+                        var superString = super.toString();
+                        assert(superString.contains("myToString"), false)
+                        assert(toString().contains("CallParentClass"), true)
+
+                    }
+
+                   String toString(){
+                      return "myToString :: " + super.toString()
+                    }
+
+                     Unit assert(boolean actual,boolean expected) {
+                            if (actual == expected) {
+                                print "OK"
+                            }
+                            else {
+                                print "TEST FAILED"
+                            }
+                     }
+                }
+            """
+
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -818,6 +844,7 @@ class ShouldCompileTest extends Specification {
         throwStatement          | "ThrowStatement.enk"
         nullValue               | "NullValue.enk"
         returnUnit              | "ReturnUnit.enk"
+        superCall               | "CallParentClass.enk"
     }
 
 
