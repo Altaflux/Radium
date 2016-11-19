@@ -5,6 +5,7 @@ import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BuiltInType;
+import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
 
@@ -29,7 +30,7 @@ public class AnyType implements Type {
         FunctionSignature constructorSignature = new FunctionSignature("Any", Collections.emptyList(),
                 this, Modifier.PUBLIC, this);
         FunctionSignature toString = new FunctionSignature("toString", Collections.emptyList(),
-               UnitType.INSTANCE, Modifier.PUBLIC, this);
+                DefaultTypes.STRING, Modifier.PUBLIC, this);
         FunctionSignature hashCode = new FunctionSignature("hashCode", Collections.emptyList(),
                 BuiltInType.INT, Modifier.PUBLIC, this);
 
