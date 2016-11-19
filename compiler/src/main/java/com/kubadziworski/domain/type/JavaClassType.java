@@ -65,6 +65,12 @@ public class JavaClassType implements Type {
         while (iteratedClass != null) {
             if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getDescriptor())) {
                 return arity;
+            } else {
+                for (Class inter : iteratedClass.getInterfaces()) {
+                    if (org.objectweb.asm.Type.getDescriptor(inter).equals(type.getDescriptor())) {
+                        return arity;
+                    }
+                }
             }
             iteratedClass = iteratedClass.getSuperclass();
             arity++;
