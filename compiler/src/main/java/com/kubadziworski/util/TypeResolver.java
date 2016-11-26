@@ -48,9 +48,17 @@ public final class TypeResolver {
         Type.Nullability nullability = typeContext.nullable != null ? Type.Nullability.NULLABLE : Type.Nullability.NOT_NULL;
 
         if (typeName.equals("java.lang.String")) return new TypeProjection(DefaultTypes.STRING, nullability);
+
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
         if (builtInType.isPresent()) return builtInType.get();
-        return new TypeProjection(scope.resolveClassName(typeName), nullability);
+
+        Type contextType = scope.resolveClassName(typeName);
+        //When parsing Radium classes we cannot use the Unit returned from the ClassTypeFactory as it will return the Concrete version
+        if (contextType.getName().equals("radium.Unit") & nullability.equals(Type.Nullability.NOT_NULL)) {
+            return new TypeProjection(UnitType.INSTANCE, nullability);
+        }
+
+        return new TypeProjection(contextType, nullability);
     }
 
     public static Type getFromTypeName(String typeName, Type.Nullability nullability) {
@@ -64,7 +72,7 @@ public final class TypeResolver {
 
 
     //For usage of ReflectionObjectToSignatureMapper
-    public static Type getTypeFromNameWithClazzAlias(String typeName, Type.Nullability nullability){
+    public static Type getTypeFromNameWithClazzAlias(String typeName, Type.Nullability nullability) {
         if (typeName.equals("void")) return UnitType.INSTANCE;
         if (typeName.equals("boolean")) return new TypeProjection(PrimitiveTypes.BOOLEAN_TYPE, nullability);
         if (typeName.equals("int")) return new TypeProjection(PrimitiveTypes.INT_TYPE, nullability);
@@ -74,11 +82,13 @@ public final class TypeResolver {
         if (typeName.equals("long")) return new TypeProjection(PrimitiveTypes.LONG_TYPE, nullability);
         if (typeName.equals("short")) return new TypeProjection(PrimitiveTypes.SHORT_TYPE, nullability);
 
-        if (typeName.equals("java.lang.Boolean")) return new TypeProjection(PrimitiveTypes.BOOLEAN_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Boolean"))
+            return new TypeProjection(PrimitiveTypes.BOOLEAN_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Integer")) return new TypeProjection(PrimitiveTypes.INT_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Float")) return new TypeProjection(PrimitiveTypes.FLOAT_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Double")) return new TypeProjection(PrimitiveTypes.DOUBLE_BOX_TYPE, nullability);
-        if (typeName.equals("java.lang.Character")) return new TypeProjection(PrimitiveTypes.CHAR_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Character"))
+            return new TypeProjection(PrimitiveTypes.CHAR_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Long")) return new TypeProjection(PrimitiveTypes.LONG_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Short")) return new TypeProjection(PrimitiveTypes.SHORT_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Object")) return new TypeProjection(AnyType.INSTANCE, nullability);

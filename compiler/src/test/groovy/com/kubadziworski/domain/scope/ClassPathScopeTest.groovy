@@ -5,6 +5,7 @@ import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
 import com.kubadziworski.domain.type.Type
+import com.kubadziworski.domain.type.intrinsic.AnyType
 import com.kubadziworski.domain.type.intrinsic.TypeProjection
 import com.kubadziworski.domain.type.intrinsic.UnitType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
@@ -28,9 +29,9 @@ class ClassPathScopeTest extends Specification {
         actualSignature.isPresent()
         actualSignature.get().equals(expectedSignature);
         where:
-        methodName     | type                              | args                                         | expectedName   | expectedParamsTypes                                                                    | expectedReturnType
-        "equals"       | DefaultTypes.STRING                 | [new JavaClassType("java.lang.Object")]    | "equals"       | [new TypeProjection(new JavaClassType("radium.Any"), Type.Nullability.UNKNOWN)]          | PrimitiveTypes.BOOLEAN_TYPE
-        "hashCode"     | new JavaClassType("java.lang.Object") | []                                           | "hashCode"     | []                                                                                   | PrimitiveTypes.INT_TYPE
+        methodName     | type                              | args                                         | expectedName   | expectedParamsTypes                                                                                                                   | expectedReturnType
+        "equals"       | DefaultTypes.STRING                 | [new JavaClassType("java.lang.Object")]    | "equals"       | [new TypeProjection(AnyType.INSTANCE, Type.Nullability.UNKNOWN)]                                                                               | PrimitiveTypes.BOOLEAN_TYPE
+        "hashCode"     | new JavaClassType("java.lang.Object") | []                                           | "hashCode"     | []                                                                                                                                | PrimitiveTypes.INT_TYPE
         "replaceFirst" | DefaultTypes.STRING                 | [DefaultTypes.STRING, DefaultTypes.STRING] | "replaceFirst" | [new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN),new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN)] | new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN)
     }
 

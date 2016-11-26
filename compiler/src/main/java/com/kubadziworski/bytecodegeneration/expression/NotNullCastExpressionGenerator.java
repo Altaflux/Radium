@@ -28,7 +28,7 @@ public class NotNullCastExpressionGenerator {
             return;
         }
 
-        DupExpression dupExpression = new DupExpression(expression);
+        DupExpression dupExpression = new DupExpression(expression, 0);
         dupExpression.accept(generator);
 
         Label postNullCheck = new Label();

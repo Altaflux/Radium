@@ -62,7 +62,8 @@ public class FunctionGenerator {
             }
             Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
             if (lastStatement instanceof ReturnStatement) {
-                if (!((ReturnStatement) lastStatement).getExpression().getType().equals(signature.getReturnType())) {
+
+                if (!(((ReturnStatement) lastStatement).getExpression().getType().inheritsFrom(signature.getReturnType()) > -1)) {
                     throw new RuntimeException("The return type of the expression is not the same as the function signature: " + signature.getReturnType());
                 }
                 return;
@@ -76,7 +77,7 @@ public class FunctionGenerator {
         if (!block.getStatements().isEmpty()) {
             Statement lastStatement = block.getStatements().get(block.getStatements().size() - 1);
             if (lastStatement instanceof ReturnStatement &&
-                    !((ReturnStatement) lastStatement).getExpression().getType().equals(UnitType.INSTANCE)) {
+                    ( !((ReturnStatement) lastStatement).getExpression().getType().getName().equals(UnitType.INSTANCE.getName()))) {
                 throw new RuntimeException("The return type of the expression is not the same as the function signature: " + signature.getReturnType() + " " +
                         "Expression return type: " + ((ReturnStatement) lastStatement).getExpression().getType());
             }

@@ -8,13 +8,19 @@ import com.kubadziworski.domain.type.Type;
 public class DupExpression extends ElementImpl implements Expression {
 
     private final Expression expression;
+    private final int dupShift;
 
-    public DupExpression(Expression expression) {
+    public DupExpression(Expression expression, int dupShift) {
         this.expression = expression;
+        this.dupShift = dupShift;
     }
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public int getDupShift() {
+        return dupShift;
     }
 
     @Override

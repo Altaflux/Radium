@@ -15,13 +15,19 @@ import java.lang.reflect.Modifier;
 
 public class UnitType extends JavaClassType {
 
-    public static final UnitType INSTANCE = new UnitType();
+    public static final UnitType INSTANCE = new UnitType(false);
+
+    public static final UnitType CONCRETE_INSTANCE = new UnitType(true);
+
     private static final Expression expression =
             new FieldReference(new Field("INSTANCE", INSTANCE, INSTANCE, Modifier.PUBLIC + Modifier.STATIC),
                     new EmptyExpression(INSTANCE));
 
-    private UnitType() {
+    private final boolean concrete;
+
+    private UnitType(boolean concrete) {
         super("radium.Unit");
+        this.concrete = concrete;
     }
 
     public static Expression expression() {
@@ -34,13 +40,28 @@ public class UnitType extends JavaClassType {
 
     @Override
     public int getReturnOpcode() {
+        if (concrete) return Opcodes.ARETURN;
         return Opcodes.RETURN;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+
+        if (o instanceof TypeProjection) {
+            o = ((TypeProjection) o).getInternalType();
+        }
+        if (o instanceof UnitType) {
+            return concrete == ((UnitType) o).concrete;
+        }
+
+        return o instanceof Type && getName().equals(((Type) o).getName());
+    }
 
     @Override
     public String toString() {
-        return "UnitType{} " + super.toString();
+        return "UnitType{" + concrete + "} " + super.toString();
     }
 
 

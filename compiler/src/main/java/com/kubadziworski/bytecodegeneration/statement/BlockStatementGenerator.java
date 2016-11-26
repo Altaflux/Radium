@@ -47,6 +47,4 @@ public class BlockStatementGenerator {
         }
 
     }
-//    Type type = ((Expression) stmt).getType();
-//                if (!type.equals(UnitType.INSTANCE) && !type.equals(RadiumBuiltIns.NOTHING_TYPE)) {
 }

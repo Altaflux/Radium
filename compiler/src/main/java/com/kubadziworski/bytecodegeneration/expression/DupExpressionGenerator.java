@@ -18,8 +18,19 @@ public class DupExpressionGenerator{
         Expression expression = dupExpression.getExpression();
         expression.accept(statementGenerator);
 
+
         Type type = expression.getType();
-        int dupCode = type.getDupX1Code();
-        methodVisitor.visitInsn(dupCode);
+        switch (dupExpression.getDupShift()){
+            case 0:{
+                methodVisitor.visitInsn(type.getDupCode());
+                break;
+            }
+            case 1:{
+                methodVisitor.visitInsn(type.getDupX1Code());
+                break;
+            }
+        }
+
+
     }
 }

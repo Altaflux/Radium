@@ -772,10 +772,29 @@ class ShouldCompileTest extends Specification {
                     bar(){
                         return Unit.INSTANCE
                     }
+                    baz(){
+                        var x = Unit.INSTANCE
+                        return x
+                    }
 
                 }
             """
+    private static final concreteReturnUnit =
+            """
+                ConcreteReturnUnit {
 
+                    start{
+                        var x = baz();
+                        print x!!
+                    }
+
+                   Unit? baz(){
+                        var x = Unit.INSTANCE
+                        return x
+                    }
+
+                }
+            """
     private static final superCall = """
                 CallParentClass {
 
@@ -808,13 +827,11 @@ class ShouldCompileTest extends Specification {
 
                     start(){
                         var dummyClass = new DummyClass();
-
                         var number:Int = dummyClass.objectInt();
 
                         var sum = number + 1.5
                         print sum
                     }
-
                 }
             """
     @Unroll
@@ -868,6 +885,7 @@ class ShouldCompileTest extends Specification {
         throwStatement          | "ThrowStatement.enk"
         nullValue               | "NullValue.enk"
         returnUnit              | "ReturnUnit.enk"
+        concreteReturnUnit      | "ConcreteReturnUnit.enk"
         superCall               | "CallParentClass.enk"
         typeCoercion            | "TypeCoercion.enk"
     }

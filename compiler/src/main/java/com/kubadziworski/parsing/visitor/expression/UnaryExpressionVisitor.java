@@ -43,9 +43,9 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             Expression operation;
 
             if (operator.equals(UnaryOperator.INCREMENT)) {
-                operation = new DupExpression(new Addition((expression), new Value(expression.getType(), "1")));
+                operation = new DupExpression(new Addition((expression), new Value(expression.getType(), "1")), 1);
             } else {
-                operation = new DupExpression(new Subtraction((expression), new Value(expression.getType(), "1")));
+                operation = new DupExpression(new Subtraction((expression), new Value(expression.getType(), "1")), 1);
             }
             Argument argument = new Argument(operation, null);
 

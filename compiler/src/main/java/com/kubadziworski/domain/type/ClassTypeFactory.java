@@ -23,7 +23,7 @@ public class ClassTypeFactory {
         //given that Types right now encapsulate almost all functionality
         Map<String, Type> typeMap = new HashMap<>();
         typeMap.put("radium.Any", AnyType.INSTANCE);
-        typeMap.put("radium.Unit", UnitType.INSTANCE);
+        typeMap.put("radium.Unit", UnitType.CONCRETE_INSTANCE);
         typeMap.put("radium.Int", PrimitiveTypes.INT_TYPE);
         typeMap.put("radium.Float", PrimitiveTypes.FLOAT_TYPE);
         typeMap.put("radium.Long", PrimitiveTypes.LONG_TYPE);
@@ -33,15 +33,6 @@ public class ClassTypeFactory {
         typeMap.put("radium.Byte", PrimitiveTypes.BYTE_TYPE);
         typeMap.put("radium.Boolean", PrimitiveTypes.BOOLEAN_TYPE);
 
-        ///MASK JAVA TYPES
-//        typeMap.put("java.lang.Integer", PrimitiveTypes.INT_TYPE);
-//        typeMap.put("java.lang.Float", PrimitiveTypes.FLOAT_TYPE);
-//        typeMap.put("java.lang.Long", PrimitiveTypes.LONG_TYPE);
-//        typeMap.put("java.lang.Double", PrimitiveTypes.DOUBLE_TYPE);
-//        typeMap.put("java.lang.Short", PrimitiveTypes.SHORT_TYPE);
-//        typeMap.put("java.lang.Character", PrimitiveTypes.CHAR_TYPE);
-//        typeMap.put("java.lang.Byte", PrimitiveTypes.BYTE_TYPE);
-//        typeMap.put("java.lang.Boolean", PrimitiveTypes.BOOLEAN_TYPE);
 
         syntheticTypes = Collections.unmodifiableMap(typeMap);
     }

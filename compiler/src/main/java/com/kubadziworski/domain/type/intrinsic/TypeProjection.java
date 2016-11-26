@@ -29,11 +29,9 @@ public class TypeProjection implements Type {
             this.type = type;
         }
 
-
         if (type.equals(UnitType.INSTANCE) && nullable.equals(Nullability.NULLABLE)) {
             throw new IncompatibleTypesException("Cannot set Unit to Nullable type", this, type);
         }
-
     }
 
     @Override
@@ -175,15 +173,15 @@ public class TypeProjection implements Type {
         if (this == o) return true;
         if (o == null) return false;
 
-        if (o instanceof Type && getName().equals(((Type) o).getName())) {
-            if (nullable == ((Type) o).isNullable()) return true;
+        if (o instanceof Type ) {
+            if (nullable != ((Type) o).isNullable()) return false;
         }
-        if (!getClass().equals(o.getClass())) {
-            return false;
+
+        if(o instanceof TypeProjection){
+            o = ((TypeProjection) o).getInternalType();
         }
-        TypeProjection that = (TypeProjection) o;
-        if (nullable != that.nullable) return false;
-        return type.equals(that.type);
+
+        return type.equals(o);
 
     }
 
