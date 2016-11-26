@@ -803,12 +803,16 @@ class ShouldCompileTest extends Specification {
             """
 
     private static final typeCoercion = """
+                import com.kubadziworski.test.DummyClass;
                 TypeCoercion {
 
                     start(){
+                        var dummyClass = new DummyClass();
 
+                        var number:Int = dummyClass.objectInt();
 
-
+                        var sum = number + 1.5
+                        print sum
                     }
 
                 }
@@ -865,6 +869,7 @@ class ShouldCompileTest extends Specification {
         nullValue               | "NullValue.enk"
         returnUnit              | "ReturnUnit.enk"
         superCall               | "CallParentClass.enk"
+        typeCoercion            | "TypeCoercion.enk"
     }
 
 

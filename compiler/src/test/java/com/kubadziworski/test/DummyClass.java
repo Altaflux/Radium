@@ -1,7 +1,12 @@
 package com.kubadziworski.test;
 
-/**
- * Created by plozano on 10/31/2016.
- */
+import radium.annotations.NotNull;
+
+
 public class DummyClass {
+
+    @NotNull
+    public Integer objectInt(){
+        return 5;
+    }
 }

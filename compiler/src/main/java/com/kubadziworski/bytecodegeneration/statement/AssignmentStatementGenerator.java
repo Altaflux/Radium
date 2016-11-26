@@ -67,7 +67,7 @@ public class AssignmentStatementGenerator {
                 }
                 expression.accept(generator);
                 castIfNecessary(type, localVariableType);
-                methodVisitor.visitVarInsn(type.getStoreVariableOpcode(), index);
+                methodVisitor.visitVarInsn(localVariableType.getStoreVariableOpcode(), index);
                 return;
             }
 
@@ -86,7 +86,9 @@ public class AssignmentStatementGenerator {
         PrimitiveTypesWrapperFactory.coerce(variableType, expressionType, new InstructionAdapter(methodVisitor));
 
         if (!expressionType.equals(variableType)) {
-            methodVisitor.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());
+            if(!variableType.isPrimitive()) {
+                methodVisitor.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());
+            }
         }
     }
 }
