@@ -55,9 +55,12 @@ public class ImportResolver {
                 }
             }
         }
-        imports.addAll(clazzImportResolver.extractClassesFromPackage("java.lang"));
         imports.addAll(clazzImportResolver.extractClassesFromPackage("radium"));
+        imports.addAll(clazzImportResolver.extractClassesFromPackage("java.lang"));
+
         declarationDescriptors.addAll(imports);
+
+        //declarationDescriptors.addAll(clazzImportResolver.extractClassesFromPackage("radium"));
         importDeclarationContexts.clear();
         importDeclarationContexts.addAll(missingDeclarations);
     }

@@ -45,6 +45,11 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     }
 
     @Override
+    public Statement visitNotNullCastExpression(EnkelParser.NotNullCastExpressionContext ctx){
+        return expressionVisitor.visitNotNullCastExpression(ctx);
+    }
+
+    @Override
     public Statement visitThrowStatement(@NotNull EnkelParser.ThrowStatementContext ctx) {
         return throwStatementVisitor.visitThrowStatement(ctx);
     }
@@ -53,11 +58,6 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     public Statement visitTryExpression(@NotNull EnkelParser.TryExpressionContext ctx) {
         return tryCatchExpressionVisitor.visitTryExpression(ctx);
     }
-
-//    @Override
-//    public Statement visitTryStatement(@NotNull EnkelParser.TryStatementContext ctx) {
-//        return tryCatchStatementVisitor.visitTryStatement(ctx);
-//    }
 
     @Override
     public Expression visitSignExpression(EnkelParser.SignExpressionContext ctx) {

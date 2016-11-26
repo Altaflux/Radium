@@ -1,7 +1,7 @@
 package com.kubadziworski.domain.node.expression.prefix;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.ArithmeticOperator;
+import com.kubadziworski.domain.UnaryOperator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.node.expression.Expression;
@@ -13,13 +13,13 @@ public class IncrementDecrementExpression extends ElementImpl implements Express
 
     private final Reference reference;
     private final boolean prefix;
-    private final ArithmeticOperator operator;
+    private final UnaryOperator operator;
 
-    public IncrementDecrementExpression(Reference reference, boolean prefix, ArithmeticOperator operator) {
+    public IncrementDecrementExpression(Reference reference, boolean prefix, UnaryOperator operator) {
         this(null, reference, prefix, operator);
     }
 
-    public IncrementDecrementExpression(NodeData nodeData, Reference reference, boolean prefix, ArithmeticOperator operator) {
+    public IncrementDecrementExpression(NodeData nodeData, Reference reference, boolean prefix, UnaryOperator operator) {
         super(nodeData);
         this.reference = reference;
         this.prefix = prefix;
@@ -34,7 +34,7 @@ public class IncrementDecrementExpression extends ElementImpl implements Express
         return prefix;
     }
 
-    public ArithmeticOperator getOperator() {
+    public UnaryOperator getOperator() {
         return operator;
     }
 

@@ -1,10 +1,7 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.Division;
-import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
-import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
+import com.kubadziworski.domain.node.expression.arthimetic.*;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
@@ -44,6 +41,10 @@ public interface StatementGenerator {
     void generate(VariableDeclaration variableDeclaration, StatementGenerator generator);
 
 
+    void generate(NotNullCastExpression expression);
+    void generate(NotNullCastExpression expression,  StatementGenerator generator);
+
+
     void generate(DupExpression dupExpression);
     void generate(DupExpression dupExpression,  StatementGenerator generator);
 
@@ -75,8 +76,14 @@ public interface StatementGenerator {
     void generate(ConstructorCall constructorCall);
     void generate(ConstructorCall constructorCall, StatementGenerator generator);
 
+    void generate(PureArithmeticExpression expression);
+    void generate(PureArithmeticExpression expression, StatementGenerator statementGenerator);
+
     void generate(Addition addition);
     void generate(Addition addition, StatementGenerator generator);
+
+    void generate(Argument parameter);
+    void generate(Argument parameter, StatementGenerator generator);
 
     void generate(Parameter parameter);
     void generate(Parameter parameter, StatementGenerator generator);

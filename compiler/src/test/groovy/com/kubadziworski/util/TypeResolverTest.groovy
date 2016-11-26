@@ -4,7 +4,9 @@ import com.kubadziworski.antlr.EnkelParser
 import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
+import com.kubadziworski.domain.type.Type
 import com.kubadziworski.domain.type.intrinsic.UnitType
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import org.antlr.v4.runtime.tree.TerminalNode
 import spock.lang.Specification
 
@@ -14,7 +16,7 @@ import spock.lang.Specification
 class TypeResolverTest extends Specification {
     def "GetFromTypeName with string"() {
         when:
-        def actualType = TypeResolver.getFromTypeName(typeName)
+        def actualType = TypeResolver.getFromTypeName(typeName, Type.Nullability.NOT_NULL)
 
         then:
         actualType.equals(expectedType)
@@ -22,8 +24,8 @@ class TypeResolverTest extends Specification {
         where:
         typeName            | expectedType
         "java.lang.Integer" | new JavaClassType("java.lang.Integer")
-        "int"               | BuiltInType.INT
-        "boolean"           | BuiltInType.BOOLEAN
+        "radium.Int"               | PrimitiveTypes.INT_TYPE
+        "radium.Boolean"           | PrimitiveTypes.BOOLEAN_TYPE
         "java.lang.String"  | DefaultTypes.STRING
         "byte[]"            | BuiltInType.BYTE_ARR
     }
@@ -31,19 +33,21 @@ class TypeResolverTest extends Specification {
     def "getFromTypeContext"() {
         given:
         EnkelParser.TypeContext typeContext = Mock(EnkelParser.TypeContext)
+        EnkelParser.TypeCompositionContext compositionContext = Mock()
+        typeContext.simpleName = compositionContext
 
         when:
         def actualType = TypeResolver.getFromTypeContext(typeContext)
 
         then:
-        1 * typeContext.getText() >> typeName
+        1 * compositionContext.getText() >> typeName
         actualType.equals(expectedType)
 
         where:
         typeName            | expectedType
         "java.lang.Integer" | new JavaClassType("java.lang.Integer")
-        "int"               | BuiltInType.INT
-        "boolean"           | BuiltInType.BOOLEAN
+        "radium.Int"               | PrimitiveTypes.INT_TYPE
+        "radium.Boolean"           | PrimitiveTypes.BOOLEAN_TYPE
         "java.lang.String"  | DefaultTypes.STRING
     }
 
@@ -81,11 +85,11 @@ class TypeResolverTest extends Specification {
 
         where:
         stringValue | contextType | expectedType
-        "true"      | "boolean"   | BuiltInType.BOOLEAN
-        "5.5f"      | "float"     | BuiltInType.FLOAT
-        "0x20D"     | "int"       | BuiltInType.INT
+        "true"      | "boolean"   | PrimitiveTypes.BOOLEAN_TYPE
+        "5.5f"      | "float"     | PrimitiveTypes.FLOAT_TYPE
+        "0x20D"     | "int"       | PrimitiveTypes.INT_TYPE
         "something" | "string"    | DefaultTypes.STRING
-        "'c'"       | "char"    | BuiltInType.CHAR
+        "'c'"       | "char"    | PrimitiveTypes.CHAR_TYPE
     }
 
 }

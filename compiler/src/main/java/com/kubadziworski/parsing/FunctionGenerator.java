@@ -68,7 +68,7 @@ public class FunctionGenerator {
                 return;
             } else {
                 if (!block.isReturnComplete()) {
-                    throw new RuntimeException("No return specified for method with return type: " + signature.getReturnType());
+                    throw new RuntimeException("No return specified for method: " + signature.getName() + " with return type: " + signature.getReturnType());
                 }
             }
         }

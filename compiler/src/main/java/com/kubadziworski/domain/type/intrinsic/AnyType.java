@@ -4,10 +4,10 @@ package com.kubadziworski.domain.type.intrinsic;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -26,13 +26,13 @@ public class AnyType implements Type {
 
         Parameter parameter = new Parameter("other", this, null);
         FunctionSignature equalsSignature = new FunctionSignature("equals", Collections.singletonList(parameter),
-                BuiltInType.BOOLEAN, Modifier.PUBLIC, this);
+                PrimitiveTypes.BOOLEAN_TYPE, Modifier.PUBLIC, this);
         FunctionSignature constructorSignature = new FunctionSignature("Any", Collections.emptyList(),
                 this, Modifier.PUBLIC, this);
         FunctionSignature toString = new FunctionSignature("toString", Collections.emptyList(),
                 DefaultTypes.STRING, Modifier.PUBLIC, this);
         FunctionSignature hashCode = new FunctionSignature("hashCode", Collections.emptyList(),
-                BuiltInType.INT, Modifier.PUBLIC, this);
+                PrimitiveTypes.INT_TYPE, Modifier.PUBLIC, this);
 
         functionSignatures = Arrays.asList(equalsSignature, constructorSignature, toString, hashCode);
     }
@@ -143,4 +143,11 @@ public class AnyType implements Type {
     public boolean isPrimitive() {
         return objectClass.isPrimitive();
     }
+
+    @Override
+    public Nullability isNullable() {
+        return Nullability.NOT_NULL;
+    }
+
+
 }

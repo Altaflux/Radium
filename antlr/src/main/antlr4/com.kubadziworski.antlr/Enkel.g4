@@ -162,6 +162,7 @@ expression : THIS #ThisReference
            | superCall='super' '('argumentList ')' #Supercall
            | newCall='new' typeName '('argumentList ')' #ConstructorCall
            | value        #ValueExpr
+           | expression '!!' #NotNullCastExpression
            | expr=expression operation='--'  #SuffixExpression
            | expr=expression operation='++'  #SuffixExpression
            //| expr=expression {!here(LineTerminator)}? operation='--'  #SuffixExpression
@@ -208,40 +209,17 @@ methodModifiers
 
 fieldModifier : ('public' | 'protected' | 'private') ;
 
+type : simpleName=typeComposition nullable='?'? ;
 
-type
-	:	primitiveType
-	|	referenceType
+typeComposition : referenceType
 	;
 referenceType
 	:	typeName
 	|	arrayType
 	;
-primitiveType
-	:	 numericType
-	|	 'boolean'
-	;
-
-numericType
-	:	integralType
-	|	floatingPointType
-	;
-
-integralType
-	:	'byte'
-	|	'short'
-	|	'int'
-	|	'long'
-	|	'char'
-	;
-floatingPointType
-	:	'float'
-	|	'double'
-	;
 
 arrayType
-	:	primitiveType dims
-	|	typeName dims
+	:	typeName dims
 	;
 dims
 	:	'[' ']' ('[' ']')*

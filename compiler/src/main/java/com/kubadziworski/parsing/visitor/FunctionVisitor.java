@@ -26,6 +26,7 @@ public class FunctionVisitor extends EnkelBaseVisitor<Function> {
     public Function visitFunction(@NotNull FunctionContext ctx) {
         FunctionSignature signature = ctx.functionDeclaration().accept(new FunctionSignatureVisitor(scope));
 
+        Scope scope = new Scope(this.scope, signature);
         if (!Modifier.isStatic(signature.getModifiers())) {
             scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         }

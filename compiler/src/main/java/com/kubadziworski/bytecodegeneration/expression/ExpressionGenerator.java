@@ -5,10 +5,7 @@ import com.kubadziworski.bytecodegeneration.statement.BlockStatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.IfStatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.Division;
-import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
-import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
+import com.kubadziworski.domain.node.expression.arthimetic.*;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
@@ -28,26 +25,38 @@ public class ExpressionGenerator {
     private final UnaryExpressionGenerator unaryExpressionGenerator;
     private final BlockStatementGenerator blockStatementGenerator;
     private final IfStatementGenerator ifExpressionGenerator;
+    private final ArgumentStatementGenerator argumentStatementGenerator;
+    private final NotNullCastExpressionGenerator notNullCastExpressionGenerator;
 
     private final StatementGenerator generator;
 
     public ExpressionGenerator(StatementGenerator generator, MethodVisitor methodVisitor) {
         referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor);
-        valueExpressionGenerator = new ValueExpressionGenerator( methodVisitor);
-        callExpressionGenerator = new CallExpressionGenerator(  methodVisitor);
-        arithmeticExpressionGenerator = new ArithmeticExpressionGenerator( methodVisitor);
-        conditionalExpressionGenerator = new ConditionalExpressionGenerator( methodVisitor);
-        parameterExpressionGenerator = new ParameterExpressionGenerator( methodVisitor);
+        valueExpressionGenerator = new ValueExpressionGenerator(methodVisitor);
+        callExpressionGenerator = new CallExpressionGenerator(methodVisitor);
+        arithmeticExpressionGenerator = new ArithmeticExpressionGenerator(methodVisitor);
+        conditionalExpressionGenerator = new ConditionalExpressionGenerator(methodVisitor);
+        parameterExpressionGenerator = new ParameterExpressionGenerator(methodVisitor);
         prefixExpressionGenerator = new PrefixExpressionGenerator(methodVisitor);
         popExpressionGenerator = new PopExpressionGenerator(methodVisitor);
         dupExpressionGenerator = new DupExpressionGenerator(methodVisitor);
         unaryExpressionGenerator = new UnaryExpressionGenerator(methodVisitor);
-        blockStatementGenerator = new BlockStatementGenerator( methodVisitor);
-        ifExpressionGenerator = new IfStatementGenerator( methodVisitor);
+        blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
+        ifExpressionGenerator = new IfStatementGenerator(methodVisitor);
+        argumentStatementGenerator = new ArgumentStatementGenerator(methodVisitor);
+        notNullCastExpressionGenerator = new NotNullCastExpressionGenerator(methodVisitor);
         this.generator = generator;
     }
 
-    public void generate(IfExpression ifExpression,  StatementGenerator statementGenerator) {
+    public void generate(NotNullCastExpression castExpression, StatementGenerator statementGenerator) {
+        notNullCastExpressionGenerator.generate(castExpression, statementGenerator);
+    }
+
+    public void generate(Argument argument, StatementGenerator statementGenerator) {
+        argumentStatementGenerator.generate(argument, statementGenerator);
+    }
+
+    public void generate(IfExpression ifExpression, StatementGenerator statementGenerator) {
         ifExpressionGenerator.generate(ifExpression, statementGenerator);
     }
 
@@ -59,7 +68,7 @@ public class ExpressionGenerator {
         unaryExpressionGenerator.generate(unaryExpression, generator);
     }
 
-    public void generate(DupExpression dupExpression,  StatementGenerator statementGenerator) {
+    public void generate(DupExpression dupExpression, StatementGenerator statementGenerator) {
         dupExpressionGenerator.generate(dupExpression, statementGenerator);
     }
 
@@ -75,7 +84,7 @@ public class ExpressionGenerator {
         referenceExpressionGenerator.generate(reference, getScope());
     }
 
-    public void generate(IncrementDecrementExpression incrementDecrementExpression,  StatementGenerator statementGenerator) {
+    public void generate(IncrementDecrementExpression incrementDecrementExpression, StatementGenerator statementGenerator) {
         prefixExpressionGenerator.generate(incrementDecrementExpression, getScope(), statementGenerator);
     }
 
@@ -87,19 +96,23 @@ public class ExpressionGenerator {
         valueExpressionGenerator.generate(value);
     }
 
-    public void generate(ConstructorCall constructorCall,  StatementGenerator statementGenerator) {
+    public void generate(ConstructorCall constructorCall, StatementGenerator statementGenerator) {
         callExpressionGenerator.generate(constructorCall, getScope(), statementGenerator);
     }
 
-    public void generate(SuperCall superCall,  StatementGenerator statementGenerator) {
+    public void generate(SuperCall superCall, StatementGenerator statementGenerator) {
         callExpressionGenerator.generate(superCall, getScope(), statementGenerator);
     }
 
-    public void generate(FunctionCall functionCall,  StatementGenerator statementGenerator) {
+    public void generate(FunctionCall functionCall, StatementGenerator statementGenerator) {
         callExpressionGenerator.generate(functionCall, statementGenerator);
     }
 
-    public void generate(Addition expression,  StatementGenerator statementGenerator) {
+    public void generate(PureArithmeticExpression expression, StatementGenerator statementGenerator) {
+        arithmeticExpressionGenerator.generate(expression, statementGenerator);
+    }
+
+    public void generate(Addition expression, StatementGenerator statementGenerator) {
         arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
@@ -107,11 +120,11 @@ public class ExpressionGenerator {
         arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
-    public void generate(Multiplication expression,  StatementGenerator statementGenerator) {
+    public void generate(Multiplication expression, StatementGenerator statementGenerator) {
         arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
-    public void generate(Division expression,  StatementGenerator statementGenerator) {
+    public void generate(Division expression, StatementGenerator statementGenerator) {
         arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 

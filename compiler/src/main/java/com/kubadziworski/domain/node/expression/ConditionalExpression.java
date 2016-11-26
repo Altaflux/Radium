@@ -4,8 +4,8 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
-import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.exception.MixedComparisonNotAllowedException;
 
 /**
@@ -25,18 +25,22 @@ public class ConditionalExpression extends ElementImpl implements Expression {
 
     public ConditionalExpression(NodeData element, Expression leftExpression, Expression rightExpression, CompareSign compareSign) {
         super(element);
-        this.type = BuiltInType.BOOLEAN;
+        this.type = PrimitiveTypes.BOOLEAN_TYPE;
         this.compareSign = compareSign;
         this.leftExpression = leftExpression;
         this.rightExpression = rightExpression;
         boolean leftExpressionIsPrimitive = leftExpression.getType().isPrimitive();
         boolean rightExpressionIsPrimitive = rightExpression.getType().isPrimitive();
-        isPrimitiveComparison = leftExpressionIsPrimitive && rightExpressionIsPrimitive;
-        boolean isObjectsComparison = !leftExpressionIsPrimitive && !rightExpressionIsPrimitive;
-        boolean isMixedComparison = !isPrimitiveComparison && !isObjectsComparison;
-        if (isMixedComparison) {
+
+        if(leftExpressionIsPrimitive && !rightExpressionIsPrimitive){
             throw new MixedComparisonNotAllowedException(leftExpression.getType(), rightExpression.getType());
         }
+        isPrimitiveComparison = leftExpressionIsPrimitive;
+//        boolean isObjectsComparison = !leftExpressionIsPrimitive && !rightExpressionIsPrimitive;
+//        boolean isMixedComparison = !isPrimitiveComparison && !isObjectsComparison;
+//        if (isMixedComparison) {
+//            throw new MixedComparisonNotAllowedException(leftExpression.getType(), rightExpression.getType());
+//        }
     }
 
     public CompareSign getCompareSign() {

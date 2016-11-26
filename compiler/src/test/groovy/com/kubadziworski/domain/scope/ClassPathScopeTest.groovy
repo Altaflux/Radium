@@ -4,7 +4,10 @@ import com.kubadziworski.domain.node.expression.Parameter
 import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
+import com.kubadziworski.domain.type.Type
+import com.kubadziworski.domain.type.intrinsic.TypeProjection
 import com.kubadziworski.domain.type.intrinsic.UnitType
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import spock.lang.Specification
 
 import java.lang.reflect.Modifier
@@ -15,7 +18,7 @@ class ClassPathScopeTest extends Specification {
     def "GetMethodSignature"() {
         given:
         def expectedParams = expectedParamsTypes.collect {
-            new Parameter("arg", it, null)
+            new Parameter("arg0", it, null)
         }
         def expectedSignature = new FunctionSignature(expectedName, expectedParams, expectedReturnType, Modifier.PUBLIC, type)
         when:
@@ -25,10 +28,10 @@ class ClassPathScopeTest extends Specification {
         actualSignature.isPresent()
         actualSignature.get().equals(expectedSignature);
         where:
-        methodName     | type                              | args                                         | expectedName   | expectedParamsTypes                        | expectedReturnType
-        "equals"       | DefaultTypes.STRING                 | [new JavaClassType("java.lang.Object")]    | "equals"       | [new JavaClassType("java.lang.Object")]        | BuiltInType.BOOLEAN
-        "hashCode"     | new JavaClassType("java.lang.Object") | []                                           | "hashCode"     | []                                         | BuiltInType.INT
-        "replaceFirst" | DefaultTypes.STRING                 | [DefaultTypes.STRING, DefaultTypes.STRING] | "replaceFirst" | [DefaultTypes.STRING, DefaultTypes.STRING] | DefaultTypes.STRING
+        methodName     | type                              | args                                         | expectedName   | expectedParamsTypes                                                                    | expectedReturnType
+        "equals"       | DefaultTypes.STRING                 | [new JavaClassType("java.lang.Object")]    | "equals"       | [new TypeProjection(new JavaClassType("radium.Any"), Type.Nullability.UNKNOWN)]          | PrimitiveTypes.BOOLEAN_TYPE
+        "hashCode"     | new JavaClassType("java.lang.Object") | []                                           | "hashCode"     | []                                                                                   | PrimitiveTypes.INT_TYPE
+        "replaceFirst" | DefaultTypes.STRING                 | [DefaultTypes.STRING, DefaultTypes.STRING] | "replaceFirst" | [new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN),new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN)] | new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN)
     }
 
     def "GetConstructorSignature should not return private method"() {
@@ -39,7 +42,7 @@ class ClassPathScopeTest extends Specification {
         !actualSignature.isPresent()
         where:
         methodName             | type              | args
-        "indexOfSupplementary" | DefaultTypes.STRING | [BuiltInType.INT, BuiltInType.INT]
+        "indexOfSupplementary" | DefaultTypes.STRING | [PrimitiveTypes.INT_TYPE, PrimitiveTypes.INT_TYPE]
     }
 
     def "GetConstructorSignature"() {
@@ -58,7 +61,7 @@ class ClassPathScopeTest extends Specification {
         className          | args                   | expectedClassName  | expectedParamsTypes
         "java.lang.String" | []                     | "java.lang.String" | []
         "java.lang.String" | [BuiltInType.BYTE_ARR] | "java.lang.String" | [BuiltInType.BYTE_ARR]
-        "java.lang.Long"   | [BuiltInType.LONG]     | "java.lang.Long"   | [BuiltInType.LONG]
+        "java.lang.Long"   | [PrimitiveTypes.LONG_TYPE]     | "java.lang.Long"   | [PrimitiveTypes.LONG_TYPE]
     }
 
     def "GetConstructorSignature should not return private Constructor"() {

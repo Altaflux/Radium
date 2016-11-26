@@ -42,7 +42,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         }
         List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
 
-        if(ctx.SUPER() != null){
+        if (ctx.SUPER() != null) {
             return createSuperFunctionCall(ctx, functionName, arguments);
         }
 

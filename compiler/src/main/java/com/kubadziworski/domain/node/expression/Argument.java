@@ -13,10 +13,16 @@ public class Argument extends ElementImpl implements Expression {
 
     private final String parameterName;
     private final Expression expression;
+    private final Type receiverType;
 
     public Argument(Expression expression, String parameterName) {
+        this(expression, parameterName, null);
+    }
+
+    public Argument(Expression expression, String parameterName, Type receiverType) {
         this.parameterName = parameterName;
         this.expression = expression;
+        this.receiverType = receiverType;
     }
 
     @Override
@@ -24,9 +30,17 @@ public class Argument extends ElementImpl implements Expression {
         return expression.getType();
     }
 
+    public Type getReceiverType() {
+        return receiverType;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
     @Override
     public void accept(StatementGenerator generator) {
-        expression.accept(generator);
+        generator.generate(this);
     }
 
     public Optional<String> getParameterName() {

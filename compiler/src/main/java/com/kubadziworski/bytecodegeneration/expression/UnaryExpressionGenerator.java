@@ -4,7 +4,7 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.UnarySign;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
-import com.kubadziworski.domain.type.BuiltInType;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.exception.CompilationException;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -30,7 +30,7 @@ public class UnaryExpressionGenerator {
     }
 
     public void doBooleanNegation(Expression expression, StatementGenerator expressionGenerator) {
-        if (!expression.getType().equals(BuiltInType.BOOLEAN)) {
+        if (!expression.getType().equals(PrimitiveTypes.BOOLEAN_TYPE)) {
             throw new CompilationException();
         }
 

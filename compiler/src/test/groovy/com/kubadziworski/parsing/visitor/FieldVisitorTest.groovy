@@ -5,11 +5,10 @@ import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.FunctionSignature
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
-import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import spock.lang.Specification
-
 /**
  * Created by kuba on 13.05.16.
  */
@@ -19,6 +18,8 @@ class FieldVisitorTest extends Specification {
             EnkelParser.FieldContext fieldContext = Mock()
             EnkelParser.NameContext nameContext = Mock()
             EnkelParser.TypeContext typeContext = Mock()
+            EnkelParser.TypeCompositionContext compositionContext = Mock()
+            typeContext.simpleName = compositionContext
             Scope scope = Mock()
         when:
             def field = new FieldVisitor(scope).visitField(fieldContext)
@@ -34,14 +35,14 @@ class FieldVisitorTest extends Specification {
             1* nameContext.getText() >> name
             1* fieldContext.name() >> nameContext
             1* fieldContext.type() >> typeContext
-            1* typeContext.getText() >> typeName
+            1* compositionContext.getText() >> typeName
 
             if(typeName == "java.lang.Integer"){
                 1* scope.resolveClassName(typeName) >> new JavaClassType("java.lang.Integer")
             }
         where:
         name        | typeName            | expectedType                           | expectedOwnerInternalName
-        "var"       | "int"               | BuiltInType.INT                        | "com/kubadziworski/test/DummyClass"
+        "var"       | "radium.Int"               | PrimitiveTypes.INT_TYPE                | "com/kubadziworski/test/DummyClass"
         "stringVar" | "java.lang.String"  | DefaultTypes.STRING                    | "com/kubadziworski/test/DummyClass"
         "objVar"    | "java.lang.Integer" | new JavaClassType("java.lang.Integer") | "com/kubadziworski/test/DummyClass"
     }

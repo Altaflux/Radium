@@ -14,7 +14,7 @@ public class Addition extends ArthimeticExpression {
     }
 
     public Addition(NodeData nodeData, Expression leftExpress, Expression rightExpress) {
-        super(leftExpress, rightExpress);
+        super(nodeData, leftExpress, rightExpress);
     }
 
     @Override

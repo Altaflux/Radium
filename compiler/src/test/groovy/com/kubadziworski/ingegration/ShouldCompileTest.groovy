@@ -103,7 +103,10 @@ class ShouldCompileTest extends Specification {
 								SumCalculator {
 									start() {
 										var expected = 8
-										var actual = sum(3,5)
+										var firstNum:Int = 3
+										var secondNum:Int = 5
+
+										var actual = sum(firstNum , secondNum)
 										if( actual == expected ) {
 											print "test passed"
 										} else {
@@ -111,8 +114,14 @@ class ShouldCompileTest extends Specification {
 										}
 									}
 
+                                fooo(){
+                                    bla(3)
+                                }
+                                Int? bla(Int? mip){
+                                    return mip;
+                                }
 
-								int sum (int x ,int y) {
+								Int sum (Int x ,Int y) {
 									print x
 									print y
 									return x+y
@@ -180,8 +189,8 @@ class ShouldCompileTest extends Specification {
 							 }
 
 							 primitiveComparisonTest {
-								 var a:int = 3
-								 var b:int = 3
+								 var a:Int = 3
+								 var b:Int = 3
 
 								 print "Comparing primitive " + a +" and " + b
 
@@ -215,10 +224,10 @@ class ShouldCompileTest extends Specification {
                              }
 
 							 objectComparisonTest() {
-								 var a = new java.lang.Integer(3)
-								 var b = new java.lang.Integer(3)
+								 var a:Int = 3
+								 var b:Int = 3
 
-								  print "Comparing integer " + a.toString() +" and " + b.toString()
+								  print "Comparing integer " + a +" and " + b
 
 
 								 var result = a == b
@@ -267,10 +276,10 @@ class ShouldCompileTest extends Specification {
 							  }
 
 							 objectComparisonTest2() {
-								  var a = new java.lang.Integer(3)
-								  var b = new java.lang.Integer(4)
+								  var a = 3
+								  var b = 4
 
-								print "Comparing integer " + a.toString() +" and " + b.toString()
+								print "Comparing integer " + a +" and " + b
 
 								  var result = a == b
 								  assert(expected -> false , actual -> result)
@@ -292,7 +301,7 @@ class ShouldCompileTest extends Specification {
 								  assert(actual -> result, expected -> true )
 							  }
 
-							  Unit assert(boolean actual,boolean expected) {
+							  Unit assert(Boolean actual,Boolean expected) {
 								if (actual == expected) {
 									print "OK"
 								}
@@ -306,7 +315,7 @@ class ShouldCompileTest extends Specification {
     private static final unaryExpressionTest = """
 							UnaryExpressions {
 
-								globalField : int
+								globalField : Int
 
 								start(){
 
@@ -335,7 +344,7 @@ class ShouldCompileTest extends Specification {
 
 								}
 
-								Unit assert(boolean actual,boolean expected) {
+								Unit assert(Boolean actual,Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -347,7 +356,7 @@ class ShouldCompileTest extends Specification {
                             """
     private static final globalLocal = """
 							GlobalLocal {
-								x : int
+								x : Int
 
 								start(){
 									x = 2;
@@ -358,7 +367,7 @@ class ShouldCompileTest extends Specification {
 									assert(expected -> true , actual -> x == 1);
 									assert(expected -> true , actual -> this.x == 2);
 								}
-								Unit assert(boolean actual,boolean expected) {
+								Unit assert(Boolean actual,Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -375,7 +384,7 @@ class ShouldCompileTest extends Specification {
 									print java.lang.System.out.hashCode();
 									com.kubadziworski.test.Library.execute("Hello!!");
 								}
-								Unit assert(boolean actual,boolean expected) {
+								Unit assert(Boolean actual,Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -394,7 +403,7 @@ class ShouldCompileTest extends Specification {
 									assert(expected -> true , actual -> 1 == 1);
 									this.assert(expected -> true , actual -> 1 == 1);
 								}
-								static Unit assert(boolean actual,boolean expected) {
+								static Unit assert(Boolean actual,Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -410,7 +419,7 @@ class ShouldCompileTest extends Specification {
 
 								start(){
 									execute("hello");
-									var myStuff = new Integer(1);
+									var myStuff = 1
 									print myStuff
 									print statField
 								}
@@ -420,7 +429,7 @@ class ShouldCompileTest extends Specification {
     private final static getterSetter =
             """
 							GetterSetter {
-								myField : int
+								myField : Int
                                 get(){
                                     print "returning value getter"
                                     print field
@@ -436,7 +445,7 @@ class ShouldCompileTest extends Specification {
                                     var result = myField == 5
 									assert(result, true)
 								}
-                                Unit assert(boolean actual,boolean expected) {
+                                Unit assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -449,7 +458,7 @@ class ShouldCompileTest extends Specification {
     private final static getterStatement =
             """
 							GetterStatement {
-								myField : int
+								myField : Int
                                 get() = field
                                 set(value){
                                     print "setting value"
@@ -461,7 +470,7 @@ class ShouldCompileTest extends Specification {
                                     var result = myField == 5
 									assert(result, true)
 								}
-                                Unit assert(boolean actual,boolean expected) {
+                                Unit assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -483,9 +492,9 @@ class ShouldCompileTest extends Specification {
 								}
 
                                 loggingFunction(String stuff) = print stuff
-								int singleIntFunction() = 300
+								Int singleIntFunction() = 300
 
-                                Unit assert(boolean actual,boolean expected) {
+                                Unit assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -540,7 +549,7 @@ class ShouldCompileTest extends Specification {
 									var blizz = if true 8 else 9
 									assert(blizz == 8, true)
 								}
-                                Unit assert(boolean actual,boolean expected) {
+                                Unit assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -552,7 +561,7 @@ class ShouldCompileTest extends Specification {
 							"""
     private static final myTryStatement = """
 							TryStatement {
-                                myTrue : boolean = true
+                                myTrue : Boolean = true
 
 								start(){
 								    process();
@@ -562,7 +571,7 @@ class ShouldCompileTest extends Specification {
                                     print finReturn()
 								}
 
-                                int finReturn(){
+                                Int finReturn(){
 
                                     try{
                                         return throwingMethod();
@@ -576,7 +585,7 @@ class ShouldCompileTest extends Specification {
 
                                 }
 
-                                int throwingMethod(){
+                                Int throwingMethod(){
                                     throw new RuntimeException()
                                 }
 
@@ -630,7 +639,7 @@ class ShouldCompileTest extends Specification {
                                           }
 						        }
 
-								Unit assert(boolean actual,boolean expected) {
+								Unit assert(Boolean actual, Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -643,13 +652,13 @@ class ShouldCompileTest extends Specification {
     private static final fieldInitializing =
             """
 							FieldInitializing {
-								myField : int = 10
+								myField : Int = 10
 
 								start {
                                     var result = myField == 10
                                     assert(result, true)
 								}
-                                Unit assert(boolean actual,boolean expected) {
+                                Unit assert(Boolean actual, Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -663,7 +672,7 @@ class ShouldCompileTest extends Specification {
     private final static fieldInitializingWithConstructor =
             """
 							FieldInitializingWithConstructor {
-                                myField : int = 10
+                                myField : Int = 10
 
                                 FieldInitializingWithConstructor() {
                                     print myField
@@ -674,7 +683,7 @@ class ShouldCompileTest extends Specification {
                                     assert(result, true)
                                 }
 
-                             Unit assert(boolean actual,boolean expected) {
+                             Unit assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -687,20 +696,20 @@ class ShouldCompileTest extends Specification {
     private static final detectReturnCompleteStatement =
             """
                     DetectReturnCompleteStatement {
-                        myField : int = 10
+                        myField : Int = 10
 
                         start(){
                             assert(foo(), true);
                         }
 
-                        boolean foo(){
+                        Boolean foo(){
                             if(myField == 10){
                                 return true;
                             }else {
                                 return false;
                             }
                         }
-                         Unit assert(boolean actual,boolean expected) {
+                         Unit assert(Boolean actual, Boolean expected) {
                                 if (actual == expected) {
                                     print "OK"
                                 }
@@ -782,7 +791,7 @@ class ShouldCompileTest extends Specification {
                       return "myToString :: " + super.toString()
                     }
 
-                     Unit assert(boolean actual,boolean expected) {
+                     Unit assert(Boolean actual,Boolean expected) {
                             if (actual == expected) {
                                 print "OK"
                             }
@@ -793,6 +802,17 @@ class ShouldCompileTest extends Specification {
                 }
             """
 
+    private static final typeCoercion = """
+                TypeCoercion {
+
+                    start(){
+
+
+
+                    }
+
+                }
+            """
     @Unroll
     def "Should Compile and run"() {
         expect:

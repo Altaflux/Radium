@@ -10,9 +10,9 @@ import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.GlobalScope
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
-import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes
 import org.objectweb.asm.MethodVisitor
 import spock.lang.Specification
@@ -40,7 +40,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
             1* methodVisitor.visitFieldInsn(Opcodes.GETFIELD,field.ownerInternalName,field.name,field.type.descriptor)
         where:
             name        | owner                 | type
-            "intVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | BuiltInType.INT
+            "intVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | PrimitiveTypes.INT_TYPE
             "stringVar" | new JavaClassType("com.kubadziworski.test.DummyClass") | DefaultTypes.STRING
             "objVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | new JavaClassType("java.lang.Object")
     }
@@ -60,7 +60,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
         where:
             name        | owner                 | type                                                                   | expectedOpcode
             "objVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | new JavaClassType("java.lang.Object") | Opcodes.ALOAD
-            "intVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | BuiltInType.INT                       | Opcodes.ILOAD
+            "intVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | PrimitiveTypes.INT_TYPE               | Opcodes.ILOAD
             "stringVar" | new JavaClassType("com.kubadziworski.test.DummyClass") | DefaultTypes.STRING                   | Opcodes.ALOAD
     }
 }

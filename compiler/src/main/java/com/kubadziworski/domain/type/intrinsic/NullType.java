@@ -53,6 +53,10 @@ public final class NullType implements Type {
 
     @Override
     public int inheritsFrom(Type type) {
+        if(!type.isNullable().equals(Nullability.NOT_NULL)){
+            return -1;
+        }
+
         if (type.isPrimitive()) {
             return -1;
         }
@@ -123,4 +127,21 @@ public final class NullType implements Type {
     public boolean isPrimitive() {
         return false;
     }
+
+    @Override
+    public Nullability isNullable() {
+        return Nullability.NULLABLE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+
+        if (o instanceof TypeProjection) {
+            o = ((TypeProjection) o).getInternalType();
+        }
+        return o instanceof Type && getName().equals(((Type) o).getName());
+    }
+
 }

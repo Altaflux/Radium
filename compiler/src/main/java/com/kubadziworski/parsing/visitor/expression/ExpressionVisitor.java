@@ -7,6 +7,7 @@ import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.BlockExpression;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.expression.NotNullCastExpression;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.function.CallExpressionVisitor;
@@ -28,6 +29,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final IfStatementExpressionVisitor ifStatementExpressionVisitor;
     private final BlockStatementVisitor blockStatementVisitor;
     private final TryCatchExpressionVisitor tryCatchExpressionVisitor;
+    private final NotNullCastExpressionVisitor notNullCastExpressionVisitor;
 
     public ExpressionVisitor(Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
@@ -40,6 +42,12 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         ifStatementExpressionVisitor = new IfStatementExpressionVisitor(this);
         blockStatementVisitor = new BlockStatementVisitor(scope);
         tryCatchExpressionVisitor = new TryCatchExpressionVisitor(this, scope);
+        notNullCastExpressionVisitor = new NotNullCastExpressionVisitor(this);
+    }
+
+    @Override
+    public NotNullCastExpression visitNotNullCastExpression(EnkelParser.NotNullCastExpressionContext ctx){
+        return notNullCastExpressionVisitor.visitNotNullCastExpression(ctx);
     }
 
     @Override

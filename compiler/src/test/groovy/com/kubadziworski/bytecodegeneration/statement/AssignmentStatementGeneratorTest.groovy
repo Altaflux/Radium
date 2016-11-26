@@ -5,9 +5,9 @@ import com.kubadziworski.domain.node.statement.Assignment
 import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
-import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import spock.lang.Specification
@@ -36,7 +36,7 @@ class AssignmentStatementGeneratorTest extends Specification {
             1*methodVisitor.visitVarInsn(expectedOpcode,3)
         where:
             varName  | assignmentExpression                      | expectedOpcode
-            "var"    | new Value(BuiltInType.INT, "25")          | Opcodes.ISTORE
+            "var"    | new Value(PrimitiveTypes.INT_TYPE, "25")  | Opcodes.ISTORE
             "strVar" | new Value(DefaultTypes.STRING, "somestr") | Opcodes.ASTORE
     }
 
@@ -55,7 +55,7 @@ class AssignmentStatementGeneratorTest extends Specification {
             1* methodVisitor.visitFieldInsn(Opcodes.PUTFIELD,field.ownerInternalName,field.name,field.type.descriptor)
         where:
             varName     | variableOwner             | variableType        | assignmentExpression
-            "var"       | new JavaClassType("Main")     | BuiltInType.INT | new Value(BuiltInType.INT, "25")
+            "var"       | new JavaClassType("Main")     | PrimitiveTypes.INT_TYPE | new Value(PrimitiveTypes.INT_TYPE, "25")
             "stringVar" | new JavaClassType("Main") | DefaultTypes.STRING | new Value(DefaultTypes.STRING, "someString")
     }
 }

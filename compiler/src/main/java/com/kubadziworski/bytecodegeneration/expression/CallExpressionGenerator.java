@@ -6,6 +6,7 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
@@ -14,6 +15,8 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CallExpressionGenerator {
 
@@ -75,7 +78,14 @@ public class CallExpressionGenerator {
         if (arguments.size() > parameters.size()) {
             throw new BadArgumentsToFunctionCallException(call);
         }
-        arguments = getSortedArguments(arguments, parameters);
+        List<Argument> sortedArguments = getSortedArguments(arguments, parameters);
+
+        arguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
+            Argument argument = sortedArguments.get(i);
+            Type parameterType = parameters.get(i).getType();
+            return new Argument(argument.getExpression(), argument.getParameterName().orElse(null), parameterType);
+        }).collect(Collectors.toList());
+
         arguments.forEach(argument -> argument.accept(statementGenerator));
         generateDefaultParameters(call, parameters, arguments, statementGenerator);
     }
@@ -97,6 +107,7 @@ public class CallExpressionGenerator {
                 .orElseThrow(() -> new WrongArgumentNameException(argument, parameters));
     }
 
+    //TODO I THINK THIS WILL NOT WORK WITH PRECOMPILED RADIUM CLASSES
     private void generateDefaultParameters(Call call, List<Parameter> parameters, List<Argument> arguments, StatementGenerator statementGenerator) {
         for (int i = arguments.size(); i < parameters.size(); i++) {
             Expression defaultParameter = parameters.get(i).getDefaultValue()

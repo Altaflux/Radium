@@ -4,8 +4,12 @@ import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 
 public class ClassTypeFactory {
@@ -20,6 +24,25 @@ public class ClassTypeFactory {
         Map<String, Type> typeMap = new HashMap<>();
         typeMap.put("radium.Any", AnyType.INSTANCE);
         typeMap.put("radium.Unit", UnitType.INSTANCE);
+        typeMap.put("radium.Int", PrimitiveTypes.INT_TYPE);
+        typeMap.put("radium.Float", PrimitiveTypes.FLOAT_TYPE);
+        typeMap.put("radium.Long", PrimitiveTypes.LONG_TYPE);
+        typeMap.put("radium.Double", PrimitiveTypes.DOUBLE_TYPE);
+        typeMap.put("radium.Short", PrimitiveTypes.SHORT_TYPE);
+        typeMap.put("radium.Char", PrimitiveTypes.CHAR_TYPE);
+        typeMap.put("radium.Byte", PrimitiveTypes.BYTE_TYPE);
+        typeMap.put("radium.Boolean", PrimitiveTypes.BOOLEAN_TYPE);
+
+        ///MASK JAVA TYPES
+//        typeMap.put("java.lang.Integer", PrimitiveTypes.INT_TYPE);
+//        typeMap.put("java.lang.Float", PrimitiveTypes.FLOAT_TYPE);
+//        typeMap.put("java.lang.Long", PrimitiveTypes.LONG_TYPE);
+//        typeMap.put("java.lang.Double", PrimitiveTypes.DOUBLE_TYPE);
+//        typeMap.put("java.lang.Short", PrimitiveTypes.SHORT_TYPE);
+//        typeMap.put("java.lang.Character", PrimitiveTypes.CHAR_TYPE);
+//        typeMap.put("java.lang.Byte", PrimitiveTypes.BYTE_TYPE);
+//        typeMap.put("java.lang.Boolean", PrimitiveTypes.BOOLEAN_TYPE);
+
         syntheticTypes = Collections.unmodifiableMap(typeMap);
     }
 

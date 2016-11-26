@@ -20,7 +20,6 @@ public enum BuiltInType implements Type {
     LONG("long", long.class, "J", TypeSpecificOpcodes.LONG, 2),
     FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT, 1),
     DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE, 2),
-    STRING("string", String.class, "Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, 1),
     BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT, 1),
     INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT, 1),
     CHAR_ARR("char[]", char[].class, "[C", TypeSpecificOpcodes.OBJECT, 1),
@@ -152,8 +151,13 @@ public enum BuiltInType implements Type {
     }
 
     @Override
-    public boolean isPrimitive(){
+    public boolean isPrimitive() {
         return opcodes.isPrimitive();
+    }
+
+    @Override
+    public Nullability isNullable() {
+        return Nullability.NOT_NULL;
     }
 
     @Override

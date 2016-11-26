@@ -1,37 +1,44 @@
 package com.kubadziworski.util;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
-import com.kubadziworski.domain.type.BuiltInType;
-import com.kubadziworski.domain.type.DefaultTypes;
+import com.kubadziworski.domain.type.BoxableType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.NullType;
+import com.kubadziworski.domain.type.intrinsic.TypeProjection;
+import org.objectweb.asm.commons.InstructionAdapter;
 
-import java.util.Map;
-import java.util.Optional;
-
-/**
- * Created by kuba on 17.05.16.
- */
 public class PrimitiveTypesWrapperFactory {
 
-    private final static BiMap<BuiltInType,Type> types = ImmutableBiMap.of(
-            BuiltInType.INT, DefaultTypes.Integer(),
-            BuiltInType.BOOLEAN,DefaultTypes.Boolean(),
-            BuiltInType.FLOAT,DefaultTypes.Float(),
-            BuiltInType.DOUBLE,DefaultTypes.Double()
-    );
 
-    private final static Map<Type,String> toPrimitiveMethodName = ImmutableMap.of(
-            DefaultTypes.Integer(),"intValue"
-    );
+    public static void coerce(Type to, Type from, InstructionAdapter v) {
 
-    public static Optional<BuiltInType> getPrimitiveForWrapper(Type type) {
-        return Optional.ofNullable(types.inverse().get(type));
+        if(to instanceof TypeProjection){
+            to = ((TypeProjection) to).getInternalType();
+        }
+        if(from instanceof TypeProjection){
+            from = ((TypeProjection) from).getInternalType();
+        }
+
+        if(from.equals(NullType.INSTANCE)){
+            return;
+        }
+
+        if (to.equals(from)) return;
+
+        if (from instanceof BoxableType && to instanceof BoxableType) {
+            if (((BoxableType) to).isBoxed() && !((BoxableType) from).isBoxed()) {
+                BoxUnboxer.box(org.objectweb.asm.Type.getType(from.getDescriptor()), org.objectweb.asm.Type.getType(to.getDescriptor()), v);
+                coerce(to, ((BoxableType) from).getBoxedType(), v);
+            } else if (!((BoxableType) to).isBoxed() && ((BoxableType) from).isBoxed()) {
+                BoxUnboxer.unbox(org.objectweb.asm.Type.getType(((BoxableType) from).getUnBoxedType().getDescriptor()), v);
+                coerce(to, ((BoxableType) from).getUnBoxedType(), v);
+            }else {
+                v.cast(org.objectweb.asm.Type.getType(from.getDescriptor()), org.objectweb.asm.Type.getType(to.getDescriptor()));
+            }
+        } else if (from.isPrimitive() && !to.isPrimitive()) {
+            BoxUnboxer.box(org.objectweb.asm.Type.getType(from.getDescriptor()),
+                    org.objectweb.asm.Type.getType(((BoxableType) from).getBoxedType().getDescriptor()), v);
+        } else {
+            v.cast(org.objectweb.asm.Type.getType(from.getDescriptor()), org.objectweb.asm.Type.getType(to.getDescriptor()));
+        }
     }
-
-    public static Optional<Type> getWrapperForPrimitive(Type type) {
-        return Optional.ofNullable(types.get(type));
-    }
-
 }

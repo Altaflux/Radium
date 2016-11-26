@@ -1,6 +1,8 @@
 package radium;
 
 
+import radium.annotations.NotNull;
+
 /**
  * This is the representation of Void in Radium
  * Its definition is overwritten by ClassTypeFactory, this class is just present
@@ -8,6 +10,7 @@ package radium;
  */
 public class Unit {
 
+    @NotNull
     public static final Unit INSTANCE = new Unit();
 
     private Unit() {

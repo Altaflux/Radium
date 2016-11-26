@@ -1,17 +1,13 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
-import com.kubadziworski.domain.node.RdElement;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.Division;
-import com.kubadziworski.domain.node.expression.arthimetic.Multiplication;
-import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
+import com.kubadziworski.domain.node.expression.arthimetic.*;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.*;
+import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
@@ -240,6 +236,17 @@ public class BaseStatementGenerator implements StatementGenerator {
         expressionGenerator.generate(constructorCall, generator);
     }
 
+    @Override
+    public void generate(PureArithmeticExpression addition) {
+        expressionGenerator.generate(addition, this);
+    }
+
+    @Override
+    public void generate(PureArithmeticExpression addition, StatementGenerator generator) {
+        generateLineNumber(addition);
+        expressionGenerator.generate(addition, generator);
+    }
+
     public void generate(Addition addition) {
         expressionGenerator.generate(addition, this);
     }
@@ -252,6 +259,14 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     public void generate(Parameter parameter) {
         expressionGenerator.generate(parameter);
+    }
+
+    public void generate(Argument argument, StatementGenerator generator) {
+        expressionGenerator.generate(argument, generator);
+    }
+
+    public void generate(Argument argument) {
+        expressionGenerator.generate(argument, this);
     }
 
     @Override
@@ -360,6 +375,17 @@ public class BaseStatementGenerator implements StatementGenerator {
         expressionGenerator.generate(popExpression, generator);
     }
 
+    public void generate(NotNullCastExpression castExpression) {
+        expressionGenerator.generate(castExpression, this);
+    }
+
+    @Override
+    public void generate(NotNullCastExpression castExpression, StatementGenerator generator) {
+        generateLineNumber(castExpression);
+        expressionGenerator.generate(castExpression, generator);
+    }
+
+
 
     public Scope getScope() {
         return parent.getScope();
@@ -371,13 +397,13 @@ public class BaseStatementGenerator implements StatementGenerator {
 
 
     private void generateLineNumber(Statement statement) {
-        if (statement instanceof RdElement) {
-            if (((RdElement) statement).shouldAnalyze()) {
-                if (((RdElement) statement).getStartLine() != lastLine) {
+        if (statement != null) {
+            if (statement.shouldAnalyze()) {
+                if (statement.getStartLine() != lastLine) {
                     Label label = new Label();
                     methodVisitor.visitLabel(label);
-                    methodVisitor.visitLineNumber(((RdElement) statement).getStartLine(), label);
-                    lastLine = ((RdElement) statement).getStartLine();
+                    methodVisitor.visitLineNumber(statement.getStartLine(), label);
+                    lastLine = statement.getStartLine();
                 }
             }
         }

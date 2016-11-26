@@ -2,7 +2,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.ArithmeticOperator;
+import com.kubadziworski.domain.UnaryOperator;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Reference;
@@ -40,7 +40,7 @@ public class PrefixExpressionGenerator {
         }
 
         int operationOpCode;
-        if (incrementDecrementExpression.getOperator().equals(ArithmeticOperator.INCREMENT)) {
+        if (incrementDecrementExpression.getOperator().equals(UnaryOperator.INCREMENT)) {
             operationOpCode = reference.getType().getAddOpcode();
         } else {
             operationOpCode = reference.getType().getSubstractOpcode();

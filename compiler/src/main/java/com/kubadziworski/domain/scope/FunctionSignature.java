@@ -65,15 +65,29 @@ public class FunctionSignature {
         return areArgumentsAndParamsMatchedByIndex(arguments);
     }
 
+    public List<Argument> getMatchedParameters(List<Argument> arguments) {
+        boolean isNamedArgList = arguments.stream().anyMatch(a -> a.getParameterName().isPresent());
+        if (areArgumentsAndParamsMatchedByName(arguments)) {
+            return arguments.stream().map(argument -> new Argument(argument.getExpression(), argument.getParameterName().orElse(null),
+                    getParameterForName(argument.getParameterName().orElse(null)).getType())).collect(Collectors.toList());
+        }
+
+       return IntStream.range(0, arguments.size()).mapToObj(i -> {
+            Argument argument = arguments.get(i);
+            Type parameterType = parameters.get(i).getType();
+            return new Argument(argument.getExpression(), argument.getParameterName().orElse(null), parameterType);
+        }).collect(Collectors.toList());
+    }
+
     private int areArgumentsAndParamsMatchedByIndex(List<Argument> arguments) {
 
         List<Parameter> nonDefault = parameters.stream()
                 .filter(parameter -> !parameter.getDefaultValue().isPresent()).collect(Collectors.toList());
-        if(arguments.size()== 0 && parameters.size() == 0){
+        if (arguments.size() == 0 && parameters.size() == 0) {
             return 0;
         }
-        if(arguments.size() != parameters.size()){
-            if(arguments.size() != nonDefault.size()){
+        if (arguments.size() != parameters.size()) {
+            if (arguments.size() != nonDefault.size()) {
                 return -1;
             }
         }
@@ -88,7 +102,6 @@ public class FunctionSignature {
         } else {
             return list.stream().mapToInt(Integer::intValue).max().orElse(0);
         }
-
     }
 
     private boolean areArgumentsAndParamsMatchedByName(List<Argument> arguments) {

@@ -9,8 +9,10 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.exception.IncompatibleTypesException;
+import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Optional;
 
@@ -81,6 +83,8 @@ public class AssignmentStatementGenerator {
     }
 
     private void castIfNecessary(Type expressionType, Type variableType) {
+        PrimitiveTypesWrapperFactory.coerce(variableType, expressionType, new InstructionAdapter(methodVisitor));
+
         if (!expressionType.equals(variableType)) {
             methodVisitor.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());
         }

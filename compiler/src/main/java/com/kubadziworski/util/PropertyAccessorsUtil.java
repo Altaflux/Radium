@@ -6,20 +6,14 @@ import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.EnkelType;
-
 import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 public class PropertyAccessorsUtil {
@@ -64,7 +58,7 @@ public class PropertyAccessorsUtil {
     }
 
     public static FunctionSignature createGetterForField(Field field) {
-        if (field.getType().equals(BuiltInType.BOOLEAN)) {
+        if (field.getType().equals(PrimitiveTypes.BOOLEAN_TYPE)) {
             return new FunctionSignature("is" + getPropertyMethodSuffix(field.getName()), Collections.emptyList(),
                     field.getType(), Modifier.PUBLIC, field.getOwner());
         }
@@ -98,7 +92,7 @@ public class PropertyAccessorsUtil {
             return Optional.empty();
         } catch (Exception e) {
             return ((EnkelType) field.getOwner()).getScope().map(scope -> {
-                if (field.getType().equals(BuiltInType.BOOLEAN)) {
+                if (field.getType().equals(PrimitiveTypes.BOOLEAN_TYPE)) {
                     return getFunctionSignatureForMethod("is", field, scope, Collections.emptyList());
                 }
                 return getFunctionSignatureForMethod("get", field, scope, Collections.emptyList());

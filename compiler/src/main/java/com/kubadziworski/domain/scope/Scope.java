@@ -31,6 +31,8 @@ public class Scope {
     private final MetaData metaData;
     private final EnkelScope enkelScope;
 
+    private final FunctionSignature currentFunctionSignature;
+
     public Scope(MetaData metaData, ImportResolver importResolver) {
         this.metaData = metaData;
         functionSignatures = new ArrayList<>();
@@ -38,6 +40,7 @@ public class Scope {
         fields = new LinkedMap<>();
         this.importResolver = importResolver;
         this.enkelScope = new EnkelScope(importResolver.getGlobalScope());
+        this.currentFunctionSignature = null;
     }
 
     public Scope(Scope scope) {
@@ -47,6 +50,17 @@ public class Scope {
         localVariables = new LinkedMap<>(scope.getLocalVariables());
         this.importResolver = scope.getImportResolver();
         this.enkelScope = scope.enkelScope;
+        this.currentFunctionSignature = scope.currentFunctionSignature;
+    }
+
+    public Scope(Scope scope, FunctionSignature functionSignature) {
+        metaData = scope.metaData;
+        functionSignatures = Lists.newArrayList(scope.getFunctionSignatures());
+        fields = new LinkedMap<>(scope.getFields());
+        localVariables = new LinkedMap<>(scope.getLocalVariables());
+        this.importResolver = scope.getImportResolver();
+        this.enkelScope = scope.enkelScope;
+        this.currentFunctionSignature = functionSignature;
     }
 
     public void addSignature(FunctionSignature signature) {
@@ -126,6 +140,11 @@ public class Scope {
 
     public void addLocalVariable(LocalVariable variable) {
         localVariables.put(variable.getName(), variable);
+    }
+
+
+    public FunctionSignature getCurrentFunctionSignature() {
+        return currentFunctionSignature;
     }
 
     public LocalVariable getLocalVariable(String varName) {

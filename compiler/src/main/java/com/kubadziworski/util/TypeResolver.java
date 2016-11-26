@@ -9,40 +9,81 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.*;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.NullType;
+import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes.PRIMITIVE_TYPES;
+
 /**
  * Created by kuba on 02.04.16.
  */
 public final class TypeResolver {
 
+    private static final Type BOOLEAN_TYPE = PrimitiveTypes.BOOLEAN_TYPE;
+    private static final Type INT_TYPE = PrimitiveTypes.INT_TYPE;
+    private static final Type LONG_TYPE = PrimitiveTypes.LONG_TYPE;
+    private static final Type DOUBLE_TYPE = PrimitiveTypes.DOUBLE_TYPE;
+    private static final Type FLOAT_TYPE = PrimitiveTypes.FLOAT_TYPE;
+    private static final Type CHAR_TYPE = PrimitiveTypes.CHAR_TYPE;
+
     public static Type getFromTypeContext(TypeContext typeContext) {
-        if (typeContext == null) return UnitType.INSTANCE;
-        return getFromTypeName(typeContext.getText());
+        if (typeContext == null) return new TypeProjection(UnitType.INSTANCE, Type.Nullability.NOT_NULL);
+
+        if (typeContext.nullable != null) {
+            return getFromTypeName(typeContext.simpleName.getText(), Type.Nullability.NULLABLE);
+        }
+        return getFromTypeName(typeContext.simpleName.getText(), Type.Nullability.NOT_NULL);
     }
 
     public static Type getFromTypeContext(TypeContext typeContext, Scope scope) {
         if (typeContext == null) return UnitType.INSTANCE;
-        String typeName = typeContext.getText();
+        String typeName = typeContext.simpleName.getText();
 
-        if (typeName.equals("java.lang.String")) return DefaultTypes.STRING;
+        Type.Nullability nullability = typeContext.nullable != null ? Type.Nullability.NULLABLE : Type.Nullability.NOT_NULL;
+
+        if (typeName.equals("java.lang.String")) return new TypeProjection(DefaultTypes.STRING, nullability);
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
         if (builtInType.isPresent()) return builtInType.get();
-        return scope.resolveClassName(typeName);
+        return new TypeProjection(scope.resolveClassName(typeName), nullability);
     }
 
-    public static Type getFromTypeName(String typeName) {
-        if (typeName.equals("void")) return UnitType.INSTANCE;
-        if (typeName.equals("java.lang.String")) return DefaultTypes.STRING;
+    public static Type getFromTypeName(String typeName, Type.Nullability nullability) {
+
+        if (typeName.equals("java.lang.String")) return new TypeProjection(DefaultTypes.STRING, nullability);
 
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
         if (builtInType.isPresent()) return builtInType.get();
-        return ClassTypeFactory.createClassType(typeName);
+        return new TypeProjection(ClassTypeFactory.createClassType(typeName), nullability);
+    }
+
+
+    //For usage of ReflectionObjectToSignatureMapper
+    public static Type getTypeFromNameWithClazzAlias(String typeName, Type.Nullability nullability){
+        if (typeName.equals("void")) return UnitType.INSTANCE;
+        if (typeName.equals("boolean")) return new TypeProjection(PrimitiveTypes.BOOLEAN_TYPE, nullability);
+        if (typeName.equals("int")) return new TypeProjection(PrimitiveTypes.INT_TYPE, nullability);
+        if (typeName.equals("float")) return new TypeProjection(PrimitiveTypes.FLOAT_TYPE, nullability);
+        if (typeName.equals("double")) return new TypeProjection(PrimitiveTypes.DOUBLE_TYPE, nullability);
+        if (typeName.equals("char")) return new TypeProjection(PrimitiveTypes.CHAR_TYPE, nullability);
+        if (typeName.equals("long")) return new TypeProjection(PrimitiveTypes.LONG_TYPE, nullability);
+        if (typeName.equals("short")) return new TypeProjection(PrimitiveTypes.SHORT_TYPE, nullability);
+
+        if (typeName.equals("java.lang.Boolean")) return new TypeProjection(PrimitiveTypes.BOOLEAN_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Integer")) return new TypeProjection(PrimitiveTypes.INT_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Float")) return new TypeProjection(PrimitiveTypes.FLOAT_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Double")) return new TypeProjection(PrimitiveTypes.DOUBLE_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Character")) return new TypeProjection(PrimitiveTypes.CHAR_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Long")) return new TypeProjection(PrimitiveTypes.LONG_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Short")) return new TypeProjection(PrimitiveTypes.SHORT_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Object")) return new TypeProjection(AnyType.INSTANCE, nullability);
+
+        return getFromTypeName(typeName, nullability);
     }
 
     public static Type getFromValue(EnkelParser.ValueContext value) {
@@ -55,42 +96,42 @@ public final class TypeResolver {
             stringValue = stringValue.replace("_", "");
             if (stringValue.startsWith("0x") || stringValue.startsWith("0X") || stringValue.startsWith("0")) {
                 if (tryInteger(stringValue) != null) {
-                    return BuiltInType.INT;
+                    return INT_TYPE;
                 }
             }
 
             if (stringValue.endsWith("l") || stringValue.endsWith("L")) {
-                return BuiltInType.LONG;
+                return LONG_TYPE;
             }
             if (Ints.tryParse(stringValue) != null) {
-                return BuiltInType.INT;
+                return INT_TYPE;
             } else if (Longs.tryParse(stringValue) != null) {
-                return BuiltInType.LONG;
+                return LONG_TYPE;
             }
         } else if (value.FloatingPointLiteral() != null) {
             stringValue = stringValue.replace("_", "");
 
             if (stringValue.startsWith("0x") || stringValue.startsWith("0X") || stringValue.startsWith("0")) {
                 if (tryLongHex(stringValue) != null) {
-                    return BuiltInType.LONG;
+                    return LONG_TYPE;
                 }
             }
 
             if (stringValue.endsWith("f") || stringValue.endsWith("F")) {
-                return BuiltInType.FLOAT;
+                return FLOAT_TYPE;
             }
             if (Doubles.tryParse(stringValue) != null) {
-                return BuiltInType.DOUBLE;
+                return DOUBLE_TYPE;
             } else if (Floats.tryParse(stringValue) != null) {
-                return BuiltInType.FLOAT;
+                return FLOAT_TYPE;
             }
 
         } else if (value.BOOL() != null) {
-            return BuiltInType.BOOLEAN;
+            return BOOLEAN_TYPE;
         }
 
         if (value.CharacterLiteral() != null) {
-            return BuiltInType.CHAR;
+            return CHAR_TYPE;
         }
 
         return DefaultTypes.STRING;
@@ -127,7 +168,7 @@ public final class TypeResolver {
         if (TypeChecker.isBool(type)) {
             return Boolean.valueOf(stringValue);
         }
-        if (type == BuiltInType.CHAR) {
+        if (type == PrimitiveTypes.CHAR_TYPE) {
             stringValue = StringUtils.removeStart(stringValue, "'");
             stringValue = StringUtils.removeEnd(stringValue, "'");
             return stringValue;
@@ -156,10 +197,19 @@ public final class TypeResolver {
         }
     }
 
-    private static Optional<BuiltInType> getBuiltInType(String typeName) {
-        return Arrays.stream(BuiltInType.values())
+//    private static Optional<BuiltInType> getBuiltdInType(String typeName) {
+//        return Arrays.stream(BuiltInType.values())
+//                .filter(type -> type.getName().equals(typeName))
+//                .findFirst();
+//    }
+
+    private static Optional<Type> getBuiltInType(String typeName) {
+        return PRIMITIVE_TYPES.stream()
                 .filter(type -> type.getName().equals(typeName))
-                .findFirst();
+                .findFirst().map(Optional::of).orElse((Arrays.stream(BuiltInType.values())
+                        .filter(type -> type.getName().equals(typeName))
+                        .map(type -> (Type) type)
+                        .findFirst()));
     }
 
     public static Optional<FunctionSignature> resolveArity(Type owner, Map<Integer, List<FunctionSignature>> functions) {
@@ -209,17 +259,10 @@ public final class TypeResolver {
             return UnitType.INSTANCE;
         }
 
-//        int result = IntStream.range(0, types.size()).map(operand -> {
-//            if (types.get(operand).isPrimitive()) {
-//                return 0;
-//            }
-//            return 1;
-//        }).min().orElse(1);
-
         List<Type> commonTypesList = types.stream()
                 .filter(type -> !type.equals(RadiumBuiltIns.NOTHING_TYPE))
                 .collect(Collectors.toList());
-        if(commonTypesList.isEmpty()){
+        if (commonTypesList.isEmpty()) {
             return RadiumBuiltIns.NOTHING_TYPE;
         }
         return commonTypesList.stream()

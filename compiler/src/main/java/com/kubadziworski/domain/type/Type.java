@@ -14,6 +14,11 @@ import java.util.stream.Collectors;
  * Created by kuba on 28.03.16.
  */
 public interface Type {
+
+    enum Nullability {
+        NULLABLE, NOT_NULL, UNKNOWN
+    }
+
     String getName();
 
     Class<?> getTypeClass();
@@ -56,12 +61,14 @@ public interface Type {
 
     boolean isPrimitive();
 
+    Nullability isNullable();
+
     default FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
         List<FunctionSignature> signatures = getFunctionSignatures();
         Map<Integer, List<FunctionSignature>> functions = signatures.stream()
                 .collect(Collectors.groupingBy(signature -> signature.matches(identifier, arguments)));
 
-        return TypeResolver.resolveArity(this, functions).orElseThrow(() -> new MethodSignatureNotFoundException(identifier, arguments));
+        return TypeResolver.resolveArity(this, functions).orElseThrow(() -> new MethodSignatureNotFoundException(identifier, arguments, this));
     }
 
     default Field getField(String fieldName) {

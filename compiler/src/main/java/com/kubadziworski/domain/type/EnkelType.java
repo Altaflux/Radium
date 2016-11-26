@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class EnkelType implements Type {
+
     private final String name;
     private final Scope scope;
 
@@ -54,6 +55,8 @@ public class EnkelType implements Type {
 
     @Override
     public int inheritsFrom(Type type) {
+
+
         int arity = 0;
         if (type.getName().equals(this.getName())) {
             return arity;
@@ -157,6 +160,11 @@ public class EnkelType implements Type {
     }
 
     @Override
+    public Nullability isNullable() {
+        return Nullability.NOT_NULL;
+    }
+
+    @Override
     public int getStackSize() {
         return 1;
     }
@@ -164,11 +172,9 @@ public class EnkelType implements Type {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
 
-        EnkelType enkelType = (EnkelType) o;
-
-        return name.equals(enkelType.name);
+        return o instanceof Type && getName().equals(((Type) o).getName());
 
     }
 

@@ -5,14 +5,19 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
+import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.node.expression.SuperCall;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.DescriptorFactory;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+
+import java.util.stream.IntStream;
 
 /**
  * Created by kuba on 28.03.16.
@@ -30,6 +35,26 @@ public class MethodGenerator {
         Block block = (Block) function.getRootStatement();
         Scope scope = block.getScope();
         MethodVisitor mv = classWriter.visitMethod(function.getModifiers(), name, description, null, null);
+
+        if (function.getReturnType().isNullable().equals(Type.Nullability.NULLABLE)) {
+            AnnotationVisitor av0 = mv.visitAnnotation("Lradium/annotations/Nullable;", false);
+            av0.visitEnd();
+        }else {
+            AnnotationVisitor av0 = mv.visitAnnotation("Lradium/annotations/NotNull;", false);
+            av0.visitEnd();
+        }
+
+        IntStream.range(0, function.getParameters().size()).forEach(index -> {
+            Parameter parameter = function.getParameters().get(index);
+            if(parameter.getType().isNullable().equals(Type.Nullability.NULLABLE) || parameter.getDefaultValue().isPresent()){
+                AnnotationVisitor av0 = mv.visitParameterAnnotation(index, "Lradium/annotations/Nullable;", false);
+                av0.visitEnd();
+            }else {
+                AnnotationVisitor av0 = mv.visitParameterAnnotation(index, "Lradium/annotations/NotNull;", false);
+                av0.visitEnd();
+            }
+        });
+
         mv.visitCode();
         StatementGenerator statementScopeGenerator = new StatementGeneratorFilter(mv, scope);
         block.accept(statementScopeGenerator);

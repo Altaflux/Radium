@@ -7,7 +7,7 @@ import com.kubadziworski.antlr.EnkelParser.SignExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.SuffixExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.UnaryExpressionContext;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.ArithmeticOperator;
+import com.kubadziworski.domain.UnaryOperator;
 import com.kubadziworski.domain.UnarySign;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
@@ -35,14 +35,14 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
 
     public Expression visitPrefixExpression(PrefixExpressionContext ctx) {
-        ArithmeticOperator operator = ArithmeticOperator.fromString(ctx.operation.getText());
+        UnaryOperator operator = UnaryOperator.fromString(ctx.operation.getText());
         Expression expression = ctx.expression().accept(expressionVisitor);
         if (expression instanceof PropertyAccessorCall) {
             Field field = ((PropertyAccessorCall) expression).getField();
             FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
             Expression operation;
 
-            if (operator.equals(ArithmeticOperator.INCREMENT)) {
+            if (operator.equals(UnaryOperator.INCREMENT)) {
                 operation = new DupExpression(new Addition((expression), new Value(expression.getType(), "1")));
             } else {
                 operation = new DupExpression(new Subtraction((expression), new Value(expression.getType(), "1")));
@@ -58,14 +58,14 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
 
     public Expression visitSuffixExpression(SuffixExpressionContext ctx) {
-        ArithmeticOperator operator = ArithmeticOperator.fromString(ctx.operation.getText());
+        UnaryOperator operator = UnaryOperator.fromString(ctx.operation.getText());
         Expression expression = ctx.expr.accept(expressionVisitor);
         if (expression instanceof PropertyAccessorCall) {
             Field field = ((PropertyAccessorCall) expression).getField();
             FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
             Expression operation;
 
-            if (operator.equals(ArithmeticOperator.INCREMENT)) {
+            if (operator.equals(UnaryOperator.INCREMENT)) {
                 operation = (new Addition((expression), new Value(expression.getType(), "1")));
             } else {
                 operation = (new Subtraction((expression), new Value(expression.getType(), "1")));

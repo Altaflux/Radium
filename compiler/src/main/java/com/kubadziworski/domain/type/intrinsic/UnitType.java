@@ -43,6 +43,7 @@ public class UnitType extends JavaClassType {
         return "UnitType{} " + super.toString();
     }
 
+
     private static class UnitExpression extends ElementImpl implements Expression {
 
         private final Expression expression;

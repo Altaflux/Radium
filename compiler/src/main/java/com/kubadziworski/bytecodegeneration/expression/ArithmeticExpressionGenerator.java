@@ -5,8 +5,10 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 public class ArithmeticExpressionGenerator {
 
@@ -43,6 +45,18 @@ public class ArithmeticExpressionGenerator {
         evaluateArithmeticComponents(expression, statementGenerator);
         Type type = expression.getType();
         methodVisitor.visitInsn(type.getDividOpcode());
+    }
+
+    public void generate(PureArithmeticExpression pureArithmeticExpression, StatementGenerator statementGenerator) {
+        InstructionAdapter ad = new InstructionAdapter(methodVisitor);
+        Expression leftExpression = pureArithmeticExpression.getLeftExpression();
+        leftExpression.accept(statementGenerator);
+        PrimitiveTypesWrapperFactory.coerce(pureArithmeticExpression.getType(), leftExpression.getType(), ad);
+
+        Expression rightExpression = pureArithmeticExpression.getRightExpression();
+        rightExpression.accept(statementGenerator);
+        PrimitiveTypesWrapperFactory.coerce(pureArithmeticExpression.getType(), rightExpression.getType(), ad);
+        methodVisitor.visitInsn(pureArithmeticExpression.getOperator().getOperationOpCode(pureArithmeticExpression.getType()));
     }
 
     private void evaluateArithmeticComponents(ArthimeticExpression expression, StatementGenerator statementGenerator) {

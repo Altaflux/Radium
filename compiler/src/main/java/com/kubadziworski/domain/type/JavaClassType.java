@@ -2,6 +2,7 @@ package com.kubadziworski.domain.type;
 
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.objectweb.asm.Opcodes;
 
@@ -178,14 +179,19 @@ public class JavaClassType implements Type {
     }
 
     @Override
+    public Nullability isNullable() {
+        return Nullability.NOT_NULL;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
 
-        JavaClassType that = (JavaClassType) o;
-
-        return name.equals(that.name);
-
+        if (o instanceof TypeProjection) {
+            o = ((TypeProjection) o).getInternalType();
+        }
+        return o instanceof Type && getName().equals(((Type) o).getName());
     }
 
     @Override
