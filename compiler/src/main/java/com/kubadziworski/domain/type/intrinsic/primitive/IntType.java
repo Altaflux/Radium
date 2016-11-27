@@ -18,8 +18,11 @@ public class IntType extends AbstractPrimitiveType {
 
     private static final Type physicalType = new JavaClassType("radium.Int");
 
+    public final boolean isPrimitive;
+
     public IntType(boolean primitive) {
         super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        isPrimitive = primitive;
     }
 
     @Override
@@ -34,6 +37,10 @@ public class IntType extends AbstractPrimitiveType {
 
     @Override
     public List<FunctionSignature> getFunctionSignatures() {
+
+//        FunctionSignature toString = new FunctionSignature("toString", Collections.emptyList(), this, Modifier.PUBLIC + Modifier.STATIC, NULLABLE_TYPE);
+//        FunctionSignature hashCode = new FunctionSignature("hashCode", Collections.emptyList(), this, Modifier.PUBLIC + Modifier.STATIC, NULLABLE_TYPE);
+//
         return physicalType.getFunctionSignatures();
     }
 

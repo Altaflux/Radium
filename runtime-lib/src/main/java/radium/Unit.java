@@ -16,6 +16,7 @@ public class Unit {
     private Unit() {
     }
 
+    @NotNull
     public String toString() {
         return "radium.Unit";
     }
