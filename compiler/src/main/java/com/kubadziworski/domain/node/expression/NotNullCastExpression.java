@@ -9,7 +9,6 @@ import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 
 public class NotNullCastExpression extends ElementImpl implements Expression {
     private final Expression expression;
-    private final Type returnType;
 
     public NotNullCastExpression(Expression expression) {
         this(null, expression);
@@ -18,12 +17,12 @@ public class NotNullCastExpression extends ElementImpl implements Expression {
     public NotNullCastExpression(NodeData nodeData, Expression expression) {
         super(nodeData);
         this.expression = expression;
-        this.returnType = new TypeProjection(expression.getType(), Type.Nullability.NOT_NULL);
+
     }
 
     @Override
     public Type getType() {
-        return returnType;
+        return new TypeProjection(expression.getType(), Type.Nullability.NOT_NULL);
     }
 
     public Expression getExpression() {

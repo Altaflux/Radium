@@ -7,8 +7,8 @@ import com.kubadziworski.domain.type.Type;
  */
 public class LocalVariable implements Variable {
     private final String name;
-    private final Type type;
     private final boolean mutable;
+    private Type type;
 
     public LocalVariable(String name, Type type) {
         this(name, type, true);
@@ -32,5 +32,9 @@ public class LocalVariable implements Variable {
     @Override
     public String getName() {
         return name;
+    }
+
+    public void changeType(Type type) {
+        this.type = type;
     }
 }

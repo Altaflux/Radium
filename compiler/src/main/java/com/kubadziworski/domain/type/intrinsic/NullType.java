@@ -53,13 +53,13 @@ public final class NullType implements Type {
 
     @Override
     public int inheritsFrom(Type type) {
-        if(!type.isNullable().equals(Nullability.NOT_NULL)){
+        if(type.isNullable().equals(Nullability.NOT_NULL)){
             return -1;
         }
 
-        if (type.isPrimitive()) {
-            return -1;
-        }
+//        if (type.isPrimitive()) {
+//            return -1;
+//        }
         return 0;
     }
 

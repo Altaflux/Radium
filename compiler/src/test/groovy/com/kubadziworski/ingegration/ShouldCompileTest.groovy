@@ -589,7 +589,7 @@ class ShouldCompileTest extends Specification {
                                     throw new RuntimeException()
                                 }
 
-								int foo(){
+								Int foo(){
 
 								   try {
 								        if(true){
@@ -739,7 +739,7 @@ class ShouldCompileTest extends Specification {
             """
                     NullValue {
                         start(){
-                            var foo:String = null
+                            var foo:String? = null
                             print foo
 
                           var bla = try {
@@ -827,10 +827,11 @@ class ShouldCompileTest extends Specification {
 
                     start(){
                         var dummyClass = new DummyClass();
-                        var number:Int = dummyClass.objectInt();
+                        var number:Int? = dummyClass.objectInt();
 
-                        var sum = number + 1.5
+                        var sum = number!! + 1.5
                         print sum
+                        number = null
                     }
                 }
             """

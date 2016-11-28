@@ -36,6 +36,18 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
             return generateAssignment(ctx, ctx.preExp.accept(expressionVisitor), varName, expression);
         }
         if (scope.isLocalVariableExists(varName)) {
+
+//            LocalVariable variable = scope.getLocalVariable(varName);
+//            Type varType = variable.getType();
+//            if (varType.isPrimitive() && !expression.getType().isNullable().equals(Type.Nullability.NOT_NULL)) {
+//                if(varType instanceof TypeProjection){
+//                    varType = ((TypeProjection) varType).getInternalType();
+//                }
+//                Type boxed = ((BoxableType) varType).getBoxedType();
+//                variable.changeType(new TypeProjection(boxed, Type.Nullability.NULLABLE));
+//            }
+
+
             return new Assignment(new RuleContextElementImpl(ctx), varName, expression);
         } else if (scope.isFieldExists(varName)) {
             return generateAssignment(ctx, new LocalVariableReference(scope.getLocalVariable("this")), varName, expression);

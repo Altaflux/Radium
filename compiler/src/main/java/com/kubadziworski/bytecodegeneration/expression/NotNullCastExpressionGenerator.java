@@ -4,7 +4,9 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.DupExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.NotNullCastExpression;
+import com.kubadziworski.domain.type.BoxableType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
@@ -23,7 +25,12 @@ public class NotNullCastExpressionGenerator {
         Expression expression = castExpression.getExpression();
 
 
-        if (expression.getType().isNullable().equals(Type.Nullability.NOT_NULL)) {
+        Type type = expression.getType();
+        if (type instanceof TypeProjection) {
+            type = ((TypeProjection) type).getInternalType();
+        }
+
+        if (type.isPrimitive() && !((BoxableType) type).isBoxed()) {
             expression.accept(generator);
             return;
         }

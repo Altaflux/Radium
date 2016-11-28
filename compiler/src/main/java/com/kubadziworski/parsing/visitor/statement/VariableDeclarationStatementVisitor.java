@@ -9,8 +9,8 @@ import com.kubadziworski.domain.node.statement.VariableDeclaration;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
-import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.TypeResolver;
@@ -52,6 +52,15 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
                 throw new IncompatibleTypesException(varName, declarationType, expression.getType());
             }
         }
+//        if (declarationType.isPrimitive()) {
+//            Type.Nullability nullability = declarationType.isNullable();
+//            if (declarationType instanceof TypeProjection) {
+//                declarationType = ((TypeProjection) declarationType).getInternalType();
+//            }
+//            TypeProjection typeProjection = new TypeProjection(((BoxableType) declarationType).getUnBoxedType(), nullability);
+//            scope.addLocalVariable(new LocalVariable(varName, typeProjection, mutable));
+//            return new VariableDeclaration(new RuleContextElementImpl(ctx), varName, expression, typeProjection, mutable);
+//        }
         scope.addLocalVariable(new LocalVariable(varName, declarationType, mutable));
         return new VariableDeclaration(new RuleContextElementImpl(ctx), varName, expression, declarationType, mutable);
     }
