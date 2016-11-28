@@ -155,4 +155,10 @@ public class TypeConversions {
         Assert.assertFalse(TypeChecker.isInt(new TypeProjection(new IntType(false), Type.Nullability.NULLABLE)));
     }
 
+    @Test
+    public void testVoidReturnFromASM() {
+
+        org.objectweb.asm.Type type = org.objectweb.asm.Type.getType(void.class);
+        Assert.assertEquals(Opcodes.RETURN, type.getOpcode(Opcodes.IRETURN));
+    }
 }

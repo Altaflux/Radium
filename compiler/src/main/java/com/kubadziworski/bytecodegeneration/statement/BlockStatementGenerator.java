@@ -7,6 +7,7 @@ import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.RadiumBuiltIns;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -39,12 +40,30 @@ public class BlockStatementGenerator {
                 Type type = ((Expression) stmt).getType();
                 if (!type.equals(UnitType.INSTANCE) && !type.equals(RadiumBuiltIns.NOTHING_TYPE)) {
                     if (!(stmt instanceof ConstructorCall)) {
-                        methodVisitor.visitInsn(Opcodes.POP);
+                        visitPop(type);
                     }
                 }
             }
 
         }
 
+    }
+
+    ///TODO this needs to be done better, maybe by defining a base call site,
+    private void visitPop(Type type) {
+        if (type.equals(NullType.INSTANCE)) {
+            methodVisitor.visitInsn(Opcodes.POP);
+            return;
+        }
+        switch (org.objectweb.asm.Type.getType(type.getDescriptor()).getSize()) {
+            case 1: {
+                methodVisitor.visitInsn(Opcodes.POP);
+                break;
+            }
+            case 2: {
+                methodVisitor.visitInsn(Opcodes.POP2);
+                break;
+            }
+        }
     }
 }

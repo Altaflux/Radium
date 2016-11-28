@@ -94,36 +94,6 @@ public final class NullType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getSubstractOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getMultiplyOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getDividOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getNegation() {
-        return 0;
-    }
-
-    @Override
-    public int getStackSize() {
-        return 1;
-    }
-
-    @Override
     public boolean isPrimitive() {
         return false;
     }

@@ -116,17 +116,6 @@ public class ExpressionGenerator {
         arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
-    public void generate(Subtraction expression, StatementGenerator statementGenerator) {
-        arithmeticExpressionGenerator.generate(expression, statementGenerator);
-    }
-
-    public void generate(Multiplication expression, StatementGenerator statementGenerator) {
-        arithmeticExpressionGenerator.generate(expression, statementGenerator);
-    }
-
-    public void generate(Division expression, StatementGenerator statementGenerator) {
-        arithmeticExpressionGenerator.generate(expression, statementGenerator);
-    }
 
     public void generate(ConditionalExpression conditionalExpression, StatementGenerator statementGenerator) {
         conditionalExpressionGenerator.generate(conditionalExpression, statementGenerator);

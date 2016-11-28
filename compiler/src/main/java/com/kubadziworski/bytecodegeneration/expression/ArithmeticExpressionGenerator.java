@@ -2,9 +2,9 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.arthimetic.Addition;
+import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.type.DefaultTypes;
-import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -24,28 +24,9 @@ public class ArithmeticExpressionGenerator {
             generateStringAppend(expression, statementGenerator);
             return;
         }
-        evaluateArithmeticComponents(expression, statementGenerator);
-        Type type = expression.getType();
-        methodVisitor.visitInsn(type.getAddOpcode());
+        throw new RuntimeException("Addition must only be done to String types");
     }
 
-    public void generate(Subtraction expression, StatementGenerator statementGenerator) {
-        Type type = expression.getType();
-        evaluateArithmeticComponents(expression, statementGenerator);
-        methodVisitor.visitInsn(type.getSubstractOpcode());
-    }
-
-    public void generate(Multiplication expression, StatementGenerator statementGenerator) {
-        evaluateArithmeticComponents(expression, statementGenerator);
-        Type type = expression.getType();
-        methodVisitor.visitInsn(type.getMultiplyOpcode());
-    }
-
-    public void generate(Division expression, StatementGenerator statementGenerator) {
-        evaluateArithmeticComponents(expression, statementGenerator);
-        Type type = expression.getType();
-        methodVisitor.visitInsn(type.getDividOpcode());
-    }
 
     public void generate(PureArithmeticExpression pureArithmeticExpression, StatementGenerator statementGenerator) {
         InstructionAdapter ad = new InstructionAdapter(methodVisitor);
@@ -57,13 +38,6 @@ public class ArithmeticExpressionGenerator {
         rightExpression.accept(statementGenerator);
         PrimitiveTypesWrapperFactory.coerce(pureArithmeticExpression.getType(), rightExpression.getType(), ad);
         methodVisitor.visitInsn(pureArithmeticExpression.getOperator().getOperationOpCode(pureArithmeticExpression.getType()));
-    }
-
-    private void evaluateArithmeticComponents(ArthimeticExpression expression, StatementGenerator statementGenerator) {
-        Expression leftExpression = expression.getLeftExpression();
-        Expression rightExpression = expression.getRightExpression();
-        leftExpression.accept(statementGenerator);
-        rightExpression.accept(statementGenerator);
     }
 
     private void generateStringAppend(Addition expression, StatementGenerator statementGenerator) {

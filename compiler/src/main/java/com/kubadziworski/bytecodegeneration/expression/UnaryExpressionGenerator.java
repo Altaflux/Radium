@@ -9,6 +9,7 @@ import com.kubadziworski.exception.CompilationException;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 
 public class UnaryExpressionGenerator {
@@ -47,6 +48,6 @@ public class UnaryExpressionGenerator {
 
     public void doSubtraction(Expression unaryExpression, StatementGenerator expressionGenerator) {
         unaryExpression.accept(expressionGenerator);
-        methodVisitor.visitInsn(unaryExpression.getType().getNegation());
+        methodVisitor.visitInsn(Type.getType(unaryExpression.getType().getDescriptor()).getOpcode(Opcodes.INEG));
     }
 }

@@ -285,16 +285,6 @@ public class BaseStatementGenerator implements StatementGenerator {
         expressionGenerator.generate(conditionalExpression, generator);
     }
 
-    public void generate(Multiplication multiplication) {
-        expressionGenerator.generate(multiplication, this);
-    }
-
-    @Override
-    public void generate(Multiplication multiplication, StatementGenerator generator) {
-        generateLineNumber(multiplication);
-        expressionGenerator.generate(multiplication, generator);
-    }
-
     public void generate(Value value) {
         expressionGenerator.generate(value);
     }
@@ -303,26 +293,6 @@ public class BaseStatementGenerator implements StatementGenerator {
     public void generate(Value value, StatementGenerator generator) {
         generateLineNumber(value);
         expressionGenerator.generate(value);
-    }
-
-    public void generate(Subtraction subtraction) {
-        expressionGenerator.generate(subtraction, this);
-    }
-
-    @Override
-    public void generate(Subtraction subtraction, StatementGenerator generator) {
-        generateLineNumber(subtraction);
-        expressionGenerator.generate(subtraction, generator);
-    }
-
-    public void generate(Division division) {
-        expressionGenerator.generate(division, this);
-    }
-
-    @Override
-    public void generate(Division division, StatementGenerator generator) {
-        generateLineNumber(division);
-        expressionGenerator.generate(division, generator);
     }
 
     public void generate(EmptyExpression emptyExpression) {

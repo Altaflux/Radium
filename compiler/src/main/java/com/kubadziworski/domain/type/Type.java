@@ -47,18 +47,6 @@ public interface Type {
 
     int getReturnOpcode();
 
-    int getAddOpcode();
-
-    int getSubstractOpcode();
-
-    int getMultiplyOpcode();
-
-    int getDividOpcode();
-
-    int getNegation();
-
-    int getStackSize();
-
     boolean isPrimitive();
 
     Nullability isNullable();

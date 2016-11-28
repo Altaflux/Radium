@@ -91,17 +91,10 @@ public interface StatementGenerator {
     void generate(ConditionalExpression conditionalExpression);
     void generate(ConditionalExpression conditionalExpression, StatementGenerator generator);
 
-    void generate(Multiplication multiplication);
-    void generate(Multiplication multiplication, StatementGenerator generator);
 
     void generate(Value value);
     void generate(Value value, StatementGenerator generator);
 
-    void generate(Subtraction subtraction);
-    void generate(Subtraction subtraction, StatementGenerator generator);
-
-    void generate(Division division);
-    void generate(Division division, StatementGenerator generator);
 
     void generate(EmptyExpression emptyExpression);
     void generate(EmptyExpression emptyExpression, StatementGenerator generator);

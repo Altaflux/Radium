@@ -111,16 +111,6 @@ public enum BuiltInType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        return opcodes.getAdd();
-    }
-
-    @Override
-    public int getSubstractOpcode() {
-        return opcodes.getSubstract();
-    }
-
-    @Override
     public int getDupCode() {
         return opcodes.getDupCode();
     }
@@ -128,26 +118,6 @@ public enum BuiltInType implements Type {
     @Override
     public int getDupX1Code() {
         return opcodes.getDupX1Code();
-    }
-
-    @Override
-    public int getMultiplyOpcode() {
-        return opcodes.getMultiply();
-    }
-
-    @Override
-    public int getDividOpcode() {
-        return opcodes.getDivide();
-    }
-
-    @Override
-    public int getStackSize() {
-        return stackSize;
-    }
-
-    @Override
-    public int getNegation() {
-        return opcodes.getNegation();
     }
 
     @Override

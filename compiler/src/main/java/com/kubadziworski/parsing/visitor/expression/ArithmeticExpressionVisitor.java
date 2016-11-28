@@ -30,7 +30,6 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<Expression> {
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-      //  return new Addition(new RuleContextElementImpl(ctx), leftExpress, rightExpress);
         return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.ADD);
     }
 
@@ -42,7 +41,6 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<Expression> {
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-       // return new Multiplication(new RuleContextElementImpl(ctx), leftExpress, rightExpress);
         return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.MULTIPLY);
     }
 
@@ -54,7 +52,6 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<Expression> {
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-        //return new Subtraction(new RuleContextElementImpl(ctx), leftExpress, rightExpress);
         return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.SUBTRACT);
     }
 
@@ -66,7 +63,6 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<Expression> {
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
 
-        ///return new Division(new RuleContextElementImpl(ctx), leftExpress, rightExpress);
         return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.DIVIDE);
     }
 

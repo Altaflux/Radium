@@ -130,31 +130,6 @@ public class EnkelType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        throw new RuntimeException("Addition operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public int getSubstractOpcode() {
-        throw new RuntimeException("Subtraction operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public int getMultiplyOpcode() {
-        throw new RuntimeException("Multiplcation operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public int getDividOpcode() {
-        throw new RuntimeException("Division operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
-    public int getNegation() {
-        throw new RuntimeException("Negation operation not (yet ;) ) supported for custom objects");
-    }
-
-    @Override
     public boolean isPrimitive(){
         return false;
     }
@@ -162,11 +137,6 @@ public class EnkelType implements Type {
     @Override
     public Nullability isNullable() {
         return Nullability.NOT_NULL;
-    }
-
-    @Override
-    public int getStackSize() {
-        return 1;
     }
 
     @Override

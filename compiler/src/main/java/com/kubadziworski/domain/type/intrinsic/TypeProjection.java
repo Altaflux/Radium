@@ -115,36 +115,6 @@ public class TypeProjection implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        return type.getAddOpcode();
-    }
-
-    @Override
-    public int getSubstractOpcode() {
-        return type.getSubstractOpcode();
-    }
-
-    @Override
-    public int getMultiplyOpcode() {
-        return type.getMultiplyOpcode();
-    }
-
-    @Override
-    public int getDividOpcode() {
-        return type.getDividOpcode();
-    }
-
-    @Override
-    public int getNegation() {
-        return type.getNegation();
-    }
-
-    @Override
-    public int getStackSize() {
-        return type.getStackSize();
-    }
-
-    @Override
     public boolean isPrimitive() {
         return type.isPrimitive();
     }

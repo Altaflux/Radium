@@ -2,8 +2,10 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.PopExpression;
+import com.kubadziworski.domain.type.intrinsic.NullType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 
 public class PopExpressionGenerator  {
@@ -19,7 +21,13 @@ public class PopExpressionGenerator  {
 
         popExpression.getOwner().accept(expressionGenerator);
 
-        switch (popExpression.getType().getStackSize()) {
+        if(popExpression.getType().equals(NullType.INSTANCE)){
+            methodVisitor.visitInsn(Opcodes.POP);
+            return;
+        }
+
+
+        switch (Type.getType(popExpression.getType().getDescriptor()).getSize()) {
             case 1: {
                 methodVisitor.visitInsn(Opcodes.POP);
                 break;

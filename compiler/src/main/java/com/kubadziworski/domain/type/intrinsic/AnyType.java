@@ -110,36 +110,6 @@ public class AnyType implements Type {
     }
 
     @Override
-    public int getAddOpcode() {
-        return objectClass.getAddOpcode();
-    }
-
-    @Override
-    public int getSubstractOpcode() {
-        return objectClass.getSubstractOpcode();
-    }
-
-    @Override
-    public int getMultiplyOpcode() {
-        return objectClass.getMultiplyOpcode();
-    }
-
-    @Override
-    public int getDividOpcode() {
-        return objectClass.getDividOpcode();
-    }
-
-    @Override
-    public int getNegation() {
-        return objectClass.getNegation();
-    }
-
-    @Override
-    public int getStackSize() {
-        return objectClass.getStackSize();
-    }
-
-    @Override
     public boolean isPrimitive() {
         return objectClass.isPrimitive();
     }

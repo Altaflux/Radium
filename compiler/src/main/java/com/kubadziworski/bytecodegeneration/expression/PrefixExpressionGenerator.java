@@ -10,6 +10,8 @@ import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 public class PrefixExpressionGenerator {
 
@@ -41,9 +43,9 @@ public class PrefixExpressionGenerator {
 
         int operationOpCode;
         if (incrementDecrementExpression.getOperator().equals(UnaryOperator.INCREMENT)) {
-            operationOpCode = reference.getType().getAddOpcode();
+            operationOpCode = Type.getType(reference.getType().getDescriptor()).getOpcode(Opcodes.IADD);
         } else {
-            operationOpCode = reference.getType().getSubstractOpcode();
+            operationOpCode = Type.getType(reference.getType().getDescriptor()).getOpcode(Opcodes.ISUB);
         }
 
         if (incrementDecrementExpression.isPrefix()) {

@@ -222,13 +222,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
         generate(conditionalExpression, this);
     }
 
-    @Override
-    final public void generate(Multiplication multiplication) {
-        if (parent != null) {
-            parent.generate(multiplication);
-        }
-        generate(multiplication, this);
-    }
 
     @Override
     final public void generate(Value value) {
@@ -238,21 +231,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
         next.generate(value, this);
     }
 
-    @Override
-    final public void generate(Subtraction subtraction) {
-        if (parent != null) {
-            parent.generate(subtraction);
-        }
-        generate(subtraction, this);
-    }
-
-    @Override
-    final public void generate(Division division) {
-        if (parent != null) {
-            parent.generate(division);
-        }
-        generate(division, this);
-    }
 
     @Override
     final public void generate(EmptyExpression emptyExpression) {
@@ -416,24 +394,11 @@ public class StatementGeneratorFilter implements StatementGenerator {
         next.generate(conditionalExpression, generator);
     }
 
-    @Override
-    public void generate(Multiplication multiplication, StatementGenerator generator) {
-        next.generate(multiplication, generator);
-    }
+
 
     @Override
     public void generate(Value value, StatementGenerator generator) {
         next.generate(value, generator);
-    }
-
-    @Override
-    public void generate(Subtraction subtraction, StatementGenerator generator) {
-        next.generate(subtraction, generator);
-    }
-
-    @Override
-    public void generate(Division division, StatementGenerator generator) {
-        next.generate(division, generator);
     }
 
     @Override

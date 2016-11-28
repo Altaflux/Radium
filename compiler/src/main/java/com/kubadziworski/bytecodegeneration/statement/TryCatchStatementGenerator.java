@@ -11,8 +11,10 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -153,6 +155,7 @@ public class TryCatchStatementGenerator {
             methodVisitor.visitLabel(endOfReturnLabel);
             labelPacks.add(new LabelPack(startLabel.get(), endOfReturnLabel));
 
+            org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getType(getScope().getCurrentFunctionSignature().getReturnType().getDescriptor());
             if (finalBlock != null) {
                 String varName = "$$Return" + atomicInteger.incrementAndGet();
                 getScope().addLocalVariable(new LocalVariable(varName, returnStatement.getExpression().getType()));
@@ -161,13 +164,19 @@ public class TryCatchStatementGenerator {
                 StatementGeneratorFilter filter = new StatementGeneratorFilter(null, next, getScope());
                 finalBlock.accept(filter);
 
+                //TODO We cannot a return statement here as the TryCatchFilter will not allow us, so we will simulate its operation here
+                // we should seek to at least unify this into a place to avoid code duplication.
                 if (!finalBlock.isReturnComplete()) {
                     methodVisitor.visitVarInsn(returnStatement.getExpression().getType().getLoadVariableOpcode(), getScope().getLocalVariableIndex(varName));
-                    methodVisitor.visitInsn(returnStatement.getExpression().getType().getReturnOpcode());
+                    PrimitiveTypesWrapperFactory.coerce(getScope().getCurrentFunctionSignature().getReturnType(), returnStatement.getExpression().getType(),
+                            new InstructionAdapter(methodVisitor));
+                    methodVisitor.visitInsn(asmType.getOpcode(IRETURN));
                 }
 
             } else {
-                methodVisitor.visitInsn(returnStatement.getExpression().getType().getReturnOpcode());
+                PrimitiveTypesWrapperFactory.coerce(getScope().getCurrentFunctionSignature().getReturnType(), returnStatement.getExpression().getType(),
+                        new InstructionAdapter(methodVisitor));
+                methodVisitor.visitInsn(asmType.getOpcode(IRETURN));
             }
 
             Label nextReturnStartLabel = new Label();

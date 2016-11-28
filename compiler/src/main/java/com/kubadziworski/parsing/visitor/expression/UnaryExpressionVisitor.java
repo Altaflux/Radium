@@ -7,13 +7,13 @@ import com.kubadziworski.antlr.EnkelParser.SignExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.SuffixExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.UnaryExpressionContext;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.UnaryOperator;
 import com.kubadziworski.domain.UnarySign;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.Subtraction;
+import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Field;
@@ -43,9 +43,9 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             Expression operation;
 
             if (operator.equals(UnaryOperator.INCREMENT)) {
-                operation = new DupExpression(new Addition((expression), new Value(expression.getType(), "1")), 1);
+                operation = new DupExpression(new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.ADD), 1);
             } else {
-                operation = new DupExpression(new Subtraction((expression), new Value(expression.getType(), "1")), 1);
+                operation = new DupExpression(new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.SUBTRACT), 1);
             }
             Argument argument = new Argument(operation, null);
 
@@ -66,9 +66,9 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             Expression operation;
 
             if (operator.equals(UnaryOperator.INCREMENT)) {
-                operation = (new Addition((expression), new Value(expression.getType(), "1")));
+                operation = new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.ADD);
             } else {
-                operation = (new Subtraction((expression), new Value(expression.getType(), "1")));
+                operation = new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.SUBTRACT);
             }
             Argument argument = new Argument(operation, null);
             return new ComposedExpression(expression,
@@ -137,7 +137,6 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
         public Type getType() {
             return type;
         }
-
 
         @Override
         public void accept(StatementGenerator generator) {
