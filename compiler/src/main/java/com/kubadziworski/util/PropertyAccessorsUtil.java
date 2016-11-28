@@ -1,6 +1,6 @@
 package com.kubadziworski.util;
 
-import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
@@ -78,7 +78,7 @@ public class PropertyAccessorsUtil {
         } catch (Exception e) {
             return ((EnkelType) field.getOwner()).getScope()
                     .map(scope -> getFunctionSignatureForMethod("set", field, scope,
-                            Collections.singletonList(new Argument(new EmptyExpression(field.getType()), null))));
+                            Collections.singletonList(new ArgumentHolder(new EmptyExpression(field.getType()), null))));
         }
     }
 
@@ -100,7 +100,7 @@ public class PropertyAccessorsUtil {
         }
     }
 
-    private static FunctionSignature getFunctionSignatureForMethod(String prefix, Field field, Scope scope, List<Argument> arguments) {
+    private static FunctionSignature getFunctionSignatureForMethod(String prefix, Field field, Scope scope, List<ArgumentHolder> arguments) {
         for (String suffix : getPropertyMethodSuffixes(field.getName())) {
             try {
                 return scope.getMethodCallSignature(prefix + suffix, arguments);

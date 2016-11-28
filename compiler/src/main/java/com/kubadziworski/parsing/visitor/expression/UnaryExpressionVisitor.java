@@ -47,9 +47,9 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             } else {
                 operation = new DupExpression(new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.SUBTRACT), 1);
             }
-            Argument argument = new Argument(operation, null);
+            ArgumentHolder argument = new ArgumentHolder(operation, null);
 
-            return new FakeReturnExpression(new FunctionCall(signature, Collections.singletonList(argument),
+            return new FakeReturnExpression(new FunctionCall(signature, signature.createArgumentList(Collections.singletonList(argument)),
                     ((PropertyAccessorCall) expression).getOwner()), expression.getType());
         }
         Reference ref = (Reference) expression;
@@ -70,9 +70,9 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             } else {
                 operation = new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.SUBTRACT);
             }
-            Argument argument = new Argument(operation, null);
+            ArgumentHolder argument = new ArgumentHolder(operation, null);
             return new ComposedExpression(expression,
-                    new FakeReturnExpression(new FunctionCall(signature, Collections.singletonList(argument),
+                    new FakeReturnExpression(new FunctionCall(signature, signature.createArgumentList(Collections.singletonList(argument)),
                             ((PropertyAccessorCall) expression).getOwner()), expression.getType()));
         }
         Reference ref = (Reference) expression;

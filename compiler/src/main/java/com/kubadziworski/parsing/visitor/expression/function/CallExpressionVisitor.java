@@ -24,6 +24,8 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
+import static com.kubadziworski.domain.node.expression.SuperCall.SUPER_IDENTIFIER;
+
 public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     private final ExpressionVisitor expressionVisitor;
     private final Scope scope;
@@ -40,7 +42,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         if (functionName.equals(scope.getFullClassName())) {
             throw new FunctionNameEqualClassException(functionName);
         }
-        List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
+        List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
 
         if (ctx.SUPER() != null) {
             return createSuperFunctionCall(ctx, functionName, arguments);
@@ -57,9 +59,9 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                     //and simply use the class to call it.
                     //We may need to check if this doesn't causes trouble, else we use a POP after
                     //calling the owner expression, for now lets not optimize...
-                    return new FunctionCall(new RuleContextElementImpl(ctx), signature, arguments, new PopExpression(owner));
+                    return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new PopExpression(owner));
                 }
-                return new FunctionCall(new RuleContextElementImpl(ctx), signature, arguments, owner);
+                return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), owner);
             } catch (Exception e) {
                 String possibleClass = ctx.owner.getText();
                 return visitStaticReference(possibleClass, functionName, arguments);
@@ -68,44 +70,46 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
 
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
         if (Modifier.isStatic(signature.getModifiers())) {
-            return new FunctionCall(new RuleContextElementImpl(ctx), signature, arguments, signature.getOwner());
+            return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), signature.getOwner());
         }
 
         Type thisType = new EnkelType(scope.getFullClassName(), scope);
         LocalVariable thisVariable = new LocalVariable("this", thisType);
-        return new FunctionCall(new RuleContextElementImpl(ctx), signature, arguments, new LocalVariableReference(thisVariable));
+        return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new LocalVariableReference(thisVariable));
     }
 
     @Override
     public Call visitConstructorCall(@NotNull ConstructorCallContext ctx) {
 
         Type className = scope.resolveClassName(ctx.typeName().getText());
-        List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
-        return new ConstructorCall(new RuleContextElementImpl(ctx), className.getName(), arguments);
+        List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
+        FunctionSignature signature = scope.getConstructorCallSignature(className.getName(), arguments);
+        return new ConstructorCall(new RuleContextElementImpl(ctx), signature, className.getName(), signature.createArgumentList(arguments));
     }
 
     @Override
     public Call visitSupercall(@NotNull SupercallContext ctx) {
-        List<Argument> arguments = getArgumentsForCall(ctx.argumentList());
-        return new SuperCall(new RuleContextElementImpl(ctx), arguments);
+        List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
+        FunctionSignature signature = scope.getMethodCallSignature(SUPER_IDENTIFIER, arguments);
+        return new SuperCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments));
     }
 
-    private SuperFunctionCall createSuperFunctionCall(FunctionCallContext ctx, String functionName, List<Argument> arguments) {
+    private SuperFunctionCall createSuperFunctionCall(FunctionCallContext ctx, String functionName, List<ArgumentHolder> arguments) {
 
         FunctionSignature signature = ClassTypeFactory.createClassType(scope.getSuperClassName()).getMethodCallSignature(functionName, arguments);
         Type thisType = new EnkelType(scope.getFullClassName(), scope);
         LocalVariable thisVariable = new LocalVariable("this", thisType);
 
-        return new SuperFunctionCall(new RuleContextElementImpl(ctx), signature, arguments, new LocalVariableReference(thisVariable));
+        return new SuperFunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new LocalVariableReference(thisVariable));
     }
 
-    private Call visitStaticReference(String possibleClass, String functionName, List<Argument> arguments) {
+    private Call visitStaticReference(String possibleClass, String functionName, List<ArgumentHolder> arguments) {
         Type classType = scope.resolveClassName(possibleClass);
         FunctionSignature signature = classType.getMethodCallSignature(functionName, arguments);
-        return new FunctionCall(signature, arguments, classType);
+        return new FunctionCall(signature, signature.createArgumentList(arguments), classType);
     }
 
-    private List<Argument> getArgumentsForCall(ArgumentListContext argumentsListCtx) {
+    private List<ArgumentHolder> getArgumentsForCall(ArgumentListContext argumentsListCtx) {
         if (argumentsListCtx != null) {
             ArgumentExpressionsListVisitor visitor = new ArgumentExpressionsListVisitor(expressionVisitor);
             return argumentsListCtx.accept(visitor);

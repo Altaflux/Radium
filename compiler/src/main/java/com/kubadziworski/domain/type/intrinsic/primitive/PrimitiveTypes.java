@@ -1,7 +1,7 @@
 package com.kubadziworski.domain.type.intrinsic.primitive;
 
 
-import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
@@ -39,8 +39,8 @@ public class PrimitiveTypes {
             return type1;
         }
 
-        FunctionSignature signature1 = type1.getMethodCallSignature("plus", Collections.singletonList(new Argument(new EmptyExpression(type2), null)));
-        FunctionSignature signature2 = type2.getMethodCallSignature("plus", Collections.singletonList(new Argument(new EmptyExpression(type1), null)));
+        FunctionSignature signature1 = type1.getMethodCallSignature("plus", Collections.singletonList(new ArgumentHolder(new EmptyExpression(type2), null)));
+        FunctionSignature signature2 = type2.getMethodCallSignature("plus", Collections.singletonList(new ArgumentHolder(new EmptyExpression(type1), null)));
 
         if (signature1.getReturnType().equals(signature2.getReturnType())) {
             return (AbstractPrimitiveType) signature1.getReturnType();

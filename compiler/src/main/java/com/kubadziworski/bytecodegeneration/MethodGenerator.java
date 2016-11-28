@@ -10,6 +10,7 @@ import com.kubadziworski.domain.node.expression.SuperCall;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.DescriptorFactory;
@@ -17,6 +18,7 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
+import java.util.Collections;
 import java.util.stream.IntStream;
 
 /**
@@ -70,7 +72,8 @@ public class MethodGenerator {
         MethodVisitor mv = classWriter.visitMethod(constructor.getModifiers(), "<init>", description, null, null);
         mv.visitCode();
         StatementGenerator statementScopeGenerator = new StatementGeneratorFilter(mv, scope);
-        new SuperCall().accept(statementScopeGenerator);
+        FunctionSignature signature = scope.getMethodCallSignature(SuperCall.SUPER_IDENTIFIER, Collections.emptyList());
+        new SuperCall(signature).accept(statementScopeGenerator);
         block.accept(statementScopeGenerator);
         appendReturnIfNotExists(constructor, block, statementScopeGenerator);
         mv.visitMaxs(-1, -1);

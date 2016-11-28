@@ -1,6 +1,7 @@
 package com.kubadziworski.exception;
 
 import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.Parameter;
 
 import java.util.List;
@@ -10,6 +11,9 @@ import java.util.List;
  */
 public class WrongArgumentNameException extends RuntimeException {
     public WrongArgumentNameException(Argument argument, List<Parameter> parameters) {
+        super("You are trying to call method with argument name" + argument.getParameterName().get() + " where parameters = " + parameters);
+    }
+    public WrongArgumentNameException(ArgumentHolder argument, List<Parameter> parameters) {
         super("You are trying to call method with argument name" + argument.getParameterName().get() + " where parameters = " + parameters);
     }
 }

@@ -17,9 +17,7 @@ public class ArgumentStatementGenerator {
 
     public void generate(Argument argument, StatementGenerator generator) {
         argument.getExpression().accept(generator);
-        if (argument.getReceiverType() != null) {
-            PrimitiveTypesWrapperFactory
-                    .coerce(argument.getReceiverType(), argument.getType(), new InstructionAdapter(methodVisitor));
-        }
+        PrimitiveTypesWrapperFactory
+                .coerce(argument.getReceiverType(), argument.getType(), new InstructionAdapter(methodVisitor));
     }
 }

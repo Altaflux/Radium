@@ -15,9 +15,6 @@ public class Argument extends ElementImpl implements Expression {
     private final Expression expression;
     private final Type receiverType;
 
-    public Argument(Expression expression, String parameterName) {
-        this(expression, parameterName, null);
-    }
 
     public Argument(Expression expression, String parameterName, Type receiverType) {
         this.parameterName = parameterName;

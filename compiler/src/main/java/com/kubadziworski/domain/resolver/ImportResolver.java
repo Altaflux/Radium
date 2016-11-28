@@ -1,7 +1,7 @@
 package com.kubadziworski.domain.resolver;
 
 import com.kubadziworski.antlr.EnkelParser;
-import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.type.Type;
@@ -121,7 +121,7 @@ public class ImportResolver {
         return Optional.empty();
     }
 
-    public Optional<FunctionSignature> getMethod(String methodName, List<Argument> arguments) {
+    public Optional<FunctionSignature> getMethod(String methodName, List<ArgumentHolder> arguments) {
         Map<Integer, List<FunctionSignature>> descs = declarationDescriptors.stream()
                 .filter(declarationDescriptor -> declarationDescriptor instanceof FunctionDescriptor)
                 .filter(declarationDescriptor -> declarationDescriptor.getName().equals(methodName))

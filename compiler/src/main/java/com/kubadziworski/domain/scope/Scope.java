@@ -2,10 +2,11 @@ package com.kubadziworski.domain.scope;
 
 import com.google.common.collect.Lists;
 import com.kubadziworski.domain.MetaData;
-import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.resolver.ImportResolver;
-import com.kubadziworski.domain.type.*;
-
+import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.EnkelType;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
@@ -78,7 +79,7 @@ public class Scope {
         return isSignatureExists(identifier, Collections.emptyList());
     }
 
-    public boolean isSignatureExists(String identifier, List<Argument> arguments) {
+    public boolean isSignatureExists(String identifier, List<ArgumentHolder> arguments) {
         if (identifier.equals("super")) return true;
 
         Map<Integer, List<FunctionSignature>> functions = functionSignatures.stream()
@@ -91,12 +92,12 @@ public class Scope {
         return getMethodCallSignature(identifier, Collections.emptyList());
     }
 
-    public FunctionSignature getConstructorCallSignature(String className, List<Argument> arguments) {
+    public FunctionSignature getConstructorCallSignature(String className, List<ArgumentHolder> arguments) {
         //TODO Think about how to resolve is if another class name is the same as the local class
         boolean isDifferentThanCurrentClass = !className.equals(getFullClassName());
         if (isDifferentThanCurrentClass) {
 
-            List<Type> argumentsTypes = arguments.stream().map(Argument::getType).collect(toList());
+            List<Type> argumentsTypes = arguments.stream().map(argumentStub -> argumentStub.getExpression().getType()).collect(toList());
             Type resolvedClass = resolveClassName(className);
             return enkelScope.getConstructorSignature(resolvedClass, arguments).map(Optional::of)
                     .orElse(new ClassPathScope().getConstructorSignature(resolvedClass, argumentsTypes))
@@ -105,15 +106,15 @@ public class Scope {
         return getConstructorCallSignatureForCurrentClass(arguments);
     }
 
-    private FunctionSignature getConstructorCallSignatureForCurrentClass(List<Argument> arguments) {
+    private FunctionSignature getConstructorCallSignatureForCurrentClass(List<ArgumentHolder> arguments) {
         return getMethodCallSignature(null, getFullClassName(), arguments);
     }
 
-    private FunctionSignature getMethodCallSignature(Type owner, String methodName, List<Argument> arguments) {
+    private FunctionSignature getMethodCallSignature(Type owner, String methodName, List<ArgumentHolder> arguments) {
         boolean isDifferentThanCurrentClass = owner != null && !owner.equals(getClassType());
         if (isDifferentThanCurrentClass) {
 
-            List<Type> argumentsTypes = arguments.stream().map(Argument::getType).collect(toList());
+            List<Type> argumentsTypes = arguments.stream().map(argumentStub -> argumentStub.getExpression().getType()).collect(toList());
             return enkelScope.getMethodSignature(owner, methodName, arguments).map(Optional::of)
                     .orElse(new ClassPathScope().getMethodSignature(owner, methodName, argumentsTypes))
                     .orElseThrow(() -> new MethodSignatureNotFoundException(this, methodName, arguments));
@@ -121,7 +122,7 @@ public class Scope {
         return getMethodCallSignature(methodName, arguments);
     }
 
-    public FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
+    public FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         if (identifier.equals("super")) {
             return new FunctionSignature("super", Collections.emptyList(), UnitType.INSTANCE, Modifier.PUBLIC,
                     ClassTypeFactory.createClassType(getSuperClassName()));

@@ -1,13 +1,15 @@
 package com.kubadziworski.domain.type;
 
-import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
 import com.kubadziworski.util.TypeResolver;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +53,7 @@ public interface Type {
 
     Nullability isNullable();
 
-    default FunctionSignature getMethodCallSignature(String identifier, List<Argument> arguments) {
+    default FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         List<FunctionSignature> signatures = getFunctionSignatures();
         Map<Integer, List<FunctionSignature>> functions = signatures.stream()
                 .collect(Collectors.groupingBy(signature -> signature.matches(identifier, arguments)));

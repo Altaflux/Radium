@@ -4,10 +4,11 @@ import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.*;
 import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
-import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FunctionCall;
-import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.arthimetic.Addition;
+import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
@@ -73,12 +74,12 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<Expression> {
             return new Addition(new RuleContextElementImpl(context), leftExpression, rightExpression);
         }
 
-        Argument argument = new Argument(rightExpression, null);
+        ArgumentHolder argument = new ArgumentHolder(rightExpression, null);
         FunctionSignature signature = type.getMethodCallSignature(operator.getMethodName(), Collections.singletonList(argument));
         if (rightExpression.getType().isPrimitive()) {
             return new PureArithmeticExpression(leftExpression, rightExpression, signature.getReturnType(), operator);
         }
 
-        return new FunctionCall(new RuleContextElementImpl(context), signature, Collections.singletonList(argument), leftExpression);
+        return new FunctionCall(new RuleContextElementImpl(context), signature, signature.createArgumentList(Collections.singletonList(argument)), leftExpression);
     }
 }

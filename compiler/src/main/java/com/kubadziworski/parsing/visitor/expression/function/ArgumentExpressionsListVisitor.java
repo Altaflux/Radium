@@ -1,11 +1,9 @@
 package com.kubadziworski.parsing.visitor.expression.function;
 
 import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.NamedArgumentsListContext;
 import com.kubadziworski.antlr.EnkelParser.UnnamedArgumentsListContext;
-import com.kubadziworski.domain.node.expression.Argument;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -16,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by kuba on 09.05.16.
  */
-public class ArgumentExpressionsListVisitor extends EnkelBaseVisitor<List<Argument>> {
+public class ArgumentExpressionsListVisitor extends EnkelBaseVisitor<List<ArgumentHolder>> {
     private final ExpressionVisitor expressionVisitor;
 
     public ArgumentExpressionsListVisitor(ExpressionVisitor expressionVisitor) {
@@ -24,14 +22,14 @@ public class ArgumentExpressionsListVisitor extends EnkelBaseVisitor<List<Argume
     }
 
     @Override
-    public List<Argument> visitUnnamedArgumentsList(@NotNull UnnamedArgumentsListContext ctx) {
+    public List<ArgumentHolder> visitUnnamedArgumentsList(@NotNull UnnamedArgumentsListContext ctx) {
         ArgumentExpressionVisitor argumentExpressionVisitor = new ArgumentExpressionVisitor(expressionVisitor);
         return ctx.argument().stream()
                 .map(a -> a.accept(argumentExpressionVisitor)).collect(toList());
     }
 
     @Override
-    public List<Argument> visitNamedArgumentsList(@NotNull NamedArgumentsListContext ctx) {
+    public List<ArgumentHolder> visitNamedArgumentsList(@NotNull NamedArgumentsListContext ctx) {
         ArgumentExpressionVisitor argumentExpressionVisitor = new ArgumentExpressionVisitor(expressionVisitor);
         return ctx.namedArgument().stream()
                 .map(a -> a.accept(argumentExpressionVisitor)).collect(toList());

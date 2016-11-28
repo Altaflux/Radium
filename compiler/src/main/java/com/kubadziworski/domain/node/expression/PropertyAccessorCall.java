@@ -1,23 +1,23 @@
 package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.domain.node.NodeData;
-import com.kubadziworski.domain.node.RdElement;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 
 import java.util.Collections;
+import java.util.List;
 
 public class PropertyAccessorCall extends FunctionCall {
 
     private final boolean isGetter;
     private final Field field;
 
-    public PropertyAccessorCall(FunctionSignature signature, Argument argument, Expression owner, Field field) {
-        this(null, signature, argument, owner, field);
+    public PropertyAccessorCall(FunctionSignature signature, List<Argument> arguments, Expression owner, Field field) {
+        this(null, signature, arguments, owner, field);
     }
 
-    public PropertyAccessorCall(NodeData element, FunctionSignature signature, Argument argument, Expression owner, Field field) {
-        super(element, signature, Collections.singletonList(argument), owner);
+    public PropertyAccessorCall(NodeData element, FunctionSignature signature, List<Argument> arguments, Expression owner, Field field) {
+        super(element, signature, arguments, owner);
         this.isGetter = false;
         this.field = field;
     }

@@ -105,7 +105,9 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         Parameter args = new Parameter("args", BuiltInType.STRING_ARR, null);
         Type owner = scope.getClassType();
         FunctionSignature functionSignature = new FunctionSignature("main", Collections.singletonList(args), UnitType.INSTANCE, Modifier.PUBLIC + Modifier.STATIC, owner);
-        ConstructorCall constructorCall = new ConstructorCall(scope.getFullClassName());
+
+        FunctionSignature constructorCallSignature = scope.getConstructorCallSignature(scope.getFullClassName(), Collections.emptyList());
+        ConstructorCall constructorCall = new ConstructorCall(constructorCallSignature, scope.getFullClassName());
         FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), UnitType.INSTANCE, Modifier.PUBLIC, owner);
         FunctionCall startFunctionCall = new FunctionCall(startFunSignature, Collections.emptyList(), scope.getClassType());
         Block block = new Block(new Scope(scope), Arrays.asList(constructorCall, startFunctionCall));

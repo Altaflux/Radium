@@ -14,6 +14,7 @@ import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.Collections;
 import java.util.Optional;
 
 public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
@@ -72,8 +73,8 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
 
         Optional<FunctionSignature> signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field);
         Optional<FunctionCall> functionCall = signature.map(functionSignature -> {
-            Argument argument = new Argument(expression, null);
-            return new PropertyAccessorCall(functionSignature, argument, owner, field);
+            ArgumentHolder argument = new ArgumentHolder(expression, null);
+            return new PropertyAccessorCall(functionSignature, functionSignature.createArgumentList(Collections.singletonList(argument)), owner, field);
         });
 
         if (functionCall.isPresent()) {

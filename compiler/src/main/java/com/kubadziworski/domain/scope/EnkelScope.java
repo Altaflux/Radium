@@ -1,6 +1,6 @@
 package com.kubadziworski.domain.scope;
 
-import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.type.Type;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class EnkelScope {
         this.globalScope = globalScope;
     }
 
-    public Optional<FunctionSignature> getMethodSignature(Type owner, String methodName, List<Argument> arguments) {
+    public Optional<FunctionSignature> getMethodSignature(Type owner, String methodName, List<ArgumentHolder> arguments) {
         try {
             return Optional.of(globalScope.getScopeByClassName(owner.getName()).getMethodCallSignature(methodName, arguments));
         } catch (Exception e) {
@@ -32,7 +32,7 @@ public class EnkelScope {
         }
     }
 
-    public Optional<FunctionSignature> getConstructorSignature(Type className, List<Argument> arguments) {
+    public Optional<FunctionSignature> getConstructorSignature(Type className, List<ArgumentHolder> arguments) {
         try {
             return Optional.of(globalScope.getScopeByClassName(className.getName()).getConstructorCallSignature(className.getName(), arguments));
         } catch (Exception e) {

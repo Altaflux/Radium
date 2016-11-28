@@ -6,7 +6,6 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
-import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
@@ -15,8 +14,6 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class CallExpressionGenerator {
 
@@ -27,7 +24,7 @@ public class CallExpressionGenerator {
     }
 
     public void generate(ConstructorCall constructorCall, Scope scope, StatementGenerator statementGenerator) {
-        FunctionSignature signature = scope.getConstructorCallSignature(constructorCall.getIdentifier(), constructorCall.getArguments());
+        FunctionSignature signature = constructorCall.getFunctionSignature();
         String ownerDescriptor = ClassTypeFactory.createClassType(signature.getName()).getInternalName();
         methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
         methodVisitor.visitInsn(Opcodes.DUP);
@@ -56,19 +53,12 @@ public class CallExpressionGenerator {
     }
 
     private void generateArguments(FunctionCall call, StatementGenerator statementGenerator) {
-        FunctionSignature signature = call.getOwnerType()
-                .getMethodCallSignature(call.getIdentifier(), call.getArguments());
+        FunctionSignature signature = call.getSignature();
         generateArguments(call, signature, statementGenerator);
     }
 
     private void generateArguments(SuperCall call, Scope scope, StatementGenerator statementGenerator) {
-        FunctionSignature signature = scope.getMethodCallSignature(call.getIdentifier(), call.getArguments());
-        generateArguments(call, signature, statementGenerator);
-    }
-
-    private void generateArguments(ConstructorCall call, Scope scope, StatementGenerator statementGenerator) {
-        FunctionSignature signature = scope.getConstructorCallSignature(call.getIdentifier(), call.getArguments());
-        generateArguments(call, signature, statementGenerator);
+        generateArguments(call, call.getFunctionSignature(), statementGenerator);
     }
 
 
@@ -78,17 +68,11 @@ public class CallExpressionGenerator {
         if (arguments.size() > parameters.size()) {
             throw new BadArgumentsToFunctionCallException(call);
         }
-        List<Argument> sortedArguments = getSortedArguments(arguments, parameters);
-
-        arguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
-            Argument argument = sortedArguments.get(i);
-            Type parameterType = parameters.get(i).getType();
-            return new Argument(argument.getExpression(), argument.getParameterName().orElse(null), parameterType);
-        }).collect(Collectors.toList());
-
+        arguments = getSortedArguments(arguments, parameters);
         arguments.forEach(argument -> argument.accept(statementGenerator));
         generateDefaultParameters(call, parameters, arguments, statementGenerator);
     }
+
 
     private List<Argument> getSortedArguments(List<Argument> arguments, List<Parameter> parameters) {
         Comparator<Argument> argumentIndexComparator = (o1, o2) -> {
