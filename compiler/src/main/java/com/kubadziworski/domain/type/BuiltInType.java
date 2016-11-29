@@ -96,11 +96,6 @@ public enum BuiltInType implements Type {
     }
 
     @Override
-    public int getLoadVariableOpcode() {
-        return opcodes.getLoad();
-    }
-
-    @Override
     public int getStoreVariableOpcode() {
         return opcodes.getStore();
     }

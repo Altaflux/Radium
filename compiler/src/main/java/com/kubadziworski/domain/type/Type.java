@@ -43,8 +43,6 @@ public interface Type {
 
     int getDupX1Code();
 
-    int getLoadVariableOpcode();
-
     int getStoreVariableOpcode();
 
     int getReturnOpcode();

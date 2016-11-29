@@ -21,7 +21,8 @@ public class ReferenceExpressionGenerator {
         String varName = localVariableReference.getName();
         int index = scope.getLocalVariableIndex(varName);
         Type type = localVariableReference.getType();
-        methodVisitor.visitVarInsn(type.getLoadVariableOpcode(), index);
+        int opCode = org.objectweb.asm.Type.getType(type.getDescriptor()).getOpcode(Opcodes.ILOAD);
+        methodVisitor.visitVarInsn(opCode, index);
     }
 
 

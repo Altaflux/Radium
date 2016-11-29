@@ -20,8 +20,8 @@ public class UnitType extends JavaClassType {
     public static final UnitType CONCRETE_INSTANCE = new UnitType(true);
 
     private static final Expression expression =
-            new FieldReference(new Field("INSTANCE", INSTANCE, INSTANCE, Modifier.PUBLIC + Modifier.STATIC),
-                    new EmptyExpression(INSTANCE));
+            new FieldReference(new Field("INSTANCE", CONCRETE_INSTANCE, CONCRETE_INSTANCE, Modifier.PUBLIC + Modifier.STATIC),
+                    new EmptyExpression(CONCRETE_INSTANCE));
 
     private final boolean concrete;
 
@@ -36,6 +36,14 @@ public class UnitType extends JavaClassType {
 
     public static Expression chainExpression(Expression expression) {
         return new UnitExpression(expression);
+    }
+
+    @Override
+    public String getDescriptor() {
+        if(concrete) {
+            return "L" + getInternalName() + ";";
+        }
+        return "V";
     }
 
     @Override

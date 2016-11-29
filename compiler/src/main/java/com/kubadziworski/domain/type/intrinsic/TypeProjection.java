@@ -100,11 +100,6 @@ public class TypeProjection implements Type {
     }
 
     @Override
-    public int getLoadVariableOpcode() {
-        return type.getLoadVariableOpcode();
-    }
-
-    @Override
     public int getStoreVariableOpcode() {
         return type.getStoreVariableOpcode();
     }

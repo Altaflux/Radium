@@ -11,6 +11,8 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
+import com.kubadziworski.domain.type.intrinsic.TypeProjection;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.TypeResolver;
@@ -43,15 +45,30 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
             declarationType = TypeResolver.getFromTypeContext(ctx.type(), scope);
         }
 
+        Type.Nullability nullability = declarationType.isNullable();
+
+        if (declarationType instanceof TypeProjection) {
+            declarationType = ((TypeProjection) declarationType).getInternalType();
+        }
+
         if (declarationType.equals(NullType.INSTANCE)) {
             declarationType = ClassTypeFactory.createClassType("radium.Nothing");
         }
 
+        if (declarationType.equals(UnitType.INSTANCE)) {
+            declarationType = UnitType.CONCRETE_INSTANCE;
+        }
+
         if (!expression.getType().equals(NullType.INSTANCE)) {
             if (expression.getType().inheritsFrom(declarationType) < 0) {
-                throw new IncompatibleTypesException(varName, declarationType, expression.getType());
+                //TODO FIX VERY VERY UGLY HACK TO LET Unit instances to be equal to Concrete Unit instances when doing variable declaration
+                if (!(expression.getType().getName().equals(UnitType.INSTANCE.getName()) && declarationType.getName().equals(UnitType.CONCRETE_INSTANCE.getName()))) {
+                    throw new IncompatibleTypesException(varName, declarationType, expression.getType());
+                }
             }
         }
+
+
 //        if (declarationType.isPrimitive()) {
 //            Type.Nullability nullability = declarationType.isNullable();
 //            if (declarationType instanceof TypeProjection) {
@@ -61,7 +78,9 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
 //            scope.addLocalVariable(new LocalVariable(varName, typeProjection, mutable));
 //            return new VariableDeclaration(new RuleContextElementImpl(ctx), varName, expression, typeProjection, mutable);
 //        }
-        scope.addLocalVariable(new LocalVariable(varName, declarationType, mutable));
-        return new VariableDeclaration(new RuleContextElementImpl(ctx), varName, expression, declarationType, mutable);
+
+        Type finalType = new TypeProjection(declarationType, nullability);
+        scope.addLocalVariable(new LocalVariable(varName, finalType, mutable));
+        return new VariableDeclaration(new RuleContextElementImpl(ctx), varName, expression, finalType, mutable);
     }
 }

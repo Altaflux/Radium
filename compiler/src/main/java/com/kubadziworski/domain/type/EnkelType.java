@@ -105,11 +105,6 @@ public class EnkelType implements Type {
     }
 
     @Override
-    public int getLoadVariableOpcode() {
-        return Opcodes.ALOAD;
-    }
-
-    @Override
     public int getStoreVariableOpcode() {
         return Opcodes.ASTORE;
     }

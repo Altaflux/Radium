@@ -95,11 +95,6 @@ public class AnyType implements Type {
     }
 
     @Override
-    public int getLoadVariableOpcode() {
-        return objectClass.getLoadVariableOpcode();
-    }
-
-    @Override
     public int getStoreVariableOpcode() {
         return objectClass.getStoreVariableOpcode();
     }
@@ -118,6 +113,5 @@ public class AnyType implements Type {
     public Nullability isNullable() {
         return Nullability.NOT_NULL;
     }
-
 
 }

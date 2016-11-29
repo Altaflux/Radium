@@ -62,11 +62,6 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
     }
 
     @Override
-    public int getLoadVariableOpcode() {
-        return type.getLoadVariableOpcode();
-    }
-
-    @Override
     public int getStoreVariableOpcode() {
         return type.getStoreVariableOpcode();
     }

@@ -53,13 +53,9 @@ public final class NullType implements Type {
 
     @Override
     public int inheritsFrom(Type type) {
-        if(type.isNullable().equals(Nullability.NOT_NULL)){
+        if (type.isNullable().equals(Nullability.NOT_NULL)) {
             return -1;
         }
-
-//        if (type.isPrimitive()) {
-//            return -1;
-//        }
         return 0;
     }
 
@@ -76,11 +72,6 @@ public final class NullType implements Type {
     @Override
     public int getDupX1Code() {
         return TypeSpecificOpcodes.OBJECT.getDupX1Code();
-    }
-
-    @Override
-    public int getLoadVariableOpcode() {
-        return TypeSpecificOpcodes.OBJECT.getLoad();
     }
 
     @Override

@@ -119,11 +119,6 @@ public class JavaClassType implements Type {
     }
 
     @Override
-    public int getLoadVariableOpcode() {
-        return Opcodes.ALOAD;
-    }
-
-    @Override
     public int getStoreVariableOpcode() {
         return Opcodes.ASTORE;
     }

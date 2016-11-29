@@ -14,6 +14,7 @@ import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.ArrayList;
@@ -167,7 +168,9 @@ public class TryCatchStatementGenerator {
                 //TODO We cannot a return statement here as the TryCatchFilter will not allow us, so we will simulate its operation here
                 // we should seek to at least unify this into a place to avoid code duplication.
                 if (!finalBlock.isReturnComplete()) {
-                    methodVisitor.visitVarInsn(returnStatement.getExpression().getType().getLoadVariableOpcode(), getScope().getLocalVariableIndex(varName));
+
+                    int opCode = org.objectweb.asm.Type.getType(returnStatement.getExpression().getType().getDescriptor()).getOpcode(Opcodes.ILOAD);
+                    methodVisitor.visitVarInsn(opCode, getScope().getLocalVariableIndex(varName));
                     PrimitiveTypesWrapperFactory.coerce(getScope().getCurrentFunctionSignature().getReturnType(), returnStatement.getExpression().getType(),
                             new InstructionAdapter(methodVisitor));
                     methodVisitor.visitInsn(asmType.getOpcode(IRETURN));

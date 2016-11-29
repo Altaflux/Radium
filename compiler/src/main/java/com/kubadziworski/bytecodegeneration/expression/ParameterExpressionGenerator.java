@@ -4,6 +4,7 @@ import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 public class ParameterExpressionGenerator {
 
@@ -16,6 +17,7 @@ public class ParameterExpressionGenerator {
     public void generate(Parameter parameter, Scope scope) {
         Type type = parameter.getType();
         int index = scope.getLocalVariableIndex(parameter.getName());
-        methodVisitor.visitVarInsn(type.getLoadVariableOpcode(), index);
+        int opCode = org.objectweb.asm.Type.getType(type.getDescriptor()).getOpcode(Opcodes.ILOAD);
+        methodVisitor.visitVarInsn(opCode, index);
     }
 }
