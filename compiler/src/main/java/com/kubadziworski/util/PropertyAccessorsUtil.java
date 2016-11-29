@@ -50,7 +50,7 @@ public class PropertyAccessorsUtil {
     public static FunctionSignature createSetterForField(Field field, String fieldName) {
         return new FunctionSignature("set" + getPropertyMethodSuffix(field.getName()),
                 Collections.singletonList(new Parameter(fieldName, field.getType(), null)),
-                UnitType.INSTANCE, Modifier.PUBLIC, field.getOwner());
+                UnitType.INSTANCE, Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
     }
 
     public static FunctionSignature createSetterForField(Field field) {
@@ -60,10 +60,10 @@ public class PropertyAccessorsUtil {
     public static FunctionSignature createGetterForField(Field field) {
         if (field.getType().equals(PrimitiveTypes.BOOLEAN_TYPE)) {
             return new FunctionSignature("is" + getPropertyMethodSuffix(field.getName()), Collections.emptyList(),
-                    field.getType(), Modifier.PUBLIC, field.getOwner());
+                    field.getType(), Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
         }
         return new FunctionSignature("get" + getPropertyMethodSuffix(field.getName()), Collections.emptyList(),
-                field.getType(), Modifier.PUBLIC, field.getOwner());
+                field.getType(), Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
     }
 
 
