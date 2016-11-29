@@ -6,7 +6,7 @@ import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.type.RadiumBuiltIns;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 
 
 public class BlockExpression extends Block implements Expression {
@@ -22,7 +22,7 @@ public class BlockExpression extends Block implements Expression {
         this.block = block;
 
         if (block.getStatements().isEmpty()) {
-            type = UnitType.INSTANCE;
+            type = VoidType.INSTANCE;
         } else {
             Statement statement = block.getStatements().get(block.getStatements().size() - 1);
             if (super.isReturnComplete()) {
@@ -31,7 +31,7 @@ public class BlockExpression extends Block implements Expression {
                 if (statement instanceof Expression) {
                     type = ((Expression) statement).getType();
                 } else {
-                    type = UnitType.INSTANCE;
+                    type = VoidType.INSTANCE;
                 }
             }
         }

@@ -3,8 +3,8 @@ package com.kubadziworski.domain.node.expression;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
-import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
 
 import java.util.Optional;
@@ -44,7 +44,7 @@ public class IfExpression extends ElementImpl implements Expression {
         if (trueStatement.getType().isPrimitive() && falseStatement.getType().isPrimitive()) {
             throw new ComparisonBetweenDiferentTypesException(trueStatement, falseStatement);
         }
-        return ClassTypeFactory.createClassType("radium.Any");
+        return AnyType.INSTANCE;
     }
 
     @Override

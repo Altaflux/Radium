@@ -7,7 +7,7 @@ import com.kubadziworski.domain.resolver.ImportResolver;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
@@ -124,7 +124,7 @@ public class Scope {
 
     public FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         if (identifier.equals("super")) {
-            return new FunctionSignature("super", Collections.emptyList(), UnitType.INSTANCE, Modifier.PUBLIC,
+            return new FunctionSignature("super", Collections.emptyList(), VoidType.INSTANCE, Modifier.PUBLIC,
                     ClassTypeFactory.createClassType(getSuperClassName()));
         }
 

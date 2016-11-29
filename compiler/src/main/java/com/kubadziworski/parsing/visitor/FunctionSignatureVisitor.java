@@ -7,6 +7,9 @@ import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.type.intrinsic.TypeProjection;
+import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.util.TypeResolver;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.function.ParameterExpressionListVisitor;
@@ -33,6 +36,15 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
     public FunctionSignature visitFunctionDeclaration(@NotNull FunctionDeclarationContext ctx) {
         String functionName = ctx.functionName().getText();
         Type returnType = TypeResolver.getFromTypeContext(ctx.type(), scope);
+
+        if(returnType.getName().equals("radium.Unit") && returnType.isNullable().equals(Type.Nullability.NULLABLE)){
+            returnType = new TypeProjection(UnitType.CONCRETE_INSTANCE, Type.Nullability.NULLABLE);
+        }
+
+        if(returnType.getName().equals("radium.Unit") && returnType.isNullable().equals(Type.Nullability.NOT_NULL)){
+            returnType = new TypeProjection(VoidType.INSTANCE, Type.Nullability.NOT_NULL);
+        }
+
         ParametersListContext parametersCtx = ctx.parametersList();
 
 

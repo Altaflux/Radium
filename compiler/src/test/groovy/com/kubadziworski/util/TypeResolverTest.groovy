@@ -5,11 +5,10 @@ import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
 import com.kubadziworski.domain.type.Type
-import com.kubadziworski.domain.type.intrinsic.UnitType
+import com.kubadziworski.domain.type.intrinsic.VoidType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import org.antlr.v4.runtime.tree.TerminalNode
 import spock.lang.Specification
-
 /**
  * Created by kuba on 12.05.16.
  */
@@ -56,7 +55,7 @@ class TypeResolverTest extends Specification {
         def actualType = TypeResolver.getFromTypeContext(null)
 
         then:
-        actualType.equals(UnitType.INSTANCE)
+        actualType.equals(VoidType.INSTANCE)
     }
 
     def "GetFromValue"() {

@@ -12,38 +12,36 @@ import java.util.Optional;
  */
 public enum BuiltInType implements Type {
 
-    BOOLEAN("boolean", boolean.class, "Z", TypeSpecificOpcodes.INT, 1),
-    INT("int", int.class, "I", TypeSpecificOpcodes.INT, 1),
-    CHAR("char", char.class, "C", TypeSpecificOpcodes.INT, 1),
-    BYTE("byte", byte.class, "B", TypeSpecificOpcodes.INT, 1),
-    SHORT("short", short.class, "S", TypeSpecificOpcodes.INT, 1),
-    LONG("long", long.class, "J", TypeSpecificOpcodes.LONG, 2),
-    FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT, 1),
-    DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE, 2),
-    BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT, 1),
-    INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT, 1),
-    CHAR_ARR("char[]", char[].class, "[C", TypeSpecificOpcodes.OBJECT, 1),
-    BYTE_ARR("byte[]", byte[].class, "[B", TypeSpecificOpcodes.OBJECT, 1),
-    SHORT_ARR("short[]", short[].class, "[S", TypeSpecificOpcodes.OBJECT, 1),
-    LONG_ARR("long[]", long[].class, "[J", TypeSpecificOpcodes.OBJECT, 1),
-    FLOAT_ARR("float[]", float[].class, "[F", TypeSpecificOpcodes.OBJECT, 1),
-    DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT, 1),
-    NONE("", null, "", TypeSpecificOpcodes.OBJECT, 1),
-    STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT, 1);
-  //  VOID("void", void.class, "V", TypeSpecificOpcodes.VOID, 0);
+    BOOLEAN("boolean", boolean.class, "Z", TypeSpecificOpcodes.INT),
+    INT("int", int.class, "I", TypeSpecificOpcodes.INT),
+    CHAR("char", char.class, "C", TypeSpecificOpcodes.INT),
+    BYTE("byte", byte.class, "B", TypeSpecificOpcodes.INT),
+    SHORT("short", short.class, "S", TypeSpecificOpcodes.INT),
+    LONG("long", long.class, "J", TypeSpecificOpcodes.LONG),
+    FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT),
+    DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE),
+    BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT),
+    INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT),
+    CHAR_ARR("char[]", char[].class, "[C", TypeSpecificOpcodes.OBJECT),
+    BYTE_ARR("byte[]", byte[].class, "[B", TypeSpecificOpcodes.OBJECT),
+    SHORT_ARR("short[]", short[].class, "[S", TypeSpecificOpcodes.OBJECT),
+    LONG_ARR("long[]", long[].class, "[J", TypeSpecificOpcodes.OBJECT),
+    FLOAT_ARR("float[]", float[].class, "[F", TypeSpecificOpcodes.OBJECT),
+    DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT),
+    NONE("", null, "", TypeSpecificOpcodes.OBJECT),
+    STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT);
 
     private final String name;
     private final Class<?> typeClass;
     private final String descriptor;
     private final TypeSpecificOpcodes opcodes;
-    private final int stackSize;
 
-    BuiltInType(String name, Class<?> typeClass, String descriptor, TypeSpecificOpcodes opcodes, int stackSize) {
+    BuiltInType(String name, Class<?> typeClass, String descriptor, TypeSpecificOpcodes opcodes) {
         this.name = name;
         this.typeClass = typeClass;
         this.descriptor = descriptor;
         this.opcodes = opcodes;
-        this.stackSize = stackSize;
+
     }
 
     public Optional<Type> getSuperType() {

@@ -7,6 +7,7 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
@@ -30,7 +31,7 @@ public class AssignmentStatementGenerator {
         Expression expression = assignment.getAssignmentExpression();
         Type type = expression.getType();
 
-        if (type.equals(UnitType.INSTANCE)) {
+        if (type.equals(VoidType.INSTANCE)) {
             expression = UnitType.chainExpression(expression);
         }
 

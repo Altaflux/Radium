@@ -11,6 +11,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -40,7 +41,7 @@ public class TryCatchStatementGenerator {
 
 
     public void generate(TryCatchStatement tryCatchStatement, StatementGenerator statementGenerator) {
-        generateStuff(tryCatchStatement.getFinallyBlock().orElse(null), tryCatchStatement.getStatement(), Collections.emptyList(), statementGenerator, UnitType.INSTANCE);
+        generateStuff(tryCatchStatement.getFinallyBlock().orElse(null), tryCatchStatement.getStatement(), Collections.emptyList(), statementGenerator, VoidType.INSTANCE);
     }
 
     public void generate(TryCatchExpression tryCatchStatement, StatementGenerator statementGenerator) {
@@ -88,7 +89,7 @@ public class TryCatchStatementGenerator {
 
                         //If the whole tryCatch expression is of Unit type then we should not create a Unit instance,
                         //assignment and parameter declarations must instantiate their own Unit instances.
-                        if (catchBlock.getType().equals(UnitType.INSTANCE) && !expectedType.equals(UnitType.INSTANCE)) {
+                        if (catchBlock.getType().equals(VoidType.INSTANCE) && !expectedType.equals(VoidType.INSTANCE)) {
                             UnitType.expression().accept(statementGenerator);
                         }
                         methodVisitor.visitJumpInsn(GOTO, fullEndOfTryCatchStatementLabel);

@@ -13,6 +13,7 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.TypeResolver;
@@ -52,17 +53,17 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
         }
 
         if (declarationType.equals(NullType.INSTANCE)) {
-            declarationType = ClassTypeFactory.createClassType("radium.Nothing");
+            declarationType = new TypeProjection(ClassTypeFactory.createClassType("radium.Nothing"), nullability);
         }
 
-        if (declarationType.equals(UnitType.INSTANCE)) {
-            declarationType = UnitType.CONCRETE_INSTANCE;
+        if (declarationType.equals(VoidType.INSTANCE)) {
+            declarationType = new TypeProjection(UnitType.CONCRETE_INSTANCE, nullability);
         }
 
         if (!expression.getType().equals(NullType.INSTANCE)) {
             if (expression.getType().inheritsFrom(declarationType) < 0) {
                 //TODO FIX VERY VERY UGLY HACK TO LET Unit instances to be equal to Concrete Unit instances when doing variable declaration
-                if (!(expression.getType().getName().equals(UnitType.INSTANCE.getName()) && declarationType.getName().equals(UnitType.CONCRETE_INSTANCE.getName()))) {
+                if (!(declarationType.getName().equals(UnitType.CONCRETE_INSTANCE.getName()))) {
                     throw new IncompatibleTypesException(varName, declarationType, expression.getType());
                 }
             }

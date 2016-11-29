@@ -7,7 +7,7 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.EnkelType;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import org.springframework.util.StringUtils;
 
@@ -50,7 +50,7 @@ public class PropertyAccessorsUtil {
     public static FunctionSignature createSetterForField(Field field, String fieldName) {
         return new FunctionSignature("set" + getPropertyMethodSuffix(field.getName()),
                 Collections.singletonList(new Parameter(fieldName, field.getType(), null)),
-                UnitType.INSTANCE, Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
+                VoidType.INSTANCE, Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
     }
 
     public static FunctionSignature createSetterForField(Field field) {

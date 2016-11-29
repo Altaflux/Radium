@@ -145,7 +145,6 @@ public class EnkelType implements Type {
         if (o == null) return false;
 
         return o instanceof Type && getName().equals(((Type) o).getName());
-
     }
 
     @Override

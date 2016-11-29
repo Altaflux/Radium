@@ -9,25 +9,19 @@ import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
-import org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Modifier;
 
 public class UnitType extends JavaClassType {
 
-    public static final UnitType INSTANCE = new UnitType(false);
-
-    public static final UnitType CONCRETE_INSTANCE = new UnitType(true);
+    public static final UnitType CONCRETE_INSTANCE = new UnitType();
 
     private static final Expression expression =
             new FieldReference(new Field("INSTANCE", CONCRETE_INSTANCE, CONCRETE_INSTANCE, Modifier.PUBLIC + Modifier.STATIC),
                     new EmptyExpression(CONCRETE_INSTANCE));
 
-    private final boolean concrete;
-
-    private UnitType(boolean concrete) {
+    private UnitType() {
         super("radium.Unit");
-        this.concrete = concrete;
     }
 
     public static Expression expression() {
@@ -40,22 +34,17 @@ public class UnitType extends JavaClassType {
 
     @Override
     public String getDescriptor() {
-        if(concrete) {
-            return "L" + getInternalName() + ";";
-        }
-        return "V";
+        return super.getDescriptor();
     }
 
     @Override
     public int getReturnOpcode() {
-        if (concrete) return Opcodes.ARETURN;
-        return Opcodes.RETURN;
+        return super.getReturnOpcode();
     }
 
     @Override
     public org.objectweb.asm.Type getAsmType() {
-        if (concrete) return new JavaClassType("radium.Unit").getAsmType();
-        return org.objectweb.asm.Type.VOID_TYPE;
+        return super.getAsmType();
     }
 
     @Override
@@ -66,16 +55,13 @@ public class UnitType extends JavaClassType {
         if (o instanceof TypeProjection) {
             o = ((TypeProjection) o).getInternalType();
         }
-        if (o instanceof UnitType) {
-            return concrete == ((UnitType) o).concrete;
-        }
 
         return o instanceof Type && getName().equals(((Type) o).getName());
     }
 
     @Override
     public String toString() {
-        return "UnitType{" + concrete + "} " + super.toString();
+        return super.toString();
     }
 
 
@@ -89,7 +75,7 @@ public class UnitType extends JavaClassType {
 
         @Override
         public Type getType() {
-            return UnitType.INSTANCE;
+            return UnitType.CONCRETE_INSTANCE;
         }
 
         @Override

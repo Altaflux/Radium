@@ -8,7 +8,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.RadiumBuiltIns;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -38,7 +38,7 @@ public class BlockStatementGenerator {
             }
             if (stmt instanceof Expression) {
                 Type type = ((Expression) stmt).getType();
-                if (!type.equals(UnitType.INSTANCE) && !type.equals(RadiumBuiltIns.NOTHING_TYPE)) {
+                if (!type.equals(VoidType.INSTANCE) && !type.equals(RadiumBuiltIns.NOTHING_TYPE)) {
                     if (!(stmt instanceof ConstructorCall)) {
                         visitPop(type);
                     }

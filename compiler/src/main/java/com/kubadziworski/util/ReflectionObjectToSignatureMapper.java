@@ -5,7 +5,7 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import radium.annotations.NotNull;
 import radium.annotations.Nullable;
 
@@ -37,7 +37,7 @@ public final class ReflectionObjectToSignatureMapper {
                 .map(p -> new Parameter(p.getName(), TypeResolver.getTypeFromNameWithClazzAlias(p.getType().getCanonicalName(), getNullability(p)), null))
                 .collect(toList());
 
-        return new FunctionSignature(name, parameters, UnitType.INSTANCE, constructor.getModifiers(), owner);
+        return new FunctionSignature(name, parameters, VoidType.INSTANCE, constructor.getModifiers(), owner);
     }
 
     public static Field fromField(java.lang.reflect.Field field, Type owner) {

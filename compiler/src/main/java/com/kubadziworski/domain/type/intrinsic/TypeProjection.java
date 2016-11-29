@@ -4,7 +4,6 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BoxableType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.exception.IncompatibleTypesException;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,10 +26,6 @@ public class TypeProjection implements Type {
             this.type = ((BoxableType) type).getBoxedType();
         } else {
             this.type = type;
-        }
-
-        if (type.equals(UnitType.INSTANCE) && nullable.equals(Nullability.NULLABLE)) {
-            throw new IncompatibleTypesException("Cannot set Unit to Nullable type", this, type);
         }
     }
 

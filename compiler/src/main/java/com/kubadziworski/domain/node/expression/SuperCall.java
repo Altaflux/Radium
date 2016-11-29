@@ -5,7 +5,7 @@ import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Collections;
@@ -52,7 +52,7 @@ public class SuperCall extends ElementImpl implements Call {
 
     @Override
     public Type getType() {
-        return UnitType.INSTANCE;
+        return VoidType.INSTANCE;
     }
 
     public FunctionSignature getFunctionSignature() {

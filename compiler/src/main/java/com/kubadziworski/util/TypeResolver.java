@@ -7,10 +7,7 @@ import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.*;
-import com.kubadziworski.domain.type.intrinsic.AnyType;
-import com.kubadziworski.domain.type.intrinsic.NullType;
-import com.kubadziworski.domain.type.intrinsic.TypeProjection;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.*;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +30,7 @@ public final class TypeResolver {
     private static final Type CHAR_TYPE = PrimitiveTypes.CHAR_TYPE;
 
     public static Type getFromTypeContext(TypeContext typeContext) {
-        if (typeContext == null) return new TypeProjection(UnitType.INSTANCE, Type.Nullability.NOT_NULL);
+        if (typeContext == null) return new TypeProjection(VoidType.INSTANCE, Type.Nullability.NOT_NULL);
 
         if (typeContext.nullable != null) {
             return getFromTypeName(typeContext.simpleName.getText(), Type.Nullability.NULLABLE);
@@ -42,7 +39,7 @@ public final class TypeResolver {
     }
 
     public static Type getFromTypeContext(TypeContext typeContext, Scope scope) {
-        if (typeContext == null) return UnitType.INSTANCE;
+        if (typeContext == null) return VoidType.INSTANCE;
         String typeName = typeContext.simpleName.getText();
 
         Type.Nullability nullability = typeContext.nullable != null ? Type.Nullability.NULLABLE : Type.Nullability.NOT_NULL;
@@ -54,9 +51,10 @@ public final class TypeResolver {
 
         Type contextType = scope.resolveClassName(typeName);
         //When parsing Radium classes we cannot use the Unit returned from the ClassTypeFactory as it will return the Concrete version
-        if (contextType.getName().equals("radium.Unit") & nullability.equals(Type.Nullability.NOT_NULL)) {
-            return new TypeProjection(UnitType.INSTANCE, nullability);
-        }
+        //NOTE CHECK BEHAVIOUR
+//        if (contextType.getName().equals("radium.Unit") & nullability.equals(Type.Nullability.NOT_NULL)) {
+//            return new TypeProjection(UnitType.INSTANCE, nullability);
+//        }
 
         return new TypeProjection(contextType, nullability);
     }
@@ -73,7 +71,7 @@ public final class TypeResolver {
 
     //For usage of ReflectionObjectToSignatureMapper
     public static Type getTypeFromNameWithClazzAlias(String typeName, Type.Nullability nullability) {
-        if (typeName.equals("void")) return UnitType.INSTANCE;
+        if (typeName.equals("void")) return VoidType.INSTANCE;
         if (typeName.equals("boolean")) return new TypeProjection(PrimitiveTypes.BOOLEAN_TYPE, nullability);
         if (typeName.equals("int")) return new TypeProjection(PrimitiveTypes.INT_TYPE, nullability);
         if (typeName.equals("float")) return new TypeProjection(PrimitiveTypes.FLOAT_TYPE, nullability);
@@ -98,7 +96,7 @@ public final class TypeResolver {
 
     public static Type getFromValue(EnkelParser.ValueContext value) {
         String stringValue = value.getText();
-        if (StringUtils.isEmpty(stringValue)) return UnitType.INSTANCE;
+        if (StringUtils.isEmpty(stringValue)) return UnitType.CONCRETE_INSTANCE;
 
         if (stringValue.equals("null")) return NullType.INSTANCE;
 
@@ -207,11 +205,6 @@ public final class TypeResolver {
         }
     }
 
-//    private static Optional<BuiltInType> getBuiltdInType(String typeName) {
-//        return Arrays.stream(BuiltInType.values())
-//                .filter(type -> type.getName().equals(typeName))
-//                .findFirst();
-//    }
 
     private static Optional<Type> getBuiltInType(String typeName) {
         return PRIMITIVE_TYPES.stream()
@@ -266,7 +259,7 @@ public final class TypeResolver {
 
     public static Type getCommonType(List<Type> types) {
         if (types.isEmpty()) {
-            return UnitType.INSTANCE;
+            return VoidType.INSTANCE;
         }
 
         List<Type> commonTypesList = types.stream()

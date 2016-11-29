@@ -18,7 +18,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.apache.commons.collections4.ListUtils;
 
@@ -81,7 +81,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
 
     private void addDefaultConstructorSignatureToScope(String name, boolean defaultConstructorExists) {
         if (!defaultConstructorExists) {
-            FunctionSignature constructorSignature = new FunctionSignature(name, Collections.emptyList(), UnitType.INSTANCE, Modifier.PUBLIC, scope.getClassType());
+            FunctionSignature constructorSignature = new FunctionSignature(name, Collections.emptyList(), VoidType.INSTANCE, Modifier.PUBLIC, scope.getClassType());
             scope.addSignature(constructorSignature);
         }
     }
@@ -104,11 +104,11 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
     private Function getGeneratedMainMethod() {
         Parameter args = new Parameter("args", BuiltInType.STRING_ARR, null);
         Type owner = scope.getClassType();
-        FunctionSignature functionSignature = new FunctionSignature("main", Collections.singletonList(args), UnitType.INSTANCE, Modifier.PUBLIC + Modifier.STATIC, owner);
+        FunctionSignature functionSignature = new FunctionSignature("main", Collections.singletonList(args), VoidType.INSTANCE, Modifier.PUBLIC + Modifier.STATIC, owner);
 
         FunctionSignature constructorCallSignature = scope.getConstructorCallSignature(scope.getFullClassName(), Collections.emptyList());
         ConstructorCall constructorCall = new ConstructorCall(constructorCallSignature, scope.getFullClassName());
-        FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), UnitType.INSTANCE, Modifier.PUBLIC, owner);
+        FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), VoidType.INSTANCE, Modifier.PUBLIC, owner);
         FunctionCall startFunctionCall = new FunctionCall(startFunSignature, Collections.emptyList(), scope.getClassType());
         Block block = new Block(new Scope(scope), Arrays.asList(constructorCall, startFunctionCall));
         return new Function(functionSignature, block);

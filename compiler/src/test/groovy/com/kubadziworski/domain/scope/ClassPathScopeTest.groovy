@@ -7,7 +7,7 @@ import com.kubadziworski.domain.type.JavaClassType
 import com.kubadziworski.domain.type.Type
 import com.kubadziworski.domain.type.intrinsic.AnyType
 import com.kubadziworski.domain.type.intrinsic.TypeProjection
-import com.kubadziworski.domain.type.intrinsic.UnitType
+import com.kubadziworski.domain.type.intrinsic.VoidType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import spock.lang.Specification
 
@@ -51,7 +51,7 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, null)
         }
-        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, UnitType.INSTANCE, Modifier.PUBLIC, new JavaClassType(className));
+        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, VoidType.INSTANCE, Modifier.PUBLIC, new JavaClassType(className));
         when:
         ClassPathScope classPathScope = new ClassPathScope();
         def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(className), args)

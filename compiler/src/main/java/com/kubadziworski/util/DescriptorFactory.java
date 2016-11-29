@@ -4,7 +4,6 @@ import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.intrinsic.UnitType;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -33,9 +32,6 @@ public final class DescriptorFactory {
                 .map(parameter -> parameter.getType().getDescriptor())
                 .collect(Collectors.joining("", "(", ")"));
         String returnDescriptor = returnType.getDescriptor();
-        if (returnType.equals(UnitType.INSTANCE)) {
-            return parametersDescriptor + "V";
-        }
         return parametersDescriptor + returnDescriptor;
     }
 }
