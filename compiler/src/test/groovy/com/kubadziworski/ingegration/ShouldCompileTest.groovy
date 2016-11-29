@@ -834,6 +834,32 @@ class ShouldCompileTest extends Specification {
                     }
                 }
             """
+
+    private static final primitiveFunctions = """
+                import com.kubadziworski.test.DummyClass;
+                PrimitiveFunctions {
+
+                    start(){
+                       val myVal = 1.plus(3)
+                       print myVal.toString()
+                       assert(myVal == 4, true)
+
+                       val newVal = myVal.minus(3)
+                       assert(newVal == 1, true)
+
+                       assert(1.compareTo(1) == 0, true)
+
+                    }
+                    Unit assert(Boolean actual,Boolean expected) {
+                            if (actual == expected) {
+                                print "OK"
+                            }
+                            else {
+                                print "TEST FAILED"
+                            }
+                    }
+                }
+            """
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -888,6 +914,7 @@ class ShouldCompileTest extends Specification {
         concreteReturnUnit      | "ConcreteReturnUnit.enk"
         superCall               | "CallParentClass.enk"
         typeCoercion            | "TypeCoercion.enk"
+        primitiveFunctions      | "PrimitiveFunctions.enk"
     }
 
 

@@ -33,5 +33,10 @@ public enum ArithmeticOperator {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Sign not implemented"));
     }
+    public static ArithmeticOperator fromMethodName(String methodName) {
+        return Arrays.stream(values()).filter(opSign -> opSign.methodName.equals(methodName))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Method not implemented"));
+    }
 
 }

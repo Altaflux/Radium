@@ -37,4 +37,12 @@ public class Value extends ElementImpl implements Expression {
     public Type getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return "Value{" +
+                "value='" + value + '\'' +
+                ", type=" + type +
+                "} " + super.toString();
+    }
 }

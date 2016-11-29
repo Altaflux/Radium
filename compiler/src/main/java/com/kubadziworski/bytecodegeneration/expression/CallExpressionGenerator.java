@@ -6,6 +6,7 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.intrinsic.primitive.function.PrimitiveFunction;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
@@ -42,6 +43,12 @@ public class CallExpressionGenerator {
 
     public void generate(FunctionCall functionCall, StatementGenerator statementGenerator) {
         Expression owner = functionCall.getOwner();
+
+        if (owner.getType().isPrimitive()) {
+            callArithmeticExpression(functionCall, statementGenerator);
+            return;
+        }
+
         owner.accept(statementGenerator);
         generateArguments(functionCall, statementGenerator);
         String functionName = functionCall.getIdentifier();
@@ -60,7 +67,6 @@ public class CallExpressionGenerator {
     private void generateArguments(SuperCall call, Scope scope, StatementGenerator statementGenerator) {
         generateArguments(call, call.getFunctionSignature(), statementGenerator);
     }
-
 
     private void generateArguments(Call call, FunctionSignature signature, StatementGenerator statementGenerator) {
         List<Parameter> parameters = signature.getParameters();
@@ -90,6 +96,12 @@ public class CallExpressionGenerator {
                 .findFirst()
                 .orElseThrow(() -> new WrongArgumentNameException(argument, parameters));
     }
+
+
+    private void callArithmeticExpression(FunctionCall functionCall, StatementGenerator statementGenerator) {
+        PrimitiveFunction.executePrimitiveExpression(functionCall, statementGenerator, methodVisitor);
+    }
+
 
     //TODO I THINK THIS WILL NOT WORK WITH PRECOMPILED RADIUM CLASSES
     private void generateDefaultParameters(Call call, List<Parameter> parameters, List<Argument> arguments, StatementGenerator statementGenerator) {
