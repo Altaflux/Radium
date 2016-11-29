@@ -53,6 +53,12 @@ public class UnitType extends JavaClassType {
     }
 
     @Override
+    public org.objectweb.asm.Type getAsmType() {
+        if (concrete) return new JavaClassType("radium.Unit").getAsmType();
+        return org.objectweb.asm.Type.VOID_TYPE;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;

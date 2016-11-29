@@ -110,6 +110,11 @@ public class AnyType implements Type {
     }
 
     @Override
+    public org.objectweb.asm.Type getAsmType() {
+        return org.objectweb.asm.Type.getType(getDescriptor());
+    }
+
+    @Override
     public Nullability isNullable() {
         return Nullability.NOT_NULL;
     }

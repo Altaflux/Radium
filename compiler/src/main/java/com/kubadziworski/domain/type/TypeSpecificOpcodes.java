@@ -22,8 +22,6 @@ public enum TypeSpecificOpcodes {
     private final boolean isPrimitive;
 
     TypeSpecificOpcodes( int store, int ret, int dup, int dupX1, boolean isPrimitive) {
-
-
         this.store = store;
         this.ret = ret;
         this.dup = dup;

@@ -126,6 +126,11 @@ public enum BuiltInType implements Type {
     }
 
     @Override
+    public org.objectweb.asm.Type getAsmType() {
+        return org.objectweb.asm.Type.getType(getDescriptor());
+    }
+
+    @Override
     public String toString() {
         return "BuiltInType{" +
                 "name='" + name + '\'' +

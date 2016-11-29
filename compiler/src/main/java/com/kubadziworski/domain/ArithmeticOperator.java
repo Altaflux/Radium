@@ -21,8 +21,7 @@ public enum ArithmeticOperator {
     }
 
     public int getOperationOpCode(Type type) {
-        org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getType(type.getDescriptor());
-        return asmType.getOpcode(operationOpCode);
+        return type.getAsmType().getOpcode(operationOpCode);
     }
 
     public String getMethodName() {

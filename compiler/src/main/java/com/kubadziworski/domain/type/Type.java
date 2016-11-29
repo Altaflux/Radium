@@ -12,9 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by kuba on 28.03.16.
- */
+
 public interface Type {
 
     enum Nullability {
@@ -50,6 +48,8 @@ public interface Type {
     boolean isPrimitive();
 
     Nullability isNullable();
+
+    org.objectweb.asm.Type getAsmType();
 
     default FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         List<FunctionSignature> signatures = getFunctionSignatures();

@@ -26,19 +26,19 @@ public class PrimitiveTypesWrapperFactory {
 
         if (from instanceof BoxableType && to instanceof BoxableType) {
             if (((BoxableType) to).isBoxed() && !((BoxableType) from).isBoxed()) {
-                BoxUnboxer.box(org.objectweb.asm.Type.getType(from.getDescriptor()), org.objectweb.asm.Type.getType(to.getDescriptor()), v);
+                BoxUnboxer.box(from.getAsmType(), to.getAsmType(), v);
                 coerce(to, ((BoxableType) from).getBoxedType(), v);
             } else if (!((BoxableType) to).isBoxed() && ((BoxableType) from).isBoxed()) {
-                BoxUnboxer.unbox(org.objectweb.asm.Type.getType(((BoxableType) from).getUnBoxedType().getDescriptor()), v);
+                BoxUnboxer.unbox(((BoxableType) from).getUnBoxedType().getAsmType(), v);
                 coerce(to, ((BoxableType) from).getUnBoxedType(), v);
             }else {
-                v.cast(org.objectweb.asm.Type.getType(from.getDescriptor()), org.objectweb.asm.Type.getType(to.getDescriptor()));
+                v.cast(from.getAsmType(), to.getAsmType());
             }
         } else if (from.isPrimitive() && !to.isPrimitive()) {
-            BoxUnboxer.box(org.objectweb.asm.Type.getType(from.getDescriptor()),
-                    org.objectweb.asm.Type.getType(((BoxableType) from).getBoxedType().getDescriptor()), v);
+            BoxUnboxer.box(from.getAsmType(),
+                    ((BoxableType) from).getBoxedType().getAsmType(), v);
         } else {
-            v.cast(org.objectweb.asm.Type.getType(from.getDescriptor()), org.objectweb.asm.Type.getType(to.getDescriptor()));
+            v.cast(from.getAsmType(), to.getAsmType());
         }
     }
 }

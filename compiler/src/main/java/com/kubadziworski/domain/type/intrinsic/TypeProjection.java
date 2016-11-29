@@ -119,6 +119,10 @@ public class TypeProjection implements Type {
         return nullable;
     }
 
+    @Override
+    public org.objectweb.asm.Type getAsmType() {
+        return type.getAsmType();
+    }
 
     public Type getInternalType() {
         return type;

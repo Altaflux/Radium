@@ -87,6 +87,11 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
     }
 
     @Override
+    public org.objectweb.asm.Type getAsmType() {
+        return org.objectweb.asm.Type.getType(getDescriptor());
+    }
+
+    @Override
     public int inheritsFrom(Type type) {
         if (this.getName().equals(type.getName())) {
             return 0;

@@ -90,6 +90,11 @@ public final class NullType implements Type {
     }
 
     @Override
+    public org.objectweb.asm.Type getAsmType() {
+        throw new UnsupportedOperationException("Cannot get ASM Type of NULL instance");
+    }
+
+    @Override
     public Nullability isNullable() {
         return Nullability.NULLABLE;
     }

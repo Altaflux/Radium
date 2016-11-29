@@ -17,7 +17,7 @@ public class ParameterExpressionGenerator {
     public void generate(Parameter parameter, Scope scope) {
         Type type = parameter.getType();
         int index = scope.getLocalVariableIndex(parameter.getName());
-        int opCode = org.objectweb.asm.Type.getType(type.getDescriptor()).getOpcode(Opcodes.ILOAD);
+        int opCode = type.getAsmType().getOpcode(Opcodes.ILOAD);
         methodVisitor.visitVarInsn(opCode, index);
     }
 }

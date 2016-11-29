@@ -27,11 +27,11 @@ public class ReturnStatementGenerator {
         FunctionSignature functionSignature = scope.getCurrentFunctionSignature();
         if (functionSignature != null) {
             Type returnType = functionSignature.getReturnType();
-            int returnOpCode = org.objectweb.asm.Type.getType(returnType.getDescriptor()).getOpcode(Opcodes.IRETURN);
+            int returnOpCode = returnType.getAsmType().getOpcode(Opcodes.IRETURN);
             PrimitiveTypesWrapperFactory.coerce(returnType, type, new InstructionAdapter(methodVisitor));
             methodVisitor.visitInsn(returnOpCode);
         } else {
-            int returnOpCode = org.objectweb.asm.Type.getType(type.getDescriptor()).getOpcode(Opcodes.IRETURN);
+            int returnOpCode = type.getAsmType().getOpcode(Opcodes.IRETURN);
             methodVisitor.visitInsn(returnOpCode);
         }
     }

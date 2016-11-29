@@ -169,7 +169,7 @@ public class TryCatchStatementGenerator {
                 // we should seek to at least unify this into a place to avoid code duplication.
                 if (!finalBlock.isReturnComplete()) {
 
-                    int opCode = org.objectweb.asm.Type.getType(returnStatement.getExpression().getType().getDescriptor()).getOpcode(Opcodes.ILOAD);
+                    int opCode = returnStatement.getExpression().getType().getAsmType().getOpcode(Opcodes.ILOAD);
                     methodVisitor.visitVarInsn(opCode, getScope().getLocalVariableIndex(varName));
                     PrimitiveTypesWrapperFactory.coerce(getScope().getCurrentFunctionSignature().getReturnType(), returnStatement.getExpression().getType(),
                             new InstructionAdapter(methodVisitor));
