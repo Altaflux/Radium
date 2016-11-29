@@ -3,7 +3,6 @@ package com.kubadziworski.domain.type;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
-import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,25 +103,6 @@ public class EnkelType implements Type {
         return name.replace(".", "/");
     }
 
-    @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
-    }
-
-    @Override
-    public int getDupCode() {
-        return Opcodes.DUP;
-    }
-
-    @Override
-    public int getDupX1Code() {
-        return Opcodes.DUP_X1;
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return Opcodes.ARETURN;
-    }
 
     @Override
     public boolean isPrimitive(){

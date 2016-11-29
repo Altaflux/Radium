@@ -3,7 +3,6 @@ package com.kubadziworski.domain.type.intrinsic;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
-import org.objectweb.asm.Opcodes;
 
 import java.util.Collections;
 import java.util.List;
@@ -68,26 +67,6 @@ public class VoidType implements Type {
             return Optional.of(type);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public int getDupCode() {
-        return 0;
-    }
-
-    @Override
-    public int getDupX1Code() {
-        return 0;
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return 0;
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return VOID.getOpcode(Opcodes.IRETURN);
     }
 
     @Override

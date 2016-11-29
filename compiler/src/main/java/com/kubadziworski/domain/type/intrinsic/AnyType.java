@@ -85,26 +85,6 @@ public class AnyType implements Type {
     }
 
     @Override
-    public int getDupCode() {
-        return objectClass.getDupCode();
-    }
-
-    @Override
-    public int getDupX1Code() {
-        return objectClass.getDupX1Code();
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return objectClass.getStoreVariableOpcode();
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return objectClass.getReturnOpcode();
-    }
-
-    @Override
     public boolean isPrimitive() {
         return objectClass.isPrimitive();
     }

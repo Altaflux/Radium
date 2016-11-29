@@ -161,7 +161,7 @@ public class TryCatchStatementGenerator {
             if (finalBlock != null) {
                 String varName = "$$Return" + atomicInteger.incrementAndGet();
                 getScope().addLocalVariable(new LocalVariable(varName, returnStatement.getExpression().getType()));
-                methodVisitor.visitVarInsn(returnStatement.getExpression().getType().getStoreVariableOpcode(), getScope().getLocalVariableIndex(varName));
+                methodVisitor.visitVarInsn(returnStatement.getExpression().getType().getAsmType().getOpcode(Opcodes.ISTORE), getScope().getLocalVariableIndex(varName));
 
                 StatementGeneratorFilter filter = new StatementGeneratorFilter(null, next, getScope());
                 finalBlock.accept(filter);

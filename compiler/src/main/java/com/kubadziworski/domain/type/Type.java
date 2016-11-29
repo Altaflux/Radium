@@ -37,14 +37,6 @@ public interface Type {
 
     Optional<Type> nearestDenominator(Type type);
 
-    int getDupCode();
-
-    int getDupX1Code();
-
-    int getStoreVariableOpcode();
-
-    int getReturnOpcode();
-
     boolean isPrimitive();
 
     Nullability isNullable();

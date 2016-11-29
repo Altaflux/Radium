@@ -38,11 +38,6 @@ public class UnitType extends JavaClassType {
     }
 
     @Override
-    public int getReturnOpcode() {
-        return super.getReturnOpcode();
-    }
-
-    @Override
     public org.objectweb.asm.Type getAsmType() {
         return super.getAsmType();
     }

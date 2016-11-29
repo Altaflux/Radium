@@ -68,7 +68,7 @@ public class AssignmentStatementGenerator {
                 }
                 expression.accept(generator);
                 castIfNecessary(type, localVariableType);
-                methodVisitor.visitVarInsn(localVariableType.getStoreVariableOpcode(), index);
+                methodVisitor.visitVarInsn(localVariableType.getAsmType().getOpcode(Opcodes.ISTORE), index);
                 return;
             }
 

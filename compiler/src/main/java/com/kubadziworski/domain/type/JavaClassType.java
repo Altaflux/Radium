@@ -4,7 +4,6 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
-import org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -116,26 +115,6 @@ public class JavaClassType implements Type {
     @Override
     public String getInternalName() {
         return name.replace(".", "/");
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return Opcodes.ASTORE;
-    }
-
-    @Override
-    public int getDupCode() {
-        return Opcodes.DUP;
-    }
-
-    @Override
-    public int getDupX1Code() {
-        return Opcodes.DUP_X1;
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return Opcodes.ARETURN;
     }
 
     @Override

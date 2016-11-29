@@ -1,13 +1,13 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.bytecodegeneration.util.AsmUtil;
 import com.kubadziworski.domain.node.expression.DupExpression;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
 
 
-public class DupExpressionGenerator{
+public class DupExpressionGenerator {
     private final MethodVisitor methodVisitor;
 
     public DupExpressionGenerator(MethodVisitor methodVisitor) {
@@ -18,19 +18,7 @@ public class DupExpressionGenerator{
         Expression expression = dupExpression.getExpression();
         expression.accept(statementGenerator);
 
-
-        Type type = expression.getType();
-        switch (dupExpression.getDupShift()){
-            case 0:{
-                methodVisitor.visitInsn(type.getDupCode());
-                break;
-            }
-            case 1:{
-                methodVisitor.visitInsn(type.getDupX1Code());
-                break;
-            }
-        }
-
+        AsmUtil.duplicateStackValue(expression.getType().getAsmType(), methodVisitor, dupExpression.getDupShift());
 
     }
 }

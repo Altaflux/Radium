@@ -52,26 +52,6 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
     }
 
     @Override
-    public int getDupCode() {
-        return type.getDupCode();
-    }
-
-    @Override
-    public int getDupX1Code() {
-        return type.getDupX1Code();
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return type.getStoreVariableOpcode();
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return type.getReturnOpcode();
-    }
-
-    @Override
     public boolean isPrimitive() {
         return true;
     }

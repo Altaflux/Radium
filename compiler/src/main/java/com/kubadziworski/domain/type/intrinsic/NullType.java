@@ -3,7 +3,6 @@ package com.kubadziworski.domain.type.intrinsic;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.TypeSpecificOpcodes;
 
 import java.util.Collections;
 import java.util.List;
@@ -64,25 +63,6 @@ public final class NullType implements Type {
         return Optional.empty();
     }
 
-    @Override
-    public int getDupCode() {
-        return TypeSpecificOpcodes.OBJECT.getDupCode();
-    }
-
-    @Override
-    public int getDupX1Code() {
-        return TypeSpecificOpcodes.OBJECT.getDupX1Code();
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return TypeSpecificOpcodes.OBJECT.getStore();
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return TypeSpecificOpcodes.OBJECT.getReturn();
-    }
 
     @Override
     public boolean isPrimitive() {

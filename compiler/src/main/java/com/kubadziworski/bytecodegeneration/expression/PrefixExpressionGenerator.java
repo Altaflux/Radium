@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.bytecodegeneration.util.AsmUtil;
 import com.kubadziworski.domain.UnaryOperator;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
@@ -33,12 +34,6 @@ public class PrefixExpressionGenerator {
             ((FieldReference) reference).acceptDup(statementGenerator);
         }
 
-        int dupsCode;
-        if (reference instanceof LocalVariableReference) {
-            dupsCode = reference.getType().getDupCode();
-        } else {
-            dupsCode = reference.getType().getDupX1Code();
-        }
 
         int operationOpCode;
         if (incrementDecrementExpression.getOperator().equals(UnaryOperator.INCREMENT)) {
@@ -50,17 +45,17 @@ public class PrefixExpressionGenerator {
         if (incrementDecrementExpression.isPrefix()) {
             statementGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
-            methodVisitor.visitInsn(dupsCode);
+            AsmUtil.duplicateStackValue(reference.getType().getAsmType(), methodVisitor, reference instanceof LocalVariableReference ? 0 : 1);
 
         } else {
-            methodVisitor.visitInsn(dupsCode);
+            AsmUtil.duplicateStackValue(reference.getType().getAsmType(), methodVisitor, reference instanceof LocalVariableReference ? 0 : 1);
             statementGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
         }
 
         if (reference instanceof LocalVariableReference) {
             int varIndex = scope.getLocalVariableIndex(reference.getName());
-            methodVisitor.visitVarInsn(reference.getType().getStoreVariableOpcode(), varIndex);
+            methodVisitor.visitVarInsn(reference.getType().getAsmType().getOpcode(Opcodes.ISTORE), varIndex);
 
         } else if (reference instanceof FieldReference) {
 

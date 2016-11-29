@@ -12,35 +12,35 @@ import java.util.Optional;
  */
 public enum BuiltInType implements Type {
 
-    BOOLEAN("boolean", boolean.class, "Z", TypeSpecificOpcodes.INT),
-    INT("int", int.class, "I", TypeSpecificOpcodes.INT),
-    CHAR("char", char.class, "C", TypeSpecificOpcodes.INT),
-    BYTE("byte", byte.class, "B", TypeSpecificOpcodes.INT),
-    SHORT("short", short.class, "S", TypeSpecificOpcodes.INT),
-    LONG("long", long.class, "J", TypeSpecificOpcodes.LONG),
-    FLOAT("float", float.class, "F", TypeSpecificOpcodes.FLOAT),
-    DOUBLE("double", double.class, "D", TypeSpecificOpcodes.DOUBLE),
-    BOOLEAN_ARR("bool[]", boolean[].class, "[B", TypeSpecificOpcodes.OBJECT),
-    INT_ARR("int[]", int[].class, "[I", TypeSpecificOpcodes.OBJECT),
-    CHAR_ARR("char[]", char[].class, "[C", TypeSpecificOpcodes.OBJECT),
-    BYTE_ARR("byte[]", byte[].class, "[B", TypeSpecificOpcodes.OBJECT),
-    SHORT_ARR("short[]", short[].class, "[S", TypeSpecificOpcodes.OBJECT),
-    LONG_ARR("long[]", long[].class, "[J", TypeSpecificOpcodes.OBJECT),
-    FLOAT_ARR("float[]", float[].class, "[F", TypeSpecificOpcodes.OBJECT),
-    DOUBLE_ARR("double[]", double[].class, "[D", TypeSpecificOpcodes.OBJECT),
-    NONE("", null, "", TypeSpecificOpcodes.OBJECT),
-    STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", TypeSpecificOpcodes.OBJECT);
+    BOOLEAN("boolean", boolean.class, "Z", true),
+    INT("int", int.class, "I", true),
+    CHAR("char", char.class, "C", true),
+    BYTE("byte", byte.class, "B", true),
+    SHORT("short", short.class, "S", true),
+    LONG("long", long.class, "J", true),
+    FLOAT("float", float.class, "F", true),
+    DOUBLE("double", double.class, "D", true),
+    BOOLEAN_ARR("bool[]", boolean[].class, "[B", false),
+    INT_ARR("int[]", int[].class, "[I", false),
+    CHAR_ARR("char[]", char[].class, "[C", false),
+    BYTE_ARR("byte[]", byte[].class, "[B", false),
+    SHORT_ARR("short[]", short[].class, "[S", false),
+    LONG_ARR("long[]", long[].class, "[J", false),
+    FLOAT_ARR("float[]", float[].class, "[F", false),
+    DOUBLE_ARR("double[]", double[].class, "[D", false),
+    NONE("", null, "", false),
+    STRING_ARR("string[]", String[].class, "[Ljava/lang/String;", false);
 
     private final String name;
     private final Class<?> typeClass;
     private final String descriptor;
-    private final TypeSpecificOpcodes opcodes;
+    private final boolean primitive;
 
-    BuiltInType(String name, Class<?> typeClass, String descriptor, TypeSpecificOpcodes opcodes) {
+    BuiltInType(String name, Class<?> typeClass, String descriptor, boolean primitive) {
         this.name = name;
         this.typeClass = typeClass;
         this.descriptor = descriptor;
-        this.opcodes = opcodes;
+        this.primitive = primitive;
 
     }
 
@@ -94,28 +94,8 @@ public enum BuiltInType implements Type {
     }
 
     @Override
-    public int getStoreVariableOpcode() {
-        return opcodes.getStore();
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return opcodes.getReturn();
-    }
-
-    @Override
-    public int getDupCode() {
-        return opcodes.getDupCode();
-    }
-
-    @Override
-    public int getDupX1Code() {
-        return opcodes.getDupX1Code();
-    }
-
-    @Override
     public boolean isPrimitive() {
-        return opcodes.isPrimitive();
+        return primitive;
     }
 
     @Override

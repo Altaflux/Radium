@@ -75,33 +75,12 @@ public class TypeProjection implements Type {
         if (this.isNullable().equals(Nullability.NULLABLE) && type.isNullable().equals(Nullability.NOT_NULL)) {
             return -1;
         }
-       // if(isNullable().equals(Nullability.NULLABLE) && type)
         return this.type.inheritsFrom(type);
     }
 
     @Override
     public Optional<Type> nearestDenominator(Type type) {
         return this.type.nearestDenominator(type);
-    }
-
-    @Override
-    public int getDupCode() {
-        return type.getDupCode();
-    }
-
-    @Override
-    public int getDupX1Code() {
-        return type.getDupX1Code();
-    }
-
-    @Override
-    public int getStoreVariableOpcode() {
-        return type.getStoreVariableOpcode();
-    }
-
-    @Override
-    public int getReturnOpcode() {
-        return type.getReturnOpcode();
     }
 
     @Override
