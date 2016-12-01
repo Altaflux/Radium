@@ -13,9 +13,9 @@ import java.util.List;
 
 public class ByteType extends AbstractPrimitiveType {
 
-    private static final Type NULLABLE_TYPE = new JavaClassType("java.lang.Byte");
+    private static final Type NULLABLE_TYPE = new JavaClassType(java.lang.Byte.class);
     private static final Type PRIMITIVE_TYPE = BuiltInType.BYTE;
-    private static final Type physicalType = new JavaClassType("radium.Byte");
+    private static final Type physicalType = new JavaClassType(radium.Byte.class);
 
     public ByteType(boolean primitive) {
         super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);

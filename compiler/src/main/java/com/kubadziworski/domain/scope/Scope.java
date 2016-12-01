@@ -208,7 +208,7 @@ public class Scope {
     }
 
     public String getSuperClassInternalName() {
-        return ClassTypeFactory.createClassType(getSuperClassName()).getInternalName();
+        return ClassTypeFactory.createClassType(getSuperClassName()).getAsmType().getInternalName();
     }
 
     public Type getClassType() {
@@ -217,7 +217,7 @@ public class Scope {
     }
 
     public String getClassInternalName() {
-        return getClassType().getInternalName();
+        return getClassType().getAsmType().getInternalName();
     }
 
     public ImportResolver getImportResolver() {

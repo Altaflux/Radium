@@ -56,7 +56,6 @@ public final class TypeResolver {
     public static Type getFromTypeName(String typeName, Type.Nullability nullability) {
 
         if (typeName.equals("java.lang.String")) return new TypeProjection(DefaultTypes.STRING, nullability);
-
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
         if (builtInType.isPresent()) return builtInType.get();
         return new TypeProjection(ClassTypeFactory.createClassType(typeName), nullability);
@@ -64,7 +63,8 @@ public final class TypeResolver {
 
 
     //For usage of ReflectionObjectToSignatureMapper
-    public static Type getTypeFromNameWithClazzAlias(String typeName, Type.Nullability nullability) {
+    public static Type getTypeFromNameWithClazzAlias(Class clazz, Type.Nullability nullability) {
+        String typeName = clazz.getCanonicalName();
         if (typeName.equals("void")) return VoidType.INSTANCE;
         if (typeName.equals("boolean")) return new TypeProjection(PrimitiveTypes.BOOLEAN_TYPE, nullability);
         if (typeName.equals("int")) return new TypeProjection(PrimitiveTypes.INT_TYPE, nullability);
@@ -86,7 +86,12 @@ public final class TypeResolver {
         if (typeName.equals("java.lang.Byte")) return new TypeProjection(PrimitiveTypes.BYTE_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Object")) return new TypeProjection(AnyType.INSTANCE, nullability);
 
-        return getFromTypeName(typeName, nullability);
+        if (typeName.equals("java.lang.String")) return new TypeProjection(DefaultTypes.STRING, nullability);
+        Optional<? extends Type> builtInType = getBuiltInType(typeName);
+        if (builtInType.isPresent()) return builtInType.get();
+
+
+        return new TypeProjection(ClassTypeFactory.createClassType(clazz), nullability);
     }
 
     public static Type getFromValue(EnkelParser.ValueContext value) {

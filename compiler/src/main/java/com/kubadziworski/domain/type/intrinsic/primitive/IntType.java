@@ -13,10 +13,10 @@ import java.util.List;
 
 public class IntType extends AbstractPrimitiveType {
 
-    private static final Type NULLABLE_TYPE = new JavaClassType("java.lang.Integer");
+    private static final Type NULLABLE_TYPE = new JavaClassType(java.lang.Integer.class);
     private static final Type PRIMITIVE_TYPE = BuiltInType.INT;
 
-    private static final Type physicalType = new JavaClassType("radium.Int");
+    private static final Type physicalType = new JavaClassType(radium.Int.class);
 
     public final boolean isPrimitive;
 

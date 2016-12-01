@@ -13,10 +13,10 @@ import java.util.List;
 
 public class BoolType extends AbstractPrimitiveType {
 
-    private static final Type NULLABLE_TYPE = new JavaClassType("java.lang.Boolean");
+    private static final Type NULLABLE_TYPE = new JavaClassType(java.lang.Boolean.class);
     private static final Type PRIMITIVE_TYPE = BuiltInType.BOOLEAN;
 
-    private static final Type physicalType = new JavaClassType("radium.Boolean");
+    private static final Type physicalType = new JavaClassType(radium.Boolean.class);
 
     public BoolType(boolean primitive) {
         super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);

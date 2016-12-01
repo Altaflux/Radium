@@ -21,7 +21,7 @@ public class UnitType extends JavaClassType {
                     new EmptyExpression(CONCRETE_INSTANCE));
 
     private UnitType() {
-        super("radium.Unit");
+        super(radium.Unit.class);
     }
 
     public static Expression expression() {

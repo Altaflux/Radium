@@ -6,8 +6,8 @@ import com.kubadziworski.domain.scope.Field
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.DefaultTypes
-import com.kubadziworski.domain.type.JavaClassType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
+import com.kubadziworski.test.DumbType
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.InstructionAdapter
@@ -55,8 +55,8 @@ class AssignmentStatementGeneratorTest extends Specification {
             1*scope.getField(varName) >> field
             1* methodVisitor.visitFieldInsn(Opcodes.PUTFIELD,field.ownerInternalName,field.name,field.type.descriptor)
         where:
-            varName     | variableOwner             | variableType        | assignmentExpression
-            "var"       | new JavaClassType("Main")     | PrimitiveTypes.INT_TYPE | new Value(PrimitiveTypes.INT_TYPE, "25")
-            "stringVar" | new JavaClassType("Main") | DefaultTypes.STRING | new Value(DefaultTypes.STRING, "someString")
+        varName     | variableOwner        | variableType            | assignmentExpression
+        "var"       | new DumbType("Main") | PrimitiveTypes.INT_TYPE | new Value(PrimitiveTypes.INT_TYPE, "25")
+        "stringVar" | new DumbType("Main") | DefaultTypes.STRING     | new Value(DefaultTypes.STRING, "someString")
     }
 }

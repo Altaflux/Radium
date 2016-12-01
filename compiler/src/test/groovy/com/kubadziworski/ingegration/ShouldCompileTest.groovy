@@ -840,7 +840,8 @@ class ShouldCompileTest extends Specification {
                 PrimitiveFunctions {
 
                     start(){
-                       val myVal = 1.plus(3)
+
+                       val myVal:Int = 1.plus(3)
                        print myVal.toString()
                        assert(myVal == 4, true)
 

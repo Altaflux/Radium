@@ -20,7 +20,7 @@ public class JavaFloat extends JavaClassType {
     private final List<FunctionSignature> functionSignatures;
 
     public JavaFloat() {
-        super("java.lang.Float");
+        super(java.lang.Float.class);
 
 
         Parameter parameter = new Parameter("o", PrimitiveTypes.FLOAT_TYPE, null);

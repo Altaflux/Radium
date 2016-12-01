@@ -16,12 +16,15 @@ import java.util.stream.Collectors;
 public class JavaClassType implements Type {
 
     private final String name;
-
+    private final Class aClass;
+    private final org.objectweb.asm.Type asmType;
     //private static Map<Type, LinkedMap<Class, Class[]>> cachedInheritance = new HashMap<>();
 
-    public JavaClassType(String name) {
-        this.name = name;
 
+    public JavaClassType(Class clazz) {
+        aClass = clazz;
+        name = clazz.getCanonicalName();
+        asmType = org.objectweb.asm.Type.getType(clazz);
     }
 
     @Override
@@ -31,17 +34,13 @@ public class JavaClassType implements Type {
 
     @Override
     public Class<?> getTypeClass() {
-        try {
-            return Class.forName(name, false, getClass().getClassLoader());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        return aClass;
     }
 
     @Override
     public Optional<Type> getSuperType() {
         return Optional.ofNullable(getTypeClass().getSuperclass())
-                .map(aClass -> new JavaClassType(aClass.getName()));
+                .map(JavaClassType::new);
     }
 
     @Override
@@ -133,7 +132,7 @@ public class JavaClassType implements Type {
         Class iteratedClass = getTypeClass();
         while (iteratedClass != null) {
             if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getDescriptor())) {
-                return Optional.of(new JavaClassType(iteratedClass.getName()));
+                return Optional.of(new JavaClassType(iteratedClass));
             }
             iteratedClass = iteratedClass.getSuperclass();
         }
@@ -155,12 +154,12 @@ public class JavaClassType implements Type {
 
     @Override
     public String getDescriptor() {
-        return "L" + getInternalName() + ";";
+        return asmType.getDescriptor();
     }
 
     @Override
     public String getInternalName() {
-        return name.replace(".", "/");
+        return asmType.getInternalName();
     }
 
     @Override
@@ -170,7 +169,7 @@ public class JavaClassType implements Type {
 
     @Override
     public org.objectweb.asm.Type getAsmType() {
-        return org.objectweb.asm.Type.getType(getDescriptor());
+        return asmType;
     }
 
     @Override

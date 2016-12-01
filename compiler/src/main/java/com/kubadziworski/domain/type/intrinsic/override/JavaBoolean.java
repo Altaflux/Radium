@@ -18,7 +18,7 @@ public class JavaBoolean extends JavaClassType {
 
     public JavaBoolean() {
 
-        super("java.lang.Boolean");
+        super(java.lang.Boolean.class);
 
 
         Parameter parameter = new Parameter("o", PrimitiveTypes.BOOLEAN_TYPE, null);

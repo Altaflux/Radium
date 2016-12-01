@@ -46,7 +46,7 @@ public enum BuiltInType implements Type {
 
     public Optional<Type> getSuperType() {
         return Optional.ofNullable(typeClass.getSuperclass())
-                .map(aClass -> new JavaClassType(aClass.getName()));
+                .map(JavaClassType::new);
     }
 
     public List<Field> getFields() {

@@ -21,7 +21,7 @@ public class JavaLong extends JavaClassType {
     private final List<FunctionSignature> functionSignatures;
 
     public JavaLong() {
-        super("java.lang.Long");
+        super(java.lang.Long.class);
 
 
         Parameter parameter = new Parameter("o", PrimitiveTypes.LONG_TYPE, null);

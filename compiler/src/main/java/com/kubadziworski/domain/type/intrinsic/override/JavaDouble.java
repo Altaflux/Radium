@@ -18,7 +18,7 @@ public class JavaDouble extends JavaClassType {
     private final List<FunctionSignature> functionSignatures;
 
     public JavaDouble() {
-        super("java.lang.Double");
+        super(java.lang.Double.class);
 
         Parameter parameter = new Parameter("o", PrimitiveTypes.DOUBLE_TYPE, null);
 

@@ -27,23 +27,23 @@ class FieldVisitorTest extends Specification {
             field.ownerInternalName == expectedOwnerInternalName;
             field.type == expectedType;
             field.name == name;
-            1* scope.getClassType() >> new JavaClassType("com.kubadziworski.test.DummyClass")
+        1 * scope.getClassType() >> new JavaClassType(com.kubadziworski.test.DummyClass.class)
             2* scope.getFunctionSignatures() >> new ArrayList<FunctionSignature>()
             2* scope.getFields() >> new org.apache.commons.collections4.map.LinkedMap<String, Field>()
             2* scope.getLocalVariables() >> new org.apache.commons.collections4.map.LinkedMap<String, LocalVariable>()
-            2* scope.getClassType() >> new JavaClassType("com.kubadziworski.test.DummyClass")
+        2 * scope.getClassType() >> new JavaClassType(com.kubadziworski.test.DummyClass.class)
             1* nameContext.getText() >> name
             1* fieldContext.name() >> nameContext
             1* fieldContext.type() >> typeContext
             1* compositionContext.getText() >> typeName
 
             if(typeName == "java.lang.Integer"){
-                1* scope.resolveClassName(typeName) >> new JavaClassType("java.lang.Integer")
+                1 * scope.resolveClassName(typeName) >> new JavaClassType(java.lang.Integer.class)
             }
         where:
-        name        | typeName            | expectedType                           | expectedOwnerInternalName
-        "var"       | "radium.Int"               | PrimitiveTypes.INT_TYPE                | "com/kubadziworski/test/DummyClass"
-        "stringVar" | "java.lang.String"  | DefaultTypes.STRING                    | "com/kubadziworski/test/DummyClass"
-        "objVar"    | "java.lang.Integer" | new JavaClassType("java.lang.Integer") | "com/kubadziworski/test/DummyClass"
+        name        | typeName            | expectedType                               | expectedOwnerInternalName
+        "var"       | "radium.Int"        | PrimitiveTypes.INT_TYPE                    | "com/kubadziworski/test/DummyClass"
+        "stringVar" | "java.lang.String"  | DefaultTypes.STRING                        | "com/kubadziworski/test/DummyClass"
+        "objVar"    | "java.lang.Integer" | new JavaClassType(java.lang.Integer.class) | "com/kubadziworski/test/DummyClass"
     }
 }

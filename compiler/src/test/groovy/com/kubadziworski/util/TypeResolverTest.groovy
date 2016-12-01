@@ -22,9 +22,9 @@ class TypeResolverTest extends Specification {
 
         where:
         typeName            | expectedType
-        "java.lang.Integer" | new JavaClassType("java.lang.Integer")
-        "radium.Int"               | PrimitiveTypes.INT_TYPE
-        "radium.Boolean"           | PrimitiveTypes.BOOLEAN_TYPE
+        "java.lang.Integer" | new JavaClassType(java.lang.Integer.class)
+        "radium.Int"        | PrimitiveTypes.INT_TYPE
+        "radium.Boolean"    | PrimitiveTypes.BOOLEAN_TYPE
         "java.lang.String"  | DefaultTypes.STRING
         "byte[]"            | BuiltInType.BYTE_ARR
     }
@@ -44,9 +44,9 @@ class TypeResolverTest extends Specification {
 
         where:
         typeName            | expectedType
-        "java.lang.Integer" | new JavaClassType("java.lang.Integer")
-        "radium.Int"               | PrimitiveTypes.INT_TYPE
-        "radium.Boolean"           | PrimitiveTypes.BOOLEAN_TYPE
+        "java.lang.Integer" | new JavaClassType(java.lang.Integer.class)
+        "radium.Int"        | PrimitiveTypes.INT_TYPE
+        "radium.Boolean"    | PrimitiveTypes.BOOLEAN_TYPE
         "java.lang.String"  | DefaultTypes.STRING
     }
 

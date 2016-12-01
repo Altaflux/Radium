@@ -100,7 +100,7 @@ public class TryCatchStatementGenerator {
         catchLabels.forEach(label -> finalGenerator.labelPacks
                 .forEach(labelPack ->
                         methodVisitor.visitTryCatchBlock(labelPack.firstLabel, labelPack.lastLabel,
-                                label.firstLabel, label.type.getInternalName())));
+                                label.firstLabel, label.type.getAsmType().getInternalName())));
 
 
         if (finalBlock != null) {

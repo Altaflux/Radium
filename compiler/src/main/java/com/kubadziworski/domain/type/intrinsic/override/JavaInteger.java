@@ -18,7 +18,7 @@ public class JavaInteger extends JavaClassType {
     private final List<FunctionSignature> functionSignatures;
 
     public JavaInteger() {
-        super("java.lang.Integer");
+        super(java.lang.Integer.class);
 
 
         Parameter parameter = new Parameter("o", PrimitiveTypes.INT_TYPE, null);

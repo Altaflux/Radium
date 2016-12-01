@@ -58,7 +58,7 @@ public class Field implements Variable , CallableDescriptor{
     }
 
     public String getOwnerInternalName() {
-        return owner.getInternalName();
+        return owner.getAsmType().getInternalName();
     }
 
     public int getInvokeOpcode() {

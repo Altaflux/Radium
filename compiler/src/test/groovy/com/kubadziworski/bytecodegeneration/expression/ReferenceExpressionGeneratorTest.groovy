@@ -40,10 +40,10 @@ class ReferenceExpressionGeneratorTest extends Specification {
             1* methodVisitor.visitVarInsn(Opcodes.ALOAD,0)
             1* methodVisitor.visitFieldInsn(Opcodes.GETFIELD,field.ownerInternalName,field.name,field.type.descriptor)
         where:
-            name        | owner                 | type
-            "intVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | PrimitiveTypes.INT_TYPE
-            "stringVar" | new JavaClassType("com.kubadziworski.test.DummyClass") | DefaultTypes.STRING
-            "objVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | new JavaClassType("java.lang.Object")
+            name    | owner                                                      | type
+        "intVar"    | new JavaClassType(com.kubadziworski.test.DummyClass.class) | PrimitiveTypes.INT_TYPE
+        "stringVar" | new JavaClassType(com.kubadziworski.test.DummyClass.class) | DefaultTypes.STRING
+        "objVar"    | new JavaClassType(com.kubadziworski.test.DummyClass.class) | new JavaClassType(java.lang.Object.class)
     }
 
     def "should generate local variable reference"() {
@@ -59,9 +59,9 @@ class ReferenceExpressionGeneratorTest extends Specification {
             1* scope.getLocalVariableIndex(name) >> 3
             1* methodVisitor.visitVarInsn(expectedOpcode,3)
         where:
-            name        | owner                 | type                                                                   | expectedOpcode
-            "objVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | new JavaClassType("java.lang.Object") | Opcodes.ALOAD
-            "intVar"    | new JavaClassType("com.kubadziworski.test.DummyClass") | PrimitiveTypes.INT_TYPE               | Opcodes.ILOAD
-            "stringVar" | new JavaClassType("com.kubadziworski.test.DummyClass") | DefaultTypes.STRING                   | Opcodes.ALOAD
+            name    | owner                                                      | type                                      | expectedOpcode
+        "objVar"    | new JavaClassType(com.kubadziworski.test.DummyClass.class) | new JavaClassType(java.lang.Object.class) | Opcodes.ALOAD
+        "intVar"    | new JavaClassType(com.kubadziworski.test.DummyClass.class) | PrimitiveTypes.INT_TYPE                   | Opcodes.ILOAD
+        "stringVar" | new JavaClassType(com.kubadziworski.test.DummyClass.class) | DefaultTypes.STRING                       | Opcodes.ALOAD
     }
 }

@@ -29,10 +29,10 @@ class ClassPathScopeTest extends Specification {
         actualSignature.isPresent()
         actualSignature.get().equals(expectedSignature);
         where:
-        methodName     | type                              | args                                         | expectedName   | expectedParamsTypes                                                                                                                   | expectedReturnType
-        "equals"       | DefaultTypes.STRING                 | [new JavaClassType("java.lang.Object")]    | "equals"       | [new TypeProjection(AnyType.INSTANCE, Type.Nullability.UNKNOWN)]                                                                               | PrimitiveTypes.BOOLEAN_TYPE
-        "hashCode"     | new JavaClassType("java.lang.Object") | []                                           | "hashCode"     | []                                                                                                                                | PrimitiveTypes.INT_TYPE
-        "replaceFirst" | DefaultTypes.STRING                 | [DefaultTypes.STRING, DefaultTypes.STRING] | "replaceFirst" | [new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN),new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN)] | new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN)
+        methodName     | type                                      | args                                        | expectedName   | expectedParamsTypes                                                                                                                    | expectedReturnType
+        "equals"       | DefaultTypes.STRING                       | [new JavaClassType(java.lang.Object.class)] | "equals"       | [new TypeProjection(AnyType.INSTANCE, Type.Nullability.UNKNOWN)]                                                                       | PrimitiveTypes.BOOLEAN_TYPE
+        "hashCode"     | new JavaClassType(java.lang.Object.class) | []                                          | "hashCode"     | []                                                                                                                                     | PrimitiveTypes.INT_TYPE
+        "replaceFirst" | DefaultTypes.STRING                       | [DefaultTypes.STRING, DefaultTypes.STRING]  | "replaceFirst" | [new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN), new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN)] | new TypeProjection(DefaultTypes.STRING, Type.Nullability.UNKNOWN)
     }
 
     def "GetConstructorSignature should not return private method"() {
@@ -51,10 +51,10 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, null)
         }
-        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, VoidType.INSTANCE, Modifier.PUBLIC, new JavaClassType(className));
+        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, VoidType.INSTANCE, Modifier.PUBLIC, new JavaClassType(Class.forName(className)));
         when:
         ClassPathScope classPathScope = new ClassPathScope();
-        def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(className), args)
+        def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(Class.forName(className)), args)
         then:
         actualSignature.isPresent()
         actualSignature.get().equals(expectedSignature);
@@ -68,7 +68,7 @@ class ClassPathScopeTest extends Specification {
     def "GetConstructorSignature should not return private Constructor"() {
         when:
         ClassPathScope classPathScope = new ClassPathScope();
-        def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(className), args)
+        def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(Class.forName(className)), args)
         then:
         !actualSignature.isPresent()
         where:

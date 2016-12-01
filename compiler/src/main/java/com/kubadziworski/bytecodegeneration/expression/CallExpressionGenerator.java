@@ -29,7 +29,7 @@ public class CallExpressionGenerator {
 
     public void generate(ConstructorCall constructorCall, Scope scope, StatementGenerator statementGenerator) {
         FunctionSignature signature = constructorCall.getFunctionSignature();
-        String ownerDescriptor = ClassTypeFactory.createClassType(signature.getName()).getInternalName();
+        String ownerDescriptor = ClassTypeFactory.createClassType(signature.getName()).getAsmType().getInternalName();
         methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
         methodVisitor.visitInsn(Opcodes.DUP);
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);
@@ -59,7 +59,7 @@ public class CallExpressionGenerator {
         generateArguments(functionCall, statementGenerator);
         String functionName = functionCall.getIdentifier();
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(functionCall.getSignature());
-        String ownerDescriptor = functionCall.getOwnerType().getInternalName();
+        String ownerDescriptor = functionCall.getOwnerType().getAsmType().getInternalName();
         int callOpCode = functionCall.getInvokeOpcode();
 
         methodVisitor.visitMethodInsn(callOpCode, ownerDescriptor, functionName, methodDescriptor, false);

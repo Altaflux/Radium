@@ -18,7 +18,7 @@ public class JavaShort extends JavaClassType {
     private final List<FunctionSignature> functionSignatures;
 
     public JavaShort() {
-        super("java.lang.Short");
+        super(java.lang.Short.class);
 
         Parameter parameter = new Parameter("o", PrimitiveTypes.SHORT_TYPE, null);
 

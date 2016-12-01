@@ -14,10 +14,10 @@ import java.util.List;
 
 public class LongType extends AbstractPrimitiveType {
 
-    private static final Type NULLABLE_TYPE = new JavaClassType("java.lang.Long");
+    private static final Type NULLABLE_TYPE = new JavaClassType(java.lang.Long.class);
     private static final Type PRIMITIVE_TYPE = BuiltInType.LONG;
 
-    private static final Type physicalType = new JavaClassType("radium.Long");
+    private static final Type physicalType = new JavaClassType(radium.Long.class);
 
     public LongType(boolean primitive) {
         super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);

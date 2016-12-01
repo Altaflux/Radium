@@ -87,7 +87,7 @@ public class AssignmentStatementGenerator {
 
         if (!expressionType.equals(variableType)) {
             if(!variableType.isPrimitive()) {
-                methodVisitor.visitTypeInsn(Opcodes.CHECKCAST, variableType.getInternalName());
+                methodVisitor.visitTypeInsn(Opcodes.CHECKCAST, variableType.getAsmType().getInternalName());
             }
         }
     }

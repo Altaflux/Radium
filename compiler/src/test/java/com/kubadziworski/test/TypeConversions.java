@@ -47,7 +47,7 @@ public class TypeConversions {
 
     @Test
     public void testPrimitiveToObject() {
-        JavaClassType objectInt = new JavaClassType("java.lang.Object");
+        JavaClassType objectInt = new JavaClassType(java.lang.Object.class);
         IntType primitiveInt = new IntType(true);
         InstructionAdapter visitor = EasyMock.createMock(InstructionAdapter.class);
         visitor.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);

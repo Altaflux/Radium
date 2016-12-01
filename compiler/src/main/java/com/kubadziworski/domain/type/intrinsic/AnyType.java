@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class AnyType implements Type {
 
-    private final Type objectClass = new JavaClassType("java.lang.Object");
+    private final Type objectClass = new JavaClassType(java.lang.Object.class);
     private final List<FunctionSignature> functionSignatures;
 
     public static AnyType INSTANCE = new AnyType();

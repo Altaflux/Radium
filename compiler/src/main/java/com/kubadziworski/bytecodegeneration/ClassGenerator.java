@@ -22,7 +22,7 @@ public class ClassGenerator {
     }
 
     public ClassWriter generate(ClassDeclaration classDeclaration) {
-        String name = classDeclaration.getClassType().getInternalName();
+        String name = classDeclaration.getClassType().getAsmType().getInternalName();
         classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
         List<Function> methods = classDeclaration.getMethods();
         Collection<Field> fields = classDeclaration.getFields();

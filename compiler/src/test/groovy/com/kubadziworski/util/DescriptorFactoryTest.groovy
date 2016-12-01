@@ -26,10 +26,10 @@ class DescriptorFactoryTest extends spock.lang.Specification {
             descr.equals(descriptor)
 
         where:
-            paramType                             | retType             | descriptor
-            PrimitiveTypes.INT_TYPE               | PrimitiveTypes.INT_TYPE     | "(I)I"
-            DefaultTypes.STRING                   | DefaultTypes.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
-            new JavaClassType("java.lang.String") | PrimitiveTypes.INT_TYPE     | "(Ljava/lang/String;)I"
+            paramType                             | retType                 | descriptor
+            PrimitiveTypes.INT_TYPE               | PrimitiveTypes.INT_TYPE | "(I)I"
+            DefaultTypes.STRING                   | DefaultTypes.STRING     | "(Ljava/lang/String;)Ljava/lang/String;"
+        new JavaClassType(java.lang.String.class) | PrimitiveTypes.INT_TYPE | "(Ljava/lang/String;)I"
     }
 
     def "test descriptor factory with signature"() {
@@ -48,9 +48,9 @@ class DescriptorFactoryTest extends spock.lang.Specification {
             descr.equals(descriptor)
 
         where:
-            paramType                             | retType             | descriptor
-            PrimitiveTypes.INT_TYPE               | PrimitiveTypes.INT_TYPE     | "(I)I"
-            DefaultTypes.STRING                   | DefaultTypes.STRING | "(Ljava/lang/String;)Ljava/lang/String;"
-            new JavaClassType("java.lang.String") | PrimitiveTypes.INT_TYPE     | "(Ljava/lang/String;)I"
+            paramType                             | retType                 | descriptor
+            PrimitiveTypes.INT_TYPE               | PrimitiveTypes.INT_TYPE | "(I)I"
+            DefaultTypes.STRING                   | DefaultTypes.STRING     | "(Ljava/lang/String;)Ljava/lang/String;"
+        new JavaClassType(java.lang.String.class) | PrimitiveTypes.INT_TYPE | "(Ljava/lang/String;)I"
     }
 }

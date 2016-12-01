@@ -14,9 +14,9 @@ import java.util.List;
 public class CharType extends AbstractPrimitiveType {
 
 
-    private static final Type NULLABLE_TYPE = new JavaClassType("java.lang.Character");
+    private static final Type NULLABLE_TYPE = new JavaClassType(java.lang.Character.class);
     private static final Type PRIMITIVE_TYPE = BuiltInType.CHAR;
-    private static final Type physicalType = new JavaClassType("radium.Char");
+    private static final Type physicalType = new JavaClassType(radium.Char.class);
 
     public CharType(boolean primitive) {
         super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);

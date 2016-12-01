@@ -5,6 +5,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
+import com.kubadziworski.exception.ClassNotFoundForNameException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,12 +48,22 @@ public class ClassTypeFactory {
         if (syntheticTypes.containsKey(name)) {
             return syntheticTypes.get(name);
         }
-
         if (globalScope != null) {
             Scope scope = globalScope.getScopeByClassName(name);
             if (scope != null) {
                 return new EnkelType(name, scope);
             }
+        }
+        try {
+            return new JavaClassType(Class.forName(name));
+        } catch (ClassNotFoundException e) {
+            throw new ClassNotFoundForNameException(name);
+        }
+    }
+
+    public static Type createClassType(Class name) {
+        if (syntheticTypes.containsKey(name.getCanonicalName())) {
+            return syntheticTypes.get(name.getCanonicalName());
         }
         return new JavaClassType(name);
     }
