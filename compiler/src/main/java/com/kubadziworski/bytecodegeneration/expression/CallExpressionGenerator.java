@@ -20,7 +20,8 @@ import java.util.Optional;
 public class CallExpressionGenerator {
 
     private final MethodVisitor methodVisitor;
-    private final IntrinsicMethods intrinsicMethods = new IntrinsicMethods();
+
+    private static ThreadLocal<IntrinsicMethods> intrinsicMethods = ThreadLocal.withInitial(IntrinsicMethods::new);
 
     public CallExpressionGenerator(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
@@ -104,7 +105,7 @@ public class CallExpressionGenerator {
 
 
     private Optional<Expression> callArithmeticExpression(FunctionCall functionCall, StatementGenerator statementGenerator) {
-        return intrinsicMethods.intrinsicMethod(functionCall).map(intrinsicMethod -> intrinsicMethod.toExpression(functionCall, methodVisitor));
+        return intrinsicMethods.get().intrinsicMethod(functionCall).map(intrinsicMethod -> intrinsicMethod.toExpression(functionCall, methodVisitor));
 
     }
 

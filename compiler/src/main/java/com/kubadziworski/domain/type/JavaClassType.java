@@ -17,6 +17,8 @@ public class JavaClassType implements Type {
 
     private final String name;
 
+    //private static Map<Type, LinkedMap<Class, Class[]>> cachedInheritance = new HashMap<>();
+
     public JavaClassType(String name) {
         this.name = name;
 
@@ -77,6 +79,50 @@ public class JavaClassType implements Type {
         }
         return -1;
     }
+
+
+    //Possible cache the type inheritance if this starts taking too much time
+
+//    public int inheritsFrom(Type type) {
+//        int arity = 0;
+//        if (type.getDescriptor().equals(this.getDescriptor())) {
+//            return arity;
+//        }
+//
+//        LinkedMap<Class,Class[]> classLinkedMap = cachedInheritance.get(this);
+//        if(classLinkedMap == null){
+//            createInheretanceTree();
+//            classLinkedMap = cachedInheritance.get(this);
+//        }
+//
+//        Class iteratedClass = classLinkedMap.firstKey();
+//        while (iteratedClass != null) {
+//            if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getDescriptor())) {
+//                return arity;
+//            } else {
+//                for (Class inter : classLinkedMap.get(iteratedClass)) {
+//                    if (org.objectweb.asm.Type.getDescriptor(inter).equals(type.getDescriptor())) {
+//                        return arity;
+//                    }
+//                }
+//            }
+//            iteratedClass = classLinkedMap.nextKey(iteratedClass);
+//            arity++;
+//        }
+//        return -1;
+//    }
+
+//    private void createInheretanceTree(){
+//        LinkedMap<Class,Class[]> classLinkedMap = new LinkedMap<>();
+//
+//        Class iteratedClass = getTypeClass();
+//        while (iteratedClass != null) {
+//            Class[] interfaces = iteratedClass.getInterfaces();
+//            classLinkedMap.put(iteratedClass, interfaces);
+//            iteratedClass = iteratedClass.getSuperclass();
+//        }
+//        cachedInheritance.put(this, classLinkedMap);
+//    }
 
     @Override
     public Optional<Type> nearestDenominator(Type type) {
