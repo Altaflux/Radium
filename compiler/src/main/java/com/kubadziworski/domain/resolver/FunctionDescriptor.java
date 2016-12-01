@@ -1,7 +1,7 @@
 package com.kubadziworski.domain.resolver;
 
-import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.scope.FunctionSignature;
+
 
 /**
  * Created by plozano on 10/15/2016.

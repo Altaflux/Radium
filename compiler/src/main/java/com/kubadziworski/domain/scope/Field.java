@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * Created by kuba on 13.05.16.
  */
-public class Field implements Variable {
+public class Field implements Variable , CallableDescriptor{
 
     private final String name;
     private final Type owner;

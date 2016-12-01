@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
 /**
  * Created by kuba on 06.04.16.
  */
-public class FunctionSignature {
+public class FunctionSignature implements CallableDescriptor {
     private final String name;
     private final List<Parameter> parameters;
     private final Type returnType;
@@ -135,6 +135,11 @@ public class FunctionSignature {
     }
 
     public Type getReturnType() {
+        return returnType;
+    }
+
+    @Override
+    public Type getType() {
         return returnType;
     }
 

@@ -3,13 +3,14 @@ package com.kubadziworski.domain.node.expression;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
+import com.kubadziworski.domain.scope.CallableMember;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.type.Type;
 
 /**
  * Created by kuba on 09.04.16.
  */
-public class FieldReference extends ElementImpl implements Reference {
+public class FieldReference extends ElementImpl implements Reference, CallableMember {
 
     private final Field field;
     private final Expression owner;

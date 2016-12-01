@@ -51,6 +51,31 @@ public class BaseStatementGenerator implements StatementGenerator {
         this.lastLine = lastLine;
     }
 
+    private BaseStatementGenerator(StatementGenerator generator, MethodVisitor methodVisitor, int lastLine,
+                                   PrintStatementGenerator printStatementGenerator,
+                                   VariableDeclarationStatementGenerator variableDeclarationStatementGenerator,
+                                   ReturnStatementGenerator returnStatementGenerator,
+                                   IfStatementGenerator ifStatementGenerator,
+                                   BlockStatementGenerator blockStatementGenerator,
+                                   ForStatementGenerator forStatementGenerator,
+                                   AssignmentStatementGenerator assignmentStatementGenerator,
+                                   TryCatchStatementGenerator tryCatchStatementGenerator,
+                                   ThrowStatementGenerator throwStatementGenerator) {
+        parent = generator;
+        this.printStatementGenerator = printStatementGenerator;
+        this.variableDeclarationStatementGenerator = variableDeclarationStatementGenerator;
+        this.returnStatementGenerator = returnStatementGenerator;
+        this.ifStatementGenerator = ifStatementGenerator;
+        this.blockStatementGenerator = blockStatementGenerator;
+        this.forStatementGenerator = forStatementGenerator;
+        this.assignmentStatementGenerator = assignmentStatementGenerator;
+        this.tryCatchStatementGenerator = tryCatchStatementGenerator;
+        this.expressionGenerator = new ExpressionGenerator(generator, methodVisitor);
+        this.throwStatementGenerator = throwStatementGenerator;
+        this.methodVisitor = methodVisitor;
+        this.lastLine = lastLine;
+    }
+
     @Override
     public void generate(ThrowStatement throwStatement) {
         throwStatementGenerator.generate(throwStatement, this);
@@ -356,15 +381,21 @@ public class BaseStatementGenerator implements StatementGenerator {
     }
 
 
-
     public Scope getScope() {
         return parent.getScope();
     }
 
-    public StatementGenerator copy(StatementGenerator generator) {
-        return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine);
-    }
+//    public StatementGenerator copy(StatementGenerator generator) {
+//        return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine);
+//    }
 
+
+    public StatementGenerator copy(StatementGenerator generator) {
+        return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine,
+                printStatementGenerator, variableDeclarationStatementGenerator, returnStatementGenerator,
+                ifStatementGenerator, blockStatementGenerator, forStatementGenerator, assignmentStatementGenerator, tryCatchStatementGenerator,
+                throwStatementGenerator);
+    }
 
     private void generateLineNumber(Statement statement) {
         if (statement != null) {

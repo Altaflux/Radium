@@ -50,12 +50,6 @@ public final class TypeResolver {
         if (builtInType.isPresent()) return builtInType.get();
 
         Type contextType = scope.resolveClassName(typeName);
-        //When parsing Radium classes we cannot use the Unit returned from the ClassTypeFactory as it will return the Concrete version
-        //NOTE CHECK BEHAVIOUR
-//        if (contextType.getName().equals("radium.Unit") & nullability.equals(Type.Nullability.NOT_NULL)) {
-//            return new TypeProjection(UnitType.INSTANCE, nullability);
-//        }
-
         return new TypeProjection(contextType, nullability);
     }
 
@@ -89,6 +83,7 @@ public final class TypeResolver {
             return new TypeProjection(PrimitiveTypes.CHAR_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Long")) return new TypeProjection(PrimitiveTypes.LONG_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Short")) return new TypeProjection(PrimitiveTypes.SHORT_BOX_TYPE, nullability);
+        if (typeName.equals("java.lang.Byte")) return new TypeProjection(PrimitiveTypes.BYTE_BOX_TYPE, nullability);
         if (typeName.equals("java.lang.Object")) return new TypeProjection(AnyType.INSTANCE, nullability);
 
         return getFromTypeName(typeName, nullability);
@@ -209,6 +204,7 @@ public final class TypeResolver {
     private static Optional<Type> getBuiltInType(String typeName) {
         return PRIMITIVE_TYPES.stream()
                 .filter(type -> type.getName().equals(typeName))
+                .map(abstractPrimitiveType -> (Type) abstractPrimitiveType)
                 .findFirst().map(Optional::of).orElse((Arrays.stream(BuiltInType.values())
                         .filter(type -> type.getName().equals(typeName))
                         .map(type -> (Type) type)

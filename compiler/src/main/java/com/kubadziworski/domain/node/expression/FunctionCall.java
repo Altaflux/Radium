@@ -3,6 +3,7 @@ package com.kubadziworski.domain.node.expression;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
+import com.kubadziworski.domain.scope.CallableMember;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
 
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by kuba on 02.04.16.
  */
-public class FunctionCall extends ElementImpl implements Call {
+public class FunctionCall extends ElementImpl implements Call, CallableMember {
     private final Expression owner;
     private final FunctionSignature signature;
     private final List<Argument> arguments;
@@ -45,6 +46,11 @@ public class FunctionCall extends ElementImpl implements Call {
 
     @Override
     public String getIdentifier() {
+        return signature.getName();
+    }
+
+    @Override
+    public String getName() {
         return signature.getName();
     }
 

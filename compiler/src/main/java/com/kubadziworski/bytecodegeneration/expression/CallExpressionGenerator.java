@@ -1,12 +1,12 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
 import com.google.common.collect.Ordering;
+import com.kubadziworski.bytecodegeneration.intrinsics.IntrinsicMethods;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
-import com.kubadziworski.domain.type.intrinsic.primitive.function.PrimitiveFunction;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
@@ -15,10 +15,12 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class CallExpressionGenerator {
 
     private final MethodVisitor methodVisitor;
+    private final IntrinsicMethods intrinsicMethods = new IntrinsicMethods();
 
     public CallExpressionGenerator(MethodVisitor methodVisitor) {
         this.methodVisitor = methodVisitor;
@@ -44,10 +46,13 @@ public class CallExpressionGenerator {
     public void generate(FunctionCall functionCall, StatementGenerator statementGenerator) {
         Expression owner = functionCall.getOwner();
 
-        if (owner.getType().isPrimitive()) {
-            callArithmeticExpression(functionCall, statementGenerator);
+
+        Optional<Expression> intrinsicExpression = callArithmeticExpression(functionCall, statementGenerator);
+        if (intrinsicExpression.isPresent()) {
+            intrinsicExpression.get().accept(statementGenerator);
             return;
         }
+
 
         owner.accept(statementGenerator);
         generateArguments(functionCall, statementGenerator);
@@ -98,8 +103,9 @@ public class CallExpressionGenerator {
     }
 
 
-    private void callArithmeticExpression(FunctionCall functionCall, StatementGenerator statementGenerator) {
-        PrimitiveFunction.executePrimitiveExpression(functionCall, statementGenerator, methodVisitor);
+    private Optional<Expression> callArithmeticExpression(FunctionCall functionCall, StatementGenerator statementGenerator) {
+        return intrinsicMethods.intrinsicMethod(functionCall).map(intrinsicMethod -> intrinsicMethod.toExpression(functionCall, methodVisitor));
+
     }
 
 
