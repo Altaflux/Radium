@@ -10,8 +10,8 @@ import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,11 +19,11 @@ import java.util.Optional;
 
 public class CallExpressionGenerator {
 
-    private final MethodVisitor methodVisitor;
+    private final InstructionAdapter methodVisitor;
 
     private static ThreadLocal<IntrinsicMethods> intrinsicMethods = ThreadLocal.withInitial(IntrinsicMethods::new);
 
-    public CallExpressionGenerator(MethodVisitor methodVisitor) {
+    public CallExpressionGenerator(InstructionAdapter methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 

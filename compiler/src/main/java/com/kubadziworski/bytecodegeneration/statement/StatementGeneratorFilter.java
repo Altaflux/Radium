@@ -1,13 +1,14 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.arthimetic.Addition;
+import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.*;
 import com.kubadziworski.domain.scope.Scope;
-import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 
 public class StatementGeneratorFilter implements StatementGenerator {
@@ -16,7 +17,7 @@ public class StatementGeneratorFilter implements StatementGenerator {
     private final StatementGenerator parent;
     private final Scope scope;
 
-    public StatementGeneratorFilter(MethodVisitor methodVisitor, Scope scope) {
+    public StatementGeneratorFilter(InstructionAdapter methodVisitor, Scope scope) {
         this.parent = null;
         this.scope = scope;
         this.next = new BaseStatementGenerator(this, methodVisitor);

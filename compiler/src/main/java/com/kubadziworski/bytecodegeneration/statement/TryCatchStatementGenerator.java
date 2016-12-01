@@ -14,7 +14,6 @@ import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -31,11 +30,11 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class TryCatchStatementGenerator {
 
-    private final MethodVisitor methodVisitor;
+    private final InstructionAdapter methodVisitor;
 
     private static final String FINALLY_THROWABLE_NAME = "$$Throw";
 
-    public TryCatchStatementGenerator(MethodVisitor methodVisitor) {
+    public TryCatchStatementGenerator(InstructionAdapter methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
@@ -173,13 +172,13 @@ public class TryCatchStatementGenerator {
                     int opCode = returnStatement.getExpression().getType().getAsmType().getOpcode(Opcodes.ILOAD);
                     methodVisitor.visitVarInsn(opCode, getScope().getLocalVariableIndex(varName));
                     PrimitiveTypesWrapperFactory.coerce(getScope().getCurrentFunctionSignature().getReturnType(), returnStatement.getExpression().getType(),
-                            new InstructionAdapter(methodVisitor));
+                            methodVisitor);
                     methodVisitor.visitInsn(asmType.getOpcode(IRETURN));
                 }
 
             } else {
                 PrimitiveTypesWrapperFactory.coerce(getScope().getCurrentFunctionSignature().getReturnType(), returnStatement.getExpression().getType(),
-                        new InstructionAdapter(methodVisitor));
+                        methodVisitor);
                 methodVisitor.visitInsn(asmType.getOpcode(IRETURN));
             }
 

@@ -6,17 +6,17 @@ import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.parsing.Parser;
 import com.kubadziworski.validation.ARGUMENT_ERRORS;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

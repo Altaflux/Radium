@@ -11,17 +11,16 @@ import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Optional;
 
 public class AssignmentStatementGenerator {
-    private final MethodVisitor methodVisitor;
+    private final InstructionAdapter methodVisitor;
 
 
-    public AssignmentStatementGenerator(MethodVisitor methodVisitor) {
+    public AssignmentStatementGenerator(InstructionAdapter methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
@@ -84,7 +83,7 @@ public class AssignmentStatementGenerator {
     }
 
     private void castIfNecessary(Type expressionType, Type variableType) {
-        PrimitiveTypesWrapperFactory.coerce(variableType, expressionType, new InstructionAdapter(methodVisitor));
+        PrimitiveTypesWrapperFactory.coerce(variableType, expressionType, methodVisitor);
 
         if (!expressionType.equals(variableType)) {
             if(!variableType.isPrimitive()) {

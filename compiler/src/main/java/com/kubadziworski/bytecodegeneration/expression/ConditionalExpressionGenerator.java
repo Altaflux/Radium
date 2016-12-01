@@ -12,7 +12,6 @@ import com.kubadziworski.domain.type.intrinsic.primitive.AbstractPrimitiveType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -22,9 +21,9 @@ import java.util.List;
 
 public class ConditionalExpressionGenerator {
 
-    private final MethodVisitor methodVisitor;
+    private final InstructionAdapter methodVisitor;
 
-    public ConditionalExpressionGenerator(MethodVisitor methodVisitor) {
+    public ConditionalExpressionGenerator(InstructionAdapter methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
@@ -80,7 +79,7 @@ public class ConditionalExpressionGenerator {
 //    }
 
     private void generatePrimitivesComparison(Expression leftExpression, Expression rightExpression, CompareSign compareSign, StatementGenerator statementGenerator) {
-        InstructionAdapter adapter = new InstructionAdapter(methodVisitor);
+        InstructionAdapter adapter = methodVisitor;
 
         Type leftT = leftExpression.getType();
         Type rightT = rightExpression.getType();

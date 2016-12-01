@@ -6,15 +6,14 @@ import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 public class ArithmeticExpressionGenerator {
 
-    private final MethodVisitor methodVisitor;
+    private final InstructionAdapter methodVisitor;
 
-    public ArithmeticExpressionGenerator(MethodVisitor methodVisitor) {
+    public ArithmeticExpressionGenerator(InstructionAdapter methodVisitor) {
 
         this.methodVisitor = methodVisitor;
     }
@@ -29,7 +28,7 @@ public class ArithmeticExpressionGenerator {
 
 
     public void generate(PureArithmeticExpression pureArithmeticExpression, StatementGenerator statementGenerator) {
-        InstructionAdapter ad = new InstructionAdapter(methodVisitor);
+        InstructionAdapter ad = methodVisitor;
         Expression leftExpression = pureArithmeticExpression.getLeftExpression();
         leftExpression.accept(statementGenerator);
         PrimitiveTypesWrapperFactory.coerce(pureArithmeticExpression.getType(), leftExpression.getType(), ad);

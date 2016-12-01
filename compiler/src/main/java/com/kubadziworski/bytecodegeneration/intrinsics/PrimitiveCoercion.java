@@ -6,14 +6,13 @@ import com.kubadziworski.domain.scope.CallableMember;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 
 public class PrimitiveCoercion extends IntrinsicMethod {
 
     @Override
-    public Expression toExpression(CallableMember functionCall, MethodVisitor methodVisitor) {
+    public Expression toExpression(CallableMember functionCall, InstructionAdapter methodVisitor) {
         return new IntrinsicExpression() {
 
             @Override
@@ -55,10 +54,10 @@ public class PrimitiveCoercion extends IntrinsicMethod {
                 }
             }
 
-            private void coerce(Expression value, MethodVisitor v, StatementGenerator generator, Type primitiveType) {
-                InstructionAdapter ad = new InstructionAdapter(v);
+            private void coerce(Expression value, InstructionAdapter v, StatementGenerator generator, Type primitiveType) {
+
                 value.accept(generator);
-                PrimitiveTypesWrapperFactory.coerce(primitiveType, value.getType(), ad);
+                PrimitiveTypesWrapperFactory.coerce(primitiveType, value.getType(), v);
             }
         };
     }

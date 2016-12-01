@@ -131,7 +131,7 @@ public class PrimitiveFunction {
     }
 
 
-    public static void executePrimitiveExpression(FunctionCall functionCall, StatementGenerator statementGenerator, MethodVisitor visitor) {
+    public static void executePrimitiveExpression(FunctionCall functionCall, StatementGenerator statementGenerator, InstructionAdapter visitor) {
         switch (functionCall.getIdentifier()) {
             case "minus":
             case "div":
@@ -181,8 +181,8 @@ public class PrimitiveFunction {
     }
 
 
-    private static void comparePrimitives(MethodVisitor methodVisitor, FunctionCall expression, StatementGenerator generator) {
-        InstructionAdapter v = new InstructionAdapter(methodVisitor);
+    private static void comparePrimitives(InstructionAdapter v, FunctionCall expression, StatementGenerator generator) {
+
         AbstractPrimitiveType owner = (AbstractPrimitiveType) expression.getOwner().getType();
         AbstractPrimitiveType compareValue = (AbstractPrimitiveType) expression.getArguments().get(0).getType();
 
@@ -217,10 +217,10 @@ public class PrimitiveFunction {
     }
 
 
-    private static void generateToString(MethodVisitor methodVisitor, Expression expression, StatementGenerator generator) {
+    private static void generateToString(InstructionAdapter ad, Expression expression, StatementGenerator generator) {
         expression.accept(generator);
         Type type = stringValueOfType(expression.getType().getAsmType());
-        InstructionAdapter ad = new InstructionAdapter(methodVisitor);
+
         ad.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
     }
 
@@ -236,44 +236,39 @@ public class PrimitiveFunction {
     }
     ///////////////////////////////
 
-    private static void toInt(Expression value, MethodVisitor v, StatementGenerator generator) {
-        InstructionAdapter ad = new InstructionAdapter(v);
+    private static void toInt(Expression value, InstructionAdapter v, StatementGenerator generator) {
         value.accept(generator);
-        PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.INT_TYPE, value.getType(), ad);
+        PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.INT_TYPE, value.getType(), v);
     }
 
-    private static void toLong(Expression value, MethodVisitor v, StatementGenerator generator) {
-        InstructionAdapter ad = new InstructionAdapter(v);
+    private static void toLong(Expression value, InstructionAdapter v, StatementGenerator generator) {
         value.accept(generator);
-        PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.LONG_TYPE, value.getType(), ad);
+        PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.LONG_TYPE, value.getType(), v);
     }
 
-    private static void toFloat(Expression value, MethodVisitor v, StatementGenerator generator) {
-        InstructionAdapter ad = new InstructionAdapter(v);
+    private static void toFloat(Expression value, InstructionAdapter v, StatementGenerator generator) {
         value.accept(generator);
-        PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.FLOAT_TYPE, value.getType(), ad);
+        PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.FLOAT_TYPE, value.getType(), v);
     }
 
-    private static void toDouble(Expression value, MethodVisitor v, StatementGenerator generator) {
-        InstructionAdapter ad = new InstructionAdapter(v);
+    private static void toDouble(Expression value, InstructionAdapter v, StatementGenerator generator) {
         value.accept(generator);
-        PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.FLOAT_TYPE, value.getType(), ad);
+        PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.FLOAT_TYPE, value.getType(), v);
     }
 
-    private static void toChar(Expression value, MethodVisitor v, StatementGenerator generator) {
-        InstructionAdapter ad = new InstructionAdapter(v);
+    private static void toChar(Expression value, InstructionAdapter ad, StatementGenerator generator) {
         value.accept(generator);
         PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.CHAR_TYPE, value.getType(), ad);
     }
 
-    private static void toByte(Expression value, MethodVisitor v, StatementGenerator generator) {
-        InstructionAdapter ad = new InstructionAdapter(v);
+    private static void toByte(Expression value, InstructionAdapter ad, StatementGenerator generator) {
+
         value.accept(generator);
         PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.BYTE_TYPE, value.getType(), ad);
     }
 
-    private static void toShort(Expression value, MethodVisitor v, StatementGenerator generator) {
-        InstructionAdapter ad = new InstructionAdapter(v);
+    private static void toShort(Expression value, InstructionAdapter ad, StatementGenerator generator) {
+
         value.accept(generator);
         PrimitiveTypesWrapperFactory.coerce(PrimitiveTypes.SHORT_TYPE, value.getType(), ad);
     }

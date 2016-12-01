@@ -7,13 +7,12 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.primitive.AbstractPrimitiveType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 public class CompareTo extends IntrinsicMethod {
 
     @Override
-    public Expression toExpression(CallableMember call, MethodVisitor methodVisitor) {
+    public Expression toExpression(CallableMember call, InstructionAdapter v) {
 
         return new IntrinsicExpression() {
             @Override
@@ -23,7 +22,7 @@ public class CompareTo extends IntrinsicMethod {
 
             @Override
             public void accept(StatementGenerator generator) {
-                InstructionAdapter v = new InstructionAdapter(methodVisitor);
+
                 AbstractPrimitiveType owner = (AbstractPrimitiveType) call.getOwner().getType();
                 AbstractPrimitiveType compareValue = (AbstractPrimitiveType) call.getArguments().get(0).getType();
 

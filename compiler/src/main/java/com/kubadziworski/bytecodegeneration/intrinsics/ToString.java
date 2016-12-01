@@ -5,13 +5,12 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.scope.CallableMember;
 import com.kubadziworski.domain.type.Type;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 public class ToString extends IntrinsicMethod {
 
     @Override
-    public Expression toExpression(CallableMember functionCall, MethodVisitor methodVisitor) {
+    public Expression toExpression(CallableMember functionCall, InstructionAdapter methodVisitor) {
 
         return new IntrinsicExpression() {
             @Override
@@ -23,8 +22,8 @@ public class ToString extends IntrinsicMethod {
             public void accept(StatementGenerator generator) {
                 functionCall.getOwner().accept(generator);
                 org.objectweb.asm.Type type = stringValueOfType(functionCall.getOwner().getType().getAsmType());
-                InstructionAdapter ad = new InstructionAdapter(methodVisitor);
-                ad.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
+
+                methodVisitor.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
             }
 
             org.objectweb.asm.Type stringValueOfType(org.objectweb.asm.Type type) {

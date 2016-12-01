@@ -2,14 +2,15 @@ package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.arthimetic.Addition;
+import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.*;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 
 public class BaseStatementGenerator implements StatementGenerator {
@@ -26,11 +27,11 @@ public class BaseStatementGenerator implements StatementGenerator {
     private final ThrowStatementGenerator throwStatementGenerator;
 
     private final StatementGenerator parent;
-    private final MethodVisitor methodVisitor;
+    private final InstructionAdapter methodVisitor;
 
     private int lastLine = 0;
 
-    public BaseStatementGenerator(StatementGenerator generator, MethodVisitor methodVisitor) {
+    public BaseStatementGenerator(StatementGenerator generator, InstructionAdapter methodVisitor) {
         parent = generator;
         expressionGenerator = new ExpressionGenerator(generator, methodVisitor);
         printStatementGenerator = new PrintStatementGenerator(methodVisitor);
@@ -45,12 +46,12 @@ public class BaseStatementGenerator implements StatementGenerator {
         this.methodVisitor = methodVisitor;
     }
 
-    private BaseStatementGenerator(StatementGenerator generator, MethodVisitor methodVisitor, int lastLine) {
+    private BaseStatementGenerator(StatementGenerator generator, InstructionAdapter methodVisitor, int lastLine) {
         this(generator, methodVisitor);
         this.lastLine = lastLine;
     }
 
-    private BaseStatementGenerator(StatementGenerator generator, MethodVisitor methodVisitor, int lastLine,
+    private BaseStatementGenerator(StatementGenerator generator, InstructionAdapter methodVisitor, int lastLine,
                                    PrintStatementGenerator printStatementGenerator,
                                    VariableDeclarationStatementGenerator variableDeclarationStatementGenerator,
                                    ReturnStatementGenerator returnStatementGenerator,

@@ -7,14 +7,13 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 public class ReturnStatementGenerator {
-    private final MethodVisitor methodVisitor;
+    private final InstructionAdapter methodVisitor;
 
-    public ReturnStatementGenerator(MethodVisitor methodVisitor) {
+    public ReturnStatementGenerator(InstructionAdapter methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
@@ -28,7 +27,7 @@ public class ReturnStatementGenerator {
         if (functionSignature != null) {
             Type returnType = functionSignature.getReturnType();
             int returnOpCode = returnType.getAsmType().getOpcode(Opcodes.IRETURN);
-            PrimitiveTypesWrapperFactory.coerce(returnType, type, new InstructionAdapter(methodVisitor));
+            PrimitiveTypesWrapperFactory.coerce(returnType, type, methodVisitor);
             methodVisitor.visitInsn(returnOpCode);
         } else {
             int returnOpCode = type.getAsmType().getOpcode(Opcodes.IRETURN);

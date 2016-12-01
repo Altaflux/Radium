@@ -17,6 +17,7 @@ import com.kubadziworski.util.DescriptorFactory;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Collections;
 import java.util.stream.IntStream;
@@ -36,8 +37,8 @@ public class MethodGenerator {
         String description = DescriptorFactory.getMethodDescriptor(function);
         Block block = (Block) function.getRootStatement();
         Scope scope = block.getScope();
-        MethodVisitor mv = classWriter.visitMethod(function.getModifiers(), name, description, null, null);
-
+        MethodVisitor mvs = classWriter.visitMethod(function.getModifiers(), name, description, null, null);
+        InstructionAdapter mv = new InstructionAdapter(mvs);
         if (function.getReturnType().isNullable().equals(Type.Nullability.NULLABLE)) {
             AnnotationVisitor av0 = mv.visitAnnotation("Lradium/annotations/Nullable;", false);
             av0.visitEnd();
@@ -69,7 +70,8 @@ public class MethodGenerator {
         Block block = (Block) constructor.getRootStatement();
         Scope scope = block.getScope();
         String description = DescriptorFactory.getMethodDescriptor(constructor);
-        MethodVisitor mv = classWriter.visitMethod(constructor.getModifiers(), "<init>", description, null, null);
+        MethodVisitor mvs = classWriter.visitMethod(constructor.getModifiers(), "<init>", description, null, null);
+        InstructionAdapter mv = new InstructionAdapter(mvs);
         mv.visitCode();
         StatementGenerator statementScopeGenerator = new StatementGeneratorFilter(mv, scope);
         FunctionSignature signature = scope.getMethodCallSignature(SuperCall.SUPER_IDENTIFIER, Collections.emptyList());

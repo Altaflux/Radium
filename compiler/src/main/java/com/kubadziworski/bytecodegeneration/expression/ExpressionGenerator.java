@@ -5,11 +5,12 @@ import com.kubadziworski.bytecodegeneration.statement.BlockStatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.IfStatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.arthimetic.Addition;
+import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
-import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 public class ExpressionGenerator {
 
@@ -30,7 +31,7 @@ public class ExpressionGenerator {
 
     private final StatementGenerator generator;
 
-    public ExpressionGenerator(StatementGenerator generator, MethodVisitor methodVisitor) {
+    public ExpressionGenerator(StatementGenerator generator, InstructionAdapter methodVisitor) {
         referenceExpressionGenerator = new ReferenceExpressionGenerator(methodVisitor);
         valueExpressionGenerator = new ValueExpressionGenerator(methodVisitor);
         callExpressionGenerator = new CallExpressionGenerator(methodVisitor);

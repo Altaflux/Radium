@@ -10,6 +10,7 @@ import com.kubadziworski.domain.type.JavaClassType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
+import org.objectweb.asm.commons.InstructionAdapter
 import spock.lang.Specification
 
 import java.lang.reflect.Modifier
@@ -26,7 +27,7 @@ class AssignmentStatementGeneratorTest extends Specification {
             StatementGenerator expressionGenerator = Mock()
             Scope scope = Mock()
         when:
-            new AssignmentStatementGenerator(methodVisitor).generate(assignment, scope, expressionGenerator)
+            new AssignmentStatementGenerator(new InstructionAdapter(methodVisitor)).generate(assignment, scope, expressionGenerator)
         then :
             1*scope.isLocalVariableExists(varName) >> true
             1*scope.getLocalVariableIndex(varName) >> 3
@@ -48,7 +49,7 @@ class AssignmentStatementGeneratorTest extends Specification {
             StatementGenerator expressionGenerator = Mock()
             Scope scope = Mock()
         when:
-            new AssignmentStatementGenerator(methodVisitor).generate(assignment, scope, expressionGenerator)
+            new AssignmentStatementGenerator(new InstructionAdapter(methodVisitor)).generate(assignment, scope, expressionGenerator)
             then :
             1*scope.isLocalVariableExists(varName) >> false
             1*scope.getField(varName) >> field
