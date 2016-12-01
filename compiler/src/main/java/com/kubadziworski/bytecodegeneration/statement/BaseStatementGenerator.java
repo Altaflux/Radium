@@ -42,7 +42,6 @@ public class BaseStatementGenerator implements StatementGenerator {
         assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor);
         tryCatchStatementGenerator = new TryCatchStatementGenerator(methodVisitor);
         throwStatementGenerator = new ThrowStatementGenerator(methodVisitor);
-
         this.methodVisitor = methodVisitor;
     }
 
@@ -60,7 +59,7 @@ public class BaseStatementGenerator implements StatementGenerator {
                                    ForStatementGenerator forStatementGenerator,
                                    AssignmentStatementGenerator assignmentStatementGenerator,
                                    TryCatchStatementGenerator tryCatchStatementGenerator,
-                                   ThrowStatementGenerator throwStatementGenerator) {
+                                   ThrowStatementGenerator throwStatementGenerator, ExpressionGenerator expressionGenerator) {
         parent = generator;
         this.printStatementGenerator = printStatementGenerator;
         this.variableDeclarationStatementGenerator = variableDeclarationStatementGenerator;
@@ -70,7 +69,7 @@ public class BaseStatementGenerator implements StatementGenerator {
         this.forStatementGenerator = forStatementGenerator;
         this.assignmentStatementGenerator = assignmentStatementGenerator;
         this.tryCatchStatementGenerator = tryCatchStatementGenerator;
-        this.expressionGenerator = new ExpressionGenerator(generator, methodVisitor);
+        this.expressionGenerator = expressionGenerator.copy(generator);
         this.throwStatementGenerator = throwStatementGenerator;
         this.methodVisitor = methodVisitor;
         this.lastLine = lastLine;
@@ -394,7 +393,7 @@ public class BaseStatementGenerator implements StatementGenerator {
         return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine,
                 printStatementGenerator, variableDeclarationStatementGenerator, returnStatementGenerator,
                 ifStatementGenerator, blockStatementGenerator, forStatementGenerator, assignmentStatementGenerator, tryCatchStatementGenerator,
-                throwStatementGenerator);
+                throwStatementGenerator, expressionGenerator);
     }
 
     private void generateLineNumber(Statement statement) {

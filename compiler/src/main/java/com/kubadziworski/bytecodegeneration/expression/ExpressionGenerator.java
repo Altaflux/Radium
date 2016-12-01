@@ -48,6 +48,39 @@ public class ExpressionGenerator {
         this.generator = generator;
     }
 
+    private ExpressionGenerator(StatementGenerator generator,
+                               ReferenceExpressionGenerator referenceExpressionGenerator,
+                               ValueExpressionGenerator valueExpressionGenerator,
+                               CallExpressionGenerator callExpressionGenerator,
+                               ArithmeticExpressionGenerator arithmeticExpressionGenerator,
+                               ConditionalExpressionGenerator conditionalExpressionGenerator,
+                               ParameterExpressionGenerator parameterExpressionGenerator,
+                               PrefixExpressionGenerator prefixExpressionGenerator,
+                               PopExpressionGenerator popExpressionGenerator,
+                               DupExpressionGenerator dupExpressionGenerator,
+                               UnaryExpressionGenerator unaryExpressionGenerator,
+                               BlockStatementGenerator blockStatementGenerator,
+                               IfStatementGenerator ifExpressionGenerator,
+                               ArgumentStatementGenerator argumentStatementGenerator,
+                               NotNullCastExpressionGenerator notNullCastExpressionGenerator) {
+        this.generator = generator;
+        this.referenceExpressionGenerator = referenceExpressionGenerator;
+        this.valueExpressionGenerator = valueExpressionGenerator;
+        this.callExpressionGenerator = callExpressionGenerator;
+        this.arithmeticExpressionGenerator = arithmeticExpressionGenerator;
+        this.conditionalExpressionGenerator = conditionalExpressionGenerator;
+        this.parameterExpressionGenerator = parameterExpressionGenerator;
+        this.prefixExpressionGenerator = prefixExpressionGenerator;
+        this.popExpressionGenerator = popExpressionGenerator;
+        this.dupExpressionGenerator = dupExpressionGenerator;
+        this.unaryExpressionGenerator = unaryExpressionGenerator;
+        this.blockStatementGenerator = blockStatementGenerator;
+        this.ifExpressionGenerator = ifExpressionGenerator;
+        this.argumentStatementGenerator = argumentStatementGenerator;
+        this.notNullCastExpressionGenerator = notNullCastExpressionGenerator;
+
+    }
+
     public void generate(NotNullCastExpression castExpression, StatementGenerator statementGenerator) {
         notNullCastExpressionGenerator.generate(castExpression, statementGenerator);
     }
@@ -131,5 +164,12 @@ public class ExpressionGenerator {
 
     public Scope getScope() {
         return generator.getScope();
+    }
+
+
+    public ExpressionGenerator copy(StatementGenerator generator) {
+        return new ExpressionGenerator(generator, referenceExpressionGenerator, valueExpressionGenerator, callExpressionGenerator, arithmeticExpressionGenerator, conditionalExpressionGenerator, parameterExpressionGenerator,
+                prefixExpressionGenerator, popExpressionGenerator, dupExpressionGenerator, unaryExpressionGenerator, blockStatementGenerator, ifExpressionGenerator, argumentStatementGenerator,
+                notNullCastExpressionGenerator);
     }
 }
