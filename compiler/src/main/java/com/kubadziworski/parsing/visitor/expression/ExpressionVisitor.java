@@ -46,7 +46,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     }
 
     @Override
-    public NotNullCastExpression visitNotNullCastExpression(EnkelParser.NotNullCastExpressionContext ctx){
+    public NotNullCastExpression visitNotNullCastExpression(EnkelParser.NotNullCastExpressionContext ctx) {
         return notNullCastExpressionVisitor.visitNotNullCastExpression(ctx);
     }
 
@@ -130,27 +130,8 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitAdd(@NotNull AddContext ctx) {
-
-        return arithmeticExpressionVisitor.visitAdd(ctx);
-    }
-
-    @Override
-    public Expression visitMultiply(@NotNull MultiplyContext ctx) {
-
-        return arithmeticExpressionVisitor.visitMultiply(ctx);
-    }
-
-    @Override
-    public Expression visitSubstract(@NotNull SubstractContext ctx) {
-
-        return arithmeticExpressionVisitor.visitSubstract(ctx);
-    }
-
-    @Override
-    public Expression visitDivide(@NotNull DivideContext ctx) {
-
-        return arithmeticExpressionVisitor.visitDivide(ctx);
+    public Expression visitBinaryExpression(@NotNull BinaryExpressionContext ctx) {
+        return arithmeticExpressionVisitor.visitBinaryExpression(ctx);
     }
 
     @Override

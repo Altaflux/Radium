@@ -7,13 +7,11 @@ import com.kubadziworski.antlr.EnkelParser.SignExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.SuffixExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.UnaryExpressionContext;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.UnaryOperator;
 import com.kubadziworski.domain.UnarySign;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Field;
@@ -23,6 +21,7 @@ import com.kubadziworski.util.PropertyAccessorsUtil;
 import com.kubadziworski.util.TypeChecker;
 
 import java.util.Collections;
+import java.util.List;
 
 
 public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
@@ -42,10 +41,16 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
             Expression operation;
 
+            List<ArgumentHolder> arguments = Collections.singletonList(new ArgumentHolder(new Value(expression.getType(), "1"), null));
             if (operator.equals(UnaryOperator.INCREMENT)) {
-                operation = new DupExpression(new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.ADD), 1);
+
+                FunctionSignature plusSignature = expression.getType().getMethodCallSignature("plus", arguments);
+                FunctionCall functionCall = new FunctionCall(plusSignature, plusSignature.createArgumentList(arguments), expression);
+                operation = new DupExpression(functionCall, 1);
             } else {
-                operation = new DupExpression(new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.SUBTRACT), 1);
+                FunctionSignature plusSignature = expression.getType().getMethodCallSignature("minus", arguments);
+                FunctionCall functionCall = new FunctionCall(plusSignature, plusSignature.createArgumentList(arguments), expression);
+                operation = new DupExpression(functionCall, 1);
             }
             ArgumentHolder argument = new ArgumentHolder(operation, null);
 
@@ -65,10 +70,13 @@ public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
             FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
             Expression operation;
 
+            List<ArgumentHolder> arguments = Collections.singletonList(new ArgumentHolder(new Value(expression.getType(), "1"), null));
             if (operator.equals(UnaryOperator.INCREMENT)) {
-                operation = new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.ADD);
+                FunctionSignature plusSignature = expression.getType().getMethodCallSignature("plus", arguments);
+                operation = new FunctionCall(plusSignature, plusSignature.createArgumentList(arguments), expression);
             } else {
-                operation = new PureArithmeticExpression(expression, new Value(expression.getType(), "1"), expression.getType(), ArithmeticOperator.SUBTRACT);
+                FunctionSignature plusSignature = expression.getType().getMethodCallSignature("minus", arguments);
+                operation = new FunctionCall(plusSignature, plusSignature.createArgumentList(arguments), expression);
             }
             ArgumentHolder argument = new ArgumentHolder(operation, null);
             return new ComposedExpression(expression,

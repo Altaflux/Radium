@@ -174,14 +174,18 @@ expression : THIS #ThisReference
            | operation='-' expression #SignExpression
            | operation='+' expression #SignExpression
            | operation='!' expression #UnaryExpression
-           |  '('expression '*' expression')' #Multiply
-           | expression '*' expression  #Multiply
-           | '(' expression '/' expression ')' #Divide
-           | expression '/' expression #Divide
-           | '(' expression '+' expression ')' #Add
-           | expression '+' expression #Add
-           | '(' expression '-' expression ')' #Substract
-           | expression '-' expression #Substract
+
+           |  '('expression opType='*' expression')' #BinaryExpression
+           | expression opType='*' expression  #BinaryExpression
+           | '(' expression opType='/' expression ')' #BinaryExpression
+           | expression opType='/' expression #BinaryExpression
+           | '(' expression opType='+' expression ')' #BinaryExpression
+           | expression opType='+' expression #BinaryExpression
+           | '(' expression opType='-' expression ')' #BinaryExpression
+           | expression opType='-' expression #BinaryExpression
+           | '(' expression opType='%' expression ')' #BinaryExpression
+           | expression opType='%' expression #BinaryExpression
+
            | expression cmp='>' expression #ConditionalExpression
              | expression cmp='<' expression #ConditionalExpression
              | expression cmp='==' expression #ConditionalExpression

@@ -112,20 +112,35 @@ class ShouldCompileTest extends Specification {
 										} else {
 											print "test failed"
 										}
+
+                                        assert(secondNum % firstNum == 2, true)
 									}
+                                    Unit assert(Boolean actual,Boolean expected) {
+                                        if (actual == expected) {
+                                            print "OK"
+                                        }
+                                        else {
+                                            print "TEST FAILED"
+                                        }
+                                    }
 
-                                fooo(){
-                                    bla(3)
-                                }
-                                Int? bla(Int? mip){
-                                    return mip;
-                                }
+                                    fooo(){
+                                        bla(3)
+                                    }
+                                    Int? bla(Int? mip){
+                                        return mip;
+                                    }
 
-								Int sum (Int x ,Int y) {
-									print x
-									print y
-									return x+y
-								}
+                                    Int sum (Int x ,Int y) {
+                                        print x
+                                        print y
+                                        return x+y
+                                    }
+                                    Int mod(Int x ,Int y) {
+                                        print x
+                                        print y
+                                        return x%y
+                                    }
 							}
 							"""
 

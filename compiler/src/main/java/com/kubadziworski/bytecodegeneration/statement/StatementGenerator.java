@@ -76,9 +76,6 @@ public interface StatementGenerator {
     void generate(ConstructorCall constructorCall);
     void generate(ConstructorCall constructorCall, StatementGenerator generator);
 
-    void generate(PureArithmeticExpression expression);
-    void generate(PureArithmeticExpression expression, StatementGenerator statementGenerator);
-
     void generate(Addition addition);
     void generate(Addition addition, StatementGenerator generator);
 

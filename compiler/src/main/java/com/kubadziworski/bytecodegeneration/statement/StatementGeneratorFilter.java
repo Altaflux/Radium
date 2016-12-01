@@ -2,7 +2,6 @@ package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
@@ -31,7 +30,7 @@ public class StatementGeneratorFilter implements StatementGenerator {
 
     @Override
     final public void generate(NotNullCastExpression castExpression) {
-        if(parent != null){
+        if (parent != null) {
             parent.generate(castExpression);
         }
         generate(castExpression, this);
@@ -39,7 +38,7 @@ public class StatementGeneratorFilter implements StatementGenerator {
 
     @Override
     final public void generate(ThrowStatement throwStatement) {
-        if(parent != null){
+        if (parent != null) {
             parent.generate(throwStatement);
         }
         generate(throwStatement, this);
@@ -191,13 +190,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
         generate(argument, this);
     }
 
-    @Override
-    final public void generate(PureArithmeticExpression arithmeticExpression) {
-        if (parent != null) {
-            parent.generate(arithmeticExpression);
-        }
-        generate(arithmeticExpression, this);
-    }
 
     @Override
     final public void generate(Addition addition) {
@@ -376,11 +368,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     @Override
-    public void generate(PureArithmeticExpression addition, StatementGenerator generator) {
-        next.generate(addition, generator);
-    }
-
-    @Override
     public void generate(Addition addition, StatementGenerator generator) {
         next.generate(addition, generator);
     }
@@ -394,7 +381,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
     public void generate(ConditionalExpression conditionalExpression, StatementGenerator generator) {
         next.generate(conditionalExpression, generator);
     }
-
 
 
     @Override

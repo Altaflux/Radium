@@ -6,7 +6,6 @@ import com.kubadziworski.bytecodegeneration.statement.IfStatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.scope.Scope;
@@ -140,10 +139,6 @@ public class ExpressionGenerator {
 
     public void generate(FunctionCall functionCall, StatementGenerator statementGenerator) {
         callExpressionGenerator.generate(functionCall, statementGenerator);
-    }
-
-    public void generate(PureArithmeticExpression expression, StatementGenerator statementGenerator) {
-        arithmeticExpressionGenerator.generate(expression, statementGenerator);
     }
 
     public void generate(Addition expression, StatementGenerator statementGenerator) {

@@ -8,7 +8,6 @@ import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FunctionCall;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
@@ -24,47 +23,13 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitAdd(@NotNull AddContext ctx) {
+    public Expression visitBinaryExpression(@NotNull BinaryExpressionContext ctx) {
         ExpressionContext leftExpression = ctx.expression(0);
         ExpressionContext rightExpression = ctx.expression(1);
 
         Expression leftExpress = leftExpression.accept(expressionVisitor);
         Expression rightExpress = rightExpression.accept(expressionVisitor);
-
-        return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.ADD);
-    }
-
-    @Override
-    public Expression visitMultiply(@NotNull MultiplyContext ctx) {
-        ExpressionContext leftExpression = ctx.expression(0);
-        ExpressionContext rightExpression = ctx.expression(1);
-
-        Expression leftExpress = leftExpression.accept(expressionVisitor);
-        Expression rightExpress = rightExpression.accept(expressionVisitor);
-
-        return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.MULTIPLY);
-    }
-
-    @Override
-    public Expression visitSubstract(@NotNull SubstractContext ctx) {
-        ExpressionContext leftExpression = ctx.expression(0);
-        ExpressionContext rightExpression = ctx.expression(1);
-
-        Expression leftExpress = leftExpression.accept(expressionVisitor);
-        Expression rightExpress = rightExpression.accept(expressionVisitor);
-
-        return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.SUBTRACT);
-    }
-
-    @Override
-    public Expression visitDivide(@NotNull DivideContext ctx) {
-        ExpressionContext leftExpression = ctx.expression(0);
-        ExpressionContext rightExpression = ctx.expression(1);
-
-        Expression leftExpress = leftExpression.accept(expressionVisitor);
-        Expression rightExpress = rightExpression.accept(expressionVisitor);
-
-        return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.DIVIDE);
+        return createFunction(ctx, leftExpress, rightExpress, ArithmeticOperator.fromString(ctx.opType.getText()));
     }
 
     private Expression createFunction(ExpressionContext context, Expression leftExpression, Expression rightExpression, ArithmeticOperator operator) {
@@ -76,10 +41,6 @@ public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<Expression> {
 
         ArgumentHolder argument = new ArgumentHolder(rightExpression, null);
         FunctionSignature signature = type.getMethodCallSignature(operator.getMethodName(), Collections.singletonList(argument));
-        if (rightExpression.getType().isPrimitive()) {
-            return new PureArithmeticExpression(leftExpression, rightExpression, signature.getReturnType(), operator);
-        }
-
         return new FunctionCall(new RuleContextElementImpl(context), signature, signature.createArgumentList(Collections.singletonList(argument)), leftExpression);
     }
 }

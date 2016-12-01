@@ -8,7 +8,11 @@ import java.util.Arrays;
 
 public enum ArithmeticOperator {
 
-    ADD("+", "plus", Opcodes.IADD), SUBTRACT("-", "minus", Opcodes.ISUB), DIVIDE("/", "div", Opcodes.IDIV), MULTIPLY("*", "times", Opcodes.IMUL);
+    ADD("+", "plus", Opcodes.IADD),
+    SUBTRACT("-", "minus", Opcodes.ISUB),
+    DIVIDE("/", "div", Opcodes.IDIV),
+    MOD("%", "mod", Opcodes.IREM),
+    MULTIPLY("*", "times", Opcodes.IMUL);
 
     private final String operator;
     private final String methodName;
@@ -33,6 +37,7 @@ public enum ArithmeticOperator {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Sign not implemented"));
     }
+
     public static ArithmeticOperator fromMethodName(String methodName) {
         return Arrays.stream(values()).filter(opSign -> opSign.methodName.equals(methodName))
                 .findFirst()

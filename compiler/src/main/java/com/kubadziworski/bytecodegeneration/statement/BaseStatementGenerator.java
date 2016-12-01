@@ -3,7 +3,6 @@ package com.kubadziworski.bytecodegeneration.statement;
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
@@ -261,16 +260,6 @@ public class BaseStatementGenerator implements StatementGenerator {
         expressionGenerator.generate(constructorCall, generator);
     }
 
-    @Override
-    public void generate(PureArithmeticExpression addition) {
-        expressionGenerator.generate(addition, this);
-    }
-
-    @Override
-    public void generate(PureArithmeticExpression addition, StatementGenerator generator) {
-        generateLineNumber(addition);
-        expressionGenerator.generate(addition, generator);
-    }
 
     public void generate(Addition addition) {
         expressionGenerator.generate(addition, this);

@@ -3,9 +3,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
-import com.kubadziworski.domain.node.expression.arthimetic.PureArithmeticExpression;
 import com.kubadziworski.domain.type.DefaultTypes;
-import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -24,19 +22,6 @@ public class ArithmeticExpressionGenerator {
             return;
         }
         throw new RuntimeException("Addition must only be done to String types");
-    }
-
-
-    public void generate(PureArithmeticExpression pureArithmeticExpression, StatementGenerator statementGenerator) {
-        InstructionAdapter ad = methodVisitor;
-        Expression leftExpression = pureArithmeticExpression.getLeftExpression();
-        leftExpression.accept(statementGenerator);
-        PrimitiveTypesWrapperFactory.coerce(pureArithmeticExpression.getType(), leftExpression.getType(), ad);
-
-        Expression rightExpression = pureArithmeticExpression.getRightExpression();
-        rightExpression.accept(statementGenerator);
-        PrimitiveTypesWrapperFactory.coerce(pureArithmeticExpression.getType(), rightExpression.getType(), ad);
-        methodVisitor.visitInsn(pureArithmeticExpression.getOperator().getOperationOpCode(pureArithmeticExpression.getType()));
     }
 
     private void generateStringAppend(Addition expression, StatementGenerator statementGenerator) {

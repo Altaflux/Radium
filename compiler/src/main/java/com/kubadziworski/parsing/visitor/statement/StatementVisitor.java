@@ -45,7 +45,7 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     }
 
     @Override
-    public Statement visitNotNullCastExpression(EnkelParser.NotNullCastExpressionContext ctx){
+    public Statement visitNotNullCastExpression(EnkelParser.NotNullCastExpressionContext ctx) {
         return expressionVisitor.visitNotNullCastExpression(ctx);
     }
 
@@ -149,23 +149,8 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     }
 
     @Override
-    public Expression visitAdd(@NotNull AddContext ctx) {
-        return expressionVisitor.visitAdd(ctx);
-    }
-
-    @Override
-    public Expression visitMultiply(@NotNull MultiplyContext ctx) {
-        return expressionVisitor.visitMultiply(ctx);
-    }
-
-    @Override
-    public Expression visitSubstract(@NotNull SubstractContext ctx) {
-        return expressionVisitor.visitSubstract(ctx);
-    }
-
-    @Override
-    public Expression visitDivide(@NotNull DivideContext ctx) {
-        return expressionVisitor.visitDivide(ctx);
+    public Expression visitBinaryExpression(@NotNull BinaryExpressionContext ctx) {
+        return expressionVisitor.visitBinaryExpression(ctx);
     }
 
     @Override
