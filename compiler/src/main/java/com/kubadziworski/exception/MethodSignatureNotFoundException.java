@@ -1,6 +1,7 @@
 package com.kubadziworski.exception;
 
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
+import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 
@@ -12,10 +13,12 @@ import java.util.List;
 public class MethodSignatureNotFoundException extends RuntimeException {
 
     public MethodSignatureNotFoundException(Scope scope, String methodName, List<ArgumentHolder> parameterTypes) {
-        super("There is no method '" + methodName + "' with parameters " + parameterTypes + " for OwnerType: " + scope.getClassType());
+        super("There is no method '" + methodName + "' with parameters " + parameterTypes.stream()
+                .map(ArgumentHolder::getExpression).map(Expression::getType).map(Type::getName) + " for OwnerType: " + scope.getClassType());
     }
 
     public MethodSignatureNotFoundException(String methodName, List<ArgumentHolder> parameterTypes, Type owner) {
-        super("There is no method '" + methodName + "' with parameters " + parameterTypes + " for OwnerType: " + owner);
+        super("There is no method '" + methodName + "' with parameters " + parameterTypes.stream()
+                .map(ArgumentHolder::getExpression).map(Expression::getType).map(Type::getName) + " for OwnerType: " + owner);
     }
 }

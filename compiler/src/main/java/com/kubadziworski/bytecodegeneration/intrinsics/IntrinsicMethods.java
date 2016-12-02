@@ -4,6 +4,7 @@ package com.kubadziworski.bytecodegeneration.intrinsics;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.scope.CallableMember;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 
 import java.util.Collections;
@@ -15,6 +16,8 @@ public class IntrinsicMethods {
     private final PrimitiveCoercion primitiveCoercion = new PrimitiveCoercion();
     private final ToString toString = new ToString();
     private final CompareTo compareTo = new CompareTo();
+    private final Equals equals = new Equals();
+
     private final ArithmeticIntrinsicMethod arithmeticIntrinsicMethod = new ArithmeticIntrinsicMethod();
 
     public IntrinsicMethods() {
@@ -44,9 +47,16 @@ public class IntrinsicMethods {
 
         });
 
-        PrimitiveTypes.PRIMITIVE_TYPES.forEach(type -> intrinsicMap
-                .registerIntrinsicMethod(type.getMethodCallSignature("toString", Collections.emptyList()),
-                        toString, type));
+        PrimitiveTypes.PRIMITIVE_TYPES.forEach(type -> {
+            intrinsicMap
+                    .registerIntrinsicMethod(type.getMethodCallSignature("toString", Collections.emptyList()),
+                            toString, type);
+            intrinsicMap
+                    .registerIntrinsicMethod(type.getMethodCallSignature("equals", Collections.singletonList(
+                            new ArgumentHolder(new EmptyExpression(AnyType.INSTANCE), null))),
+                            equals, type);
+
+        });
 
 
         PrimitiveTypes.NUMERIC_TYPES.forEach(type -> PrimitiveTypes.NUMERIC_TYPES.forEach(type1 -> {

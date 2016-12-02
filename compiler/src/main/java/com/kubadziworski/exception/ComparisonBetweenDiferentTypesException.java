@@ -7,6 +7,6 @@ import com.kubadziworski.domain.node.expression.Expression;
  */
 public class ComparisonBetweenDiferentTypesException extends RuntimeException {
     public ComparisonBetweenDiferentTypesException(Expression leftExpression, Expression rightExpression) {
-        super("Comparison between types " + leftExpression.getType() + " and " + rightExpression.getType() + " not yet supported");
+        super("Comparison between types " + leftExpression.getType().getName() + " and " + rightExpression.getType().getName() + " not yet supported");
     }
 }

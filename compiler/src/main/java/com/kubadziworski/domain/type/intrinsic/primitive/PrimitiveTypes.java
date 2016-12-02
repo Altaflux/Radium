@@ -1,6 +1,8 @@
 package com.kubadziworski.domain.type.intrinsic.primitive;
 
 
+import com.kubadziworski.domain.type.Type;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +33,7 @@ public class PrimitiveTypes {
 
     public static final List<AbstractPrimitiveType> NUMBER_TYPES = Arrays.asList(CHAR_TYPE, INT_TYPE, LONG_TYPE, DOUBLE_TYPE, FLOAT_TYPE, BYTE_TYPE, SHORT_TYPE);
 
-    public static final LinkedList<AbstractPrimitiveType> orderedDenominatorList = new LinkedList<>();
+    public static final LinkedList<Type> orderedDenominatorList = new LinkedList<>();
 
     static {
         orderedDenominatorList.add(BOOLEAN_TYPE);
@@ -47,6 +49,16 @@ public class PrimitiveTypes {
     public static AbstractPrimitiveType getBiggerDenominator(AbstractPrimitiveType type1, AbstractPrimitiveType type2) {
         int positionOfType1 = orderedDenominatorList.indexOf((AbstractPrimitiveType) type1.getUnBoxedType());
         int positionOfType2 = orderedDenominatorList.indexOf((AbstractPrimitiveType) type2.getUnBoxedType());
+        return (AbstractPrimitiveType) orderedDenominatorList.get(Math.max(positionOfType1, positionOfType2));
+    }
+
+    public static Type getBiggerDenominator(AbstractPrimitiveType type1, Type type2) {
+
+        if (type2.getAsmType().getSort() == org.objectweb.asm.Type.OBJECT) {
+            return type2;
+        }
+        int positionOfType1 = orderedDenominatorList.indexOf((AbstractPrimitiveType) type1.getUnBoxedType());
+        int positionOfType2 = orderedDenominatorList.indexOf(((AbstractPrimitiveType) type2).getUnBoxedType());
         return orderedDenominatorList.get(Math.max(positionOfType1, positionOfType2));
     }
 

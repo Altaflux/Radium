@@ -20,7 +20,7 @@ public class LongType extends AbstractPrimitiveType {
     private static final Type physicalType = new JavaClassType(radium.Long.class);
 
     public LongType(boolean primitive) {
-        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive, physicalType);
     }
 
     @Override

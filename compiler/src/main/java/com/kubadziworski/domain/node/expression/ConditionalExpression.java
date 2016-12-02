@@ -36,11 +36,6 @@ public class ConditionalExpression extends ElementImpl implements Expression {
             throw new MixedComparisonNotAllowedException(leftExpression.getType(), rightExpression.getType());
         }
         isPrimitiveComparison = leftExpressionIsPrimitive;
-//        boolean isObjectsComparison = !leftExpressionIsPrimitive && !rightExpressionIsPrimitive;
-//        boolean isMixedComparison = !isPrimitiveComparison && !isObjectsComparison;
-//        if (isMixedComparison) {
-//            throw new MixedComparisonNotAllowedException(leftExpression.getType(), rightExpression.getType());
-//        }
     }
 
     public CompareSign getCompareSign() {

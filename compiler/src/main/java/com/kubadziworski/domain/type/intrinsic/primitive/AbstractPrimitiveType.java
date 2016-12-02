@@ -5,6 +5,7 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BoxableType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.List;
@@ -14,11 +15,13 @@ import java.util.Optional;
 public abstract class AbstractPrimitiveType implements Type, BoxableType {
 
     protected final Type type;
+    protected final Type mainType;
     private final boolean isBoxed;
 
-    AbstractPrimitiveType(Type type, boolean primitive) {
+    AbstractPrimitiveType(Type type, boolean primitive, Type mainType) {
         this.type = type;
         this.isBoxed = !primitive;
+        this.mainType = mainType;
     }
 
     @Override
@@ -38,7 +41,7 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
 
     @Override
     public Optional<Type> getSuperType() {
-        return type.getSuperType();
+        return Optional.of(AnyType.INSTANCE);
     }
 
     @Override
@@ -76,7 +79,7 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
         if (this.getName().equals(type.getName())) {
             return 0;
         }
-        return this.type.inheritsFrom(type);
+        return this.mainType.inheritsFrom(type);
     }
 
     @Override
@@ -84,7 +87,7 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
         if (this.getName().equals(type.getName())) {
             return Optional.of(type);
         }
-        return this.type.nearestDenominator(type);
+        return this.mainType.nearestDenominator(type);
     }
 
     public abstract void compare(CompareSign compareSign, MethodVisitor methodVisitor);

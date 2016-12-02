@@ -4,6 +4,7 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.scope.CallableMember;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.domain.type.intrinsic.primitive.AbstractPrimitiveType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
@@ -23,10 +24,17 @@ public class CompareTo extends IntrinsicMethod {
             @Override
             public void accept(StatementGenerator generator) {
 
-                AbstractPrimitiveType owner = (AbstractPrimitiveType) call.getOwner().getType();
-                AbstractPrimitiveType compareValue = (AbstractPrimitiveType) call.getArguments().get(0).getType();
+                Type owner = call.getOwner().getType();
+                if (owner instanceof TypeProjection) {
+                    owner = ((TypeProjection) owner).getInternalType();
+                }
 
-                AbstractPrimitiveType topType = PrimitiveTypes.getBiggerDenominator(owner, compareValue);
+                Type compareValue = call.getArguments().get(0).getType();
+                if (compareValue instanceof TypeProjection) {
+                    compareValue = ((TypeProjection) compareValue).getInternalType();
+                }
+
+                AbstractPrimitiveType topType = PrimitiveTypes.getBiggerDenominator((AbstractPrimitiveType) owner, (AbstractPrimitiveType) compareValue);
                 org.objectweb.asm.Type asmTopType = topType.getAsmType();
 
                 call.getOwner().accept(generator);

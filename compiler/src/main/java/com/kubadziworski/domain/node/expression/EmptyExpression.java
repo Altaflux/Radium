@@ -25,4 +25,11 @@ public class EmptyExpression extends ElementImpl implements Expression {
     public void accept(StatementGenerator generator) {
         generator.generate(this);
     }
+
+    @Override
+    public String toString() {
+        return "EmptyExpression{" +
+                "type=" + type +
+                "} " + super.toString();
+    }
 }

@@ -21,7 +21,7 @@ public class PrintStatementGenerator {
         expression.accept(generator);
         Type type = expression.getType();
 
-        if (((type.inheritsFrom(AnyType.INSTANCE) > 0))) {
+        if (((type.inheritsFrom(AnyType.INSTANCE) > 0) && !type.isPrimitive())) {
             type = AnyType.INSTANCE;
         }
 

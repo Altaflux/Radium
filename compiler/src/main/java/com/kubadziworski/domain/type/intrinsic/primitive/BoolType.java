@@ -19,7 +19,7 @@ public class BoolType extends AbstractPrimitiveType {
     private static final Type physicalType = new JavaClassType(radium.Boolean.class);
 
     public BoolType(boolean primitive) {
-        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive, physicalType);
     }
 
     @Override

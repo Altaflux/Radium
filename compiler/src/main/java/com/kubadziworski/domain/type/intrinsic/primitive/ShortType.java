@@ -11,9 +11,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import java.util.List;
 
-/**
- * Created by plozano on 11/23/2016.
- */
+
 public class ShortType extends AbstractPrimitiveType {
 
     private static final Type NULLABLE_TYPE = new JavaClassType(java.lang.Short.class);
@@ -21,7 +19,7 @@ public class ShortType extends AbstractPrimitiveType {
     private static final Type physicalType = new JavaClassType(radium.Short.class);
 
     public ShortType(boolean primitive) {
-        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive, physicalType);
     }
 
     @Override

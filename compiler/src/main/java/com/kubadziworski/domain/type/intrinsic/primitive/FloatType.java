@@ -19,7 +19,7 @@ public class FloatType extends AbstractPrimitiveType {
     private static final Type physicalType = new JavaClassType(radium.Float.class);
 
     public FloatType(boolean primitive) {
-        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive, physicalType);
     }
 
     @Override

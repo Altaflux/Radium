@@ -31,7 +31,7 @@ class ShouldCompileTest extends Specification {
 									}
 								}
 
-								metod(int x) {
+								metod(Int x) {
 									print x
 								}
 							}
@@ -92,7 +92,7 @@ class ShouldCompileTest extends Specification {
 									createRect(x1->25,x2->-25,y1->50,y2->-0xE)
 								}
 
-								createRect (int x1,int y1,int x2, int y2) {
+								createRect (Int x1,Int y1,Int x2, Int y2) {
 									print "Created rect with x1=" + x1 + " y1=" + y1 + " x2=" + x2 + " y2=" + y2
 								}
 							}
@@ -158,7 +158,7 @@ class ShouldCompileTest extends Specification {
             """
 							ConstructorWithParams {
 
-							ConstructorWithParams(int x) {
+							ConstructorWithParams(Int x) {
 							print "Hey I am constructor with parameter x = " + x
 							}
 
@@ -863,6 +863,9 @@ class ShouldCompileTest extends Specification {
                        val newVal = myVal.minus(3)
                        assert(newVal == 1, true)
 
+                       assert(1.equals(2), false)
+                       assert(2.equals(2), true)
+                       assert(4.equals(new Any()), false)
                        assert(1.compareTo(1) == 0, true)
 
                     }

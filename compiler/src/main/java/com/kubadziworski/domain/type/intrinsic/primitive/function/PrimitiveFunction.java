@@ -44,7 +44,6 @@ public class PrimitiveFunction {
     private static void callCompareSign(CompareSign compareSign, MethodVisitor methodVisitor) {
         Label label = new Label();
         Label label2 = new Label();
-
         methodVisitor.visitInsn(Opcodes.LCMP);
         switch (compareSign) {
             case LESS: {

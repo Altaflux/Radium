@@ -19,7 +19,7 @@ public class DoubleType extends AbstractPrimitiveType {
     private static final Type physicalType = new JavaClassType(radium.Double.class);
 
     public DoubleType(boolean primitive) {
-        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive, physicalType);
     }
 
     @Override

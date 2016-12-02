@@ -21,7 +21,7 @@ public class IntType extends AbstractPrimitiveType {
     public final boolean isPrimitive;
 
     public IntType(boolean primitive) {
-        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive, physicalType);
         isPrimitive = primitive;
     }
 

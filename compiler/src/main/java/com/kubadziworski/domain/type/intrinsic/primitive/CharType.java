@@ -19,7 +19,7 @@ public class CharType extends AbstractPrimitiveType {
     private static final Type physicalType = new JavaClassType(radium.Char.class);
 
     public CharType(boolean primitive) {
-        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive, physicalType);
     }
 
     @Override

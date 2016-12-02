@@ -18,7 +18,7 @@ public class ByteType extends AbstractPrimitiveType {
     private static final Type physicalType = new JavaClassType(radium.Byte.class);
 
     public ByteType(boolean primitive) {
-        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive);
+        super(primitive ? PRIMITIVE_TYPE : NULLABLE_TYPE, primitive, physicalType);
     }
 
     @Override
