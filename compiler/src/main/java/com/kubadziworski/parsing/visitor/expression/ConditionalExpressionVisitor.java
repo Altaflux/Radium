@@ -30,7 +30,9 @@ public class ConditionalExpressionVisitor extends EnkelBaseVisitor<ConditionalEx
 
         if (leftExpression.getType().isPrimitive()) {
             if (!rightExpression.getType().equals(leftExpression.getType()) && !rightExpression.getType().equals(AnyType.INSTANCE)) {
-                throw new ComparisonBetweenDiferentTypesException(leftExpression, rightExpression);
+                if (cmpSign.equals(CompareSign.EQUAL) || cmpSign.equals(CompareSign.NOT_EQUAL)) {
+                    throw new ComparisonBetweenDiferentTypesException(leftExpression, rightExpression);
+                }
             }
         }
 

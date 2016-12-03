@@ -16,7 +16,7 @@ public class PrimitiveFunction {
         } else if (type.getSort() == Type.FLOAT || type.getSort() == Type.DOUBLE) {
             callCompareFloatOrDouble(compareSign, methodVisitor, type);
         } else if (type.getSort() == Type.LONG) {
-            compareIntType(compareSign, methodVisitor);
+            compareLong(compareSign, methodVisitor);
         } else {
             throw new RuntimeException("Unrecognized type for comparison: " + type);
         }
@@ -79,10 +79,14 @@ public class PrimitiveFunction {
         callCompareSign(compareSign, methodVisitor);
     }
 
+    private static void compareLong(CompareSign compareSign, MethodVisitor methodVisitor) {
+        methodVisitor.visitInsn(Opcodes.LCMP);
+        callCompareSign(compareSign, methodVisitor);
+    }
+
     private static void callCompareSign(CompareSign compareSign, MethodVisitor methodVisitor) {
         Label label = new Label();
         Label label2 = new Label();
-        methodVisitor.visitInsn(Opcodes.LCMP);
         switch (compareSign) {
             case LESS: {
                 methodVisitor.visitJumpInsn(Opcodes.IFGE, label);

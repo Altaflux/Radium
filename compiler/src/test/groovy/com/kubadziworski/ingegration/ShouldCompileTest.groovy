@@ -863,10 +863,7 @@ class ShouldCompileTest extends Specification {
                        val newVal = myVal.minus(3)
                        assert(newVal == 1, true)
 
-                       assert(1.equals(2), false)
-                       assert(2.equals(2), true)
-                       assert(4.equals(new Any()), false)
-                       assert(1.compareTo(1) == 0, true)
+                       print 2 > 1.toLong()
 
                     }
                     Unit assert(Boolean actual,Boolean expected) {
