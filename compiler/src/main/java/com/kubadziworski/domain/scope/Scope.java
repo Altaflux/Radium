@@ -8,6 +8,7 @@ import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
@@ -141,6 +142,10 @@ public class Scope {
 
     public void addLocalVariable(LocalVariable variable) {
         localVariables.put(variable.getName(), variable);
+        //TODO THIS IS AN UGLY HACK BECAUSE ONLY UNTIL NOW I HAVE REALIZED LONGS AND DOUBLES OCCUPY 2 SPACES IN THE LOCAL VARIABLE TABLE
+        if (variable.getType().equals(PrimitiveTypes.DOUBLE_TYPE) || variable.getType().equals(PrimitiveTypes.LONG_TYPE)) {
+            localVariables.put(variable.getName() + "&%^%^$#", variable);
+        }
     }
 
 

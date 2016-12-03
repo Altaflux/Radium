@@ -159,6 +159,9 @@ public final class TypeResolver {
             }
         }
         if (TypeChecker.isLong(type)) {
+            if (stringValue.endsWith("l") || stringValue.endsWith("L")) {
+                stringValue = stringValue.substring(0, stringValue.length() - 1);
+            }
             if (stringValue.startsWith("-")) {
                 String newValue = stringValue.substring(1);
                 return -Long.decode(newValue);
@@ -168,6 +171,9 @@ public final class TypeResolver {
         }
 
         if (TypeChecker.isFloat(type)) {
+            if (stringValue.endsWith("f") || stringValue.endsWith("F")) {
+                stringValue = stringValue.substring(0, stringValue.length() - 1);
+            }
             return Float.valueOf(stringValue);
         }
         if (TypeChecker.isDouble(type)) {

@@ -252,7 +252,9 @@ SemiColon  : ';';
 MultiLineComment
  : '/*' .*? '*/' -> channel(HIDDEN)
  ;
-
+LINE_COMMENT
+    :   '//' ~[\r\n]* -> skip
+    ;
 IntegerLiteral
 	:	DecimalIntegerLiteral
 	|	HexIntegerLiteral
@@ -392,7 +394,7 @@ FloatingPointLiteral
 	;
 fragment
 DecimalFloatingPointLiteral
-	:	Digits ('.' Digits || ExponentPart ||  FloatTypeSuffix )?
+	:	Digits '.' Digits  ExponentPart? FloatTypeSuffix?
 	|	'.' Digits ExponentPart? FloatTypeSuffix?
 	|	Digits ExponentPart FloatTypeSuffix?
 	|	Digits FloatTypeSuffix

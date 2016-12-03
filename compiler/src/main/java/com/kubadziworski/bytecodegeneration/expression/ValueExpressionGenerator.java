@@ -1,16 +1,16 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.domain.node.expression.Value;
-import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.util.TypeResolver;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 public class ValueExpressionGenerator {
-    private final MethodVisitor methodVisitor;
+    private final InstructionAdapter methodVisitor;
 
-    public ValueExpressionGenerator(MethodVisitor methodVisitor) {
+    public ValueExpressionGenerator(InstructionAdapter methodVisitor) {
         this.methodVisitor = methodVisitor;
     }
 
