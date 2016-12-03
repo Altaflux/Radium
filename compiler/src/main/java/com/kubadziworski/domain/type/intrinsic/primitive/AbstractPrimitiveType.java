@@ -1,12 +1,10 @@
 package com.kubadziworski.domain.type.intrinsic.primitive;
 
-import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BoxableType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
-import org.objectweb.asm.MethodVisitor;
 
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +88,6 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
         return this.mainType.nearestDenominator(type);
     }
 
-    public abstract void compare(CompareSign compareSign, MethodVisitor methodVisitor);
 
     @Override
     public String toString() {

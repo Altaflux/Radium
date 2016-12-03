@@ -1,21 +1,24 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
+import com.kubadziworski.bytecodegeneration.intrinsics.IntrinsicMethods;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.CompareSign;
-import com.kubadziworski.domain.node.expression.ArgumentHolder;
-import com.kubadziworski.domain.node.expression.ConditionalExpression;
-import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.FunctionCall;
+import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
+import java.lang.reflect.Modifier;
 import java.util.Collections;
+import java.util.Optional;
 
 public class ConditionalExpressionGenerator {
 
     private final InstructionAdapter methodVisitor;
+    private static ThreadLocal<IntrinsicMethods> intrinsicMethods = ThreadLocal.withInitial(IntrinsicMethods::new);
+
 
     public ConditionalExpressionGenerator(InstructionAdapter methodVisitor) {
         this.methodVisitor = methodVisitor;
@@ -25,6 +28,13 @@ public class ConditionalExpressionGenerator {
         Expression leftExpression = conditionalExpression.getLeftExpression();
         Expression rightExpression = conditionalExpression.getRightExpression();
         CompareSign compareSign = conditionalExpression.getCompareSign();
+
+
+        Optional<Expression> intrinsic = signature(compareSign, leftExpression, rightExpression);
+        if (intrinsic.isPresent()) {
+            intrinsic.get().accept(statementGenerator);
+            return;
+        }
 
         generateObjectsComparison(leftExpression, rightExpression, compareSign, statementGenerator);
         Label endLabel = new Label();
@@ -56,5 +66,14 @@ public class ConditionalExpressionGenerator {
                 compareToCall.accept(statementGenerator);
                 break;
         }
+    }
+
+    private Optional<Expression> signature(CompareSign sign, Expression leftExpression, Expression rightExpression) {
+        FunctionSignature signature = new FunctionSignature(sign.getSign(), Collections.singletonList(new Parameter("o", rightExpression.getType(), null))
+                , PrimitiveTypes.BOOLEAN_TYPE, Modifier.PUBLIC, leftExpression.getType());
+        FunctionCall functionCall = new FunctionCall(signature, signature.createArgumentList(Collections.singletonList(new ArgumentHolder(rightExpression, null))),
+                leftExpression);
+        return intrinsicMethods.get().intrinsicMethod(functionCall).map(intrinsicMethod -> intrinsicMethod.toExpression(functionCall, methodVisitor));
+
     }
 }

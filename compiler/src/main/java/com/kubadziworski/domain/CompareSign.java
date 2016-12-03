@@ -29,6 +29,10 @@ public enum CompareSign {
         return opcode;
     }
 
+    public String getSign() {
+        return sign;
+    }
+
     public String getMethodName() {
         return methodName;
     }
