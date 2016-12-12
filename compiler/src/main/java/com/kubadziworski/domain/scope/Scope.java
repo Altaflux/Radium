@@ -8,7 +8,6 @@ import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
-import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
@@ -142,10 +141,6 @@ public class Scope {
 
     public void addLocalVariable(LocalVariable variable) {
         localVariables.put(variable.getName(), variable);
-        //TODO THIS IS AN UGLY HACK BECAUSE ONLY UNTIL NOW I HAVE REALIZED LONGS AND DOUBLES OCCUPY 2 SPACES IN THE LOCAL VARIABLE TABLE
-        if (variable.getType().equals(PrimitiveTypes.DOUBLE_TYPE) || variable.getType().equals(PrimitiveTypes.LONG_TYPE)) {
-            localVariables.put(variable.getName() + "&%^%^$#", variable);
-        }
     }
 
 
@@ -159,7 +154,17 @@ public class Scope {
     }
 
     public int getLocalVariableIndex(String varName) {
-        return localVariables.indexOf(varName);
+        //We need for each type size increase the index position of the variable to take into account double sized
+        //types like double and long, this should be later cleaned up as it is binding the Scope to the jvm generator
+        int indexPosition = 0;
+        for (Map.Entry<String, LocalVariable> entry : localVariables.entrySet()) {
+            if (entry.getKey().equals(varName)) {
+                return indexPosition;
+            } else {
+                indexPosition += entry.getValue().getType().getAsmType().getSize();
+            }
+        }
+        throw new LocalVariableNotFoundException(this, varName);
     }
 
     public boolean isLocalVariableExists(String varName) {
@@ -236,7 +241,6 @@ public class Scope {
         }
         return ClassTypeFactory.createClassType(className);
     }
-
 
 
     @Override
