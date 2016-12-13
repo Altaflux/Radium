@@ -1,50 +1,19 @@
 package com.kubadziworski.util;
 
-import com.kubadziworski.domain.node.expression.ArgumentHolder;
-import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.EnkelType;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
 
 
 public class PropertyAccessorsUtil {
-
-
-    private static final Set<Class<?>> ANY_TYPES = Collections.emptySet();
-
-    private static final Set<Class<?>> BOOLEAN_TYPES;
-
-    static {
-        Set<Class<?>> booleanTypes = new HashSet<>();
-        booleanTypes.add(Boolean.class);
-        booleanTypes.add(Boolean.TYPE);
-        BOOLEAN_TYPES = Collections.unmodifiableSet(booleanTypes);
-    }
-
-
-    private static Method findGetterForProperty(String propertyName, Class<?> clazz, boolean mustBeStatic) {
-        Method method = findMethodForProperty(getPropertyMethodSuffixes(propertyName),
-                "get", clazz, mustBeStatic, 0, ANY_TYPES);
-        if (method == null) {
-            method = findMethodForProperty(getPropertyMethodSuffixes(propertyName),
-                    "is", clazz, mustBeStatic, 0, BOOLEAN_TYPES);
-        }
-        return method;
-    }
-
-    private static Method findSetterForProperty(String propertyName, Class<?> clazz, boolean mustBeStatic) {
-        return findMethodForProperty(getPropertyMethodSuffixes(propertyName),
-                "set", clazz, mustBeStatic, 1, ANY_TYPES);
-    }
 
 
     public static FunctionSignature createSetterForField(Field field, String fieldName) {
@@ -66,73 +35,45 @@ public class PropertyAccessorsUtil {
                 field.getType(), Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
     }
 
-
     public static Optional<FunctionSignature> getSetterFunctionSignatureForField(Field field) {
-        try {
-            Class clazz = field.getOwner().getTypeClass();
-            Method method = findSetterForProperty(field.getName(), clazz, Modifier.isStatic(field.getModifiers()));
-            if (method != null) {
-                return Optional.of(ReflectionObjectToSignatureMapper.fromMethod(method));
-            }
-            return Optional.empty();
-        } catch (Exception e) {
-            return ((EnkelType) field.getOwner()).getScope()
-                    .map(scope -> getFunctionSignatureForMethod("set", field, scope,
-                            Collections.singletonList(new ArgumentHolder(new EmptyExpression(field.getType()), null))));
-        }
+        return findSetterForProperty(field, Modifier.isStatic(field.getModifiers()));
     }
 
     public static Optional<FunctionSignature> getGetterFunctionSignatureForField(Field field) {
-        try {
-            Class clazz = field.getOwner().getTypeClass();
-            Method method = findGetterForProperty(field.getName(), clazz, Modifier.isStatic(field.getModifiers()));
-            if (method != null) {
-                return Optional.of(ReflectionObjectToSignatureMapper.fromMethod(method));
-            }
-            return Optional.empty();
-        } catch (Exception e) {
-            return ((EnkelType) field.getOwner()).getScope().map(scope -> {
-                if (field.getType().equals(PrimitiveTypes.BOOLEAN_TYPE)) {
-                    return getFunctionSignatureForMethod("is", field, scope, Collections.emptyList());
-                }
-                return getFunctionSignatureForMethod("get", field, scope, Collections.emptyList());
-            });
-        }
+        return findGetterForProperty(field, Modifier.isStatic(field.getModifiers()));
     }
 
-    private static FunctionSignature getFunctionSignatureForMethod(String prefix, Field field, Scope scope, List<ArgumentHolder> arguments) {
-        for (String suffix : getPropertyMethodSuffixes(field.getName())) {
-            try {
-                return scope.getMethodCallSignature(prefix + suffix, arguments);
-            } catch (Exception ie) {
-                //
-            }
+
+    private static Optional<FunctionSignature> findGetterForProperty(Field field, boolean mustBeStatic) {
+        String[] possibleNames = getPropertyMethodSuffixes(field.getName());
+        Optional<FunctionSignature> method = findMethodForProperty(possibleNames, "get", field.getOwner(), mustBeStatic, 0, field.getType());
+        if (method.isPresent()) {
+            return method;
         }
-        return null;
+        return findMethodForProperty(possibleNames, "is", field.getOwner(), mustBeStatic, 0, field.getType());
     }
 
-    private static Method findMethodForProperty(String[] methodSuffixes, String prefix, Class<?> clazz,
-                                                boolean mustBeStatic, int numberOfParams, Set<Class<?>> requiredReturnTypes) {
+    private static Optional<FunctionSignature> findSetterForProperty(Field field, boolean mustBeStatic) {
+        return findMethodForProperty(getPropertyMethodSuffixes(field.getName()), "set", field.getOwner(), mustBeStatic, 1, null);
+    }
 
-        Method[] methods = getSortedClassMethods(clazz);
+
+    private static Optional<FunctionSignature> findMethodForProperty(String[] methodSuffixes, String prefix, Type type,
+                                                                     boolean mustBeStatic, int numberOfParams, Type requiredReturnTypes) {
         for (String methodSuffix : methodSuffixes) {
-            for (Method method : methods) {
-                if (method.getName().equals(prefix + methodSuffix) &&
-                        method.getParameterCount() == numberOfParams &&
-                        (!mustBeStatic || Modifier.isStatic(method.getModifiers())) &&
-                        (requiredReturnTypes.isEmpty() || requiredReturnTypes.contains(method.getReturnType()))) {
-                    return method;
+            for (FunctionSignature signature : type.getFunctionSignatures()) {
+                if (signature.getName().equals(prefix + methodSuffix) &&
+                        signature.getParameters().size() == numberOfParams &&
+                        (!mustBeStatic || Modifier.isStatic(signature.getModifiers())) &&
+                        (requiredReturnTypes == null || signature.getReturnType().inheritsFrom(requiredReturnTypes) > -1)) {
+
+                    return Optional.of(signature);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    private static Method[] getSortedClassMethods(Class<?> clazz) {
-        Method[] methods = clazz.getMethods();
-        Arrays.sort(methods, (o1, o2) -> (o1.isBridge() == o2.isBridge()) ? 0 : (o1.isBridge() ? 1 : -1));
-        return methods;
-    }
 
     /**
      * Return the method suffixes for a given property name. The default implementation
@@ -158,6 +99,4 @@ public class PropertyAccessorsUtil {
         }
         return StringUtils.capitalize(propertyName);
     }
-
-
 }
