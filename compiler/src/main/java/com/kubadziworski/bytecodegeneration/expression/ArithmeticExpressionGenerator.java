@@ -30,12 +30,12 @@ public class ArithmeticExpressionGenerator {
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
         Expression leftExpression = expression.getLeftExpression();
         leftExpression.accept(statementGenerator);
-        String leftExprDescriptor = leftExpression.getType().getDescriptor();
+        String leftExprDescriptor = leftExpression.getType().getAsmType().getDescriptor();
         String descriptor = "(" + leftExprDescriptor + ")Ljava/lang/StringBuilder;";
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
         Expression rightExpression = expression.getRightExpression();
         rightExpression.accept(statementGenerator);
-        String rightExprDescriptor = rightExpression.getType().getDescriptor();
+        String rightExprDescriptor = rightExpression.getType().getAsmType().getDescriptor();
         descriptor = "(" + rightExprDescriptor + ")Ljava/lang/StringBuilder;";
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", descriptor, false);
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);

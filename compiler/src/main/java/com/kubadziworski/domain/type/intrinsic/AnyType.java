@@ -37,21 +37,9 @@ public class AnyType implements Type {
         functionSignatures = Arrays.asList(equalsSignature, constructorSignature, toString, hashCode);
     }
 
-
-
     @Override
     public String getName() {
         return "radium.Any";
-    }
-
-    @Override
-    public String getDescriptor() {
-        return objectClass.getDescriptor();
-    }
-
-    @Override
-    public String getInternalName() {
-        return objectClass.getInternalName();
     }
 
     @Override
@@ -91,7 +79,7 @@ public class AnyType implements Type {
 
     @Override
     public org.objectweb.asm.Type getAsmType() {
-        return org.objectweb.asm.Type.getType(getDescriptor());
+        return objectClass.getAsmType();
     }
 
     @Override

@@ -38,7 +38,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
             new ReferenceExpressionGenerator(methodVisitor).generate(fieldReference, expressionGenerator)
         then:
             1* methodVisitor.visitVarInsn(Opcodes.ALOAD,0)
-            1* methodVisitor.visitFieldInsn(Opcodes.GETFIELD,field.ownerInternalName,field.name,field.type.descriptor)
+        1 * methodVisitor.visitFieldInsn(Opcodes.GETFIELD, field.ownerInternalName, field.name, field.type.asmType.descriptor)
         where:
             name    | owner                                                      | type
         "intVar"    | new JavaClassType(com.kubadziworski.test.DummyClass.class) | PrimitiveTypes.INT_TYPE

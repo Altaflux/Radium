@@ -23,16 +23,6 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
     }
 
     @Override
-    public String getDescriptor() {
-        return type.getDescriptor();
-    }
-
-    @Override
-    public String getInternalName() {
-        return type.getInternalName();
-    }
-
-    @Override
     public Optional<Type> getSuperType() {
         return Optional.of(AnyType.INSTANCE);
     }
@@ -69,7 +59,7 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
 
     @Override
     public org.objectweb.asm.Type getAsmType() {
-        return org.objectweb.asm.Type.getType(getDescriptor());
+        return type.getAsmType();
     }
 
     @Override

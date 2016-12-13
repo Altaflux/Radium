@@ -33,11 +33,6 @@ public class UnitType extends JavaClassType {
     }
 
     @Override
-    public String getDescriptor() {
-        return super.getDescriptor();
-    }
-
-    @Override
     public org.objectweb.asm.Type getAsmType() {
         return super.getAsmType();
     }
@@ -64,7 +59,7 @@ public class UnitType extends JavaClassType {
 
         private final Expression expression;
 
-        public UnitExpression(Expression expression) {
+        private UnitExpression(Expression expression) {
             this.expression = expression;
         }
 

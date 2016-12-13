@@ -93,24 +93,13 @@ public class EnkelType implements Type {
     }
 
     @Override
-    public String getDescriptor() {
-        return "L" + getInternalName() + ";";
-    }
-
-    @Override
-    public String getInternalName() {
-        return name.replace(".", "/");
-    }
-
-
-    @Override
-    public boolean isPrimitive(){
+    public boolean isPrimitive() {
         return false;
     }
 
     @Override
     public org.objectweb.asm.Type getAsmType() {
-        return org.objectweb.asm.Type.getType(getDescriptor());
+        return org.objectweb.asm.Type.getType("L" + name.replace(".", "/") + ";");
     }
 
     @Override

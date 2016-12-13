@@ -5,7 +5,6 @@ import com.kubadziworski.domain.node.expression.PopExpression;
 import com.kubadziworski.domain.type.intrinsic.NullType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 
 public class PopExpressionGenerator  {
@@ -27,7 +26,7 @@ public class PopExpressionGenerator  {
         }
 
 
-        switch (Type.getType(popExpression.getType().getDescriptor()).getSize()) {
+        switch (popExpression.getType().getAsmType().getSize()) {
             case 1: {
                 methodVisitor.visitInsn(Opcodes.POP);
                 break;

@@ -34,17 +34,6 @@ public class TypeProjection implements Type {
         return type.getName();
     }
 
-
-    @Override
-    public String getDescriptor() {
-        return type.getDescriptor();
-    }
-
-    @Override
-    public String getInternalName() {
-        return type.getInternalName();
-    }
-
     @Override
     public Optional<Type> getSuperType() {
         return type.getSuperType();

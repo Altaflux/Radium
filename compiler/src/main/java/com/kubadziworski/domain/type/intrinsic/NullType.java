@@ -23,16 +23,6 @@ public final class NullType implements Type {
     }
 
     @Override
-    public String getDescriptor() {
-        return null;
-    }
-
-    @Override
-    public String getInternalName() {
-        return null;
-    }
-
-    @Override
     public Optional<Type> getSuperType() {
         return Optional.empty();
     }

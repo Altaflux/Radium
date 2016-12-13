@@ -21,10 +21,6 @@ public interface Type {
 
     String getName();
 
-    String getDescriptor();
-
-    String getInternalName();
-
     Optional<Type> getSuperType();
 
     List<Field> getFields();

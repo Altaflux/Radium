@@ -24,16 +24,6 @@ public class VoidType implements Type {
     }
 
     @Override
-    public String getDescriptor() {
-        return VOID.getDescriptor();
-    }
-
-    @Override
-    public String getInternalName() {
-        return VOID.getInternalName();
-    }
-
-    @Override
     public Optional<Type> getSuperType() {
         return Optional.empty();
     }

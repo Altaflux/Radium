@@ -53,7 +53,7 @@ class AssignmentStatementGeneratorTest extends Specification {
             then :
             1*scope.isLocalVariableExists(varName) >> false
             1*scope.getField(varName) >> field
-            1* methodVisitor.visitFieldInsn(Opcodes.PUTFIELD,field.ownerInternalName,field.name,field.type.descriptor)
+            1 * methodVisitor.visitFieldInsn(Opcodes.PUTFIELD, field.ownerInternalName, field.name, field.type.asmType.descriptor)
         where:
         varName     | variableOwner        | variableType            | assignmentExpression
         "var"       | new DumbType("Main") | PrimitiveTypes.INT_TYPE | new Value(PrimitiveTypes.INT_TYPE, "25")

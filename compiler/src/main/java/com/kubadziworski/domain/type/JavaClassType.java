@@ -23,6 +23,7 @@ public class JavaClassType implements Type {
         aClass = clazz;
         name = clazz.getCanonicalName();
         asmType = org.objectweb.asm.Type.getType(clazz);
+
     }
 
     @Override
@@ -57,16 +58,17 @@ public class JavaClassType implements Type {
     @Override
     public int inheritsFrom(Type type) {
         int arity = 0;
-        if (type.getDescriptor().equals(this.getDescriptor())) {
+
+        if (type.getAsmType().getDescriptor().equals(this.getAsmType().getDescriptor())) {
             return arity;
         }
         Class iteratedClass = getTypeClass();
         while (iteratedClass != null) {
-            if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getDescriptor())) {
+            if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getAsmType().getDescriptor())) {
                 return arity;
             } else {
                 for (Class inter : iteratedClass.getInterfaces()) {
-                    if (org.objectweb.asm.Type.getDescriptor(inter).equals(type.getDescriptor())) {
+                    if (org.objectweb.asm.Type.getDescriptor(inter).equals(type.getAsmType().getDescriptor())) {
                         return arity;
                     }
                 }
@@ -123,13 +125,13 @@ public class JavaClassType implements Type {
 
     @Override
     public Optional<Type> nearestDenominator(Type type) {
-        if (type.getDescriptor().equals(this.getDescriptor())) {
+        if (type.getAsmType().getDescriptor().equals(this.getAsmType().getDescriptor())) {
             return Optional.of(type);
         }
 
         Class iteratedClass = getTypeClass();
         while (iteratedClass != null) {
-            if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getDescriptor())) {
+            if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getAsmType().getDescriptor())) {
                 return Optional.of(new JavaClassType(iteratedClass));
             }
             iteratedClass = iteratedClass.getSuperclass();
@@ -158,16 +160,6 @@ public class JavaClassType implements Type {
         return result.stream()
                 .map(ReflectionObjectToSignatureMapper::fromMethod)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getDescriptor() {
-        return asmType.getDescriptor();
-    }
-
-    @Override
-    public String getInternalName() {
-        return asmType.getInternalName();
     }
 
     @Override

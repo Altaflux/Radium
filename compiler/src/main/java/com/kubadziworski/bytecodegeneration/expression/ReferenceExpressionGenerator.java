@@ -30,7 +30,7 @@ public class ReferenceExpressionGenerator {
         String varName = fieldReference.getName();
         Type type = fieldReference.getType();
         String ownerInternalName = fieldReference.getOwnerInternalName();
-        String descriptor = type.getDescriptor();
+        String descriptor = type.getAsmType().getDescriptor();
 
         Expression owner = fieldReference.getOwner();
         owner.accept(expressionGenerator);
@@ -41,7 +41,7 @@ public class ReferenceExpressionGenerator {
         String varName = fieldReference.getName();
         Type type = fieldReference.getType();
         String ownerInternalName = fieldReference.getOwnerInternalName();
-        String descriptor = type.getDescriptor();
+        String descriptor = type.getAsmType().getDescriptor();
 
         Expression owner = fieldReference.getOwner();
         owner.accept(expressionGenerator);

@@ -55,7 +55,7 @@ public class BlockStatementGenerator {
             methodVisitor.visitInsn(Opcodes.POP);
             return;
         }
-        switch (org.objectweb.asm.Type.getType(type.getDescriptor()).getSize()) {
+        switch (type.getAsmType().getSize()) {
             case 1: {
                 methodVisitor.visitInsn(Opcodes.POP);
                 break;

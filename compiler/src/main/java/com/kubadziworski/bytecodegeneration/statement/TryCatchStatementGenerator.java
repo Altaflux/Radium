@@ -156,7 +156,7 @@ public class TryCatchStatementGenerator {
             methodVisitor.visitLabel(endOfReturnLabel);
             labelPacks.add(new LabelPack(startLabel.get(), endOfReturnLabel));
 
-            org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getType(getScope().getCurrentFunctionSignature().getReturnType().getDescriptor());
+            org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getType(getScope().getCurrentFunctionSignature().getReturnType().getAsmType().getDescriptor());
             if (finalBlock != null) {
                 String varName = "$$Return" + atomicInteger.incrementAndGet();
                 getScope().addLocalVariable(new LocalVariable(varName, returnStatement.getExpression().getType()));

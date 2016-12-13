@@ -18,7 +18,7 @@ public class FieldGenerator {
 
     public void generate(Field field) {
         String name = field.getName();
-        String descriptor = field.getType().getDescriptor();
+        String descriptor = field.getType().getAsmType().getDescriptor();
         //classWriter.visitField(Opcodes.ACC_PUBLIC & Opcodes.ACC_STATIC, name,descriptor, null, null)
         FieldVisitor fieldVisitor = classWriter.visitField(field.getModifiers(), name,descriptor, null, null);
         fieldVisitor.visitEnd();

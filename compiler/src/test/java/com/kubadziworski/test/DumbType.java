@@ -23,16 +23,6 @@ public class DumbType implements Type {
     }
 
     @Override
-    public String getDescriptor() {
-        return "L" + getInternalName() + ";";
-    }
-
-    @Override
-    public String getInternalName() {
-        return name.replace(".", "/");
-    }
-
-    @Override
     public Optional<Type> getSuperType() {
         return Optional.empty();
     }
@@ -74,6 +64,6 @@ public class DumbType implements Type {
 
     @Override
     public org.objectweb.asm.Type getAsmType() {
-        return org.objectweb.asm.Type.getType(getDescriptor());
+        return org.objectweb.asm.Type.getType("L" + name.replace(".", "/") + ";");
     }
 }

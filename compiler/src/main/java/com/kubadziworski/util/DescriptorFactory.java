@@ -29,9 +29,9 @@ public final class DescriptorFactory {
 
     private static String getMethodDescriptor(Collection<Parameter> parameters, Type returnType) {
         String parametersDescriptor = parameters.stream()
-                .map(parameter -> parameter.getType().getDescriptor())
+                .map(parameter -> parameter.getType().getAsmType().getDescriptor())
                 .collect(Collectors.joining("", "(", ")"));
-        String returnDescriptor = returnType.getDescriptor();
+        String returnDescriptor = returnType.getAsmType().getDescriptor();
         return parametersDescriptor + returnDescriptor;
     }
 }

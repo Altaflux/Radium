@@ -47,7 +47,7 @@ public class AssignmentStatementGenerator {
                 field = exp.getType().getField(varName);
             }
 
-            descriptor = field.getType().getDescriptor();
+            descriptor = field.getType().getAsmType().getDescriptor();
             preExpression.get().accept(generator);
         } else {
 
@@ -72,7 +72,7 @@ public class AssignmentStatementGenerator {
             }
 
             field = scope.getField(varName);
-            descriptor = field.getType().getDescriptor();
+            descriptor = field.getType().getAsmType().getDescriptor();
             methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
         }
 

@@ -25,9 +25,9 @@ public class PrintStatementGenerator {
             type = AnyType.INSTANCE;
         }
 
-        String descriptor = "(" + type.getDescriptor() + ")V";
+        String descriptor = "(" + type.getAsmType().getDescriptor() + ")V";
         Type owner = ClassTypeFactory.createClassType("java.io.PrintStream");
-        String fieldDescriptor = owner.getDescriptor();
+        String fieldDescriptor = owner.getAsmType().getDescriptor();
         methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, fieldDescriptor, "println", descriptor, false);
 
     }

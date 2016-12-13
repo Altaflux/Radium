@@ -83,17 +83,6 @@ public enum BuiltInType implements Type {
         return name;
     }
 
-
-    @Override
-    public String getDescriptor() {
-        return descriptor;
-    }
-
-    @Override
-    public String getInternalName() {
-        return getDescriptor();
-    }
-
     @Override
     public boolean isPrimitive() {
         return primitive;
@@ -106,7 +95,7 @@ public enum BuiltInType implements Type {
 
     @Override
     public org.objectweb.asm.Type getAsmType() {
-        return org.objectweb.asm.Type.getType(getDescriptor());
+        return org.objectweb.asm.Type.getType(descriptor);
     }
 
     @Override
