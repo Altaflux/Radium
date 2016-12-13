@@ -33,6 +33,8 @@ public interface Type {
 
     List<FunctionSignature> getFunctionSignatures();
 
+    List<FunctionSignature> getConstructorSignatures();
+
     int inheritsFrom(Type type);
 
     Optional<Type> nearestDenominator(Type type);
@@ -42,6 +44,14 @@ public interface Type {
     Nullability isNullable();
 
     org.objectweb.asm.Type getAsmType();
+
+    default FunctionSignature getConstructorCallSignature(List<ArgumentHolder> arguments) {
+        List<FunctionSignature> signatures = getConstructorSignatures();
+        Map<Integer, List<FunctionSignature>> functions = signatures.stream()
+                .collect(Collectors.groupingBy(signature -> signature.matches(getName(), arguments)));
+
+        return TypeResolver.resolveArity(this, functions).orElseThrow(() -> new MethodSignatureNotFoundException(getName(), arguments, this));
+    }
 
     default FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         List<FunctionSignature> signatures = getFunctionSignatures();

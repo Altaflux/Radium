@@ -20,12 +20,10 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
 
 public class Scope {
     private final List<FunctionSignature> functionSignatures;
-
+    private final List<FunctionSignature> constructorSignatures;
     private final LinkedMap<String, LocalVariable> localVariables;
     private final Map<String, Field> fields;
     private final ImportResolver importResolver;
@@ -37,6 +35,7 @@ public class Scope {
     public Scope(MetaData metaData, ImportResolver importResolver) {
         this.metaData = metaData;
         functionSignatures = new ArrayList<>();
+        constructorSignatures = new ArrayList<>();
         localVariables = new LinkedMap<>();
         fields = new LinkedMap<>();
         this.importResolver = importResolver;
@@ -47,6 +46,7 @@ public class Scope {
     public Scope(Scope scope) {
         metaData = scope.metaData;
         functionSignatures = Lists.newArrayList(scope.getFunctionSignatures());
+        constructorSignatures = Lists.newArrayList(scope.getConstructorSignatures());
         fields = new LinkedMap<>(scope.getFields());
         localVariables = new LinkedMap<>(scope.getLocalVariables());
         this.importResolver = scope.getImportResolver();
@@ -57,6 +57,7 @@ public class Scope {
     public Scope(Scope scope, FunctionSignature functionSignature) {
         metaData = scope.metaData;
         functionSignatures = Lists.newArrayList(scope.getFunctionSignatures());
+        constructorSignatures = Lists.newArrayList(scope.getConstructorSignatures());
         fields = new LinkedMap<>(scope.getFields());
         localVariables = new LinkedMap<>(scope.getLocalVariables());
         this.importResolver = scope.getImportResolver();
@@ -65,62 +66,37 @@ public class Scope {
     }
 
     public void addSignature(FunctionSignature signature) {
-        if (isParameterLessSignatureExists(signature.getName())) {
+        List<ArgumentHolder> holders = signature.getParameters().stream().map(parameter -> new ArgumentHolder(parameter.getType(), parameter.getName()))
+                .collect(Collectors.toList());
+        if (isSignatureExists(signature.getName(), holders, functionSignatures)) {
             throw new MethodWithNameAlreadyDefinedException(signature);
         }
         functionSignatures.add(signature);
+    }
+
+    public void addConstructor(FunctionSignature signature) {
+        List<ArgumentHolder> holders = signature.getParameters().stream().map(parameter -> new ArgumentHolder(parameter.getType(), parameter.getName()))
+                .collect(Collectors.toList());
+        if (isSignatureExists(signature.getName(), holders, constructorSignatures)) {
+            throw new MethodWithNameAlreadyDefinedException(signature);
+        }
+        constructorSignatures.add(signature);
     }
 
     public Map<String, LocalVariable> getLocalVariables() {
         return localVariables;
     }
 
-    public boolean isParameterLessSignatureExists(String identifier) {
-        return isSignatureExists(identifier, Collections.emptyList());
-    }
 
-    public boolean isSignatureExists(String identifier, List<ArgumentHolder> arguments) {
+    private boolean isSignatureExists(String identifier, List<ArgumentHolder> arguments, List<FunctionSignature> signatures) {
         if (identifier.equals("super")) return true;
 
-        Map<Integer, List<FunctionSignature>> functions = functionSignatures.stream()
+        Map<Integer, List<FunctionSignature>> functions = signatures.stream()
                 .collect(Collectors.groupingBy(signature -> signature.matches(identifier, arguments)));
 
         return TypeResolver.resolveArity(this.getClassType(), functions).isPresent();
     }
 
-    public FunctionSignature getMethodCallSignatureWithoutParameters(String identifier) {
-        return getMethodCallSignature(identifier, Collections.emptyList());
-    }
-
-    public FunctionSignature getConstructorCallSignature(String className, List<ArgumentHolder> arguments) {
-        //TODO Think about how to resolve is if another class name is the same as the local class
-        boolean isDifferentThanCurrentClass = !className.equals(getFullClassName());
-        if (isDifferentThanCurrentClass) {
-
-            List<Type> argumentsTypes = arguments.stream().map(argumentStub -> argumentStub.getExpression().getType()).collect(toList());
-            Type resolvedClass = resolveClassName(className);
-            return enkelScope.getConstructorSignature(resolvedClass, arguments).map(Optional::of)
-                    .orElse(new ClassPathScope().getConstructorSignature(resolvedClass, argumentsTypes))
-                    .orElseThrow(() -> new MethodSignatureNotFoundException(this, resolvedClass.getName(), arguments));
-        }
-        return getConstructorCallSignatureForCurrentClass(arguments);
-    }
-
-    private FunctionSignature getConstructorCallSignatureForCurrentClass(List<ArgumentHolder> arguments) {
-        return getMethodCallSignature(null, getFullClassName(), arguments);
-    }
-
-    private FunctionSignature getMethodCallSignature(Type owner, String methodName, List<ArgumentHolder> arguments) {
-        boolean isDifferentThanCurrentClass = owner != null && !owner.equals(getClassType());
-        if (isDifferentThanCurrentClass) {
-
-            List<Type> argumentsTypes = arguments.stream().map(argumentStub -> argumentStub.getExpression().getType()).collect(toList());
-            return enkelScope.getMethodSignature(owner, methodName, arguments).map(Optional::of)
-                    .orElse(new ClassPathScope().getMethodSignature(owner, methodName, argumentsTypes))
-                    .orElseThrow(() -> new MethodSignatureNotFoundException(this, methodName, arguments));
-        }
-        return getMethodCallSignature(methodName, arguments);
-    }
 
     public FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         if (identifier.equals("super")) {
@@ -187,13 +163,16 @@ public class Scope {
         return functionSignatures;
     }
 
+    public List<FunctionSignature> getConstructorSignatures() {
+        return constructorSignatures;
+    }
+
     public Field getField(Type owner, String fieldName) {
         boolean isDifferentThanCurrentClass = owner != null && !owner.equals(getClassType());
         if (!isDifferentThanCurrentClass) {
             return getField(fieldName);
         }
-        return enkelScope.getFieldSignature(owner, fieldName).map(Optional::of)
-                .orElse(new ClassPathScope().getFieldSignature(owner, fieldName))
+        return enkelScope.getFieldSignature(owner, fieldName)
                 .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
     }
 
@@ -226,11 +205,7 @@ public class Scope {
         return new EnkelType(className, this);
     }
 
-    public String getClassInternalName() {
-        return getClassType().getAsmType().getInternalName();
-    }
-
-    public ImportResolver getImportResolver() {
+    private ImportResolver getImportResolver() {
         return importResolver;
     }
 

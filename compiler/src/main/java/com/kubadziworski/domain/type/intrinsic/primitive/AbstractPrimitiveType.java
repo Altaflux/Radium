@@ -48,6 +48,11 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
     }
 
     @Override
+    public List<FunctionSignature> getConstructorSignatures() {
+        return type.getConstructorSignatures();
+    }
+
+    @Override
     public List<FunctionSignature> getFunctionSignatures() {
         return type.getFunctionSignatures();
     }

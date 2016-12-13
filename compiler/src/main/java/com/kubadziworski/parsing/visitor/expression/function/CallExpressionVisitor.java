@@ -84,7 +84,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
 
         Type className = scope.resolveClassName(ctx.typeName().getText());
         List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
-        FunctionSignature signature = scope.getConstructorCallSignature(className.getName(), arguments);
+        FunctionSignature signature = className.getConstructorCallSignature(arguments);
         return new ConstructorCall(new RuleContextElementImpl(ctx), signature, className.getName(), signature.createArgumentList(arguments));
     }
 

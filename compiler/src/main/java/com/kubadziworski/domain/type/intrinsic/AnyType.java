@@ -70,6 +70,11 @@ public class AnyType implements Type {
     }
 
     @Override
+    public List<FunctionSignature> getConstructorSignatures() {
+        return objectClass.getConstructorSignatures();
+    }
+
+    @Override
     public List<FunctionSignature> getFunctionSignatures() {
         return functionSignatures;
     }

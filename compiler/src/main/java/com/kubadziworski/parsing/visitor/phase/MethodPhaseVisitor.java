@@ -22,7 +22,13 @@ class MethodPhaseVisitor extends EnkelBaseVisitor<Scope> {
         FunctionSignatureVisitor functionSignatureVisitor = new FunctionSignatureVisitor(scope);
         methodsCtx.stream()
                 .map(method -> method.functionDeclaration().accept(functionSignatureVisitor))
-                .forEach(scope::addSignature);
+                .forEach(signature -> {
+                    if (signature.getName().equals(scope.getClassName())) {
+                        scope.addConstructor(signature);
+                    } else {
+                        scope.addSignature(signature);
+                    }
+                });
 
         return scope;
     }

@@ -47,7 +47,13 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
 
         List<FunctionContext> methodsCtx = ctx.classBody().function();
 
-        boolean defaultConstructorExists = scope.isParameterLessSignatureExists(scope.getFullClassName());
+        FunctionSignature signature = null;
+        try {
+            signature = scope.getClassType().getConstructorCallSignature(Collections.emptyList());
+        } catch (Exception e) {
+            //
+        }
+        boolean defaultConstructorExists = signature != null;
         addDefaultConstructorSignatureToScope(scope.getFullClassName(), defaultConstructorExists);
         List<Function> methods = methodsCtx.stream()
                 .map(method -> {
@@ -67,7 +73,14 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         if (!defaultConstructorExists) {
             methods.add(getDefaultConstructor());
         }
-        boolean startMethodDefined = scope.isParameterLessSignatureExists("start");
+
+        FunctionSignature startSignature = null;
+        try {
+            startSignature = scope.getClassType().getMethodCallSignature("start", Collections.emptyList());
+        } catch (Exception e) {
+            //
+        }
+        boolean startMethodDefined = startSignature != null;
         if (startMethodDefined) {
             methods.add(getGeneratedMainMethod());
         }
@@ -82,12 +95,12 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
     private void addDefaultConstructorSignatureToScope(String name, boolean defaultConstructorExists) {
         if (!defaultConstructorExists) {
             FunctionSignature constructorSignature = new FunctionSignature(name, Collections.emptyList(), VoidType.INSTANCE, Modifier.PUBLIC, scope.getClassType());
-            scope.addSignature(constructorSignature);
+            scope.addConstructor(constructorSignature);
         }
     }
 
     private Constructor getDefaultConstructor() {
-        FunctionSignature signature = scope.getMethodCallSignatureWithoutParameters(scope.getFullClassName());
+        FunctionSignature signature = scope.getClassType().getConstructorCallSignature(Collections.emptyList());
         Block block = new Block(scope, getFieldsInitializers());
         return new Constructor(signature, block);
     }
@@ -106,7 +119,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         Type owner = scope.getClassType();
         FunctionSignature functionSignature = new FunctionSignature("main", Collections.singletonList(args), VoidType.INSTANCE, Modifier.PUBLIC + Modifier.STATIC, owner);
 
-        FunctionSignature constructorCallSignature = scope.getConstructorCallSignature(scope.getFullClassName(), Collections.emptyList());
+        FunctionSignature constructorCallSignature = owner.getConstructorCallSignature(Collections.emptyList());
         ConstructorCall constructorCall = new ConstructorCall(constructorCallSignature, scope.getFullClassName());
         FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), VoidType.INSTANCE, Modifier.PUBLIC, owner);
         FunctionCall startFunctionCall = new FunctionCall(startFunSignature, Collections.emptyList(), scope.getClassType());

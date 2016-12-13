@@ -53,6 +53,12 @@ public enum BuiltInType implements Type {
         return Collections.emptyList();
     }
 
+    @Override
+    public List<FunctionSignature> getConstructorSignatures() {
+        return Collections.emptyList();
+    }
+
+    @Override
     public List<FunctionSignature> getFunctionSignatures() {
         return Collections.emptyList();
     }

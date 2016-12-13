@@ -5,11 +5,9 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -137,6 +135,16 @@ public class JavaClassType implements Type {
             iteratedClass = iteratedClass.getSuperclass();
         }
         return Optional.empty();
+    }
+
+
+    @Override
+    public List<FunctionSignature> getConstructorSignatures() {
+        Class iteratedClass = getTypeClass();
+        List<Constructor> result = Arrays.asList(iteratedClass.getConstructors());
+        return result.stream()
+                .map(constructor -> ReflectionObjectToSignatureMapper.fromConstructor(constructor, this))
+                .collect(Collectors.toList());
     }
 
     @Override

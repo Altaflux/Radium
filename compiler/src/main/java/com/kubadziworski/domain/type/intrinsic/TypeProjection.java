@@ -63,6 +63,11 @@ public class TypeProjection implements Type {
     }
 
     @Override
+    public List<FunctionSignature> getConstructorSignatures() {
+        return type.getConstructorSignatures();
+    }
+
+    @Override
     public List<FunctionSignature> getFunctionSignatures() {
         if (nullable.equals(Nullability.NULLABLE)) {
             return Collections.emptyList();

@@ -30,6 +30,7 @@ class FieldVisitorTest extends Specification {
         1 * scope.getClassType() >> new JavaClassType(com.kubadziworski.test.DummyClass.class)
             2* scope.getFunctionSignatures() >> new ArrayList<FunctionSignature>()
             2* scope.getFields() >> new org.apache.commons.collections4.map.LinkedMap<String, Field>()
+        2 * scope.getConstructorSignatures() >> new ArrayList<FunctionSignature>()
             2* scope.getLocalVariables() >> new org.apache.commons.collections4.map.LinkedMap<String, LocalVariable>()
         2 * scope.getClassType() >> new JavaClassType(com.kubadziworski.test.DummyClass.class)
             1* nameContext.getText() >> name

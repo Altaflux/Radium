@@ -64,7 +64,8 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
                 //and simply use the class to call it.
                 //We may need to check if this doesn't causes trouble, else we use a POP after
                 //calling the owner expression, for now lets not optimize...
-                return new FieldReference(new RuleContextElementImpl(ctx), scope.getField(owner.getType(), varName), new PopExpression(owner));
+
+                return new FieldReference(new RuleContextElementImpl(ctx), owner.getType().getField(varName), new PopExpression(owner));
             }
             return generateFieldReference(ctx, field, owner, varName);
         }

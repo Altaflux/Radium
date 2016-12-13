@@ -46,6 +46,11 @@ public final class NullType implements Type {
         return Collections.emptyList();
     }
 
+    @Override
+    public List<FunctionSignature> getConstructorSignatures() {
+        return Collections.emptyList();
+    }
+
     public List<FunctionSignature> getFunctionSignatures() {
         return Collections.emptyList();
     }

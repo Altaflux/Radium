@@ -40,11 +40,15 @@ public class EnkelType implements Type {
     }
 
     @Override
+    public List<FunctionSignature> getConstructorSignatures() {
+        return scope.getConstructorSignatures();
+    }
+
+    @Override
     public List<FunctionSignature> getFunctionSignatures() {
         List<FunctionSignature> signatures = new ArrayList<>();
         signatures.addAll(scope.getFunctionSignatures());
         signatures.addAll(getSuperType().map(Type::getFunctionSignatures).orElse(Collections.emptyList()));
-
         return signatures;
     }
 
