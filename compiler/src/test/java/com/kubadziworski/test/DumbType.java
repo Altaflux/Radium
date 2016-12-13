@@ -23,11 +23,6 @@ public class DumbType implements Type {
     }
 
     @Override
-    public Class<?> getTypeClass() {
-        return null;
-    }
-
-    @Override
     public String getDescriptor() {
         return "L" + getInternalName() + ";";
     }

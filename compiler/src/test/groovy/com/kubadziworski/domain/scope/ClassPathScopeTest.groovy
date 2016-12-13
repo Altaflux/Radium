@@ -1,7 +1,6 @@
 package com.kubadziworski.domain.scope
 
 import com.kubadziworski.domain.node.expression.Parameter
-import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
 import com.kubadziworski.domain.type.Type
@@ -38,7 +37,7 @@ class ClassPathScopeTest extends Specification {
     def "GetConstructorSignature should not return private method"() {
         when:
         ClassPathScope classPathScope = new ClassPathScope();
-        def actualSignature = classPathScope.getMethodSignature(type, methodName, args)
+        def actualSignature = classPathScope.getMethodSignature(type as JavaClassType, methodName, args)
         then:
         !actualSignature.isPresent()
         where:
@@ -59,10 +58,10 @@ class ClassPathScopeTest extends Specification {
         actualSignature.isPresent()
         actualSignature.get().equals(expectedSignature);
         where:
-        className          | args                   | expectedClassName  | expectedParamsTypes
-        "java.lang.String" | []                     | "java.lang.String" | []
-        "java.lang.String" | [BuiltInType.BYTE_ARR] | "java.lang.String" | [BuiltInType.BYTE_ARR]
-        "java.lang.Long"   | [PrimitiveTypes.LONG_TYPE]     | "java.lang.Long"   | [PrimitiveTypes.LONG_TYPE]
+        className          | args                              | expectedClassName  | expectedParamsTypes
+        "java.lang.String" | []                                | "java.lang.String" | []
+        "java.lang.String" | [new JavaClassType(byte[].class)] | "java.lang.String" | [new TypeProjection(new JavaClassType(byte[].class), Type.Nullability.UNKNOWN)]
+        "java.lang.Long"   | [new JavaClassType(Long.class)]   | "java.lang.Long"   | [new TypeProjection(PrimitiveTypes.LONG_TYPE, Type.Nullability.NOT_NULL)]
     }
 
     def "GetConstructorSignature should not return private Constructor"() {

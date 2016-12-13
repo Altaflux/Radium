@@ -93,11 +93,6 @@ public class EnkelType implements Type {
     }
 
     @Override
-    public Class<?> getTypeClass() {
-        throw new RuntimeException("Enkel class " + name + " do not have a clazz instance");
-    }
-
-    @Override
     public String getDescriptor() {
         return "L" + getInternalName() + ";";
     }

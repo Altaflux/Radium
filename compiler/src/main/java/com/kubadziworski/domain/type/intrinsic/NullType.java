@@ -23,11 +23,6 @@ public final class NullType implements Type {
     }
 
     @Override
-    public Class<?> getTypeClass() {
-        return null;
-    }
-
-    @Override
     public String getDescriptor() {
         return null;
     }

@@ -24,11 +24,6 @@ public class VoidType implements Type {
     }
 
     @Override
-    public Class<?> getTypeClass() {
-        return VOID.getClass();
-    }
-
-    @Override
     public String getDescriptor() {
         return VOID.getDescriptor();
     }

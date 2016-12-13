@@ -1,7 +1,6 @@
 package com.kubadziworski.util
 
 import com.kubadziworski.antlr.EnkelParser
-import com.kubadziworski.domain.type.BuiltInType
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
 import com.kubadziworski.domain.type.Type
@@ -26,7 +25,6 @@ class TypeResolverTest extends Specification {
         "radium.Int"        | PrimitiveTypes.INT_TYPE
         "radium.Boolean"    | PrimitiveTypes.BOOLEAN_TYPE
         "java.lang.String"  | DefaultTypes.STRING
-        "byte[]"            | BuiltInType.BYTE_ARR
     }
 
     def "getFromTypeContext"() {

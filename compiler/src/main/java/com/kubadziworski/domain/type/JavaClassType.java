@@ -30,7 +30,7 @@ public class JavaClassType implements Type {
         return name;
     }
 
-    @Override
+
     public Class<?> getTypeClass() {
         return aClass;
     }

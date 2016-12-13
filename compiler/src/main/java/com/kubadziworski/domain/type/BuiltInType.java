@@ -23,7 +23,6 @@ public enum BuiltInType implements Type {
     BOOLEAN_ARR("bool[]", boolean[].class, "[B", false),
     INT_ARR("int[]", int[].class, "[I", false),
     CHAR_ARR("char[]", char[].class, "[C", false),
-    BYTE_ARR("byte[]", byte[].class, "[B", false),
     SHORT_ARR("short[]", short[].class, "[S", false),
     LONG_ARR("long[]", long[].class, "[J", false),
     FLOAT_ARR("float[]", float[].class, "[F", false),
@@ -84,10 +83,6 @@ public enum BuiltInType implements Type {
         return name;
     }
 
-    @Override
-    public Class<?> getTypeClass() {
-        return typeClass;
-    }
 
     @Override
     public String getDescriptor() {

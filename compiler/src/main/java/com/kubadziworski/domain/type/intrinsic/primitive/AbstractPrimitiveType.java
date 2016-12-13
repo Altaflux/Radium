@@ -23,11 +23,6 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
     }
 
     @Override
-    public Class<?> getTypeClass() {
-        return type.getTypeClass();
-    }
-
-    @Override
     public String getDescriptor() {
         return type.getDescriptor();
     }

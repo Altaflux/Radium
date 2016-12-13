@@ -45,11 +45,6 @@ public class AnyType implements Type {
     }
 
     @Override
-    public Class<?> getTypeClass() {
-        return objectClass.getTypeClass();
-    }
-
-    @Override
     public String getDescriptor() {
         return objectClass.getDescriptor();
     }

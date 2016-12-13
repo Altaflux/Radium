@@ -34,10 +34,6 @@ public class TypeProjection implements Type {
         return type.getName();
     }
 
-    @Override
-    public Class<?> getTypeClass() {
-        return type.getTypeClass();
-    }
 
     @Override
     public String getDescriptor() {
@@ -122,7 +118,8 @@ public class TypeProjection implements Type {
         if (o == null) return false;
 
         if (o instanceof Type ) {
-            if (nullable != ((Type) o).isNullable()) return false;
+            if (nullable.equals(Nullability.NOT_NULL) && ((Type) o).isNullable().equals(Nullability.NULLABLE))
+                return false;
         }
 
         if(o instanceof TypeProjection){
