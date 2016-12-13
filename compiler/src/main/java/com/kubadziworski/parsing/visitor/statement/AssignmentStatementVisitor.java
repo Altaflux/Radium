@@ -61,7 +61,7 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
         Field field;
         //This is only to allow getter and setters field Reference
         if (scope.getClassType().equals(owner.getType())) {
-            field = scope.getField(owner.getType(), varName);
+            field = scope.getField(varName);
         } else {
             field = owner.getType().getField(varName);
         }

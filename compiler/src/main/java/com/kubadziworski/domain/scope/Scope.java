@@ -28,7 +28,7 @@ public class Scope {
     private final Map<String, Field> fields;
     private final ImportResolver importResolver;
     private final MetaData metaData;
-    private final EnkelScope enkelScope;
+
 
     private final FunctionSignature currentFunctionSignature;
 
@@ -39,7 +39,6 @@ public class Scope {
         localVariables = new LinkedMap<>();
         fields = new LinkedMap<>();
         this.importResolver = importResolver;
-        this.enkelScope = new EnkelScope(importResolver.getGlobalScope());
         this.currentFunctionSignature = null;
     }
 
@@ -50,7 +49,6 @@ public class Scope {
         fields = new LinkedMap<>(scope.getFields());
         localVariables = new LinkedMap<>(scope.getLocalVariables());
         this.importResolver = scope.getImportResolver();
-        this.enkelScope = scope.enkelScope;
         this.currentFunctionSignature = scope.currentFunctionSignature;
     }
 
@@ -61,7 +59,6 @@ public class Scope {
         fields = new LinkedMap<>(scope.getFields());
         localVariables = new LinkedMap<>(scope.getLocalVariables());
         this.importResolver = scope.getImportResolver();
-        this.enkelScope = scope.enkelScope;
         this.currentFunctionSignature = functionSignature;
     }
 
@@ -165,15 +162,6 @@ public class Scope {
 
     public List<FunctionSignature> getConstructorSignatures() {
         return constructorSignatures;
-    }
-
-    public Field getField(Type owner, String fieldName) {
-        boolean isDifferentThanCurrentClass = owner != null && !owner.equals(getClassType());
-        if (!isDifferentThanCurrentClass) {
-            return getField(fieldName);
-        }
-        return enkelScope.getFieldSignature(owner, fieldName)
-                .orElseThrow(() -> new FieldNotFoundException(this, fieldName));
     }
 
     public Field getField(String fieldName) {
