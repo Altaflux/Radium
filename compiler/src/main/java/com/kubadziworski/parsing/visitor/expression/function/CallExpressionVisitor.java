@@ -54,7 +54,6 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
             try {
                 Expression owner = ctx.owner.accept(expressionVisitor);
                 FunctionSignature signature = owner.getType().getMethodCallSignature(functionName, arguments);
-                List<FunctionSignature> signatures = owner.getType().getFunctionSignatures();
                 if (Modifier.isStatic(signature.getModifiers())) {
                     //If the reference is static we can avoid calling the owning reference
                     //and simply use the class to call it.

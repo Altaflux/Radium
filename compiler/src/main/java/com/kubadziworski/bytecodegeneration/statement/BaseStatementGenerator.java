@@ -240,6 +240,16 @@ public class BaseStatementGenerator implements StatementGenerator {
         assignmentStatementGenerator.generate(assignment, getScope(), generator);
     }
 
+    public void generate(FieldAssignment assignment) {
+        assignmentStatementGenerator.generate(assignment, getScope(), this);
+    }
+
+    @Override
+    public void generate(FieldAssignment assignment, StatementGenerator generator) {
+        generateLineNumber(assignment);
+        assignmentStatementGenerator.generate(assignment, getScope(), generator);
+    }
+
     public void generate(SuperCall superCall) {
         expressionGenerator.generate(superCall, this);
     }

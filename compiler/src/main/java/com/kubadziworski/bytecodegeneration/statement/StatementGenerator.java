@@ -69,6 +69,10 @@ public interface StatementGenerator {
     void generate(Assignment assignment);
     void generate(Assignment assignment, StatementGenerator generator);
 
+    void generate(FieldAssignment assignment);
+
+    void generate(FieldAssignment assignment, StatementGenerator generator);
+
     void generate(SuperCall superCall);
     void generate(SuperCall superCall, StatementGenerator generator);
 

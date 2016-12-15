@@ -81,7 +81,8 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
 //        }
 
         Type finalType = new TypeProjection(declarationType, nullability);
-        scope.addLocalVariable(new LocalVariable(varName, finalType, mutable));
-        return new VariableDeclaration(new RuleContextElementImpl(ctx), varName, expression, finalType, mutable);
+        LocalVariable localVariable = new LocalVariable(varName, finalType, mutable);
+        scope.addLocalVariable(localVariable);
+        return new VariableDeclaration(new RuleContextElementImpl(ctx), localVariable, expression);
     }
 }

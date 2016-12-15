@@ -6,8 +6,8 @@ import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
-import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Block;
+import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -24,9 +24,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 
-/**
- * Created by kuba on 13.05.16.
- */
 public class FieldVisitor extends EnkelBaseVisitor<Field> {
 
     private final Scope scope;
@@ -120,7 +117,7 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
         LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
         LocalVariableReference thisReference = new LocalVariableReference(newScope.getLocalVariable("this"));
 
-        Assignment assignment = new Assignment((Expression) thisReference, field.getName(), localVariableReference);
+        FieldAssignment assignment = new FieldAssignment(thisReference, field, localVariableReference);
         Block block = new Block(newScope, Collections.singletonList(assignment));
         return new Function(getter, block);
     }

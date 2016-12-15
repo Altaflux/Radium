@@ -167,6 +167,14 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     @Override
+    final public void generate(FieldAssignment assignment) {
+        if (parent != null) {
+            parent.generate(assignment);
+        }
+        generate(assignment, this);
+    }
+
+    @Override
     final public void generate(SuperCall superCall) {
         if (parent != null) {
             parent.generate(superCall);
@@ -349,6 +357,11 @@ public class StatementGeneratorFilter implements StatementGenerator {
 
     @Override
     public void generate(Assignment assignment, StatementGenerator generator) {
+        next.generate(assignment, generator);
+    }
+
+    @Override
+    public void generate(FieldAssignment assignment, StatementGenerator generator) {
         next.generate(assignment, generator);
     }
 

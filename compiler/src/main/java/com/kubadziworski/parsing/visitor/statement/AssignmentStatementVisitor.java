@@ -5,10 +5,13 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.statement.Assignment;
+import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -48,8 +51,12 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
 //                variable.changeType(new TypeProjection(boxed, Type.Nullability.NULLABLE));
 //            }
 
+            LocalVariable localVariable = scope.getLocalVariable(varName);
+            if (!localVariable.isMutable()) {
+                throw new FinalFieldModificationException("Cannot modify final variable: " + localVariable.getName());
+            }
 
-            return new Assignment(new RuleContextElementImpl(ctx), varName, expression);
+            return new Assignment(new RuleContextElementImpl(ctx), localVariable, expression);
         } else if (scope.isFieldExists(varName)) {
             return generateAssignment(ctx, new LocalVariableReference(scope.getLocalVariable("this")), varName, expression);
         } else {
@@ -68,7 +75,7 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
 
         //This is only to allow getter and setters field Reference
         if (!field.getName().equals(varName)) {
-            return new Assignment(owner, varName, expression);
+            return new FieldAssignment(owner, field, expression);
         }
 
         Optional<FunctionSignature> signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field);
@@ -80,6 +87,6 @@ public class AssignmentStatementVisitor extends EnkelBaseVisitor<Statement> {
         if (functionCall.isPresent()) {
             return functionCall.get();
         }
-        return new Assignment(new RuleContextElementImpl(ctx), owner, varName, expression);
+        return new FieldAssignment(new RuleContextElementImpl(ctx), owner, field, expression);
     }
 }

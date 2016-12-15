@@ -8,12 +8,13 @@ import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.ConstructorCall;
 import com.kubadziworski.domain.node.expression.FunctionCall;
+import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Parameter;
-import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Block;
+import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.node.statement.VariableDeclaration;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.EnkelType;
@@ -31,9 +32,6 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * Created by kuba on 01.04.16.
- */
 public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
 
     private final Scope scope;
@@ -63,7 +61,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
                     if (function instanceof Constructor) {
                         Block block = (Block) function.getRootStatement();
                         //Check for first statement TODO
-                        Block block1 = new Block(block.getScope(), ListUtils.sum(getFieldsInitializers(), block.getStatements()));
+                        Block block1 = new Block(block.getScope(), ListUtils.sum(getFieldsInitializers(block.getScope()), block.getStatements()));
                         return new Constructor(function.getFunctionSignature(), block1);
                     }
 
@@ -101,17 +99,18 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
 
     private Constructor getDefaultConstructor() {
         FunctionSignature signature = scope.getClassType().getConstructorCallSignature(Collections.emptyList());
-        Block block = new Block(scope, getFieldsInitializers());
+        Scope constructorScope = new Scope(scope);
+        constructorScope.addLocalVariable(new LocalVariable("this", scope.getClassType(), false));
+
+        Block block = new Block(constructorScope, getFieldsInitializers(constructorScope));
         return new Constructor(signature, block);
     }
 
-    private List<Statement> getFieldsInitializers() {
+    private List<Statement> getFieldsInitializers(Scope scope) {
         return scope.getFields().values().stream()
                 .filter(stringFieldEntry -> stringFieldEntry.getInitialExpression().isPresent())
-                .map(field -> {
-                    VariableDeclaration declaration = new VariableDeclaration(field.getName(), field.getInitialExpression().get(), field.getType(), false);
-                    return new Assignment(declaration, true);
-                }).collect(Collectors.toList());
+                .map(field -> new FieldAssignment(new LocalVariableReference(scope.getLocalVariable("this")), field,
+                        field.getInitialExpression().get())).collect(Collectors.toList());
     }
 
     private Function getGeneratedMainMethod() {

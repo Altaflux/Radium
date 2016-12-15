@@ -6,7 +6,7 @@ import com.kubadziworski.domain.node.statement.VariableDeclaration;
 public class VariableDeclarationStatementGenerator {
 
     public void generate(VariableDeclaration variableDeclaration, StatementGenerator statementGenerator) {
-        Assignment assignment = new Assignment(variableDeclaration, true);
+        Assignment assignment = new Assignment(variableDeclaration);
         assignment.accept(statementGenerator);
     }
 }
