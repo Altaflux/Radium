@@ -43,14 +43,12 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
 
     @Override
     public Expression visitVariableReference(@NotNull VariableReferenceContext ctx) {
-
         String varName = ctx.getText();
         return visitReference(ctx, varName, null);
     }
 
     private Reference visitStaticReference(String possibleClass, VarReferenceContext ctx) {
         Type classType = scope.resolveClassName(possibleClass);
-//        Type classType = ClassTypeFactory.createClassType(possibleClass);
         Field field = classType.getField(ctx.variableReference().getText());
         return new FieldReference(new RuleContextElementImpl(ctx), field, new EmptyExpression(field.getOwner()));
     }
@@ -76,7 +74,6 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
         }
 
         Field field = scope.getField(varName);
-
         if (Modifier.isStatic(field.getModifiers())) {
             return new FieldReference(new RuleContextElementImpl(ctx), field, new EmptyExpression(field.getOwner()));
         }

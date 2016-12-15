@@ -4,9 +4,7 @@ import com.kubadziworski.bytecodegeneration.FieldGenerator;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.type.Type;
-import org.objectweb.asm.Opcodes;
 
-import java.lang.reflect.Modifier;
 import java.util.Optional;
 
 /**
@@ -55,17 +53,6 @@ public class Field implements Variable, CallableDescriptor {
 
     public Type getOwner() {
         return owner;
-    }
-
-    public String getOwnerInternalName() {
-        return owner.getAsmType().getInternalName();
-    }
-
-    public int getInvokeOpcode() {
-        if (Modifier.isStatic(modifiers)) {
-            return Opcodes.GETSTATIC;
-        }
-        return Opcodes.GETFIELD;
     }
 
     public void accept(FieldGenerator generator) {

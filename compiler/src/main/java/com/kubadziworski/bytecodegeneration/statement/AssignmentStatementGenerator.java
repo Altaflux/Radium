@@ -53,7 +53,7 @@ public class AssignmentStatementGenerator {
         castIfNecessary(type, field.getType());
 
         int opCode = Modifier.isStatic(((Field) field).getModifiers()) ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD;
-        methodVisitor.visitFieldInsn(opCode, ((Field) field).getOwnerInternalName(), field.getName(),
+        methodVisitor.visitFieldInsn(opCode, ((Field) field).getOwner().getAsmType().getInternalName(), field.getName(),
                 field.getType().getAsmType().getDescriptor());
     }
 

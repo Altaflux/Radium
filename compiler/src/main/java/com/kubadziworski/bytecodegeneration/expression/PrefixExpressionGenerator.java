@@ -19,9 +19,7 @@ public class PrefixExpressionGenerator {
 
 
     public PrefixExpressionGenerator(MethodVisitor methodVisitor) {
-
         this.methodVisitor = methodVisitor;
-
     }
 
 
@@ -60,7 +58,9 @@ public class PrefixExpressionGenerator {
         } else if (reference instanceof FieldReference) {
 
             String descriptor = ((FieldReference) reference).getField().getType().getAsmType().getDescriptor();
-            methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD, ((FieldReference) reference).getField().getOwnerInternalName(), ((FieldReference) reference).getField().getName(), descriptor);
+            methodVisitor.visitFieldInsn(org.objectweb.asm.Opcodes.PUTFIELD,
+                    ((FieldReference) reference).getField().getOwner().getAsmType().getInternalName(),
+                    ((FieldReference) reference).getField().getName(), descriptor);
         } else {
             throw new RuntimeException("Reference of unknown type: " + reference.getClass().getSimpleName());
         }

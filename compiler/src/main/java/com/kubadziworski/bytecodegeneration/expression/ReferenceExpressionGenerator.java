@@ -9,6 +9,8 @@ import com.kubadziworski.domain.type.Type;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.lang.reflect.Modifier;
+
 public class ReferenceExpressionGenerator {
     private final MethodVisitor methodVisitor;
 
@@ -29,18 +31,20 @@ public class ReferenceExpressionGenerator {
     public void generate(FieldReference fieldReference, StatementGenerator expressionGenerator) {
         String varName = fieldReference.getName();
         Type type = fieldReference.getType();
-        String ownerInternalName = fieldReference.getOwnerInternalName();
+        String ownerInternalName = fieldReference.getField().getOwner().getAsmType().getInternalName();
         String descriptor = type.getAsmType().getDescriptor();
 
         Expression owner = fieldReference.getOwner();
         owner.accept(expressionGenerator);
-        methodVisitor.visitFieldInsn(fieldReference.getField().getInvokeOpcode(), ownerInternalName, varName, descriptor);
+
+        int opCode = Modifier.isStatic(fieldReference.getField().getModifiers()) ? Opcodes.GETSTATIC : Opcodes.GETFIELD;
+        methodVisitor.visitFieldInsn(opCode, ownerInternalName, varName, descriptor);
     }
 
     public void generateDup(FieldReference fieldReference, StatementGenerator expressionGenerator) {
         String varName = fieldReference.getName();
         Type type = fieldReference.getType();
-        String ownerInternalName = fieldReference.getOwnerInternalName();
+        String ownerInternalName = fieldReference.getField().getOwner().getAsmType().getInternalName();
         String descriptor = type.getAsmType().getDescriptor();
 
         Expression owner = fieldReference.getOwner();

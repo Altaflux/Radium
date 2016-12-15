@@ -30,7 +30,6 @@ public class FieldReference extends ElementImpl implements Reference, CallableMe
         return field.getName();
     }
 
-
     @Override
     public Type getType() {
         return field.getType();
@@ -43,10 +42,6 @@ public class FieldReference extends ElementImpl implements Reference, CallableMe
 
     public void acceptDup(StatementGenerator generator) {
         generator.generateDup(this);
-    }
-
-    public String getOwnerInternalName() {
-        return field.getOwnerInternalName();
     }
 
     public Expression getOwner() {

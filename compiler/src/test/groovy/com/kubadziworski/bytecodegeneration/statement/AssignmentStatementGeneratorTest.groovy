@@ -54,7 +54,7 @@ class AssignmentStatementGeneratorTest extends Specification {
         when:
             new AssignmentStatementGenerator(new InstructionAdapter(methodVisitor)).generate(assignment, scope, expressionGenerator)
             then :
-            1 * methodVisitor.visitFieldInsn(Opcodes.PUTFIELD, field.ownerInternalName, field.name, field.type.asmType.descriptor)
+            1 * methodVisitor.visitFieldInsn(Opcodes.PUTFIELD, field.owner.asmType.internalName, field.name, field.type.asmType.descriptor)
         where:
         varName     | variableOwner        | variableType            | assignmentExpression
         "var"       | new DumbType("Main") | PrimitiveTypes.INT_TYPE | new Value(PrimitiveTypes.INT_TYPE, "25")
