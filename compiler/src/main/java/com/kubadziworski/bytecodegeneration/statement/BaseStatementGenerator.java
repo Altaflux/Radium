@@ -398,12 +398,12 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     private void generateLineNumber(Statement statement) {
         if (statement != null) {
-            if (statement.shouldAnalyze()) {
-                if (statement.getStartLine() != lastLine) {
+            if (statement.getNodeData().shouldAnalyze()) {
+                if (statement.getNodeData().getStartLine() != lastLine) {
                     Label label = new Label();
                     methodVisitor.visitLabel(label);
-                    methodVisitor.visitLineNumber(statement.getStartLine(), label);
-                    lastLine = statement.getStartLine();
+                    methodVisitor.visitLineNumber(statement.getNodeData().getStartLine(), label);
+                    lastLine = statement.getNodeData().getStartLine();
                 }
             }
         }

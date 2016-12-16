@@ -35,7 +35,7 @@ class AssignmentStatementGeneratorTest extends Specification {
         1 * localVariable.getName() >> varName
         1 * expressionGenerator.generate(assignmentExpression)
             1*scope.getLocalVariableIndex(varName) >> 3
-        3 * localVariable.getType() >> assignmentExpression.getType()
+        2 * localVariable.getType() >> assignmentExpression.getType()
             1*methodVisitor.visitVarInsn(expectedOpcode,3)
         where:
             varName  | assignmentExpression                      | expectedOpcode

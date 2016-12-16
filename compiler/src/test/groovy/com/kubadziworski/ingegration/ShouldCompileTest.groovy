@@ -77,7 +77,7 @@ class ShouldCompileTest extends Specification {
             """
 							Fields {
 
-								bla : int
+								bla : Int
 
 								start {
 									bla = 5

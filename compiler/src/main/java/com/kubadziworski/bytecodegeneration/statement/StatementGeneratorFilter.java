@@ -381,7 +381,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
     @Override
     public void generate(RangedForStatement rangedForStatement, StatementGenerator generator) {
         next.generate(rangedForStatement, generator);
-
     }
 
     @Override
@@ -400,8 +399,8 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     @Override
-    public void generate(ConstructorCall constructorCall, StatementGenerator generator) {
-        next.generate(constructorCall, generator);
+    public void generate(ConstructorCall cons, StatementGenerator generator) {
+        next.generate(cons, generator);
     }
 
     @Override

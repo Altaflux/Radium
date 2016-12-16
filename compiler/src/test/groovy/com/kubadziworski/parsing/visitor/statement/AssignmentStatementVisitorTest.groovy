@@ -8,7 +8,6 @@ import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.intrinsic.VoidType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor
-import com.kubadziworski.test.DumbType
 import spock.lang.Specification
 /**
  * Created by kuba on 13.05.16.
@@ -22,7 +21,7 @@ class AssignmentStatementVisitorTest extends Specification {
             EnkelParser.NameContext nameContext = Mock()
             EnkelParser.ExpressionContext expressionContext = Mock()
             ExpressionVisitor expressionVisitor = Mock()
-        LocalVariable localVariable = new LocalVariable(name, new DumbType(name))
+        LocalVariable localVariable = new LocalVariable(name, type)
             assignmentContext.postExpr = expressionContext
         when:
             def assignment = new AssignmentStatementVisitor(expressionVisitor, scope1).visitAssignment(assignmentContext)
@@ -36,8 +35,8 @@ class AssignmentStatementVisitorTest extends Specification {
             assignment.assignmentExpression == expression
         assignment.variable == localVariable
         where:
-            name | expression
-            "cos" | new EmptyExpression(VoidType.INSTANCE)
-            "int assignment" | new Value(PrimitiveTypes.INT_TYPE,"255")
+        name         | expression                                | type
+        "cos"        | new EmptyExpression(VoidType.INSTANCE)    | VoidType.INSTANCE
+        "assignment" | new Value(PrimitiveTypes.INT_TYPE, "255") | PrimitiveTypes.INT_TYPE
     }
 }

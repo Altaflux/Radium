@@ -56,7 +56,6 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         List<Function> methods = methodsCtx.stream()
                 .map(method -> {
                     //TODO DONT PROCESS FIELDS IF THIS() exists
-
                     Function function = method.accept(new FunctionVisitor(scope));
                     if (function instanceof Constructor) {
                         Block block = (Block) function.getRootStatement();
@@ -82,10 +81,6 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         if (startMethodDefined) {
             methods.add(getGeneratedMainMethod());
         }
-        scope.getFields().values().stream()
-                .peek(field -> methods.add(field.getGetterFunction()))
-                .forEach(field -> methods.add(field.getSetterFunction()));
-
 
         return new ClassDeclaration(scope.getClassName(), new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
     }

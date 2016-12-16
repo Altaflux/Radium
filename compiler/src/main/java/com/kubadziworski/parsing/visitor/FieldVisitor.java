@@ -100,7 +100,6 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
         FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
         Scope newScope = new Scope(this.scope);
         newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-        newScope.addField(field);
         FieldReference fieldReference = new FieldReference(field, new LocalVariableReference(newScope.getLocalVariable("this")));
         ReturnStatement returnStatement = new ReturnStatement(fieldReference);
         Block block = new Block(newScope, Collections.singletonList(returnStatement));
@@ -110,7 +109,6 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
     private Function generateSetter(Field field) {
         FunctionSignature getter = PropertyAccessorsUtil.createSetterForField(field);
         Scope newScope = new Scope(this.scope);
-        newScope.addField(field);
         newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         getter.getParameters()
                 .forEach(param -> newScope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));

@@ -3,11 +3,6 @@ package com.kubadziworski.domain.node;
 
 public interface RdElement {
 
-    boolean shouldAnalyze();
+    NodeData getNodeData();
 
-    int getStartLine();
-
-    String getText();
-
-    int getEndLine();
 }

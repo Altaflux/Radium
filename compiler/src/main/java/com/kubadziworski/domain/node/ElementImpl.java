@@ -15,24 +15,8 @@ public abstract class ElementImpl implements RdElement {
         this.element = new DummyElement();
     }
 
-    @Override
-    public boolean shouldAnalyze() {
-        return element.shouldAnalyze();
-    }
-
-    @Override
-    public int getStartLine() {
-        return element.getStartLine();
-    }
-
-    @Override
-    public String getText() {
-        return element.getText();
-    }
-
-    @Override
-    public int getEndLine() {
-        return element.getEndLine();
+    public NodeData getNodeData() {
+        return element;
     }
 
     private static class DummyElement implements NodeData {

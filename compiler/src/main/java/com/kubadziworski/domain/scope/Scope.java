@@ -146,6 +146,9 @@ public class Scope {
 
     public void addField(Field field) {
         fields.put(field.getName(), field);
+
+        functionSignatures.add(field.getSetterFunction().getFunctionSignature());
+        functionSignatures.add(field.getGetterFunction().getFunctionSignature());
     }
 
     public void addField(String name, Field field) {

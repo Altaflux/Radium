@@ -5,7 +5,6 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.FieldVisitor;
-import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.List;
@@ -27,8 +26,6 @@ class FieldPhaseVisitor extends EnkelBaseVisitor<Scope> {
                 .collect(Collectors.toList());
 
         fields.forEach(scope::addField);
-        fields.stream().map(PropertyAccessorsUtil::createGetterForField).forEach(scope::addSignature);
-        fields.stream().map(PropertyAccessorsUtil::createSetterForField).forEach(scope::addSignature);
         return scope;
     }
 }

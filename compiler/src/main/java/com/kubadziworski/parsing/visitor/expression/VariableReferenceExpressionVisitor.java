@@ -9,12 +9,10 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
-import java.util.Optional;
 
 public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final Scope scope;
@@ -65,7 +63,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
 
                 return new FieldReference(new RuleContextElementImpl(ctx), owner.getType().getField(varName), new PopExpression(owner));
             }
-            return generateFieldReference(ctx, field, owner, varName);
+            return generateFieldReference(ctx, field, owner);
         }
 
         if (scope.isLocalVariableExists(varName)) {
@@ -81,21 +79,10 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
         Type thisType = scope.getClassType();
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         LocalVariableReference thisReference = new LocalVariableReference(new RuleContextElementImpl(ctx), thisVariable);
-        return generateFieldReference(ctx, field, thisReference, varName);
+        return generateFieldReference(ctx, field, thisReference);
     }
 
-    private Expression generateFieldReference(ParserRuleContext ctx, Field field, Expression owner, String name) {
-        //This is only to allow getter and setters field Reference
-        if (!field.getName().equals(name)) {
-            return new FieldReference(new RuleContextElementImpl(ctx), field, owner);
-        }
-
-        Optional<FunctionCall> functionCall = PropertyAccessorsUtil.getGetterFunctionSignatureForField(field)
-                .map(functionSignature -> new PropertyAccessorCall(new RuleContextElementImpl(ctx), functionSignature, owner, field));
-
-        if (functionCall.isPresent()) {
-            return functionCall.get();
-        }
+    private Expression generateFieldReference(ParserRuleContext ctx, Field field, Expression owner) {
         return new FieldReference(new RuleContextElementImpl(ctx), field, owner);
     }
 }

@@ -2,16 +2,19 @@ package com.kubadziworski.domain.node.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
+import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.type.Type;
 
-/**
- * Created by kuba on 14.04.16.
- */
 public class EmptyExpression extends ElementImpl implements Expression {
 
     private final Type type;
 
     public EmptyExpression(Type type) {
+        this(null, type);
+    }
+
+    public EmptyExpression(NodeData element, Type type) {
+        super(element);
         this.type = type;
     }
 

@@ -35,7 +35,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
             LocalVariableReference ref = new LocalVariableReference(local)
             def fieldReference = new FieldReference(field, ref)
         when:
-            new ReferenceExpressionGenerator(methodVisitor).generate(fieldReference, expressionGenerator)
+        new ReferenceExpressionGenerator(new InstructionAdapter(methodVisitor)).generate(fieldReference, expressionGenerator)
         then:
             1* methodVisitor.visitVarInsn(Opcodes.ALOAD,0)
         1 * methodVisitor.visitFieldInsn(Opcodes.GETFIELD, field.owner.asmType.internalName, field.name, field.type.asmType.descriptor)
@@ -54,7 +54,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
             def variable = new LocalVariable(name,type)
             def localVariableReference = new LocalVariableReference(variable)
         when:
-            new ReferenceExpressionGenerator(methodVisitor).generate(localVariableReference, scope)
+        new ReferenceExpressionGenerator(new InstructionAdapter(methodVisitor)).generate(localVariableReference, scope)
         then:
             1* scope.getLocalVariableIndex(name) >> 3
             1* methodVisitor.visitVarInsn(expectedOpcode,3)
