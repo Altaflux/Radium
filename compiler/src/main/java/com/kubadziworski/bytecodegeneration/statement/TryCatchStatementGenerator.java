@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
+import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.trycatch.CatchBlock;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.Block;
@@ -159,23 +160,16 @@ public class TryCatchStatementGenerator {
             org.objectweb.asm.Type asmType = org.objectweb.asm.Type.getType(getScope().getCurrentFunctionSignature().getReturnType().getAsmType().getDescriptor());
             if (finalBlock != null) {
                 String varName = "$$Return" + atomicInteger.incrementAndGet();
-                getScope().addLocalVariable(new LocalVariable(varName, returnStatement.getExpression().getType()));
+                LocalVariable returnVariable = new LocalVariable(varName, returnStatement.getExpression().getType());
+                getScope().addLocalVariable(returnVariable);
                 methodVisitor.visitVarInsn(returnStatement.getExpression().getType().getAsmType().getOpcode(Opcodes.ISTORE), getScope().getLocalVariableIndex(varName));
 
                 StatementGeneratorFilter filter = new StatementGeneratorFilter(null, next, getScope());
                 finalBlock.accept(filter);
 
-                //TODO We cannot a return statement here as the TryCatchFilter will not allow us, so we will simulate its operation here
-                // we should seek to at least unify this into a place to avoid code duplication.
                 if (!finalBlock.isReturnComplete()) {
-
-                    int opCode = returnStatement.getExpression().getType().getAsmType().getOpcode(Opcodes.ILOAD);
-                    methodVisitor.visitVarInsn(opCode, getScope().getLocalVariableIndex(varName));
-                    PrimitiveTypesWrapperFactory.coerce(getScope().getCurrentFunctionSignature().getReturnType(), returnStatement.getExpression().getType(),
-                            methodVisitor);
-                    methodVisitor.visitInsn(asmType.getOpcode(IRETURN));
+                    next.generate(new ReturnStatement(new LocalVariableReference(returnVariable)), next);
                 }
-
             } else {
                 PrimitiveTypesWrapperFactory.coerce(getScope().getCurrentFunctionSignature().getReturnType(), returnStatement.getExpression().getType(),
                         methodVisitor);

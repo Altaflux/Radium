@@ -32,32 +32,36 @@ public class StatementGeneratorFilter implements StatementGenerator {
     final public void generate(NotNullCastExpression castExpression) {
         if (parent != null) {
             parent.generate(castExpression);
+        } else {
+            generate(castExpression, this);
         }
-        generate(castExpression, this);
     }
 
     @Override
     final public void generate(ThrowStatement throwStatement) {
         if (parent != null) {
             parent.generate(throwStatement);
+        } else {
+            generate(throwStatement, this);
         }
-        generate(throwStatement, this);
     }
 
     @Override
     final public void generate(TryCatchStatement tryCatchStatement) {
         if (parent != null) {
             parent.generate(tryCatchStatement);
+        } else {
+            generate(tryCatchStatement, this);
         }
-        generate(tryCatchStatement, this);
     }
 
     @Override
     final public void generate(TryCatchExpression tryCatchExpression) {
         if (parent != null) {
             parent.generate(tryCatchExpression);
+        } else {
+            generate(tryCatchExpression, this);
         }
-        generate(tryCatchExpression, this);
     }
 
 
@@ -65,137 +69,153 @@ public class StatementGeneratorFilter implements StatementGenerator {
     final public void generate(BlockExpression blockExpression) {
         if (parent != null) {
             parent.generate(blockExpression);
+        } else {
+            generate(blockExpression, this);
         }
-        generate(blockExpression, this);
     }
 
     @Override
     final public void generate(IfExpression ifExpression) {
         if (parent != null) {
             parent.generate(ifExpression);
+        } else {
+            generate(ifExpression, this);
         }
-        generate(ifExpression, this);
     }
 
     @Override
     final public void generate(UnaryExpression unaryExpression) {
         if (parent != null) {
             parent.generate(unaryExpression);
+        } else {
+            generate(unaryExpression, this);
         }
-        generate(unaryExpression, this);
     }
 
     @Override
     final public void generate(PrintStatement printStatement) {
         if (parent != null) {
             parent.generate(printStatement);
+        } else {
+            generate(printStatement, this);
         }
-        generate(printStatement, this);
     }
 
     @Override
     final public void generate(VariableDeclaration variableDeclaration) {
         if (parent != null) {
             parent.generate(variableDeclaration);
+        } else {
+            generate(variableDeclaration, this);
         }
-        generate(variableDeclaration, this);
     }
 
     @Override
     final public void generate(DupExpression dupExpression) {
         if (parent != null) {
             parent.generate(dupExpression);
+        } else {
+            generate(dupExpression, this);
         }
-        generate(dupExpression, this);
     }
 
     @Override
     final public void generate(IncrementDecrementExpression incrementDecrementExpression) {
         if (parent != null) {
             parent.generate(incrementDecrementExpression);
+        } else {
+            generate(incrementDecrementExpression, this);
         }
-        generate(incrementDecrementExpression, this);
     }
 
     @Override
     final public void generate(FunctionCall functionCall) {
         if (parent != null) {
             parent.generate(functionCall);
+        } else {
+            generate(functionCall, this);
         }
-        generate(functionCall, this);
     }
 
     @Override
     final public void generate(ReturnStatement returnStatement) {
         if (parent != null) {
             parent.generate(returnStatement);
+        } else {
+            generate(returnStatement, this);
         }
-        generate(returnStatement, this);
     }
 
     @Override
     final public void generate(IfStatement ifStatement) {
         if (parent != null) {
             parent.generate(ifStatement);
+        } else {
+            generate(ifStatement, this);
         }
-        generate(ifStatement, this);
     }
 
     @Override
     final public void generate(Block block) {
         if (parent != null) {
             parent.generate(block);
+        } else {
+            generate(block, this);
         }
-        generate(block, this);
     }
 
     @Override
     final public void generate(RangedForStatement rangedForStatement) {
         if (parent != null) {
             parent.generate(rangedForStatement);
+        } else {
+            generate(rangedForStatement, this);
         }
-        generate(rangedForStatement, this);
-
     }
 
     @Override
     final public void generate(Assignment assignment) {
         if (parent != null) {
             parent.generate(assignment);
+        } else {
+            generate(assignment, this);
         }
-        generate(assignment, this);
     }
 
     @Override
     final public void generate(FieldAssignment assignment) {
         if (parent != null) {
             parent.generate(assignment);
+        } else {
+            generate(assignment, this);
         }
-        generate(assignment, this);
     }
 
     @Override
     final public void generate(SuperCall superCall) {
         if (parent != null) {
             parent.generate(superCall);
+        } else {
+            generate(superCall, this);
         }
-        generate(superCall, this);
     }
 
     @Override
     final public void generate(ConstructorCall constructorCall) {
         if (parent != null) {
             parent.generate(constructorCall);
+        } else {
+            generate(constructorCall, this);
         }
-        generate(constructorCall, this);
     }
 
     @Override
     final public void generate(Argument argument) {
         if (parent != null) {
             parent.generate(argument);
+        } else {
+            generate(argument, this);
         }
-        generate(argument, this);
     }
 
 
@@ -203,24 +223,27 @@ public class StatementGeneratorFilter implements StatementGenerator {
     final public void generate(Addition addition) {
         if (parent != null) {
             parent.generate(addition);
+        } else {
+            generate(addition, this);
         }
-        generate(addition, this);
     }
 
     @Override
     final public void generate(Parameter parameter) {
         if (parent != null) {
             parent.generate(parameter);
+        } else {
+            generate(parameter, this);
         }
-        generate(parameter, this);
     }
 
     @Override
     final public void generate(ConditionalExpression conditionalExpression) {
         if (parent != null) {
             parent.generate(conditionalExpression);
+        } else {
+            generate(conditionalExpression, this);
         }
-        generate(conditionalExpression, this);
     }
 
 
@@ -228,8 +251,9 @@ public class StatementGeneratorFilter implements StatementGenerator {
     final public void generate(Value value) {
         if (parent != null) {
             parent.generate(value);
+        } else {
+            next.generate(value, this);
         }
-        next.generate(value, this);
     }
 
 
@@ -237,40 +261,45 @@ public class StatementGeneratorFilter implements StatementGenerator {
     final public void generate(EmptyExpression emptyExpression) {
         if (parent != null) {
             parent.generate(emptyExpression);
+        } else {
+            generate(emptyExpression, this);
         }
-        generate(emptyExpression, this);
     }
 
     @Override
     final public void generate(LocalVariableReference localVariableReference) {
         if (parent != null) {
             parent.generate(localVariableReference);
+        } else {
+            generate(localVariableReference, this);
         }
-        generate(localVariableReference, this);
     }
 
     @Override
     final public void generate(FieldReference fieldReference) {
         if (parent != null) {
             parent.generate(fieldReference);
+        } else {
+            generate(fieldReference, this);
         }
-        generate(fieldReference, this);
     }
 
     @Override
     final public void generateDup(FieldReference fieldReference) {
         if (parent != null) {
             parent.generateDup(fieldReference);
+        } else {
+            generateDup(fieldReference, this);
         }
-        generateDup(fieldReference, this);
     }
 
     @Override
     final public void generate(PopExpression popExpression) {
         if (parent != null) {
             parent.generate(popExpression);
+        } else {
+            generate(popExpression, this);
         }
-        generate(popExpression, this);
     }
 
     /////////////
@@ -394,7 +423,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
     public void generate(ConditionalExpression conditionalExpression, StatementGenerator generator) {
         next.generate(conditionalExpression, generator);
     }
-
 
     @Override
     public void generate(Value value, StatementGenerator generator) {
