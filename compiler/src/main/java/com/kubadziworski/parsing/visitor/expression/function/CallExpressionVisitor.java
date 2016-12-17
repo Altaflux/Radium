@@ -5,7 +5,6 @@ import com.kubadziworski.antlr.EnkelParser.ArgumentListContext;
 import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
 import com.kubadziworski.antlr.EnkelParser.SupercallContext;
-
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -14,11 +13,10 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.ClassNotFoundForNameException;
 import com.kubadziworski.exception.FunctionNameEqualClassException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;
@@ -29,7 +27,6 @@ import static com.kubadziworski.domain.node.expression.SuperCall.SUPER_IDENTIFIE
 public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
     private final ExpressionVisitor expressionVisitor;
     private final Scope scope;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CallExpressionVisitor.class);
 
     public CallExpressionVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
         this.expressionVisitor = expressionVisitor;
@@ -62,7 +59,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                     return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new PopExpression(owner));
                 }
                 return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), owner);
-            } catch (Exception e) {
+            } catch (ClassNotFoundForNameException e) {
                 String possibleClass = ctx.owner.getText();
                 return visitStaticReference(possibleClass, functionName, arguments);
             }

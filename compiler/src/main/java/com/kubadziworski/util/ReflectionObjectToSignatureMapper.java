@@ -51,10 +51,10 @@ public final class ReflectionObjectToSignatureMapper {
         }
 
         boolean notNull = Arrays.stream(field.getAnnotations())
-                .filter(annotation -> annotation.annotationType().equals(NotNull.class)).findAny().isPresent();
+                .anyMatch(annotation -> annotation.annotationType().equals(NotNull.class));
 
         boolean nullable = Arrays.stream(field.getAnnotations())
-                .filter(annotation -> annotation.annotationType().equals(Nullable.class)).findAny().isPresent();
+                .anyMatch(annotation -> annotation.annotationType().equals(Nullable.class));
 
         return getNullability(notNull, nullable);
     }
@@ -65,10 +65,10 @@ public final class ReflectionObjectToSignatureMapper {
         }
 
         boolean notNull = Arrays.stream(parameter.getAnnotations())
-                .filter(annotation -> annotation.annotationType().equals(NotNull.class)).findAny().isPresent();
+                .anyMatch(annotation -> annotation.annotationType().equals(NotNull.class));
 
         boolean nullable = Arrays.stream(parameter.getAnnotations())
-                .filter(annotation -> annotation.annotationType().equals(Nullable.class)).findAny().isPresent();
+                .anyMatch(annotation -> annotation.annotationType().equals(Nullable.class));
 
         return getNullability(notNull, nullable);
     }
@@ -79,10 +79,10 @@ public final class ReflectionObjectToSignatureMapper {
         }
 
         boolean notNull = Arrays.stream(clazz.getAnnotations())
-                .filter(annotation -> annotation.annotationType().equals(NotNull.class)).findAny().isPresent();
+                .anyMatch(annotation -> annotation.annotationType().equals(NotNull.class));
 
         boolean nullable = Arrays.stream(clazz.getAnnotations())
-                .filter(annotation -> annotation.annotationType().equals(Nullable.class)).findAny().isPresent();
+                .anyMatch(annotation -> annotation.annotationType().equals(Nullable.class));
 
         return getNullability(notNull, nullable);
     }

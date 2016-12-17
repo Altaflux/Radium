@@ -9,6 +9,8 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.ClassNotFoundForNameException;
+import com.kubadziworski.exception.FieldNotFoundException;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -31,7 +33,7 @@ public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Express
             try {
                 Expression owner = ctx.owner.accept(expressionVisitor);
                 return visitReference(ctx, varName, owner);
-            } catch (Throwable e) {
+            } catch (ClassNotFoundForNameException | FieldNotFoundException e) {
                 String possibleClass = ctx.owner.getText();
                 return visitStaticReference(possibleClass, ctx);
             }
