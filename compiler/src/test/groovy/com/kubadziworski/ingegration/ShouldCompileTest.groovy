@@ -879,6 +879,54 @@ class ShouldCompileTest extends Specification {
                     }
                 }
             """
+    private static final innerTry = """
+                InnerTry{
+                    myCondition: Boolean = true
+                    mySecondCondition: Boolean = false
+                    
+                    start(){
+                        print testTry()
+                        assert(testTry() == 5, true)
+                        
+                        myCondition = false
+                        print testTry()
+                        assert(testTry() == 1, true)
+                        
+                        mySecondCondition = true
+                        print testTry()
+                        assert(testTry() == 3, true)
+                    }
+                    
+                    Int testTry() {
+                        try {
+                            try {
+                                return 1
+                            } catch(e: Exception) {
+                                return 2
+                            } finally {
+                                if (mySecondCondition) {
+                                    return 3
+                                }
+                            }
+                        } catch(e: Exception) {
+                            return 4
+                        } finally {
+                            if (myCondition) {
+                                return 5
+                            }
+                        }
+                    }
+                    
+                    Unit assert(Boolean actual,Boolean expected) {
+                            if (actual == expected) {
+                                print "OK"
+                            }
+                            else {
+                                print "TEST FAILED"
+                            }
+                    }               
+                }
+            """
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -926,14 +974,15 @@ class ShouldCompileTest extends Specification {
         myTryStatement             | "TryStatement.enk"
         fieldInitializing        | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
-        detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
-        throwStatement          | "ThrowStatement.enk"
-        nullValue               | "NullValue.enk"
-        returnUnit              | "ReturnUnit.enk"
-        concreteReturnUnit      | "ConcreteReturnUnit.enk"
-        superCall               | "CallParentClass.enk"
-        typeCoercion            | "TypeCoercion.enk"
-        primitiveFunctions      | "PrimitiveFunctions.enk"
+        detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
+        throwStatement                   | "ThrowStatement.enk"
+        nullValue                        | "NullValue.enk"
+        returnUnit                       | "ReturnUnit.enk"
+        concreteReturnUnit               | "ConcreteReturnUnit.enk"
+        superCall                        | "CallParentClass.enk"
+        typeCoercion                     | "TypeCoercion.enk"
+        primitiveFunctions               | "PrimitiveFunctions.enk"
+        innerTry                         | "InnerTry.enk"
     }
 
 
