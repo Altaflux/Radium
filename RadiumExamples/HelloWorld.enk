@@ -1,6 +1,6 @@
 HelloWorld {
 
-    start {
+    fn start {
         print "hello world!"
     }
 }

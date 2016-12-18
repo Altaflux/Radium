@@ -1,15 +1,15 @@
 ConstructorWithParams {
 
-    ConstructorWithParams(int x) {
+    fn ConstructorWithParams(Int x) {
         print "Hey I am constructor with parameter x = " + x
     }
 
-    start() {
+    fn start() {
         var instance = new ConstructorWithParams(5)
         instance.doStuff()
     }
 
-    doStuff {
+    fn doStuff {
         print "doing stuff on ConstructorWithParams instance"
     }
 }

@@ -1,19 +1,42 @@
 SumCalculator {
+    fn start() {
+        var expected = 8
+        var firstNum:Int = 3
+        var secondNum:Int = 5
 
+        var actual = sum(firstNum , secondNum)
+        if( actual == expected ) {
+            print "test passed"
+        } else {
+            print "test failed"
+        }
 
-    start() {
-       var expected = 8
-       var actual = sum(3,5)
-       if( actual == expected ) {
-           print "test passed"
-       } else {
-           print "test failed"
-       }
+        assert(secondNum % firstNum == 2, true)
+    }
+    fn assert(Boolean actual,Boolean expected) {
+        if (actual == expected) {
+            print "OK"
+        }
+        else {
+            print "TEST FAILED"
+        }
     }
 
-
-    int sum (int x ,int y) {
-        x+y
+    fn fooo(){
+        bla(3)
+    }
+    fn bla(Int? mip):Int?{
+        return mip;
     }
 
+    fn sum (Int x ,Int y):Int {
+        print x
+        print y
+        return x+y
+    }
+    fn mod(Int x ,Int y):Int {
+        print x
+        print y
+        return x%y
+    }
 }

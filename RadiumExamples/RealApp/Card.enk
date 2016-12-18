@@ -1,22 +1,22 @@
 Card {
 
-    string color
-    string pattern
+     color: String
+     pattern: String
 
-    Card(string cardColor,string cardPattern) {
+    Card(String cardColor,String cardPattern) {
         color = cardColor
         pattern = cardPattern
     }
 
-    string getColor() {
+    fn getColor(): String {
         color
     }
 
-    string getPattern() {
+    fn getPattern(): String {
         pattern
     }
 
-    string toString() {
+    fn toString(): String {
         return "{" + color + "," + pattern + "}"
     }
 }

@@ -1,10 +1,10 @@
 NamedParamsTest {
 
-    start {
-        createRect(x1->25,x2->-25,y1->50,y2->-50)
+    fn start {
+        createRect(x1->25,x2->-25,y1->50,y2->-0xE)
     }
 
-    createRect (int x1,int y1,int x2, int y2) {
+    fn createRect (Int x1,Int y1,Int x2, Int y2) {
         print "Created rect with x1=" + x1 + " y1=" + y1 + " x2=" + x2 + " y2=" + y2
     }
 }

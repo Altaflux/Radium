@@ -1,10 +1,8 @@
 Fields {
+    bla : Int
 
-int field
-
-start {
-    field = 5
-    print field
-}
-
+    fn start {
+        bla = 5
+        print bla
+    }
 }

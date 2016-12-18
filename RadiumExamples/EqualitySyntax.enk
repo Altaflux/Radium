@@ -1,15 +1,16 @@
 EqualitySyntax {
 
- start {
+ fn start {
        objectComparisonTest()
        primitiveComparisonTest()
        primitiveComparisonTest2()
        objectComparisonTest2()
+       booleanNegationTest()
  }
 
- primitiveComparisonTest {
-     var a = 3
-     var b = 3
+ fn primitiveComparisonTest {
+     var a:Int = 3
+     var b:Int = 3
 
      print "Comparing primitive " + a +" and " + b
 
@@ -30,14 +31,23 @@ EqualitySyntax {
 
      var result = a <= b
      assert(expected -> true , actual -> result)
+
+
  }
 
+ fn booleanNegationTest(){
+    print "Doing boolean negation"
 
- objectComparisonTest() {
-     var a = new java.lang.Integer(3)
-     var b = new java.lang.Integer(3)
+    var result = !false
+    assert(expected -> true , actual -> result)
 
-      print "Comparing integer " + a.toString() +" and " + b.toString()
+ }
+
+ fn objectComparisonTest() {
+     var a:Int = 3
+     var b:Int = 3
+
+      print "Comparing integer " + a +" and " + b
 
 
      var result = a == b
@@ -59,7 +69,7 @@ EqualitySyntax {
      assert(expected -> true , actual -> result)
  }
 
- primitiveComparisonTest2 {
+ fn primitiveComparisonTest2 {
       var a = 3
       var b = 4
 
@@ -85,11 +95,11 @@ EqualitySyntax {
         assert(expected -> true , actual -> result)
   }
 
- objectComparisonTest2() {
-      var a = new java.lang.Integer(3)
-      var b = new java.lang.Integer(4)
+ fn objectComparisonTest2() {
+      var a = 3
+      var b = 4
 
-    print "Comparing integer " + a.toString() +" and " + b.toString()
+    print "Comparing integer " + a +" and " + b
 
       var result = a == b
       assert(expected -> false , actual -> result)
@@ -105,13 +115,13 @@ EqualitySyntax {
 
       var result = a >= b
       assert(expected -> false , actual -> result)
-        
+
 
       var result = a <= b
       assert(actual -> result, expected -> true )
   }
 
-  void assert(boolean actual,boolean expected) {
+  fn assert(Boolean actual,Boolean expected) {
     if (actual == expected) {
         print "OK"
     }
@@ -119,6 +129,4 @@ EqualitySyntax {
         print "TEST FAILED"
     }
   }
-
-
 }

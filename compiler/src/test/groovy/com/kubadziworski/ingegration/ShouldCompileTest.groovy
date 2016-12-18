@@ -16,7 +16,7 @@ class ShouldCompileTest extends Specification {
             """
 							HelloWorld {
 
-								start {
+								fn start {
 									print "hello world!"
 								}
 							}
@@ -25,13 +25,13 @@ class ShouldCompileTest extends Specification {
     private final static loopsCode =
             """
 							Loops {
-								start() {
+								fn start() {
 									for i from 3 to 1 {
-										metod(i)
+										method(i)
 									}
 								}
 
-								metod(Int x) {
+								fn method(Int x) {
 									print x
 								}
 							}
@@ -40,7 +40,7 @@ class ShouldCompileTest extends Specification {
     private final static allTypes =
             """
 							AllPrimitiveTypes {
-								start() {
+								fn start() {
 									var stringVar = "str"
 									var booleanVar = false
 									var integerVar = 2745
@@ -60,12 +60,12 @@ class ShouldCompileTest extends Specification {
     private final static defaultParams =
             """
 							DefaultParamTest {
-								start() {
+								fn start() {
 									greet("kuba","enkel")
 									greet("andrew")
 								}
 
-								greet (String name, String favouriteLanguage="java") {
+								fn greet (String name, String favouriteLanguage="java") {
 									print "Hello my name is "
 									print name
 									print "and my favourite langugage is "
@@ -76,14 +76,12 @@ class ShouldCompileTest extends Specification {
     private final static fields =
             """
 							Fields {
-
 								bla : Int
 
-								start {
+								fn start {
 									bla = 5
 									print bla
 								}
-
 							}
 							"""
 
@@ -91,11 +89,11 @@ class ShouldCompileTest extends Specification {
             """
 							NamedParamsTest {
 
-								start {
+								fn start {
 									createRect(x1->25,x2->-25,y1->50,y2->-0xE)
 								}
 
-								createRect (Int x1,Int y1,Int x2, Int y2) {
+								fn createRect (Int x1,Int y1,Int x2, Int y2) {
 									print "Created rect with x1=" + x1 + " y1=" + y1 + " x2=" + x2 + " y2=" + y2
 								}
 							}
@@ -104,7 +102,7 @@ class ShouldCompileTest extends Specification {
     private final static sumCalculator =
             """
 								SumCalculator {
-									start() {
+									fn start() {
 										var expected = 8
 										var firstNum:Int = 3
 										var secondNum:Int = 5
@@ -118,7 +116,7 @@ class ShouldCompileTest extends Specification {
 
                                         assert(secondNum % firstNum == 2, true)
 									}
-                                    Unit assert(Boolean actual,Boolean expected) {
+                                    fn assert(Boolean actual,Boolean expected) {
                                         if (actual == expected) {
                                             print "OK"
                                         }
@@ -127,19 +125,19 @@ class ShouldCompileTest extends Specification {
                                         }
                                     }
 
-                                    fooo(){
+                                    fn fooo(){
                                         bla(3)
                                     }
-                                    Int? bla(Int? mip){
+                                    fn bla(Int? mip):Int?{
                                         return mip;
                                     }
 
-                                    Int sum (Int x ,Int y) {
+                                    fn sum (Int x ,Int y):Int {
                                         print x
                                         print y
                                         return x+y
                                     }
-                                    Int mod(Int x ,Int y) {
+                                    fn mod(Int x ,Int y):Int {
                                         print x
                                         print y
                                         return x%y
@@ -151,9 +149,9 @@ class ShouldCompileTest extends Specification {
             """
 							DefaultConstructor {
 
-							start() {
-							print "Hey I am 'start' method. I am not static so the default constructor must have been called, even though it is not defined"
-							}
+                                fn start() {
+                                   print "Hey I am 'start' method. I am not static so the default constructor must have been called, even though it is not defined"
+                                }
 							}
 							"""
 
@@ -161,18 +159,18 @@ class ShouldCompileTest extends Specification {
             """
 							ConstructorWithParams {
 
-							ConstructorWithParams(Int x) {
-							print "Hey I am constructor with parameter x = " + x
-							}
+                                fn ConstructorWithParams(Int x) {
+                                    print "Hey I am constructor with parameter x = " + x
+                                }
 
-							start() {
-							var instance = new ConstructorWithParams(5)
-							instance.doStuff()
-							}
+                                fn start() {
+                                    var instance = new ConstructorWithParams(5)
+                                    instance.doStuff()
+                                }
 
-							doStuff {
-							print "doing stuff on ConstructorWithParams instance"
-							}
+                                fn doStuff {
+                                    print "doing stuff on ConstructorWithParams instance"
+                                }
 							}
 							"""
 
@@ -180,17 +178,17 @@ class ShouldCompileTest extends Specification {
             """
 							ParameterLessConstructor {
 
-							ParameterLessConstructor() {
-							print "Hey I am constructor without parameters"
-							}
+                                fn ParameterLessConstructor() {
+                                    print "Hey I am constructor without parameters"
+                                }
 
-							start() {
-							doStuff()
-							}
+                                fn start() {
+                                    doStuff()
+                                }
 
-							doStuff {
-							print "doing stuff on ParameterLessConstructor object"
-							}
+                                fn doStuff {
+                                    print "doing stuff on ParameterLessConstructor object"
+                                }
 							}
 							"""
 
@@ -198,7 +196,7 @@ class ShouldCompileTest extends Specification {
             """
 							EqualitySyntax {
 
-							 start {
+							 fn start {
 								   objectComparisonTest()
 								   primitiveComparisonTest()
 								   primitiveComparisonTest2()
@@ -206,7 +204,7 @@ class ShouldCompileTest extends Specification {
 								   booleanNegationTest()
 							 }
 
-							 primitiveComparisonTest {
+							 fn primitiveComparisonTest {
 								 var a:Int = 3
 								 var b:Int = 3
 
@@ -233,7 +231,7 @@ class ShouldCompileTest extends Specification {
 
 							 }
 
-                             booleanNegationTest(){
+                             fn booleanNegationTest(){
                                 print "Doing boolean negation"
 
                                 var result = !false
@@ -241,7 +239,7 @@ class ShouldCompileTest extends Specification {
 
                              }
 
-							 objectComparisonTest() {
+							 fn objectComparisonTest() {
 								 var a:Int = 3
 								 var b:Int = 3
 
@@ -267,7 +265,7 @@ class ShouldCompileTest extends Specification {
 								 assert(expected -> true , actual -> result)
 							 }
 
-							 primitiveComparisonTest2 {
+							 fn primitiveComparisonTest2 {
 								  var a = 3
 								  var b = 4
 
@@ -293,7 +291,7 @@ class ShouldCompileTest extends Specification {
 									assert(expected -> true , actual -> result)
 							  }
 
-							 objectComparisonTest2() {
+							 fn objectComparisonTest2() {
 								  var a = 3
 								  var b = 4
 
@@ -319,7 +317,7 @@ class ShouldCompileTest extends Specification {
 								  assert(actual -> result, expected -> true )
 							  }
 
-							  Unit assert(Boolean actual,Boolean expected) {
+							  fn assert(Boolean actual,Boolean expected) {
 								if (actual == expected) {
 									print "OK"
 								}
@@ -335,7 +333,7 @@ class ShouldCompileTest extends Specification {
 
 								globalField : Int
 
-								start(){
+								fn start(){
 
                                     var x = 1
                                     var y = 1
@@ -362,7 +360,7 @@ class ShouldCompileTest extends Specification {
 
 								}
 
-								Unit assert(Boolean actual,Boolean expected) {
+								fn assert(Boolean actual,Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -376,7 +374,7 @@ class ShouldCompileTest extends Specification {
 							GlobalLocal {
 								x : Int
 
-								start(){
+								fn start(){
 									x = 2;
 									var x = 1;
 									print this.x;
@@ -385,7 +383,7 @@ class ShouldCompileTest extends Specification {
 									assert(expected -> true , actual -> x == 1);
 									assert(expected -> true , actual -> this.x == 2);
 								}
-								Unit assert(Boolean actual,Boolean expected) {
+								fn assert(Boolean actual,Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -394,15 +392,15 @@ class ShouldCompileTest extends Specification {
 									}
 								}
 							}
-						""";
+						"""
     private static final staticTest = """
 							StaticTest {
 
-								start(){
+								fn start(){
 									print java.lang.System.out.hashCode();
 									com.kubadziworski.test.Library.execute("Hello!!");
 								}
-								Unit assert(Boolean actual,Boolean expected) {
+								fn assert(Boolean actual,Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -411,16 +409,16 @@ class ShouldCompileTest extends Specification {
 									}
 								}
 							}
-						""";
+						"""
     private static final staticFunctionTest = """
 
 							StaticFunctionTest {
 
-								start(){
+								fn start(){
 									assert(expected -> true , actual -> 1 == 1);
 									this.assert(expected -> true , actual -> 1 == 1);
 								}
-								static Unit assert(Boolean actual,Boolean expected) {
+								fn static assert(Boolean actual,Boolean expected):Unit {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -429,12 +427,12 @@ class ShouldCompileTest extends Specification {
 									}
 								}
 							}
-						""";
+						"""
     private static final importingTest = """
 							import com.kubadziworski.test.Library.*;
 							ImportingTest {
 
-								start(){
+								fn start(){
 									execute("hello");
 									var myStuff = 1
 									print myStuff
@@ -442,7 +440,7 @@ class ShouldCompileTest extends Specification {
 								}
 
 							}
-						""";
+						"""
     private final static getterSetter =
             """
 							GetterSetter {
@@ -457,12 +455,12 @@ class ShouldCompileTest extends Specification {
                                     field = value
                                     print field
                                 }
-								start {
+								fn start {
 									myField = 5
                                     var result = myField == 5
 									assert(result, true)
 								}
-                                Unit assert(Boolean actual,Boolean expected) {
+                                fn assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -482,12 +480,12 @@ class ShouldCompileTest extends Specification {
                                     field = value
                                     print field
                                 }
-								start {
+								fn start {
 									myField = 5
                                     var result = myField == 5
 									assert(result, true)
 								}
-                                Unit assert(Boolean actual,Boolean expected) {
+                                fn assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -502,16 +500,16 @@ class ShouldCompileTest extends Specification {
             """
 							FunctionSingleStatements {
 
-								start {
+								fn start {
 								    print singleIntFunction()
 									assert(singleIntFunction() == 300, true)
 									loggingFunction("OK")
 								}
 
-                                loggingFunction(String stuff) = print stuff
-								Int singleIntFunction() = 300
+                                fn loggingFunction(String stuff) = print stuff
+								fn singleIntFunction():Int = 300
 
-                                Unit assert(Boolean actual,Boolean expected) {
+                                fn assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -525,13 +523,13 @@ class ShouldCompileTest extends Specification {
     private final static multiFiles =
             """
 							FirstClass {
-								start {
+								fn start {
 								    print "Hello First Class"
 								}
 
 							}
                             SecondClass {
-                                start {
+                                fn start {
                                    print "Hello Second Class"
                                 }
                             }
@@ -540,7 +538,7 @@ class ShouldCompileTest extends Specification {
             """
 							IfExpression {
 
-								start {
+								fn start {
                                     var foo = if(true){
                                         5
                                     } else {
@@ -566,7 +564,7 @@ class ShouldCompileTest extends Specification {
 									var blizz = if true 8 else 9
 									assert(blizz == 8, true)
 								}
-                                Unit assert(Boolean actual,Boolean expected) {
+                                fn assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -580,7 +578,7 @@ class ShouldCompileTest extends Specification {
 							TryStatement {
                                 myTrue : Boolean = true
 
-								start(){
+								fn start(){
 								    process();
 								    val y = foo();
                                     print y
@@ -588,7 +586,7 @@ class ShouldCompileTest extends Specification {
                                     print finReturn()
 								}
 
-                                Int finReturn(){
+                                fn finReturn() : Int{
 
                                     try{
                                         return throwingMethod();
@@ -602,11 +600,11 @@ class ShouldCompileTest extends Specification {
 
                                 }
 
-                                Int throwingMethod(){
+                                fn throwingMethod() : Int{
                                     throw new RuntimeException()
                                 }
 
-								Int foo(){
+								fn foo(): Int{
 
 								   try {
 								        if(true){
@@ -628,7 +626,7 @@ class ShouldCompileTest extends Specification {
 
 								}
 
-								process(){
+								fn process(){
                                           try {
                                                 throw new RuntimeException()
 
@@ -656,7 +654,7 @@ class ShouldCompileTest extends Specification {
                                           }
 						        }
 
-								Unit assert(Boolean actual, Boolean expected) {
+								fn assert(Boolean actual, Boolean expected) {
 									if (actual == expected) {
 										print "OK"
 									}
@@ -671,11 +669,11 @@ class ShouldCompileTest extends Specification {
 							FieldInitializing {
 								myField : Int = 10
 
-								start {
+								fn start {
                                     var result = myField == 10
                                     assert(result, true)
 								}
-                                Unit assert(Boolean actual, Boolean expected) {
+                                fn assert(Boolean actual, Boolean expected) {
                                     if (actual == expected) {
                                         print "OK"
                                     }
@@ -691,23 +689,23 @@ class ShouldCompileTest extends Specification {
 							FieldInitializingWithConstructor {
                                 myField : Int = 10
 
-                                FieldInitializingWithConstructor() {
+                                fn FieldInitializingWithConstructor() {
                                     print myField
                                 }
 
-                                start() {
+                                fn start() {
                                     var result = myField == 10
                                     assert(result, true)
                                 }
 
-                             Unit assert(Boolean actual,Boolean expected) {
-                                    if (actual == expected) {
-                                        print "OK"
-                                    }
-                                    else {
-                                        print "TEST FAILED"
-                                    }
-                             }
+                                fn assert(Boolean actual,Boolean expected) {
+                                        if (actual == expected) {
+                                            print "OK"
+                                        }
+                                        else {
+                                            print "TEST FAILED"
+                                        }
+                                }
 							}
             """
     private static final detectReturnCompleteStatement =
@@ -715,18 +713,18 @@ class ShouldCompileTest extends Specification {
                     DetectReturnCompleteStatement {
                         myField : Int = 10
 
-                        start(){
+                        fn start(){
                             assert(foo(), true);
                         }
 
-                        Boolean foo(){
+                        fn foo() : Boolean{
                             if(myField == 10){
                                 return true;
                             }else {
                                 return false;
                             }
                         }
-                         Unit assert(Boolean actual, Boolean expected) {
+                         fn assert(Boolean actual, Boolean expected) {
                                 if (actual == expected) {
                                     print "OK"
                                 }
@@ -741,7 +739,7 @@ class ShouldCompileTest extends Specification {
             """
                     ThrowStatement {
 
-                        start(){
+                        fn start(){
                             try {
                                 throw new RuntimeException();
                             }catch(e : Exception){
@@ -755,7 +753,7 @@ class ShouldCompileTest extends Specification {
     private static final nullValue =
             """
                     NullValue {
-                        start(){
+                        fn start(){
                             var foo:String? = null
                             print foo
 
@@ -776,36 +774,35 @@ class ShouldCompileTest extends Specification {
             """
                 ReturnUnit {
 
-                    start{
+                    fn start{
                         var x = foo();
                         print x
                         var y = bar();
                         print y
                     }
 
-                    foo(){
+                    fn foo(){
                         print "Called method without return"
                     }
-                    bar(){
+                    fn bar(){
                         return Unit.INSTANCE
                     }
-                    baz(){
+                    fn baz(){
                         var x = Unit.INSTANCE
                         return x
                     }
-
                 }
             """
     private static final concreteReturnUnit =
             """
                 ConcreteReturnUnit {
 
-                    start{
+                    fn start{
                         var x = baz();
                         print x!!
                     }
 
-                   Unit? baz(){
+                    fn baz(): Unit?{
                         var x = Unit.INSTANCE
                         return x
                     }
@@ -815,26 +812,25 @@ class ShouldCompileTest extends Specification {
     private static final superCall = """
                 CallParentClass {
 
-                    start(){
+                   fn start(){
                         print toString();
                         var superString = super.toString();
                         assert(superString.contains("myToString"), false)
                         assert(toString().contains("CallParentClass"), true)
+                   }
 
-                    }
-
-                   String toString(){
+                   fn toString():String{
                       return "myToString :: " + super.toString()
-                    }
+                   }
 
-                     Unit assert(Boolean actual,Boolean expected) {
-                            if (actual == expected) {
-                                print "OK"
-                            }
-                            else {
-                                print "TEST FAILED"
-                            }
-                     }
+                   fn assert(Boolean actual,Boolean expected) {
+                        if (actual == expected) {
+                            print "OK"
+                        }
+                        else {
+                            print "TEST FAILED"
+                        }
+                   }
                 }
             """
 
@@ -842,7 +838,7 @@ class ShouldCompileTest extends Specification {
                 import com.kubadziworski.test.DummyClass;
                 TypeCoercion {
 
-                    start(){
+                    fn start(){
                         var dummyClass = new DummyClass();
                         var number:Int? = dummyClass.objectInt();
 
@@ -857,7 +853,7 @@ class ShouldCompileTest extends Specification {
                 import com.kubadziworski.test.DummyClass;
                 PrimitiveFunctions {
 
-                    start(){
+                    fn start(){
 
                        val myVal:Int = 1.plus(3)
                        print myVal.toString()
@@ -867,9 +863,9 @@ class ShouldCompileTest extends Specification {
                        assert(newVal == 1, true)
 
                        print 2 > 1.toLong()
-
                     }
-                    Unit assert(Boolean actual,Boolean expected) {
+                    
+                    fn assert(Boolean actual,Boolean expected) {
                             if (actual == expected) {
                                 print "OK"
                             }
@@ -884,7 +880,7 @@ class ShouldCompileTest extends Specification {
                     myCondition: Boolean = true
                     mySecondCondition: Boolean = false
                     
-                    start(){
+                   fn start(){
                         print testTry()
                         assert(testTry() == 5, true)
                         
@@ -897,7 +893,7 @@ class ShouldCompileTest extends Specification {
                         assert(testTry() == 3, true)
                     }
                     
-                    Int testTry() {
+                    fn testTry():Int {
                         try {
                             try {
                                 return 1
@@ -917,7 +913,7 @@ class ShouldCompileTest extends Specification {
                         }
                     }
                     
-                    Unit assert(Boolean actual,Boolean expected) {
+                    fn assert(Boolean actual,Boolean expected) {
                             if (actual == expected) {
                                 print "OK"
                             }
@@ -950,29 +946,29 @@ class ShouldCompileTest extends Specification {
         method1.invoke(null, arggg) == null;
 
         where:
-        code                     | filename
-        helloWorld               | "HelloWorld.enk"
-        loopsCode                | "Loops.enk"
-        allTypes                 | "AllPrimitiveTypes.enk"
-        defaultParams            | "DefaultParamTest.enk"
-        fields                   | "Fields.enk"
-        namedParams              | "NamedParamsTest.enk"
-        sumCalculator            | "SumCalculator.enk"
-        defaultConstructor       | "DefaultConstructor.enk"
-        parameterLessConsturctor | "ParameterLessConstructor.enk"
-        construcotrWithParams    | "ConstructorWithParams.enk"
-        equalityTest             | "EqualitySyntax.enk"
-        unaryExpressionTest      | "UnaryExpressions.enk"
-        globalLocal              | "GlobalLocal.enk"
-        staticTest               | "StaticTest.enk"
-        staticFunctionTest       | "StaticFunctionTest.enk"
-        importingTest            | "ImportingTest.enk"
-        getterSetter             | "GetterSetter.enk"
-        getterStatement          | "GetterStatement.enk"
-        functionSingleStatements | "FunctionSingleStatements.enk"
-        ifExpressions            | "IfExpression.enk"
-        myTryStatement             | "TryStatement.enk"
-        fieldInitializing        | "FieldInitializing.enk"
+        code                             | filename
+        helloWorld                       | "HelloWorld.enk"
+        loopsCode                        | "Loops.enk"
+        allTypes                         | "AllPrimitiveTypes.enk"
+        defaultParams                    | "DefaultParamTest.enk"
+        fields                           | "Fields.enk"
+        namedParams                      | "NamedParamsTest.enk"
+        sumCalculator                    | "SumCalculator.enk"
+        defaultConstructor               | "DefaultConstructor.enk"
+        parameterLessConsturctor         | "ParameterLessConstructor.enk"
+        construcotrWithParams            | "ConstructorWithParams.enk"
+        equalityTest                     | "EqualitySyntax.enk"
+        unaryExpressionTest              | "UnaryExpressions.enk"
+        globalLocal                      | "GlobalLocal.enk"
+        staticTest                       | "StaticTest.enk"
+        staticFunctionTest               | "StaticFunctionTest.enk"
+        importingTest                    | "ImportingTest.enk"
+        getterSetter                     | "GetterSetter.enk"
+        getterStatement                  | "GetterStatement.enk"
+        functionSingleStatements         | "FunctionSingleStatements.enk"
+        ifExpressions                    | "IfExpression.enk"
+        myTryStatement                   | "TryStatement.enk"
+        fieldInitializing                | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
         detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
         throwStatement                   | "ThrowStatement.enk"

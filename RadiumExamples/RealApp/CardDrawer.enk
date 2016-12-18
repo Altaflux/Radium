@@ -1,6 +1,10 @@
+
+import java.util.ArrayList;
+import java.util.List;
+
 CardDrawer {
-    start {
-        var cards = new List()
+    fn start {
+        var cards = new java.util.ArrayList()
         addNumberedCards(cards)
         addCardWithAllColors("Ace",cards)
         addCardWithAllColors("Queen",cards)
@@ -9,21 +13,21 @@ CardDrawer {
         drawCardsForPlayers(playersAmount -> 5,cardsList -> cards)
     }
 
-    addNumberedCards(List cardsList,int first=2, int last=10) {
+    fn addNumberedCards(List cardsList,Int first=2, Int last=10) {
         for i from first to last {
             var numberString = new java.lang.Integer(i).toString()
             addCardWithAllColors(numberString,cardsList)
         }
     }
 
-    addCardWithAllColors(string pattern,List cardsList) {
+    fn addCardWithAllColors(String pattern,List cardsList) {
         cardsList.add(new Card("Clubs",pattern))
         cardsList.add(new Card("Diamonds",pattern))
         cardsList.add(new Card("Hearts",pattern))
         cardsList.add(new Card("Spades",pattern))
     }
 
-    drawCardsForPlayers(List cardsList,int playersAmount = 3,int cardsPerPlayer = 5) {
+    fn drawCardsForPlayers(List cardsList,Int playersAmount = 3,Int cardsPerPlayer = 5) {
         if(cardsList.size() < (playersAmount * cardsPerPlayer)) {
             print "ERROR - Not enough cards"
             return

@@ -1,12 +1,11 @@
 Loops {
-    start() {
-        print "incrementing from 1 to 10"
-        for x from 1 to 10 {
-            print x
+    fn start() {
+        for i from 3 to 1 {
+            method(i)
         }
-        print "decrementing from 10 to 1"
-        for x from 10 to 1 {
-            print x
-        }
+    }
+
+    fn method(Int x) {
+        print x
     }
 }

@@ -1,8 +1,9 @@
 UnaryExpressions {
 
-    int globalField
+    globalField : Int
 
-    start(){
+    fn start(){
+
         var x = 1
         var y = 1
 
@@ -17,13 +18,18 @@ UnaryExpressions {
 
         globalField = 1
 
-        var incGlobal = globalField++
-        var result = incGlobal < globalField
+        var incSuffix = globalField++
+        var result = incSuffix < globalField
         assert(expected -> true , actual -> result)
+
+        globalField = 1
+        var incPrefix = ++globalField
+        var result2 = incPrefix == globalField
+        assert(expected -> true , actual -> result2)
 
     }
 
-    void assert(boolean actual,boolean expected) {
+    fn assert(Boolean actual,Boolean expected) {
         if (actual == expected) {
             print "OK"
         }

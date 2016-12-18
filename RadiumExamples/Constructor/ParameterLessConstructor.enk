@@ -1,14 +1,14 @@
 ParameterLessConstructor {
 
-    ParameterLessConstructor() {
+    fn ParameterLessConstructor() {
         print "Hey I am constructor without parameters"
     }
 
-    start() {
+    fn start() {
         doStuff()
     }
 
-    doStuff {
+    fn doStuff {
         print "doing stuff on ParameterLessConstructor object"
     }
 }
