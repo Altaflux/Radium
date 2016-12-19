@@ -1,0 +1,88 @@
+TryStatement {
+    myTrue : Boolean = true
+
+    fn start(){
+        process();
+        val y = foo();
+        print y
+
+        print finReturn()
+    }
+
+    fn finReturn() : Int{
+
+        try{
+            return throwingMethod();
+        }catch(e: Exception){
+            return 2
+        }finally {
+            if(myTrue){
+                return 1
+            }
+        }
+
+    }
+
+    fn throwingMethod() : Int{
+        throw new RuntimeException()
+    }
+
+    fn foo(): Int{
+
+       try {
+            if(true){
+                print "primer"
+                return 1;
+            }
+            print "segundo"
+            return 2;
+       }
+       catch(e:RuntimeException){
+            print "tercer"
+            return 3;
+       }catch(e: Exception){
+         print "cuarto"
+         return 5;
+       }finally {
+            print "hola"
+       }
+
+    }
+
+    fn process(){
+              try {
+                    throw new RuntimeException()
+
+                } catch (e:RuntimeException){
+                    print "OK"
+                }
+
+                try {
+                   throw new RuntimeException()
+
+                } catch (e:RuntimeException){
+                    print "OK"
+                }catch(e:Exception){
+                    print "FAILED"
+                }
+                try {
+                    throw new RuntimeException()
+
+                } catch (e:RuntimeException){
+                    print "OK"
+                }catch(e:Exception){
+                    print "FAILED"
+                }finally{
+                    print "finally called OK"
+              }
+    }
+
+    fn assert(Boolean actual, Boolean expected) {
+        if (actual == expected) {
+            print "OK"
+        }
+        else {
+            print "TEST FAILED"
+        }
+    }
+}

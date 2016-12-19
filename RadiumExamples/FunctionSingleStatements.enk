@@ -1,0 +1,20 @@
+FunctionSingleStatements {
+
+    fn start {
+        print singleIntFunction()
+        assert(singleIntFunction() == 300, true)
+        loggingFunction("OK")
+    }
+
+    fn loggingFunction(String stuff) = print stuff
+    fn singleIntFunction():Int = 300
+
+    fn assert(Boolean actual,Boolean expected) {
+        if (actual == expected) {
+            print "OK"
+        }
+        else {
+            print "TEST FAILED"
+        }
+    }
+}

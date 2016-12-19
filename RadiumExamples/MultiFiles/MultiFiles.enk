@@ -1,0 +1,11 @@
+FirstClass {
+    fn start {
+        print "Hello First Class"
+    }
+
+}
+SecondClass {
+    fn start {
+       print "Hello Second Class"
+    }
+}

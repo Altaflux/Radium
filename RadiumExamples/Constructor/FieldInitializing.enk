@@ -1,0 +1,16 @@
+FieldInitializing {
+    myField : Int = 10
+
+    fn start {
+        var result = myField == 10
+        assert(result, true)
+    }
+    fn assert(Boolean actual, Boolean expected) {
+        if (actual == expected) {
+            print "OK"
+        }
+        else {
+            print "TEST FAILED"
+        }
+    }
+}
