@@ -99,9 +99,9 @@ packageDeclaration
 	:   'package' ID ('.' ID)* ';'
 	;
 
-classDeclaration : className '{' classBody '}' ;
+classDeclaration : className  classBody  ;
 className : qualifiedName ;
-classBody : (field | function)* ;
+classBody : '{' (field | function)* '}' ;
 field : fieldModifier* name ':' type (EQUALS expression)? getter? setter?;
 
 getter: 'get()' functionContent ;
