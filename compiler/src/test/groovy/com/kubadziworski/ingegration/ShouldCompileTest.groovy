@@ -626,31 +626,31 @@ class ShouldCompileTest extends Specification {
                                 }
                             
                                 fn process(){
-                                          try {
-                                                throw new RuntimeException()
-                            
-                                            } catch (e:RuntimeException){
-                                                print "OK"
-                                            }
-                            
-                                            try {
-                                               throw new RuntimeException()
-                            
-                                            } catch (e:RuntimeException){
-                                                print "OK"
-                                            }catch(e:Exception){
-                                                print "FAILED"
-                                            }
-                                            try {
-                                                throw new RuntimeException()
-                            
-                                            } catch (e:RuntimeException){
-                                                print "OK"
-                                            }catch(e:Exception){
-                                                print "FAILED"
-                                            }finally{
-                                                print "finally called OK"
-                                          }
+                                    try {
+                                        throw new RuntimeException()
+                                    
+                                    } catch (e:RuntimeException){
+                                        print "OK"
+                                    }
+                                    
+                                    try {
+                                       throw new RuntimeException()
+                                    
+                                    } catch (e:RuntimeException){
+                                        print "OK"
+                                    }catch(e:Exception){
+                                        print "FAILED"
+                                    }
+                                    try {
+                                        throw new RuntimeException()
+                                    
+                                    } catch (e:RuntimeException){
+                                        print "OK"
+                                    }catch(e:Exception){
+                                        print "FAILED"
+                                    }finally{
+                                        print "finally called OK"
+                                    }
                                 }
                             
                                 fn assert(Boolean actual, Boolean expected) {
@@ -922,6 +922,26 @@ class ShouldCompileTest extends Specification {
                     }               
                 }
             """
+    private static final parenthesisExpressions = """
+                            ParenthesisExpressions {
+
+                                fn start(){
+                                    val sumNoParenthesis = 5 + 2 * 10;
+                                    val sumParenthesis = (5 + 2) * 10;
+                                    
+                                    assert(expected -> true , actual -> sumNoParenthesis == 25);
+                                    assert(expected -> true , actual -> sumParenthesis == 70);
+                                }
+                                fn assert(Boolean actual,Boolean expected) {
+                                    if (actual == expected) {
+                                        print "OK"
+                                    }
+                                    else {
+                                        print "TEST FAILED"
+                                    }
+                                }
+                            }
+                        """
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -970,14 +990,15 @@ class ShouldCompileTest extends Specification {
         fieldInitializing                | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
         detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
-        throwStatement                   | "ThrowStatement.enk"
-        nullValue                        | "NullValue.enk"
-        returnUnit                       | "ReturnUnit.enk"
-        concreteReturnUnit               | "ConcreteReturnUnit.enk"
-        superCall                        | "CallParentClass.enk"
-        typeCoercion                     | "TypeCoercion.enk"
-        primitiveFunctions               | "PrimitiveFunctions.enk"
-        innerTry                         | "InnerTry.enk"
+        throwStatement         | "ThrowStatement.enk"
+        nullValue              | "NullValue.enk"
+        returnUnit             | "ReturnUnit.enk"
+        concreteReturnUnit     | "ConcreteReturnUnit.enk"
+        superCall              | "CallParentClass.enk"
+        typeCoercion           | "TypeCoercion.enk"
+        primitiveFunctions     | "PrimitiveFunctions.enk"
+        innerTry               | "InnerTry.enk"
+        parenthesisExpressions | "ParenthesisExpressions.enk"
     }
 
 

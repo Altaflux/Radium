@@ -30,6 +30,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     private final BlockStatementVisitor blockStatementVisitor;
     private final TryCatchExpressionVisitor tryCatchExpressionVisitor;
     private final NotNullCastExpressionVisitor notNullCastExpressionVisitor;
+    private final ParenthesisExpressionVisitor parenthesisExpressionVisitor;
 
     public ExpressionVisitor(Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
@@ -43,6 +44,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
         blockStatementVisitor = new BlockStatementVisitor(scope);
         tryCatchExpressionVisitor = new TryCatchExpressionVisitor(this, scope);
         notNullCastExpressionVisitor = new NotNullCastExpressionVisitor(this);
+        parenthesisExpressionVisitor = new ParenthesisExpressionVisitor(this);
     }
 
     @Override
@@ -137,5 +139,10 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     @Override
     public ConditionalExpression visitConditionalExpression(@NotNull ConditionalExpressionContext ctx) {
         return conditionalExpressionVisitor.visitConditionalExpression(ctx);
+    }
+
+    @Override
+    public Expression visitParenthesisExpression(@NotNull EnkelParser.ParenthesisExpressionContext ctx) {
+        return parenthesisExpressionVisitor.visitParenthesisExpression(ctx);
     }
 }

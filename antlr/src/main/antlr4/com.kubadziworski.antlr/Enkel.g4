@@ -128,7 +128,6 @@ statement : block
            | printStatement
            | forStatement
            | returnStatement
-           //| tryStatement
            | throwStatement
            | expression ;
 
@@ -153,20 +152,20 @@ argumentList : argument? (',' a=argument)* #UnnamedArgumentsList
 argument : expression ;
 namedArgument : name '->' expression ;
 
-expression : THIS #ThisReference
-           | variableReference #VarReference
-           | owner=expression '.' variableReference  #VarReference
+
+
+expression
+           : primary #PrimaryExpression
            | SUPER '.' functionName '(' argumentList ')' #FunctionCall
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
            | functionName '(' argumentList ')' #FunctionCall
            | superCall='super' '('argumentList ')' #Supercall
            | newCall='new' typeName '('argumentList ')' #ConstructorCall
-           | value        #ValueExpr
+           | variableReference #VarReference
+           | owner=expression '.' variableReference  #VarReference
            | expression '!!' #NotNullCastExpression
            | expr=expression operation='--'  #SuffixExpression
            | expr=expression operation='++'  #SuffixExpression
-           //| expr=expression {!here(LineTerminator)}? operation='--'  #SuffixExpression
-           //| expr=expression {!here(LineTerminator)}? operation='++'  #SuffixExpression
            | 'try' block ((catchBlock+ | finallyBlock)  finallyBlock?) #TryExpression
            |  'if'  ('(')? expression (')')? trueStatement=returnable ('else' falseStatement=returnable)? #IfExpression
            | operation='--' (expression) #PrefixExpression
@@ -174,26 +173,23 @@ expression : THIS #ThisReference
            | operation='-' expression #SignExpression
            | operation='+' expression #SignExpression
            | operation='!' expression #UnaryExpression
-
-           |  '('expression opType='*' expression')' #BinaryExpression
            | expression opType='*' expression  #BinaryExpression
-           | '(' expression opType='/' expression ')' #BinaryExpression
            | expression opType='/' expression #BinaryExpression
-           | '(' expression opType='+' expression ')' #BinaryExpression
            | expression opType='+' expression #BinaryExpression
-           | '(' expression opType='-' expression ')' #BinaryExpression
            | expression opType='-' expression #BinaryExpression
-           | '(' expression opType='%' expression ')' #BinaryExpression
            | expression opType='%' expression #BinaryExpression
-
            | expression cmp='>' expression #ConditionalExpression
-             | expression cmp='<' expression #ConditionalExpression
-             | expression cmp='==' expression #ConditionalExpression
-             | expression cmp='!=' expression #ConditionalExpression
-             | expression cmp='>=' expression #ConditionalExpression
-             | expression cmp='<=' expression #ConditionalExpression
+           | expression cmp='<' expression #ConditionalExpression
+           | expression cmp='==' expression #ConditionalExpression
+           | expression cmp='!=' expression #ConditionalExpression
+           | expression cmp='>=' expression #ConditionalExpression
+           | expression cmp='<=' expression #ConditionalExpression
            ;
-
+primary
+    : '('expression')' #ParenthesisExpression
+    | THIS #ThisReference
+    | value #ValueExpr
+    ;
 
 variableReference : ID ;
 

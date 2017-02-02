@@ -167,4 +167,9 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     public Statement visitAssignment(@NotNull EnkelParser.AssignmentContext ctx) {
         return assignmentStatementVisitor.visitAssignment(ctx);
     }
+
+    @Override
+    public Expression visitParenthesisExpression(@NotNull EnkelParser.ParenthesisExpressionContext ctx) {
+        return expressionVisitor.visitParenthesisExpression(ctx);
+    }
 }
