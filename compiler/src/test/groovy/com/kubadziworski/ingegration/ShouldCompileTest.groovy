@@ -844,6 +844,8 @@ class ShouldCompileTest extends Specification {
                         var sum = number!! + 1.5
                         print sum
                         number = null
+                        
+                        dummyClass.myString("foo")
                     }
                 }
             """

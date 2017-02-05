@@ -9,4 +9,8 @@ public class DummyClass {
     public Integer objectInt(){
         return 5;
     }
+
+    public String myString(@NotNull String myString) {
+        return myString;
+    }
 }

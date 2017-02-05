@@ -32,9 +32,9 @@ class ClazzImportResolver implements BaseImportResolver {
     static {
         List<URL> bootList = Arrays.stream(ManagementFactory.getRuntimeMXBean()
                 .getBootClassPath().split(java.io.File.pathSeparator))
-                .map(ClazzImportResolver::pathToUrl).filter(url -> url != null).collect(Collectors.toList());
+                .map(ClazzImportResolver::pathToUrl).filter(Objects::nonNull).collect(Collectors.toList());
         List<URL> systemPathList = Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
-                .map(ClazzImportResolver::pathToUrl).filter(url -> url != null).collect(Collectors.toList());
+                .map(ClazzImportResolver::pathToUrl).filter(Objects::nonNull).collect(Collectors.toList());
 
         bootClassPath = ListUtils.sum(systemPathList,
                 ListUtils.sum(bootList, ClasspathHelper.forClassLoader().stream().collect(Collectors.toList())));
@@ -66,7 +66,7 @@ class ClazzImportResolver implements BaseImportResolver {
                 .filter(s -> s.matches(importPackage.replace(".", "/") + "/" + "[^/]*.class"))
                 .map(clazzName -> clazzName.replace("/", ".").replace(".class", ""))
                 .map(ClazzImportResolver::getClazz)
-                .filter(aClass -> aClass != null)
+                .filter(Objects::nonNull)
                 .map(aClass -> new ClassDescriptor(ClassUtils.getSimpleName(aClass), ClassUtils.getPackageName(aClass)))
                 .collect(Collectors.toList());
     }
@@ -108,17 +108,18 @@ class ClazzImportResolver implements BaseImportResolver {
     }
 
     private List<FunctionDescriptor> getFunctionDescriptorFromClass(Class clazz, String methodName) {
+        JavaClassType javaClassType = new JavaClassType(clazz);
         Method[] methods = clazz.getDeclaredMethods();
         List<FunctionDescriptor> functionDescriptors = new ArrayList<>();
         for (Method method : methods) {
             if (Modifier.isStatic(method.getModifiers()) && !Modifier.isPrivate(method.getModifiers())) {
                 if (methodName == null) {
-                    FunctionSignature signature = ReflectionObjectToSignatureMapper.fromMethod(method);
+                    FunctionSignature signature = ReflectionObjectToSignatureMapper.fromMethod(method, javaClassType);
                     FunctionDescriptor functionDescriptor = new FunctionDescriptor(method.getName(), signature);
                     functionDescriptors.add(functionDescriptor);
                 } else {
                     if (methodName.equals(method.getName())) {
-                        FunctionSignature signature = ReflectionObjectToSignatureMapper.fromMethod(method);
+                        FunctionSignature signature = ReflectionObjectToSignatureMapper.fromMethod(method, javaClassType);
                         FunctionDescriptor functionDescriptor = new FunctionDescriptor(method.getName(), signature);
                         functionDescriptors.add(functionDescriptor);
                     }

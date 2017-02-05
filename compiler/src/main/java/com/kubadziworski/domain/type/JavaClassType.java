@@ -3,11 +3,18 @@ package com.kubadziworski.domain.type;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
+import com.kubadziworski.exception.CompilationException;
+import com.kubadziworski.util.Lazy;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.ClassNode;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -18,12 +25,14 @@ public class JavaClassType implements Type {
     private final org.objectweb.asm.Type asmType;
     //private static Map<Type, LinkedMap<Class, Class[]>> cachedInheritance = new HashMap<>();
 
+    private volatile Supplier<ClassNode> classNodeSupplier;
+    private static final Map<JavaClassType, ClassNode> classNodeCache = new HashMap<>();
 
     public JavaClassType(Class clazz) {
         aClass = clazz;
         name = clazz.getCanonicalName();
         asmType = org.objectweb.asm.Type.getType(clazz);
-
+        classNodeSupplier = Lazy.lazily(() -> classNodeSupplier = Lazy.value(createClassNode()));
     }
 
     @Override
@@ -158,7 +167,7 @@ public class JavaClassType implements Type {
             iteratedClass = iteratedClass.getSuperclass();
         }
         return result.stream()
-                .map(ReflectionObjectToSignatureMapper::fromMethod)
+                .map(method -> ReflectionObjectToSignatureMapper.fromMethod(method, new JavaClassType(method.getDeclaringClass())))
                 .collect(Collectors.toList());
     }
 
@@ -175,6 +184,25 @@ public class JavaClassType implements Type {
     @Override
     public Nullability isNullable() {
         return Nullability.NOT_NULL;
+    }
+
+    public ClassNode getClassNode() {
+        return classNodeSupplier.get();
+    }
+
+    private ClassNode createClassNode() {
+        if (classNodeCache.containsKey(this)) {
+            return classNodeCache.get(this);
+        }
+        ClassNode classNode = new ClassNode(Opcodes.ASM5);
+        try {
+            ClassReader classVisitor = new ClassReader(this.getTypeClass().getName());
+            classVisitor.accept(classNode, ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES);
+        } catch (IOException e) {
+            throw new CompilationException("Could not parse class: " + this.getTypeClass().getName(), e);
+        }
+        classNodeCache.put(this, classNode);
+        return classNode;
     }
 
     @Override

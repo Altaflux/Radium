@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * to validate against probable runtime errors and element contract violations.
  */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
 public @interface NotNull {
     String value() default "";

@@ -23,7 +23,7 @@ public class ClassPathScope {
             Class<?>[] params = arguments.stream()
                     .map(JavaClassType::getTypeClass).toArray(Class<?>[]::new);
             Method method = MethodUtils.getMatchingAccessibleMethod(methodOwnerClass, methodName, params);
-            return Optional.of(ReflectionObjectToSignatureMapper.fromMethod(method));
+            return Optional.of(ReflectionObjectToSignatureMapper.fromMethod(method, owner));
         } catch (Exception e) {
             return Optional.empty();
         }
