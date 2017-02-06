@@ -61,15 +61,29 @@ class ClazzImportResolver implements BaseImportResolver {
 
     @Override
     public List<DeclarationDescriptor> extractClassesFromPackage(String importPackage) {
-
+        final String fixedImportPackage = importPackage.replace(".", "/") + "/" + "[^/]*.class";
         return reflections.getResources(Pattern.compile("[^/]*.class")).stream()
-                .filter(s -> s.matches(importPackage.replace(".", "/") + "/" + "[^/]*.class"))
-                .map(clazzName -> clazzName.replace("/", ".").replace(".class", ""))
-                .map(ClazzImportResolver::getClazz)
-                .filter(Objects::nonNull)
-                .map(aClass -> new ClassDescriptor(ClassUtils.getSimpleName(aClass), ClassUtils.getPackageName(aClass)))
+                .filter(s -> s.matches(fixedImportPackage))
+                .map(ClazzImportResolver::createClassDescriptor)
                 .collect(Collectors.toList());
     }
+
+
+    private static ClassDescriptor createClassDescriptor(String clazz) {
+        final int i = clazz.lastIndexOf('/');
+        String packageName;
+        if (i != -1) {
+            packageName = clazz.substring(0, i).replace('/', '.');
+        } else {
+            packageName = StringUtils.EMPTY;
+        }
+
+        int extraSkip = packageName.length() > 0 ? 1 : 0;
+        String name = clazz.substring(packageName.length() + extraSkip).replace('$', '.');
+        name = name.substring(0, name.indexOf(".class"));
+        return new ClassDescriptor(name, packageName);
+    }
+
 
     @Override
     public Optional<List<DeclarationDescriptor>> getMethodsOrFields(String importPackage) {
