@@ -944,6 +944,30 @@ class ShouldCompileTest extends Specification {
                                 }
                             }
                         """
+    private final static inlineCode =
+            """
+                            import com.kubadziworski.test.DummyClass;
+                            InlineCode {
+
+                                fn start {
+                                    var x = new DummyClass();
+                                    x.faaaaaa("hello world!")
+                                    print this.toString()
+                                }
+                                
+                                fn myCode(){
+                                    var x = "holis"
+                                    print x
+                                }
+                                fn myMethod() {
+                                    com.kubadziworski.test.DummyClass.fooooo(this.toString())
+                                }
+                                
+                                fn myMethods() {
+                                   print this.toString()
+                                }
+                            }
+							"""
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -991,16 +1015,17 @@ class ShouldCompileTest extends Specification {
         myTryStatement                   | "TryStatement.enk"
         fieldInitializing                | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
-        detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
-        throwStatement         | "ThrowStatement.enk"
-        nullValue              | "NullValue.enk"
-        returnUnit             | "ReturnUnit.enk"
-        concreteReturnUnit     | "ConcreteReturnUnit.enk"
-        superCall              | "CallParentClass.enk"
-        typeCoercion           | "TypeCoercion.enk"
-        primitiveFunctions     | "PrimitiveFunctions.enk"
-        innerTry               | "InnerTry.enk"
-        parenthesisExpressions | "ParenthesisExpressions.enk"
+        detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
+        throwStatement                | "ThrowStatement.enk"
+        nullValue                     | "NullValue.enk"
+        returnUnit                    | "ReturnUnit.enk"
+        concreteReturnUnit            | "ConcreteReturnUnit.enk"
+        superCall                     | "CallParentClass.enk"
+        typeCoercion                  | "TypeCoercion.enk"
+        primitiveFunctions            | "PrimitiveFunctions.enk"
+        innerTry                      | "InnerTry.enk"
+        parenthesisExpressions        | "ParenthesisExpressions.enk"
+        inlineCode                    | "InlineCode.enk"
     }
 
 

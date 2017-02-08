@@ -49,20 +49,20 @@ public class ExpressionGenerator {
     }
 
     private ExpressionGenerator(StatementGenerator generator,
-                               ReferenceExpressionGenerator referenceExpressionGenerator,
-                               ValueExpressionGenerator valueExpressionGenerator,
-                               CallExpressionGenerator callExpressionGenerator,
-                               ArithmeticExpressionGenerator arithmeticExpressionGenerator,
-                               ConditionalExpressionGenerator conditionalExpressionGenerator,
-                               ParameterExpressionGenerator parameterExpressionGenerator,
-                               PrefixExpressionGenerator prefixExpressionGenerator,
-                               PopExpressionGenerator popExpressionGenerator,
-                               DupExpressionGenerator dupExpressionGenerator,
-                               UnaryExpressionGenerator unaryExpressionGenerator,
-                               BlockStatementGenerator blockStatementGenerator,
-                               IfStatementGenerator ifExpressionGenerator,
-                               ArgumentStatementGenerator argumentStatementGenerator,
-                               NotNullCastExpressionGenerator notNullCastExpressionGenerator) {
+                                ReferenceExpressionGenerator referenceExpressionGenerator,
+                                ValueExpressionGenerator valueExpressionGenerator,
+                                CallExpressionGenerator callExpressionGenerator,
+                                ArithmeticExpressionGenerator arithmeticExpressionGenerator,
+                                ConditionalExpressionGenerator conditionalExpressionGenerator,
+                                ParameterExpressionGenerator parameterExpressionGenerator,
+                                PrefixExpressionGenerator prefixExpressionGenerator,
+                                PopExpressionGenerator popExpressionGenerator,
+                                DupExpressionGenerator dupExpressionGenerator,
+                                UnaryExpressionGenerator unaryExpressionGenerator,
+                                BlockStatementGenerator blockStatementGenerator,
+                                IfStatementGenerator ifExpressionGenerator,
+                                ArgumentStatementGenerator argumentStatementGenerator,
+                                NotNullCastExpressionGenerator notNullCastExpressionGenerator) {
         this.generator = generator;
         this.referenceExpressionGenerator = referenceExpressionGenerator;
         this.valueExpressionGenerator = valueExpressionGenerator;
@@ -138,7 +138,7 @@ public class ExpressionGenerator {
     }
 
     public void generate(FunctionCall functionCall, StatementGenerator statementGenerator) {
-        callExpressionGenerator.generate(functionCall, statementGenerator);
+        callExpressionGenerator.generate(functionCall, getScope(), statementGenerator);
     }
 
     public void generate(Addition expression, StatementGenerator statementGenerator) {

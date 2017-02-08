@@ -3,6 +3,7 @@ package com.kubadziworski.parsing.visitor;
 import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.FunctionDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.ParametersListContext;
+import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
@@ -37,11 +38,11 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
         String functionName = ctx.functionName().getText();
         Type returnType = TypeResolver.getFromTypeContext(ctx.type(), scope);
 
-        if(returnType.getName().equals("radium.Unit") && returnType.isNullable().equals(Type.Nullability.NULLABLE)){
+        if (returnType.getName().equals("radium.Unit") && returnType.isNullable().equals(Type.Nullability.NULLABLE)) {
             returnType = new TypeProjection(UnitType.CONCRETE_INSTANCE, Type.Nullability.NULLABLE);
         }
 
-        if(returnType.getName().equals("radium.Unit") && returnType.isNullable().equals(Type.Nullability.NOT_NULL)){
+        if (returnType.getName().equals("radium.Unit") && returnType.isNullable().equals(Type.Nullability.NOT_NULL)) {
             returnType = new TypeProjection(VoidType.INSTANCE, Type.Nullability.NOT_NULL);
         }
 
@@ -54,6 +55,13 @@ public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature
             }
             return 0;
         }).mapToInt(Integer::intValue).sum();
+
+        boolean inline = ctx.methodModifiers().stream()
+                .anyMatch(methodModifiersContext -> methodModifiersContext.getText().equals("inline"));
+
+        if (inline) {
+            modifiers = modifiers + RadiumModifiers.INLINE;
+        }
 
         //TODO SET CORRECTLY MODIFIERS
         if (parametersCtx != null) {

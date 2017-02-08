@@ -1,5 +1,7 @@
 package com.kubadziworski.domain.type;
 
+import com.kubadziworski.bytecodegeneration.inline.CodeInliner;
+import com.kubadziworski.bytecodegeneration.inline.RadiumCodeInliner;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
@@ -52,8 +54,8 @@ public class EnkelType implements Type {
         return signatures;
     }
 
-    public Optional<Scope> getScope() {
-        return Optional.ofNullable(scope);
+    public Scope getScope() {
+        return scope;
     }
 
     @Override
@@ -105,6 +107,11 @@ public class EnkelType implements Type {
     @Override
     public Nullability isNullable() {
         return Nullability.NOT_NULL;
+    }
+
+
+    public CodeInliner getInliner() {
+        return RadiumCodeInliner.INSTANCE;
     }
 
     @Override

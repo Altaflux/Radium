@@ -5,6 +5,7 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.bytecodegeneration.util.PropertyAccessorsGenerator;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
+import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.Parameter;
@@ -39,8 +40,14 @@ public class MethodGenerator {
         String description = DescriptorFactory.getMethodDescriptor(function);
         Block block = (Block) function.getRootStatement();
         Scope scope = block.getScope();
-        MethodVisitor mvs = classWriter.visitMethod(function.getModifiers(), name, description, null, null);
+
+        int mod = function.getModifiers();
+        if (RadiumModifiers.isInline(mod)) {
+            mod = mod - RadiumModifiers.INLINE;
+        }
+        MethodVisitor mvs = classWriter.visitMethod(mod, name, description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
+        generateInlineAnnotation(function, mv);
         generateMutabilityAnnotations(function, mv);
 
         mv.visitCode();
@@ -88,6 +95,12 @@ public class MethodGenerator {
         mv.visitEnd();
     }
 
+    private void generateInlineAnnotation(Function function, InstructionAdapter mv) {
+        if (RadiumModifiers.isInline(function.getModifiers())) {
+            AnnotationVisitor av0 = mv.visitAnnotation("Lradium/internal/InlineOnly;", false);
+            av0.visitEnd();
+        }
+    }
 
     private void generateMutabilityAnnotations(Function function, InstructionAdapter mv) {
         if (function.getReturnType().isNullable().equals(Type.Nullability.NULLABLE)) {

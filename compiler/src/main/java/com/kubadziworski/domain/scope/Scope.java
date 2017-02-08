@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.scope;
 
 import com.google.common.collect.Lists;
+import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.MetaData;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.resolver.ImportResolver;
@@ -28,7 +29,7 @@ public class Scope {
     private final Map<String, Field> fields;
     private final ImportResolver importResolver;
     private final MetaData metaData;
-
+    private final List<Function> methods;
 
     private final FunctionSignature currentFunctionSignature;
 
@@ -40,6 +41,7 @@ public class Scope {
         fields = new LinkedMap<>();
         this.importResolver = importResolver;
         this.currentFunctionSignature = null;
+        this.methods = new ArrayList<>();
     }
 
     public Scope(Scope scope) {
@@ -50,6 +52,7 @@ public class Scope {
         localVariables = new LinkedMap<>(scope.getLocalVariables());
         this.importResolver = scope.getImportResolver();
         this.currentFunctionSignature = scope.currentFunctionSignature;
+        this.methods = scope.methods;
     }
 
     public Scope(Scope scope, FunctionSignature functionSignature) {
@@ -60,6 +63,7 @@ public class Scope {
         localVariables = new LinkedMap<>(scope.getLocalVariables());
         this.importResolver = scope.getImportResolver();
         this.currentFunctionSignature = functionSignature;
+        this.methods = scope.methods;
     }
 
     public void addSignature(FunctionSignature signature) {
@@ -161,6 +165,14 @@ public class Scope {
 
     public List<FunctionSignature> getFunctionSignatures() {
         return functionSignatures;
+    }
+
+    public final void addMethods(List<Function> functions) {
+        methods.addAll(functions);
+    }
+
+    public List<Function> getMethods() {
+        return methods;
     }
 
     public List<FunctionSignature> getConstructorSignatures() {

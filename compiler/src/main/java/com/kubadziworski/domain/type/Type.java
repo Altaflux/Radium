@@ -1,11 +1,13 @@
 package com.kubadziworski.domain.type;
 
+import com.kubadziworski.bytecodegeneration.inline.CodeInliner;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
 import com.kubadziworski.util.TypeResolver;
+
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,10 @@ public interface Type {
     Nullability isNullable();
 
     org.objectweb.asm.Type getAsmType();
+
+    default CodeInliner getInliner() {
+        throw new UnsupportedOperationException("Type: " + getClass() + " does not supports inlining");
+    }
 
     default FunctionSignature getConstructorCallSignature(List<ArgumentHolder> arguments) {
         List<FunctionSignature> signatures = getConstructorSignatures();

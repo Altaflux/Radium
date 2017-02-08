@@ -1,10 +1,11 @@
 package com.kubadziworski.domain.type;
 
+import com.kubadziworski.bytecodegeneration.inline.CodeInliner;
+import com.kubadziworski.bytecodegeneration.inline.JvmCodeInliner;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.exception.CompilationException;
-import com.kubadziworski.util.Lazy;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -25,14 +25,12 @@ public class JavaClassType implements Type {
     private final org.objectweb.asm.Type asmType;
     //private static Map<Type, LinkedMap<Class, Class[]>> cachedInheritance = new HashMap<>();
 
-    private volatile Supplier<ClassNode> classNodeSupplier;
-    private static final Map<JavaClassType, ClassNode> classNodeCache = new HashMap<>();
+    private static final Map<JavaClassType, ClassNodeContainer> classNodeCache = new HashMap<>();
 
     public JavaClassType(Class clazz) {
         aClass = clazz;
         name = clazz.getCanonicalName();
         asmType = org.objectweb.asm.Type.getType(clazz);
-        classNodeSupplier = Lazy.lazily(() -> classNodeSupplier = Lazy.value(createClassNode()));
     }
 
     @Override
@@ -186,22 +184,32 @@ public class JavaClassType implements Type {
         return Nullability.NOT_NULL;
     }
 
-    public ClassNode getClassNode() {
-        return classNodeSupplier.get();
+    public ClassNode getClassNode(boolean skipCode) {
+        return createClassNode(skipCode);
     }
 
-    private ClassNode createClassNode() {
+    private ClassNode createClassNode(boolean skipCode) {
         if (classNodeCache.containsKey(this)) {
-            return classNodeCache.get(this);
+            ClassNodeContainer container = classNodeCache.get(this);
+            if (skipCode) {
+                return container.classNode;
+            } else if (!container.skipCode) {
+                return container.classNode;
+            }
         }
         ClassNode classNode = new ClassNode(Opcodes.ASM5);
         try {
             ClassReader classVisitor = new ClassReader(this.getTypeClass().getName());
-            classVisitor.accept(classNode, ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES);
+            if (skipCode) {
+                classVisitor.accept(classNode, ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES);
+            } else {
+                classVisitor.accept(classNode, ClassReader.EXPAND_FRAMES);
+            }
+
         } catch (IOException e) {
             throw new CompilationException("Could not parse class: " + this.getTypeClass().getName(), e);
         }
-        classNodeCache.put(this, classNode);
+        classNodeCache.put(this, new ClassNodeContainer(classNode, skipCode));
         return classNode;
     }
 
@@ -221,10 +229,41 @@ public class JavaClassType implements Type {
         return name.hashCode();
     }
 
+    public CodeInliner getInliner() {
+        return JvmCodeInliner.INSTANCE;
+    }
+
     @Override
     public String toString() {
         return "JavaClassType{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    private static class ClassNodeContainer {
+        private final ClassNode classNode;
+        private final boolean skipCode;
+
+        private ClassNodeContainer(ClassNode classNode, boolean skipCode) {
+            this.classNode = classNode;
+            this.skipCode = skipCode;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ClassNodeContainer container = (ClassNodeContainer) o;
+
+            return skipCode == container.skipCode && classNode.equals(container.classNode);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = classNode.hashCode();
+            result = 31 * result + (skipCode ? 1 : 0);
+            return result;
+        }
     }
 }

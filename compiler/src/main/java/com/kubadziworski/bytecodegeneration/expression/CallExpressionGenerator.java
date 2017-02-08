@@ -3,6 +3,7 @@ package com.kubadziworski.bytecodegeneration.expression;
 import com.google.common.collect.Ordering;
 import com.kubadziworski.bytecodegeneration.intrinsics.IntrinsicMethods;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
@@ -44,7 +45,7 @@ public class CallExpressionGenerator {
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", "()V" /*TODO Handle super calls with arguments*/, false);
     }
 
-    public void generate(FunctionCall functionCall, StatementGenerator statementGenerator) {
+    public void generate(FunctionCall functionCall, Scope scope, StatementGenerator statementGenerator) {
         Expression owner = functionCall.getOwner();
 
 
@@ -62,6 +63,10 @@ public class CallExpressionGenerator {
         String ownerDescriptor = functionCall.getOwnerType().getAsmType().getInternalName();
         int callOpCode = functionCall.getInvokeOpcode();
 
+        if (shouldInline(functionCall)) {
+            functionCall.getOwnerType().getInliner().inlineMethod(scope.getClassType(), methodVisitor, functionCall);
+            return;
+        }
         methodVisitor.visitMethodInsn(callOpCode, ownerDescriptor, functionName, methodDescriptor, false);
     }
 
@@ -109,6 +114,9 @@ public class CallExpressionGenerator {
 
     }
 
+    private static boolean shouldInline(FunctionCall functionCall) {
+        return RadiumModifiers.isInline(functionCall.getSignature().getModifiers());
+    }
 
     //TODO I THINK THIS WILL NOT WORK WITH PRECOMPILED RADIUM CLASSES
     private void generateDefaultParameters(Call call, List<Parameter> parameters, List<Argument> arguments, StatementGenerator statementGenerator) {

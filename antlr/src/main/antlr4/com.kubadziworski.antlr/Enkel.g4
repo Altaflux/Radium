@@ -204,7 +204,8 @@ qualifiedName : ID ('.' ID)*;
 methodModifiers
     : 'static'
     | 'public'
-    | 'private' ;
+    | 'private'
+    | 'inline' ;
 
 fieldModifier : ('public' | 'protected' | 'private') ;
 

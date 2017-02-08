@@ -1,5 +1,6 @@
 package com.kubadziworski.util;
 
+import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -13,6 +14,7 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 import radium.annotations.NotNull;
 import radium.annotations.Nullable;
+import radium.internal.InlineOnly;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -25,13 +27,16 @@ public final class ReflectionObjectToSignatureMapper {
 
     private static final String NOT_NULL_DESCRIPTOR = org.objectweb.asm.Type.getDescriptor(NotNull.class);
     private static final String NULLABLE_DESCRIPTOR = org.objectweb.asm.Type.getDescriptor(Nullable.class);
+    private static final String INLINE_DESCRIPTOR = org.objectweb.asm.Type.getDescriptor(InlineOnly.class);
 
     public static FunctionSignature fromMethod(Method method, JavaClassType javaClassType) {
         String name = method.getName();
         List<Parameter> parameters = getParams(method.getParameters(), method.getName(), org.objectweb.asm.Type.getMethodDescriptor(method), javaClassType);
         Class<?> returnType = method.getReturnType();
         Type owner = ClassTypeFactory.createClassType(method.getDeclaringClass().getName());
-        return new FunctionSignature(name, parameters, TypeResolver.getTypeFromNameWithClazzAlias(returnType, getReturnNullability(method, javaClassType)), method.getModifiers(), owner);
+        int mod = method.getModifiers() + isInline(method, javaClassType);
+        return new FunctionSignature(name, parameters, TypeResolver.getTypeFromNameWithClazzAlias(returnType, getReturnNullability(method, javaClassType)),
+                mod, owner);
     }
 
     public static FunctionSignature fromConstructor(Constructor constructor, JavaClassType owner) {
@@ -45,13 +50,35 @@ public final class ReflectionObjectToSignatureMapper {
         return new Field(name, owner, TypeResolver.getTypeFromNameWithClazzAlias(field.getType(), getNullability(field, owner)), field.getModifiers());
     }
 
+
+    @SuppressWarnings("unchecked")
+    private static int isInline(Method method, JavaClassType javaClassType) {
+
+        final String methodDescriptor = org.objectweb.asm.Type.getMethodDescriptor(method);
+        ClassNode classNode = javaClassType.getClassNode(true);
+        Optional<MethodNode> methodNodeOp = ((List<MethodNode>) classNode.methods).stream()
+                .filter(o -> (o.desc.equals(methodDescriptor)))
+                .filter(methodNode -> methodNode.name.equals(method.getName()))
+                .findFirst();
+
+        if (methodNodeOp.isPresent()) {
+            MethodNode methodNode = methodNodeOp.get();
+            if (methodNode.invisibleAnnotations != null && ((List<AnnotationNode>) methodNode.invisibleAnnotations)
+                    .stream()
+                    .anyMatch(annotationNode -> annotationNode.desc.equals(INLINE_DESCRIPTOR))) {
+                return RadiumModifiers.INLINE;
+            }
+        }
+        return 0;
+    }
+
     @SuppressWarnings("unchecked")
     private static Type.Nullability getNullability(java.lang.reflect.Field field, JavaClassType javaClassType) {
         if (field.getType().isPrimitive()) {
             return Type.Nullability.NOT_NULL;
         }
 
-        ClassNode classNode = javaClassType.getClassNode();
+        ClassNode classNode = javaClassType.getClassNode(true);
         Optional<FieldNode> methodNodeOp = ((List<FieldNode>) classNode.fields).stream().filter(o -> (o.name.equals(field.getName())))
                 .findAny();
 
@@ -73,7 +100,7 @@ public final class ReflectionObjectToSignatureMapper {
 
     @SuppressWarnings("unchecked")
     private static List<Parameter> getParams(java.lang.reflect.Parameter[] parameters, String name, String descriptor, JavaClassType type) {
-        Optional<MethodNode> methodNodeOp = ((List<MethodNode>) type.getClassNode().methods).stream()
+        Optional<MethodNode> methodNodeOp = ((List<MethodNode>) type.getClassNode(true).methods).stream()
                 .filter(o -> (o.desc.equals(descriptor)))
                 .filter(methodNode -> methodNode.name.equals(name))
                 .findFirst();
@@ -116,8 +143,10 @@ public final class ReflectionObjectToSignatureMapper {
         }
 
         final String methodDescriptor = org.objectweb.asm.Type.getMethodDescriptor(method);
-        ClassNode classNode = javaClassType.getClassNode();
-        Optional<MethodNode> methodNodeOp = ((List<MethodNode>) classNode.methods).stream().filter(o -> (o.desc.equals(methodDescriptor)))
+        ClassNode classNode = javaClassType.getClassNode(true);
+        Optional<MethodNode> methodNodeOp = ((List<MethodNode>) classNode.methods).stream()
+                .filter(o -> (o.desc.equals(methodDescriptor)))
+                .filter(methodNode -> methodNode.name.equals(method.getName()))
                 .findFirst();
         if (methodNodeOp.isPresent()) {
             MethodNode methodNode = methodNodeOp.get();

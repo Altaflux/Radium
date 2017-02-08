@@ -1,5 +1,6 @@
 package com.kubadziworski.domain.type.intrinsic;
 
+import com.kubadziworski.bytecodegeneration.inline.CodeInliner;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BoxableType;
@@ -99,6 +100,10 @@ public class TypeProjection implements Type {
                 "nullable=" + nullable +
                 ", type=" + type +
                 '}';
+    }
+
+    public CodeInliner getInliner() {
+        return type.getInliner();
     }
 
     @Override

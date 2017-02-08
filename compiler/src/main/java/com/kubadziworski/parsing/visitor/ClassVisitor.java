@@ -82,6 +82,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
             methods.add(getGeneratedMainMethod());
         }
 
+        scope.addMethods(methods);
         return new ClassDeclaration(scope.getClassName(), new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
     }
 
