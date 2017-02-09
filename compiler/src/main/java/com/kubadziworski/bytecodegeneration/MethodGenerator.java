@@ -20,7 +20,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.DescriptorFactory;
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -29,10 +29,10 @@ import java.util.stream.IntStream;
 
 
 public class MethodGenerator {
-    private final ClassWriter classWriter;
+    private final ClassVisitor cv;
 
-    public MethodGenerator(ClassWriter classWriter) {
-        this.classWriter = classWriter;
+    public MethodGenerator(ClassVisitor cv) {
+        this.cv = cv;
     }
 
     public void generate(Function function) {
@@ -45,7 +45,7 @@ public class MethodGenerator {
         if (RadiumModifiers.isInline(mod)) {
             mod = mod - RadiumModifiers.INLINE;
         }
-        MethodVisitor mvs = classWriter.visitMethod(mod, name, description, null, null);
+        MethodVisitor mvs = cv.visitMethod(mod, name, description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
         generateInlineAnnotation(function, mv);
         generateMutabilityAnnotations(function, mv);
@@ -64,7 +64,7 @@ public class MethodGenerator {
         String description = DescriptorFactory.getMethodDescriptor(function);
         Block block = (Block) function.getRootStatement();
         Scope scope = block.getScope();
-        MethodVisitor mvs = classWriter.visitMethod(function.getModifiers(), name, description, null, null);
+        MethodVisitor mvs = cv.visitMethod(function.getModifiers(), name, description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
         generateMutabilityAnnotations(function, mv);
 
@@ -82,7 +82,7 @@ public class MethodGenerator {
         Block block = (Block) constructor.getRootStatement();
         Scope scope = block.getScope();
         String description = DescriptorFactory.getMethodDescriptor(constructor);
-        MethodVisitor mvs = classWriter.visitMethod(constructor.getModifiers(), "<init>", description, null, null);
+        MethodVisitor mvs = cv.visitMethod(constructor.getModifiers(), "<init>", description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
         generateMutabilityAnnotations(constructor, mv);
         mv.visitCode();

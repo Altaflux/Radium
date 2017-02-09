@@ -30,9 +30,9 @@ public class ClassGenerator {
         visitor.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
         List<Function> methods = classDeclaration.getMethods();
         Collection<Field> fields = classDeclaration.getFields();
-        FieldGenerator fieldGenerator = new FieldGenerator(classWriter);
+        FieldGenerator fieldGenerator = new FieldGenerator(visitor);
         fields.forEach(f -> f.accept(fieldGenerator));
-        MethodGenerator methodGenerator = new MethodGenerator(classWriter);
+        MethodGenerator methodGenerator = new MethodGenerator(visitor);
         methods.forEach(f -> f.accept(methodGenerator));
         visitor.visitEnd();
 
