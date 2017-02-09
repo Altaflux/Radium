@@ -63,10 +63,6 @@ public class CallExpressionGenerator {
         String ownerDescriptor = functionCall.getOwnerType().getAsmType().getInternalName();
         int callOpCode = functionCall.getInvokeOpcode();
 
-        if (shouldInline(functionCall)) {
-            functionCall.getOwnerType().getInliner().inlineMethod(scope.getClassType(), methodVisitor, functionCall);
-            return;
-        }
         methodVisitor.visitMethodInsn(callOpCode, ownerDescriptor, functionName, methodDescriptor, false);
     }
 

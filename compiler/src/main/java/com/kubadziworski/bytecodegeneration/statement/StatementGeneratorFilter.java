@@ -92,14 +92,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
         }
     }
 
-    @Override
-    final public void generate(PrintStatement printStatement) {
-        if (parent != null) {
-            parent.generate(printStatement);
-        } else {
-            generate(printStatement, this);
-        }
-    }
 
     @Override
     final public void generate(VariableDeclaration variableDeclaration) {
@@ -336,11 +328,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
     @Override
     public void generate(UnaryExpression unaryExpression, StatementGenerator generator) {
         next.generate(unaryExpression, generator);
-    }
-
-    @Override
-    public void generate(PrintStatement printStatement, StatementGenerator generator) {
-        next.generate(printStatement, generator);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.kubadziworski.bytecodegeneration.inline;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.domain.Function;
-import com.kubadziworski.domain.node.expression.FunctionCall;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.EnkelType;
@@ -23,39 +22,26 @@ public class RadiumCodeInliner implements CodeInliner {
 
     }
 
+
     @Override
-    public void inlineMethod(Type currentClass, InstructionAdapter visitor, FunctionCall functionCall) {
-
-        String newClass = currentClass.getName();
-        String oldClass = functionCall.getSignature().getOwner().getName();
-
-        String methodDescriptor = DescriptorFactory.getMethodDescriptor(functionCall.getSignature());
-        EnkelType enkelType = ((EnkelType) (functionCall.getOwnerType()));
+    public MethodNode getMethodNode(Type owner, String name, String desc) {
+        EnkelType enkelType = (EnkelType) (owner);
         Scope scope = enkelType.getScope();
 
         Function function = scope.getMethods().stream()
-                .filter(func -> func.getName().equals(func.getName()))
-                .filter(func -> {
-                    String desc = DescriptorFactory.getMethodDescriptor(func.getFunctionSignature());
-                    return desc.equals(methodDescriptor);
-                })
-                .findFirst().orElseThrow(() -> new CompilationException("Could not find method: " + functionCall.getName()));
-
+                .filter(func -> func.getName().equals(name))
+                .filter(func -> DescriptorFactory.getMethodDescriptor(func.getFunctionSignature()).equals(desc))
+                .findFirst().orElseThrow(() -> new CompilationException("Could not find method: " + name));
 
         Block block = (Block) function.getRootStatement();
         Scope blockScope = block.getScope();
-        String ownerDescriptor = functionCall.getSignature().getOwner().getAsmType().getInternalName();
-        MethodNode methodNode = new MethodNode(Opcodes.ASM5, functionCall.getSignature().getModifiers(), functionCall.getName()
-                , methodDescriptor, null, null);
+        MethodNode methodNode = new MethodNode(Opcodes.ASM5, function.getFunctionSignature().getModifiers(), function.getName()
+                , desc, null, null);
 
         StatementGenerator statementScopeGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodNode), blockScope);
         block.accept(statementScopeGenerator);
 
-        MethodCallInliner methodCallInliner = new MethodCallInliner(methodNode.access, methodNode.desc, visitor, methodNode, oldClass, ownerDescriptor, newClass);
-
-        int callOpCode = functionCall.getInvokeOpcode();
-        methodCallInliner.visitMethodInsn(callOpCode, ownerDescriptor, functionCall.getName(), methodDescriptor, false);
-
+        return methodNode;
     }
 
 }

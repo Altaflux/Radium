@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration;
 
+import com.kubadziworski.bytecodegeneration.inline.MethodInliner;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.bytecodegeneration.util.PropertyAccessorsGenerator;
@@ -46,7 +47,9 @@ public class MethodGenerator {
             mod = mod - RadiumModifiers.INLINE;
         }
         MethodVisitor mvs = classWriter.visitMethod(mod, name, description, null, null);
-        InstructionAdapter mv = new InstructionAdapter(mvs);
+        MethodInliner methodInliner = new MethodInliner(mod, description, mvs, scope.getClassName());
+
+        InstructionAdapter mv = new InstructionAdapter(methodInliner);
         generateInlineAnnotation(function, mv);
         generateMutabilityAnnotations(function, mv);
 

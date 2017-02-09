@@ -57,6 +57,7 @@ public class ImportResolver {
         }
         imports.addAll(clazzImportResolver.extractClassesFromPackage("radium"));
         imports.addAll(clazzImportResolver.extractClassesFromPackage("java.lang"));
+        imports.addAll(doOnDemandImport("radium.io.Console"));
 
         declarationDescriptors.addAll(imports);
 

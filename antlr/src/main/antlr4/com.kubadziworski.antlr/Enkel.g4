@@ -125,7 +125,6 @@ blockStatement :  {(_input.LA(1) != OpenBrace) }? statement eos ;
 statement : block
            | variableDeclaration
            | assignment
-           | printStatement
            | forStatement
            | returnStatement
            | throwStatement
@@ -135,7 +134,6 @@ returnable : block | expression ;
 
 variableDeclaration : (VARIABLE | IMMUTABLE) name (':' type)? EQUALS expression;
 assignment :  (preExp=expression '.')?  name  EQUALS postExpr=expression;
-printStatement : PRINT expression ;
 returnStatement : 'return' expression #ReturnWithValue
                 | 'return' #ReturnVoid ;
 forStatement : 'for' ('(')? forConditions (')')? statement ;

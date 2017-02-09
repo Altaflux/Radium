@@ -14,7 +14,7 @@ import org.objectweb.asm.commons.InstructionAdapter;
 
 public class BaseStatementGenerator implements StatementGenerator {
 
-    private final PrintStatementGenerator printStatementGenerator;
+
     private final VariableDeclarationStatementGenerator variableDeclarationStatementGenerator;
     private final ReturnStatementGenerator returnStatementGenerator;
     private final IfStatementGenerator ifStatementGenerator;
@@ -33,7 +33,7 @@ public class BaseStatementGenerator implements StatementGenerator {
     public BaseStatementGenerator(StatementGenerator generator, InstructionAdapter methodVisitor) {
         parent = generator;
         expressionGenerator = new ExpressionGenerator(generator, methodVisitor);
-        printStatementGenerator = new PrintStatementGenerator(methodVisitor);
+
         variableDeclarationStatementGenerator = new VariableDeclarationStatementGenerator();
         forStatementGenerator = new ForStatementGenerator(methodVisitor);
         blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
@@ -51,7 +51,6 @@ public class BaseStatementGenerator implements StatementGenerator {
     }
 
     private BaseStatementGenerator(StatementGenerator generator, InstructionAdapter methodVisitor, int lastLine,
-                                   PrintStatementGenerator printStatementGenerator,
                                    VariableDeclarationStatementGenerator variableDeclarationStatementGenerator,
                                    ReturnStatementGenerator returnStatementGenerator,
                                    IfStatementGenerator ifStatementGenerator,
@@ -61,7 +60,6 @@ public class BaseStatementGenerator implements StatementGenerator {
                                    TryCatchStatementGenerator tryCatchStatementGenerator,
                                    ThrowStatementGenerator throwStatementGenerator, ExpressionGenerator expressionGenerator) {
         parent = generator;
-        this.printStatementGenerator = printStatementGenerator;
         this.variableDeclarationStatementGenerator = variableDeclarationStatementGenerator;
         this.returnStatementGenerator = returnStatementGenerator;
         this.ifStatementGenerator = ifStatementGenerator;
@@ -137,16 +135,6 @@ public class BaseStatementGenerator implements StatementGenerator {
     public void generate(UnaryExpression unaryExpression, StatementGenerator generator) {
         generateLineNumber(unaryExpression);
         expressionGenerator.generate(unaryExpression, generator);
-    }
-
-    public void generate(PrintStatement printStatement) {
-        printStatementGenerator.generate(printStatement, this);
-    }
-
-    @Override
-    public void generate(PrintStatement printStatement, StatementGenerator generator) {
-        generateLineNumber(printStatement);
-        printStatementGenerator.generate(printStatement, generator);
     }
 
     public void generate(VariableDeclaration variableDeclaration) {
@@ -391,7 +379,7 @@ public class BaseStatementGenerator implements StatementGenerator {
 
     public StatementGenerator copy(StatementGenerator generator) {
         return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine,
-                printStatementGenerator, variableDeclarationStatementGenerator, returnStatementGenerator,
+                variableDeclarationStatementGenerator, returnStatementGenerator,
                 ifStatementGenerator, blockStatementGenerator, forStatementGenerator, assignmentStatementGenerator, tryCatchStatementGenerator,
                 throwStatementGenerator, expressionGenerator);
     }

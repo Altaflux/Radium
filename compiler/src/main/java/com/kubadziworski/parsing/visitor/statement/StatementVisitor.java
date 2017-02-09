@@ -19,7 +19,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 public class StatementVisitor extends EnkelBaseVisitor<Statement> {
 
     private final ExpressionVisitor expressionVisitor;
-    private final PrintStatementVisitor printStatementVisitor;
     private final VariableDeclarationStatementVisitor variableDeclarationStatementVisitor;
     private final ReturnStatementVisitor returnStatementVisitor;
     private final BlockStatementVisitor blockStatementVisitor;
@@ -32,7 +31,6 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
 
     public StatementVisitor(Scope scope) {
         expressionVisitor = new ExpressionVisitor(scope);
-        printStatementVisitor = new PrintStatementVisitor(expressionVisitor);
         variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor(expressionVisitor, scope);
         returnStatementVisitor = new ReturnStatementVisitor(expressionVisitor);
         blockStatementVisitor = new BlockStatementVisitor(scope);
@@ -72,11 +70,6 @@ public class StatementVisitor extends EnkelBaseVisitor<Statement> {
     @Override
     public Statement visitFunctionContent(@NotNull EnkelParser.FunctionContentContext ctx) {
         return functionContentVisitor.visitFunctionContent(ctx);
-    }
-
-    @Override
-    public Statement visitPrintStatement(@NotNull PrintStatementContext ctx) {
-        return printStatementVisitor.visitPrintStatement(ctx);
     }
 
     @Override

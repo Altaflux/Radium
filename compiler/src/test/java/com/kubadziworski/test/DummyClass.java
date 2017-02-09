@@ -20,7 +20,7 @@ public class DummyClass {
         System.out.println(myString);
     }
 
-    @InlineOnly
+    //@InlineOnly
     public void faaaaaa(String myString) {
         System.out.println(this);
         System.out.println(myString);

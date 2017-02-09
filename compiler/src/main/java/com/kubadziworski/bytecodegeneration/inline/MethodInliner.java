@@ -1,32 +1,33 @@
 package com.kubadziworski.bytecodegeneration.inline;
 
+import com.kubadziworski.domain.RadiumModifiers;
+import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.util.DescriptorFactory;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.*;
+import org.objectweb.asm.commons.LocalVariablesSorter;
+import org.objectweb.asm.commons.MethodRemapper;
+import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.commons.SimpleRemapper;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
-public class MethodCallInliner extends LocalVariablesSorter {
+public class MethodInliner extends LocalVariablesSorter {
 
-    private final String oldClass;
-    private final String newClass;
-    private final MethodNode mn;
-    private List<CatchBlock> blocks = new ArrayList<>();
     private boolean inlining;
-    private final String oldInternalName;
+    private final String currentClass;
+    private final List<CatchBlock> blocks = new ArrayList<>();
 
-    MethodCallInliner(int access, String desc, MethodVisitor mv, MethodNode mn,
-                      String oldClass, String oldInternalName, String newClass) {
+    public MethodInliner(int access, String desc, MethodVisitor mv, String currentClass) {
         super(Opcodes.ASM5, access, desc, mv);
-        this.oldClass = oldClass;
-        this.newClass = newClass;
-        this.mn = mn;
-        this.oldInternalName = oldInternalName;
-
+        this.currentClass = currentClass;
     }
 
     public void visitMethodInsn(int opcode,
@@ -36,22 +37,34 @@ public class MethodCallInliner extends LocalVariablesSorter {
                     owner, name, desc, itf);
             return;
         }
-        Map<String, String> map = Collections.singletonMap(
-                oldClass, newClass);
-        Remapper remapper = new SimpleRemapper(map);
+
+        Type type = ClassTypeFactory.createClassType(owner.replace('/', '.'));
+        MethodNode methodNode = type.getInliner().getMethodNode(type, name, desc);
+
+        Remapper remapper = new SimpleRemapper(Collections.singletonMap(
+                type.getName(), currentClass));
         Label end = new Label();
         inlining = true;
-        mn.instructions.resetLabels();
+        methodNode.instructions.resetLabels();
 
+        methodNode.accept(new MethodRemapper(new InliningAdapter(this, end, opcode == Opcodes.INVOKESTATIC ?
+                Opcodes.ACC_STATIC : 0, desc), remapper));
 
-        mn.accept(new InliningAdapter(this, end, opcode == Opcodes.INVOKESTATIC ?
-                Opcodes.ACC_STATIC : 0, desc, remapper));
         inlining = false;
         super.visitLabel(end);
     }
 
     private boolean canBeInlined(String owner, String name, String desc) {
-        return owner.equals(oldInternalName) && mn.desc.equals(desc) && name.equals(mn.name);
+        try {
+            Type type = ClassTypeFactory.createClassType(owner.replace('/', '.'));
+            return type.getFunctionSignatures().stream()
+                    .filter(functionSignature -> functionSignature.getName().equals(name))
+                    .filter(functionSignature -> DescriptorFactory.getMethodDescriptor(functionSignature).equals(desc))
+                    .findFirst().map(functionSignature -> RadiumModifiers.isInline(functionSignature.getModifiers()))
+                    .orElse(false);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public void visitTryCatchBlock(Label start,
@@ -73,6 +86,11 @@ public class MethodCallInliner extends LocalVariablesSorter {
         super.visitMaxs(stack, locals);
     }
 
+
+    protected int newLocalMapping(org.objectweb.asm.Type type) {
+        return super.newLocalMapping(type);
+    }
+
     private static class CatchBlock {
         private final Label start;
         private final Label end;
@@ -87,19 +105,19 @@ public class MethodCallInliner extends LocalVariablesSorter {
         }
     }
 
-    public static class InliningAdapter extends RemappingMethodAdapter {
+
+    private static class InliningAdapter extends LocalVariablesSorter {
         private final LocalVariablesSorter lvs;
         private final Label end;
 
         private InliningAdapter(LocalVariablesSorter mv,
-                                Label end, int acc, String desc,
-                                Remapper remapper) {
-            super(acc | Opcodes.ACC_STATIC, "()V", mv, remapper);
+                                Label end, int acc, String desc) {
+            super(Opcodes.ASM5, acc | Opcodes.ACC_STATIC, "()V", mv);
             this.lvs = mv;
             this.end = end;
             int offset = (acc & Opcodes.ACC_STATIC) != 0 ?
                     0 : 1;
-            Type[] args = Type.getArgumentTypes(desc);
+            org.objectweb.asm.Type[] args = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = args.length - 1; i >= 0; i--) {
                 super.visitVarInsn(args[i].getOpcode(
                         Opcodes.ISTORE), i + offset);
@@ -117,11 +135,18 @@ public class MethodCallInliner extends LocalVariablesSorter {
             }
         }
 
-        public void visitMaxs(int stack, int locals) {
+        public AnnotationVisitor visitParameterAnnotation(int parameter,
+                                                          String desc, boolean visible) {
+            return null;
         }
 
-        protected int newLocalMapping(Type type) {
+        public void visitMaxs(int stack, int locals) {
+
+        }
+
+        protected int newLocalMapping(org.objectweb.asm.Type type) {
             return lvs.newLocal(type);
         }
     }
+
 }

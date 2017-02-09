@@ -33,10 +33,6 @@ public interface StatementGenerator {
 
     void generate(UnaryExpression unaryExpression, StatementGenerator generator);
 
-    void generate(PrintStatement printStatement);
-
-    void generate(PrintStatement printStatement, StatementGenerator generator);
-
     void generate(VariableDeclaration variableDeclaration);
     void generate(VariableDeclaration variableDeclaration, StatementGenerator generator);
 

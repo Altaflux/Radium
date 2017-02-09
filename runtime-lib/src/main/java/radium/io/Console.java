@@ -1,93 +1,107 @@
 package radium.io;
 
 
-import radium.*;
-import radium.Boolean;
-import radium.Byte;
-import radium.Double;
-import radium.Float;
-import radium.Long;
-import radium.Short;
 import radium.annotations.Nullable;
+import radium.internal.InlineOnly;
 
 public class Console {
 
-    public static void print(@Nullable Any message) {
+    @InlineOnly
+    public static void print(@Nullable Object message) {
         System.out.print(message);
     }
 
-    public static void print(Int message) {
+    @InlineOnly
+    public static void print(int message) {
         System.out.print(message);
     }
 
-    public static void print(Long message) {
+    @InlineOnly
+    public static void print(long message) {
         System.out.print(message);
     }
 
-    public static void print(Byte message) {
+    @InlineOnly
+    public static void print(byte message) {
         System.out.print(message);
     }
 
-    public static void print(Short message) {
+    @InlineOnly
+    public static void print(short message) {
         System.out.print(message);
     }
 
-    public static void print(Char message) {
+    @InlineOnly
+    public static void print(char message) {
         System.out.print(message);
     }
 
-    public static void print(Boolean message) {
+    @InlineOnly
+    public static void print(boolean message) {
         System.out.print(message);
     }
 
-    public static void print(Float message) {
+    @InlineOnly
+    public static void print(float message) {
         System.out.print(message);
     }
 
-    public static void print(Double message) {
+    @InlineOnly
+    public static void print(double message) {
         System.out.print(message);
     }
 
+    @InlineOnly
     public static void print(CharSequence message) {
         System.out.print(message);
     }
 
-    public static void println(@Nullable Any message) {
+    @InlineOnly
+    public static void println(@Nullable Object message) {
         System.out.println(message);
     }
 
-    public static void println(Int message) {
+    @InlineOnly
+    public static void println(int message) {
         System.out.println(message);
     }
 
-    public static void println(Long message) {
+    @InlineOnly
+    public static void println(long message) {
         System.out.println(message);
     }
 
-    public static void println(Byte message) {
+    @InlineOnly
+    public static void println(byte message) {
         System.out.println(message);
     }
 
-    public static void println(Short message) {
+    @InlineOnly
+    public static void println(short message) {
         System.out.println(message);
     }
 
-    public static void println(Char message) {
+    @InlineOnly
+    public static void println(char message) {
         System.out.println(message);
     }
 
-    public static void println(Boolean message) {
+    @InlineOnly
+    public static void println(boolean message) {
         System.out.println(message);
     }
 
-    public static void println(Float message) {
+    @InlineOnly
+    public static void println(float message) {
         System.out.println(message);
     }
 
-    public static void println(Double message) {
+    @InlineOnly
+    public static void println(double message) {
         System.out.println(message);
     }
 
+    @InlineOnly
     public static void println(CharSequence message) {
         System.out.println(message);
     }
