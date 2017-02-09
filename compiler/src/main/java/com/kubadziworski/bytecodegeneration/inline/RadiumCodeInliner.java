@@ -22,7 +22,6 @@ public class RadiumCodeInliner implements CodeInliner {
 
     }
 
-
     @Override
     public MethodNode getMethodNode(Type owner, String name, String desc) {
         EnkelType enkelType = (EnkelType) (owner);
@@ -35,10 +34,14 @@ public class RadiumCodeInliner implements CodeInliner {
 
         Block block = (Block) function.getRootStatement();
         Scope blockScope = block.getScope();
+
         MethodNode methodNode = new MethodNode(Opcodes.ASM5, function.getFunctionSignature().getModifiers(), function.getName()
                 , desc, null, null);
 
-        StatementGenerator statementScopeGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodNode), blockScope);
+        MethodInliner methodInliner = new MethodInliner(function.getFunctionSignature().getModifiers(), desc, methodNode,
+                function.getFunctionSignature().getOwner().getName());
+
+        StatementGenerator statementScopeGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodInliner), blockScope);
         block.accept(statementScopeGenerator);
 
         return methodNode;

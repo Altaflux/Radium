@@ -1,7 +1,8 @@
 package com.kubadziworski.bytecodegeneration;
 
-import com.kubadziworski.domain.Function;
+import com.kubadziworski.bytecodegeneration.asm.RadiumClassVisitor;
 import com.kubadziworski.domain.ClassDeclaration;
+import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.scope.Field;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -18,19 +19,23 @@ public class ClassGenerator {
     private final ClassWriter classWriter;
 
     public ClassGenerator() {
+
         classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
     }
 
     public ClassWriter generate(ClassDeclaration classDeclaration) {
         String name = classDeclaration.getClassType().getAsmType().getInternalName();
-        classWriter.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
+
+        RadiumClassVisitor visitor = new RadiumClassVisitor(Opcodes.ASM5, classWriter, classDeclaration.getClassType().getAsmType().getClassName());
+        visitor.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
         List<Function> methods = classDeclaration.getMethods();
         Collection<Field> fields = classDeclaration.getFields();
         FieldGenerator fieldGenerator = new FieldGenerator(classWriter);
         fields.forEach(f -> f.accept(fieldGenerator));
         MethodGenerator methodGenerator = new MethodGenerator(classWriter);
         methods.forEach(f -> f.accept(methodGenerator));
-        classWriter.visitEnd();
+        visitor.visitEnd();
+
         return classWriter;
     }
 

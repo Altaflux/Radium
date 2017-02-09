@@ -5,6 +5,7 @@ import com.kubadziworski.antlr.EnkelParser.ArgumentListContext;
 import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
 import com.kubadziworski.antlr.EnkelParser.SupercallContext;
+import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -14,6 +15,7 @@ import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ClassNotFoundForNameException;
+import com.kubadziworski.exception.CompilationException;
 import com.kubadziworski.exception.FunctionNameEqualClassException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -66,6 +68,9 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         }
 
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
+        if (scope.getCurrentFunctionSignature().equals(signature) && RadiumModifiers.isInline(signature.getModifiers())) {
+            throw new CompilationException("Inline function '" + signature.getName() + "' cannot be recursive");
+        }
         if (Modifier.isStatic(signature.getModifiers())) {
             return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), signature.getOwner());
         }

@@ -135,8 +135,7 @@ public class MethodInliner extends LocalVariablesSorter {
             }
         }
 
-        public AnnotationVisitor visitParameterAnnotation(int parameter,
-                                                          String desc, boolean visible) {
+        public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
             return null;
         }
 
