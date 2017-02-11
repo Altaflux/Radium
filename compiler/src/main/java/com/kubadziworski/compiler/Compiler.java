@@ -45,6 +45,7 @@ public class Compiler {
 
     public void compile(String[] args) throws Exception {
 
+        ClassTypeFactory.classLoader = ClassLoader.getSystemClassLoader();
         List<String> enkelFiles = getListOfFiles(args[0]);
         if (enkelFiles.isEmpty()) {
             LOGGER.error(ARGUMENT_ERRORS.NO_FILE.getMessage());
