@@ -1,10 +1,12 @@
-package com.kubadziworski.domain.resolver;
+package com.kubadziworski.resolver;
+
+import com.kubadziworski.resolver.descriptor.DeclarationDescriptor;
 
 import java.util.List;
 import java.util.Optional;
 
 
-public interface BaseImportResolver {
+public interface ClassPathResolver {
 
     Optional<DeclarationDescriptor> preParseClassDeclarations(String importPackage);
 

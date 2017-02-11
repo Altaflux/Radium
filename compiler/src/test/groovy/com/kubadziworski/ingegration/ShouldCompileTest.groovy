@@ -1001,6 +1001,10 @@ class ShouldCompileTest extends Specification {
                                 }
                             }
 							"""
+
+
+    private final static Compiler compiler = new Compiler()
+
     @Unroll
     def "Should Compile and run"() {
         expect:
@@ -1008,7 +1012,7 @@ class ShouldCompileTest extends Specification {
         def file = new File("target/enkelClasses/" + filename)
 
         FileUtils.writeStringToFile(file, code)
-        Compiler.main("target/enkelClasses/" + filename)
+        compiler.compile("target/enkelClasses/" + filename)
 
         URL u = new File("target/enkelClasses/").toURL();
         URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
@@ -1069,7 +1073,7 @@ class ShouldCompileTest extends Specification {
         def file = new File("target/enkelClasses/" + filename)
 
         FileUtils.writeStringToFile(file, code)
-        Compiler.main("target/enkelClasses/" + filename)
+        compiler.compile("target/enkelClasses/" + filename)
 
         URL u = new File("target/enkelClasses/").toURL();
         URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();

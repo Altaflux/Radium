@@ -1,9 +1,13 @@
-package com.kubadziworski.domain.resolver;
+package com.kubadziworski.resolver;
 
 
+import com.kubadziworski.resolver.descriptor.FunctionDescriptor;
+import com.kubadziworski.resolver.descriptor.PropertyDescriptor;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.resolver.descriptor.ClassDescriptor;
+import com.kubadziworski.resolver.descriptor.DeclarationDescriptor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Modifier;
@@ -13,11 +17,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class EnkelImportResolver implements BaseImportResolver {
+public class EnkelImportResolver implements ClassPathResolver {
 
     private final GlobalScope globalScope;
 
-    EnkelImportResolver(GlobalScope globalScope) {
+    public EnkelImportResolver(GlobalScope globalScope) {
         this.globalScope = globalScope;
     }
 

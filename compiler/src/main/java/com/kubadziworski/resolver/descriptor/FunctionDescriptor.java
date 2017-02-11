@@ -1,11 +1,8 @@
-package com.kubadziworski.domain.resolver;
+package com.kubadziworski.resolver.descriptor;
 
 import com.kubadziworski.domain.scope.FunctionSignature;
 
 
-/**
- * Created by plozano on 10/15/2016.
- */
 public class FunctionDescriptor implements DeclarationDescriptor {
     private final String name;
     private final FunctionSignature functionSignature;

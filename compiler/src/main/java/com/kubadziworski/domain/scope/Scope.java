@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.MetaData;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
-import com.kubadziworski.domain.resolver.ImportResolver;
+import com.kubadziworski.resolver.ImportResolver;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
@@ -201,6 +201,10 @@ public class Scope {
 
     public String getSuperClassInternalName() {
         return ClassTypeFactory.createClassType(getSuperClassName()).getAsmType().getInternalName();
+    }
+
+    public MetaData getMetaData() {
+        return metaData;
     }
 
     public Type getClassType() {

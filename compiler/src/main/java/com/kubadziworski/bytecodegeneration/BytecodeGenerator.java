@@ -13,6 +13,7 @@ public class BytecodeGenerator {
         return compilationUnit.getClassDeclaration().stream()
                 .map(classDeclaration -> {
                     ClassGenerator classGenerator = new ClassGenerator();
+
                     return new GeneratedClassHolder(classGenerator.generate(classDeclaration).toByteArray(), classDeclaration.getName());
                 }).collect(Collectors.toList());
     }

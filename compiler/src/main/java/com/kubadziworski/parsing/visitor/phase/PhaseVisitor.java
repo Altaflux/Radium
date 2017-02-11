@@ -2,20 +2,23 @@ package com.kubadziworski.parsing.visitor.phase;
 
 
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.configuration.CompilerConfigInstance;
+import com.kubadziworski.configuration.JvmConfiguration;
 import com.kubadziworski.domain.ClassDeclaration;
 import com.kubadziworski.domain.CompilationData;
 import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.domain.MetaData;
-import com.kubadziworski.domain.resolver.ImportResolver;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.exception.ClassNotFoundForNameException;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.parsing.visitor.ClassVisitor;
+import com.kubadziworski.resolver.ImportResolver;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PhaseVisitor {
@@ -34,7 +37,8 @@ public class PhaseVisitor {
         if (declarationContexts != null) {
             packageDeclaration = declarationContexts.ID().stream().map(ParseTree::getText).collect(Collectors.joining("."));
         }
-        ImportResolver importResolver = new ImportResolver(context.importDeclaration(), globalScope);
+        JvmConfiguration jvmConfiguration = CompilerConfigInstance.getConfig();
+        ImportResolver importResolver = new ImportResolver(context.importDeclaration(), jvmConfiguration.getResolverContainer());
         String packageDeclaration2 = packageDeclaration;
         List<Triple<EnkelParser.ClassDeclarationContext, String, String>> classes = context.classDeclaration().stream().map(ctx -> {
             if (StringUtils.isNotEmpty(packageDeclaration2)) {
@@ -51,8 +55,7 @@ public class PhaseVisitor {
         ImportResolver importResolver = enkelParser.value1;
         List<Holder> scopes = enkelParser.value2.stream().map(holderOfClasses -> holderOfClasses)
                 .map(ctx -> {
-                    String superClass = importResolver.getClassName("Any")
-                            .orElseThrow(() -> new ClassNotFoundForNameException("Any"));
+                    String superClass = AnyType.INSTANCE.getName();
                     return new Holder(ctx.value1, new Scope(new MetaData(ctx.value2, ctx.value3, superClass, Collections.emptyList()),
                             importResolver));
                 }).collect(Collectors.toList());
@@ -76,7 +79,8 @@ public class PhaseVisitor {
             return holder.ctx.accept(classVisitor);
         }).collect(Collectors.toList());
 
-        return new CompilationUnit(classDeclaration, compilationData.value3);
+        return new CompilationUnit(classDeclaration, compilationData.value3,
+                classDeclaration.stream().findAny().map(ClassDeclaration::getClassPackage).filter(Objects::nonNull).orElse(""));
 
     }
 

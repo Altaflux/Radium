@@ -1,5 +1,7 @@
 package com.kubadziworski.domain.scope
 
+import com.kubadziworski.compiler.RadiumArguments
+import com.kubadziworski.configuration.CompilerConfigInstance
 import com.kubadziworski.domain.node.expression.Parameter
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
@@ -15,6 +17,11 @@ import java.lang.reflect.Modifier
  * Created by kuba on 11.05.16.
  */
 class ClassPathScopeTest extends Specification {
+    def setupSpec() {
+        RadiumArguments arguments = new RadiumArguments()
+        arguments.classLoader = ClassLoader.systemClassLoader;
+        CompilerConfigInstance.initialize(arguments)
+    }
     def "GetMethodSignature"() {
         given:
         def expectedParams = expectedParamsTypes.collect {

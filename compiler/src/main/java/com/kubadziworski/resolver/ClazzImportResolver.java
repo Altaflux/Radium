@@ -1,9 +1,13 @@
-package com.kubadziworski.domain.resolver;
+package com.kubadziworski.resolver;
 
 import com.kubadziworski.domain.scope.ClassPathScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.JavaClassType;
+import com.kubadziworski.resolver.descriptor.ClassDescriptor;
+import com.kubadziworski.resolver.descriptor.DeclarationDescriptor;
+import com.kubadziworski.resolver.descriptor.FunctionDescriptor;
+import com.kubadziworski.resolver.descriptor.PropertyDescriptor;
 import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -23,27 +27,28 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-class ClazzImportResolver implements BaseImportResolver {
+public class ClazzImportResolver implements ClassPathResolver {
 
     private static final ClassPathScope classPathScope = new ClassPathScope();
+    private final Reflections reflections;
 
-    private static final List<URL> bootClassPath;
 
-    static {
+    public ClazzImportResolver(ClassLoader classLoader) {
         List<URL> bootList = Arrays.stream(ManagementFactory.getRuntimeMXBean()
                 .getBootClassPath().split(java.io.File.pathSeparator))
                 .map(ClazzImportResolver::pathToUrl).filter(Objects::nonNull).collect(Collectors.toList());
         List<URL> systemPathList = Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
                 .map(ClazzImportResolver::pathToUrl).filter(Objects::nonNull).collect(Collectors.toList());
 
-        bootClassPath = ListUtils.sum(systemPathList,
-                ListUtils.sum(bootList, ClasspathHelper.forClassLoader().stream().collect(Collectors.toList())));
+        List<URL> bootClassPath = ListUtils.sum(systemPathList,
+                ListUtils.sum(bootList, ClasspathHelper.forClassLoader(classLoader).stream().collect(Collectors.toList())));
+
+        reflections = new Reflections(new ConfigurationBuilder()
+                .setScanners(new ResourcesScanner())
+                .forPackages("")
+                .setUrls(bootClassPath));
     }
 
-    private static final Reflections reflections = new Reflections(new ConfigurationBuilder()
-            .setScanners(new ResourcesScanner())
-            .forPackages("")
-            .setUrls(bootClassPath));
 
     @Override
     public Optional<DeclarationDescriptor> preParseClassDeclarations(String importPackage) {

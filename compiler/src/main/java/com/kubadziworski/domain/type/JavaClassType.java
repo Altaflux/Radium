@@ -2,6 +2,8 @@ package com.kubadziworski.domain.type;
 
 import com.kubadziworski.bytecodegeneration.inline.CodeInliner;
 import com.kubadziworski.bytecodegeneration.inline.JvmCodeInliner;
+import com.kubadziworski.configuration.CompilerConfigInstance;
+import com.kubadziworski.configuration.JvmConfiguration;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
@@ -12,6 +14,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -199,7 +202,21 @@ public class JavaClassType implements Type {
         }
         ClassNode classNode = new ClassNode(Opcodes.ASM5);
         try {
-            ClassReader classVisitor = new ClassReader(this.getTypeClass().getName());
+
+            InputStream stream = null;
+            JvmConfiguration configuration = CompilerConfigInstance.getConfig();
+            if (configuration.getClassLoader() != null) {
+                stream = configuration.getClassLoader().getResourceAsStream(this.getTypeClass().getName().replace(".", "/") + ".class");
+            }
+            if (stream == null) {
+                stream = ClassLoader.getSystemResourceAsStream(this.getTypeClass().getName().replace(".", "/") + ".class");
+            }
+            ClassReader classVisitor = new ClassReader(stream);
+            try {
+                stream.close();
+            } catch (Exception e) {
+                //
+            }
             if (skipCode) {
                 classVisitor.accept(classNode, ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES);
             } else {

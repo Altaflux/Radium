@@ -1,4 +1,4 @@
-package com.kubadziworski.domain.resolver;
+package com.kubadziworski.resolver.descriptor;
 
 import com.kubadziworski.domain.scope.Field;
 

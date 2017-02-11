@@ -83,7 +83,7 @@ public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
         }
 
         scope.addMethods(methods);
-        return new ClassDeclaration(scope.getClassName(), new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
+        return new ClassDeclaration(scope.getClassName(), scope.getMetaData().getPackageName(), new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
     }
 
     private void addDefaultConstructorSignatureToScope(String name, boolean defaultConstructorExists) {

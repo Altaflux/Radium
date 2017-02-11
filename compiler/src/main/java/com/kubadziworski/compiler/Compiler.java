@@ -1,12 +1,14 @@
 package com.kubadziworski.compiler;
 
 import com.kubadziworski.bytecodegeneration.BytecodeGenerator;
+import com.kubadziworski.configuration.CompilerConfigInstance;
 import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.parsing.Parser;
 import com.kubadziworski.validation.ARGUMENT_ERRORS;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.tools.ant.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,8 +28,13 @@ public class Compiler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
 
-    private File compilePath = new File(".");
 
+    public Compiler() {
+        RadiumArguments radiumArguments = new RadiumArguments();
+        radiumArguments.classLoader = ClassLoader.getSystemClassLoader();
+        CompilerConfigInstance.initialize(radiumArguments);
+
+    }
     public static void main(String[] args) throws Exception {
         try {
             new Compiler().compile(args);
@@ -44,11 +52,13 @@ public class Compiler {
         }
         LOGGER.info("Files to compile: ");
         enkelFiles.forEach(LOGGER::info);
-        GlobalScope globalScope = new GlobalScope();
+        GlobalScope globalScope = CompilerConfigInstance.getConfig().getGlobalScope();
         ClassTypeFactory.initialize(globalScope);
 
         Parser parser = new Parser(globalScope);
-        List<CompilationUnit> compilationUnits = parser.processAllFiles(enkelFiles);
+        List<Pair<String, List<String>>> compilationData = Collections
+                .singletonList(Pair.of(Paths.get(".").toAbsolutePath().normalize().toString(), enkelFiles));
+        List<CompilationUnit> compilationUnits = parser.processAllFiles(compilationData);
 
         compilationUnits.forEach(compilationUnit -> {
             LOGGER.info("Finished Parsing. Started compiling to bytecode.");
@@ -64,7 +74,7 @@ public class Compiler {
     private List<String> getListOfFiles(String path) {
 
         DirectoryScanner scanner = new DirectoryScanner();
-        // scanner.setIncludes(new String[]{"**/*.java"});
+
         scanner.setIncludes(new String[]{path});
         LOGGER.info("Base path: " + Paths.get(".").toAbsolutePath().normalize().toString());
         scanner.setBasedir(Paths.get(".").toAbsolutePath().normalize().toString());
@@ -90,11 +100,10 @@ public class Compiler {
                 OutputStream os = new FileOutputStream(compileFile);
                 IOUtils.write(generatedClassHolder.getBytes(), os);
                 LOGGER.info("Done. To run compiled file execute: 'java {}' in current dir", className);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
         });
-
     }
 }

@@ -2,17 +2,20 @@ package com.kubadziworski.bytecodegeneration.expression
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter
+import com.kubadziworski.compiler.RadiumArguments
+import com.kubadziworski.configuration.CompilerConfigInstance
 import com.kubadziworski.domain.MetaData
 import com.kubadziworski.domain.node.expression.FieldReference
 import com.kubadziworski.domain.node.expression.LocalVariableReference
-import com.kubadziworski.domain.resolver.ImportResolver
 import com.kubadziworski.domain.scope.Field
-import com.kubadziworski.domain.scope.GlobalScope
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
+import com.kubadziworski.resolver.ClazzImportResolver
+import com.kubadziworski.resolver.ImportResolver
+import com.kubadziworski.resolver.ResolverContainer
 import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.commons.InstructionAdapter
@@ -23,10 +26,17 @@ import java.lang.reflect.Modifier
  * Created by kuba on 13.05.16.
  */
 class ReferenceExpressionGeneratorTest extends Specification {
+    def setupSpec() {
+        RadiumArguments arguments = new RadiumArguments()
+        arguments.classLoader = ClassLoader.systemClassLoader;
+        CompilerConfigInstance.initialize(arguments)
+    }
+
     def "should generate field reference"() {
         given:
             MetaData metaData = new MetaData("Main", "", "java.lang.Object", Collections.emptyList())
-            Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList(), new GlobalScope()))
+        ResolverContainer container = new ResolverContainer(Arrays.asList(new ClazzImportResolver(ClassLoader.systemClassLoader)))
+        Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList(), container))
             MethodVisitor methodVisitor = Mock()
             StatementGenerator expressionGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodVisitor), scope)
             LocalVariable local = new LocalVariable("this",scope.getClassType())

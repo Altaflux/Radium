@@ -10,7 +10,6 @@ import com.kubadziworski.exception.ClassNotFoundForNameException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 
 public class ClassTypeFactory {
@@ -68,7 +67,4 @@ public class ClassTypeFactory {
         return new JavaClassType(name);
     }
 
-    public static Optional<GlobalScope> getGlobalScope() {
-        return Optional.ofNullable(globalScope);
-    }
 }

@@ -16,12 +16,14 @@ public class ClassDeclaration {
     private final List<Field> fields;
     private final List<Function> methods;
     private final Type classType;
+    private final String classPackage;
 
-    public ClassDeclaration(String name, Type classType, List<Field> fields, List<Function> methods) {
+    public ClassDeclaration(String name, String classPackage, Type classType, List<Field> fields, List<Function> methods) {
         this.name = name;
         this.fields = fields;
         this.methods = methods;
         this.classType = classType;
+        this.classPackage = classPackage;
     }
 
     public String getName() {
@@ -40,6 +42,7 @@ public class ClassDeclaration {
         return Collections.unmodifiableList(methods);
     }
 
-
-
+    public String getClassPackage() {
+        return classPackage;
+    }
 }

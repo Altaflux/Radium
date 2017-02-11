@@ -1,10 +1,11 @@
 package com.kubadziworski.domain.scope;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-/**
- * Created by plozano on 10/19/2016.
- */
 public class GlobalScope {
 
     private final Map<String, Scope> scopeMap = new HashMap<>();

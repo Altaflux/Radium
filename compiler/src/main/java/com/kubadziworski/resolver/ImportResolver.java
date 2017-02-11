@@ -1,13 +1,15 @@
-package com.kubadziworski.domain.resolver;
+package com.kubadziworski.resolver;
 
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.BadImportException;
+import com.kubadziworski.resolver.descriptor.ClassDescriptor;
+import com.kubadziworski.resolver.descriptor.DeclarationDescriptor;
+import com.kubadziworski.resolver.descriptor.FunctionDescriptor;
+import com.kubadziworski.resolver.descriptor.PropertyDescriptor;
 import com.kubadziworski.util.TypeResolver;
-import org.apache.commons.collections4.ListUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,18 +19,11 @@ public class ImportResolver {
 
     private final List<ImportDeclaration> importDeclarationContexts;
     private final HashSet<DeclarationDescriptor> declarationDescriptors = new HashSet<>();
-    private final ClazzImportResolver clazzImportResolver;
-    private final EnkelImportResolver enkelImportResolver;
-    private final GlobalScope globalScope;
+    private final ResolverContainer resolverContainer;
 
-    public ImportResolver(List<EnkelParser.ImportDeclarationContext> importDeclarationContexts, GlobalScope globalScope) {
-
+    public ImportResolver(List<EnkelParser.ImportDeclarationContext> importDeclarationContexts, ResolverContainer resolverContainer) {
         this.importDeclarationContexts = new ArrayList<>(convertToImportDeclarations(importDeclarationContexts));
-        this.clazzImportResolver = new ClazzImportResolver();
-        this.enkelImportResolver = new EnkelImportResolver(globalScope);
-        this.globalScope = globalScope;
-
-
+        this.resolverContainer = resolverContainer;
     }
 
     public void loadClassImports() {
@@ -37,9 +32,7 @@ public class ImportResolver {
         for (ImportDeclaration importDeclarationContext : importDeclarationContexts) {
             String importPackage = importDeclarationContext.importDeclaration;
             if (!importDeclarationContext.isOnDemand) {
-                Optional<DeclarationDescriptor> descriptors =
-                        enkelImportResolver.preParseClassDeclarations(importPackage)
-                                .map(Optional::of).orElse(clazzImportResolver.preParseClassDeclarations(importPackage));
+                Optional<DeclarationDescriptor> descriptors = resolverContainer.preParseClassDeclarations(importPackage);
 
                 if (descriptors.isPresent()) {
                     imports.add(descriptors.get());
@@ -47,21 +40,18 @@ public class ImportResolver {
                     missingDeclarations.add(importDeclarationContext);
                 }
             } else {
-                List<DeclarationDescriptor> descriptors = ListUtils.sum(clazzImportResolver.extractClassesFromPackage(importPackage),
-                        enkelImportResolver.extractClassesFromPackage(importPackage));
+                List<DeclarationDescriptor> descriptors = resolverContainer.extractClassesFromPackage(importPackage);
                 imports.addAll(descriptors);
                 if (descriptors.isEmpty()) {
                     missingDeclarations.add(importDeclarationContext);
                 }
             }
         }
-        imports.addAll(clazzImportResolver.extractClassesFromPackage("radium"));
-        imports.addAll(clazzImportResolver.extractClassesFromPackage("java.lang"));
+        imports.addAll(resolverContainer.extractClassesFromPackage("radium"));
+        imports.addAll(resolverContainer.extractClassesFromPackage("java.lang"));
         imports.addAll(doOnDemandImport("radium.io.Console"));
 
         declarationDescriptors.addAll(imports);
-
-        //declarationDescriptors.addAll(clazzImportResolver.extractClassesFromPackage("radium"));
         importDeclarationContexts.clear();
         importDeclarationContexts.addAll(missingDeclarations);
     }
@@ -95,18 +85,11 @@ public class ImportResolver {
     }
 
     private List<DeclarationDescriptor> doOnDemandImport(String importPackage) {
-        return enkelImportResolver.getMethodsOrFields(importPackage).map(Optional::of)
-                .orElse(clazzImportResolver.getMethodsOrFields(importPackage))
-                .orElse(Collections.emptyList());
+        return resolverContainer.getMethodsOrFields(importPackage).orElse(Collections.emptyList());
     }
 
     private List<DeclarationDescriptor> doSingleTypeImport(String originalImportString) {
-        List<DeclarationDescriptor> descriptors = new ArrayList<>();
-
-        descriptors.addAll(enkelImportResolver.extractFieldOrMethods(originalImportString));
-        descriptors.addAll(clazzImportResolver.extractFieldOrMethods(originalImportString));
-
-        return descriptors;
+        return resolverContainer.extractFieldOrMethods(originalImportString);
     }
 
 
@@ -146,14 +129,6 @@ public class ImportResolver {
             return Optional.of(((ClassDescriptor) descriptor.get()));
         }
         return Optional.empty();
-    }
-
-    public Optional<String> getClassName(String clazzName) {
-        return getClassInternal(clazzName).map(ClassDescriptor::getFullClassName);
-    }
-
-    public GlobalScope getGlobalScope() {
-        return globalScope;
     }
 
     private static List<ImportDeclaration> convertToImportDeclarations(List<EnkelParser.ImportDeclarationContext> importDeclarationContexts) {

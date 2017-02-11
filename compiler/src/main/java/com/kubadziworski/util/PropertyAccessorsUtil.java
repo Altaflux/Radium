@@ -6,7 +6,7 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;

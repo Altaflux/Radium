@@ -16,13 +16,30 @@
         <module>compiler</module>
         <module>antlr</module>
         <module>runtime-lib</module>
+        <module>radium-maven-plugin</module>
+        <module>radium-maven-test</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.kuba.dziworski</groupId>
+                <artifactId>antlr</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kuba.dziworski</groupId>
+                <artifactId>compiler</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kuba.dziworski</groupId>
+                <artifactId>radium-runtime</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-            <version>1.9.7</version>
-        </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
@@ -34,32 +51,18 @@
             <artifactId>cglib</artifactId>
             <version>3.2.2</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
             <version>2.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>4.2.5.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>4.2.5.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>4.2.5.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>4.2.5.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -106,20 +109,17 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.21</version>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.21</version>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.8</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <build>

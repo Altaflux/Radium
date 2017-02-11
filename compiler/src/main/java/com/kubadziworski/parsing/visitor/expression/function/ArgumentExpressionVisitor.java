@@ -28,7 +28,6 @@ public class ArgumentExpressionVisitor extends EnkelBaseVisitor<ArgumentHolder> 
     @Override
     public ArgumentHolder visitNamedArgument(@NotNull NamedArgumentContext ctx) {
         Expression value = ctx.expression().accept(expressionVisitor);
-        String name = ctx.name().getText();
         return new ArgumentHolder(value, null);
     }
 
