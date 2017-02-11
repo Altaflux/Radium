@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PhaseVisitor {
@@ -76,7 +77,8 @@ public class PhaseVisitor {
             return holder.ctx.accept(classVisitor);
         }).collect(Collectors.toList());
 
-        return new CompilationUnit(classDeclaration, compilationData.value3);
+        return new CompilationUnit(classDeclaration, compilationData.value3,
+                classDeclaration.stream().findAny().map(ClassDeclaration::getClassPackage).filter(Objects::nonNull).orElse(""));
 
     }
 

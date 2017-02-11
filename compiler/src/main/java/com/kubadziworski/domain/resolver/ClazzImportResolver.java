@@ -37,7 +37,7 @@ class ClazzImportResolver implements BaseImportResolver {
                 .map(ClazzImportResolver::pathToUrl).filter(Objects::nonNull).collect(Collectors.toList());
 
         bootClassPath = ListUtils.sum(systemPathList,
-                ListUtils.sum(bootList, ClasspathHelper.forClassLoader().stream().collect(Collectors.toList())));
+                ListUtils.sum(bootList, ClasspathHelper.forClassLoader(ClassTypeFactory.classLoader).stream().collect(Collectors.toList())));
     }
 
     private static final Reflections reflections = new Reflections(new ConfigurationBuilder()

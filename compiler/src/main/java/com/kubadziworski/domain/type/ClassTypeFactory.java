@@ -17,6 +17,8 @@ public class ClassTypeFactory {
     private static volatile GlobalScope globalScope;
     private static final Map<String, Type> syntheticTypes;
 
+    public static ClassLoader classLoader;
+
     static {
         //TODO DECLARING "radium.Any" on here is needed for now
         //as subclass declaration needs to occur before types are formally loaded

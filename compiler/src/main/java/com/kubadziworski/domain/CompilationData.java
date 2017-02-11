@@ -2,17 +2,16 @@ package com.kubadziworski.domain;
 
 import com.kubadziworski.antlr.EnkelParser;
 
-/**
- * Created by plozano on 10/20/2016.
- */
 public class CompilationData {
 
     private final String filePath;
+    private final String basePath;
     private final EnkelParser enkelParser;
 
-    public CompilationData(String filePath, EnkelParser enkelParser) {
+    public CompilationData(String basePath, String filePath, EnkelParser enkelParser) {
         this.filePath = filePath;
         this.enkelParser = enkelParser;
+        this.basePath = basePath;
     }
 
     public String getFilePath() {
@@ -21,5 +20,9 @@ public class CompilationData {
 
     public EnkelParser getEnkelParser() {
         return enkelParser;
+    }
+
+    public String getBasePath() {
+        return basePath;
     }
 }

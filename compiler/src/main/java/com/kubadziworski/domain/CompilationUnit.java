@@ -9,28 +9,23 @@ public class CompilationUnit {
 
     private final List<ClassDeclaration> classDeclaration;
     private final String filePath;
+    private final String classPackage;
 
-    public CompilationUnit(List<ClassDeclaration> classDeclaration, String filePath) {
+    public CompilationUnit(List<ClassDeclaration> classDeclaration, String filePath, String classPackage) {
         this.classDeclaration = classDeclaration;
         this.filePath = filePath;
+        this.classPackage = classPackage;
     }
 
     public List<ClassDeclaration> getClassDeclaration() {
         return classDeclaration;
     }
 
-//    public String getClassName() {
-//        return classDeclaration.getName();
-//    }
-
     public String getFilePath() {
         return filePath;
     }
+
+    public String getClassPackage() {
+        return classPackage;
+    }
 }
-
-/**
-
- x.filePath= "";
- x.setFilePath("")
- var foo = x.getFilePath
- **/

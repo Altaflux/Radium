@@ -12,6 +12,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -199,7 +200,20 @@ public class JavaClassType implements Type {
         }
         ClassNode classNode = new ClassNode(Opcodes.ASM5);
         try {
-            ClassReader classVisitor = new ClassReader(this.getTypeClass().getName());
+
+            InputStream stream = null;
+            if (ClassTypeFactory.classLoader != null) {
+                stream = ClassTypeFactory.classLoader.getResourceAsStream(this.getTypeClass().getName().replace(".", "/") + ".class");
+            }
+            if (stream == null) {
+                stream = ClassLoader.getSystemResourceAsStream(this.getTypeClass().getName().replace(".", "/") + ".class");
+            }
+            ClassReader classVisitor = new ClassReader(stream);
+            try {
+                stream.close();
+            } catch (Exception e) {
+                //
+            }
             if (skipCode) {
                 classVisitor.accept(classNode, ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES);
             } else {

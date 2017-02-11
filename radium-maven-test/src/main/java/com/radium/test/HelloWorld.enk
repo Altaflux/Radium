@@ -1,0 +1,7 @@
+package com.radium.test;
+
+HelloWorld {
+    fn start {
+        println("hello world!")
+    }
+}

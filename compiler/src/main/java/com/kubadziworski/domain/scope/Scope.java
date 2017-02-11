@@ -203,6 +203,10 @@ public class Scope {
         return ClassTypeFactory.createClassType(getSuperClassName()).getAsmType().getInternalName();
     }
 
+    public MetaData getMetaData() {
+        return metaData;
+    }
+
     public Type getClassType() {
         String className = getFullClassName();
         return new EnkelType(className, this);
