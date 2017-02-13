@@ -109,26 +109,4 @@
             </plugin>
         </plugins>
     </build>
-
-
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-infinitest-intellij</id>
-            <name>bintray</name>
-            <url>http://dl.bintray.com/infinitest/intellij</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-infinitest-intellij</id>
-            <name>bintray-plugins</name>
-            <url>http://dl.bintray.com/infinitest/intellij</url>
-        </pluginRepository>
-    </pluginRepositories>
 </project>
