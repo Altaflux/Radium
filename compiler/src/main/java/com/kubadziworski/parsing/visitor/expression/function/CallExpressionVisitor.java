@@ -16,6 +16,7 @@ import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ClassNotFoundForNameException;
 import com.kubadziworski.exception.CompilationException;
+import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.FunctionNameEqualClassException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -61,7 +62,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
                     return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new PopExpression(owner));
                 }
                 return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), owner);
-            } catch (ClassNotFoundForNameException e) {
+            } catch (ClassNotFoundForNameException | FieldNotFoundException e) {
                 String possibleClass = ctx.owner.getText();
                 return visitStaticReference(possibleClass, functionName, arguments);
             }

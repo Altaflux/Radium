@@ -431,15 +431,7 @@ class ShouldCompileTest extends Specification {
 
                                 fn start(){
                                     println(java.lang.System.out.hashCode());
-                                    com.kubadziworski.test.Library.execute("Hello!!");
-                                }
-                                fn assert(Boolean actual,Boolean expected) {
-                                    if (actual == expected) {
-                                        println("OK")
-                                    }
-                                    else {
-                                        println("TEST FAILED")
-                                    }
+                                    com.kubadziworski.test.statics.ImportMethods.execute("Hello!!");
                                 }
                             }
 						"""
@@ -461,7 +453,7 @@ class ShouldCompileTest extends Specification {
                             }
 						"""
     private static final importingTest = """
-                            import com.kubadziworski.test.Library.*;
+                            import com.kubadziworski.test.statics.ImportMethods.*;
                             ImportingTest {
 
                                 fn start(){
@@ -571,30 +563,30 @@ class ShouldCompileTest extends Specification {
                             IfExpression {
                             
                                 fn start {
-                                    var foo = if(true){
+                                    var shouldBeFive = if(true){
                                         5
                                     } else {
                                         6
                                     }
-                                    assert(foo == 5, true)
-                                    var bar = if(false){
+                                    assert(shouldBeFive == 5, true)
+                                    var shouldBeSix = if(false){
                                         5
                                     } else {
                                         6
                                     }
-                                    assert(bar == 6, true)
+                                    assert(shouldBeSix == 6, true)
                             
-                                    var baz = if(false){
+                                    var shouldBeTwo = if(false){
                                         1
                                     }else if(true){
                                         2
                                     }else {
                                         3
                                     }
-                                    assert(baz == 2, true)
+                                    assert(shouldBeTwo == 2, true)
                             
-                                    var blizz = if true 8 else 9
-                                    assert(blizz == 8, true)
+                                    var shouldBeEight = if true 8 else 9
+                                    assert(shouldBeEight == 8, true)
                                 }
                                 fn assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
@@ -612,7 +604,7 @@ class ShouldCompileTest extends Specification {
                             
                                 fn start(){
                                     process();
-                                    val y = foo();
+                                    val y = testFinalBlocks();
                                     println(y)
                             
                                     println(finReturn())
@@ -636,24 +628,24 @@ class ShouldCompileTest extends Specification {
                                     throw new RuntimeException()
                                 }
                             
-                                fn foo(): Int{
+                                fn testFinalBlocks(): Int{
                             
                                    try {
                                         if(true){
-                                            println("primer")
+                                            println("return 1")
                                             return 1;
                                         }
-                                        println("segundo")
+                                        println("return 2")
                                         return 2;
                                    }
                                    catch(e:RuntimeException){
-                                        println("tercer")
+                                        println("return 3")
                                         return 3;
                                    }catch(e: Exception){
-                                     println("cuarto")
+                                     println("return 5")
                                      return 5;
                                    }finally {
-                                        println("hola")
+                                        println("final block")
                                    }
                             
                                 }
@@ -661,14 +653,12 @@ class ShouldCompileTest extends Specification {
                                 fn process(){
                                     try {
                                         throw new RuntimeException()
-                                    
                                     } catch (e:RuntimeException){
                                         println("OK")
                                     }
                                     
                                     try {
                                        throw new RuntimeException()
-                                    
                                     } catch (e:RuntimeException){
                                         println("OK")
                                     }catch(e:Exception){
@@ -676,7 +666,6 @@ class ShouldCompileTest extends Specification {
                                     }
                                     try {
                                         throw new RuntimeException()
-                                    
                                     } catch (e:RuntimeException){
                                         println("OK")
                                     }catch(e:Exception){
@@ -786,18 +775,18 @@ class ShouldCompileTest extends Specification {
             """
                     NullValue {
                         fn start(){
-                            var foo:String? = null
-                            println(foo)
+                            var nullableString:String? = null
+                            println(nullableString)
 
-                          var bla = try {
+                          var tryResult = try {
                                 throw new NullPointerException();
                             }catch(e: NullPointerException){
-                                println("hello")
+                                println("PASS - NullPointerCatch")
                             }catch(e:Exception){
                                 println("FAIL")
                             }
 
-                            println(bla)
+                            println(tryResult)
                         }
                     }
             """
@@ -807,19 +796,21 @@ class ShouldCompileTest extends Specification {
                 ReturnUnit {
 
                     fn start{
-                        var x = foo();
+                        var x = voidMethod();
                         println(x)
-                        var y = bar();
+                        var y = returnConcreteUnit();
                         println(y)
+                        //TODO FIX THIS
+                        //println(returnConcreteUnitByReference())
                     }
 
-                    fn foo(){
+                    fn voidMethod(){
                         println("Called method without return")
                     }
-                    fn bar(){
+                    fn returnConcreteUnit(){
                         return Unit.INSTANCE
                     }
-                    fn baz(){
+                    fn returnConcreteUnitByReference(){
                         var x = Unit.INSTANCE
                         return x
                     }
@@ -830,11 +821,11 @@ class ShouldCompileTest extends Specification {
                 ConcreteReturnUnit {
 
                     fn start{
-                        var x = baz();
+                        var x = nullableUnit();
                         println(x!!)
                     }
 
-                    fn baz(): Unit?{
+                    fn nullableUnit(): Unit?{
                         var x = Unit.INSTANCE
                         return x
                     }
@@ -851,7 +842,7 @@ class ShouldCompileTest extends Specification {
                         assert(toString().contains("CallParentClass"), true)
                    }
 
-                   fn toString():String{
+                   fn toString(): String {
                       return "myToString :: " + super.toString()
                    }
 
@@ -867,24 +858,22 @@ class ShouldCompileTest extends Specification {
             """
 
     private static final typeCoercion = """
-                import com.kubadziworski.test.DummyClass;
+                import com.kubadziworski.test.coercion.TypeCoercionTest;
                 TypeCoercion {
 
                     fn start(){
-                        var dummyClass = new DummyClass();
-                        var number:Int? = dummyClass.objectInt();
+                        var typeCoercionTest = new TypeCoercionTest();
+                        var number:Int? = typeCoercionTest.objectInt();
 
                         var sum = number!! + 1.5
                         println(sum)
                         number = null
-                        
-                        dummyClass.myString("foo")
+                        typeCoercionTest.returnString("foo")
                     }
                 }
             """
 
     private static final primitiveFunctions = """
-                import com.kubadziworski.test.DummyClass;
                 PrimitiveFunctions {
 
                     fn start(){
@@ -979,25 +968,30 @@ class ShouldCompileTest extends Specification {
                         """
     private final static inlineCode =
             """
-                            import com.kubadziworski.test.DummyClass;
+                            import com.kubadziworski.test.minline.InlinedClass;
                             InlineCode {
 
                                 fn start {
-                                    var x = new DummyClass();
-                                    x.faaaaaa("hello world!")
-                                  //  println(this.toString())
+                                    var x = new InlinedClass();
+                                    x.inlinedNonStatic("hello world!")
+                                    InlinedClass.inlinedStatic(this.toString())
+                                }
+                            }
+							"""
+
+    private final static callStaticImports =
+            """
+                            import com.kubadziworski.test.statics.*;
+                            CallStaticImports {
+
+                                fn start {
+                                    var x = new ClassWithStatics();
+                                    x.nonStaticMethod("hello world!")
+                                    myMethod()
                                 }
                                 
-                                fn myCode(){
-                                    var x = "holis"
-                                    println(x)
-                                }
                                 fn myMethod() {
-                                    com.kubadziworski.test.DummyClass.fooooo(this.toString())
-                                }
-                                
-                                fn myMethods() {
-                                   println(this.toString())
+                                    ClassWithStatics.staticMethod(this.toString())
                                 }
                             }
 							"""
@@ -1054,15 +1048,16 @@ class ShouldCompileTest extends Specification {
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
         detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
         throwStatement                | "ThrowStatement.enk"
-        nullValue                     | "NullValue.enk"
-        returnUnit                    | "ReturnUnit.enk"
-        concreteReturnUnit            | "ConcreteReturnUnit.enk"
-        superCall                     | "CallParentClass.enk"
-        typeCoercion                  | "TypeCoercion.enk"
-        primitiveFunctions            | "PrimitiveFunctions.enk"
-        innerTry                      | "InnerTry.enk"
-        parenthesisExpressions        | "ParenthesisExpressions.enk"
-        inlineCode                    | "InlineCode.enk"
+        nullValue              | "NullValue.enk"
+        returnUnit             | "ReturnUnit.enk"
+        concreteReturnUnit     | "ConcreteReturnUnit.enk"
+        superCall              | "CallParentClass.enk"
+        typeCoercion           | "TypeCoercion.enk"
+        primitiveFunctions     | "PrimitiveFunctions.enk"
+        innerTry               | "InnerTry.enk"
+        parenthesisExpressions | "ParenthesisExpressions.enk"
+        inlineCode             | "InlineCode.enk"
+        callStaticImports      | "CallStaticImports.enk"
     }
 
 
