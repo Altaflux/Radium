@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ReturnVoidContext;
 import com.kubadziworski.antlr.EnkelParser.ReturnWithValueContext;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
@@ -11,7 +11,7 @@ import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
-public class ReturnStatementVisitor extends EnkelBaseVisitor<ReturnStatement> {
+public class ReturnStatementVisitor extends EnkelParserBaseVisitor<ReturnStatement> {
     private final ExpressionVisitor expressionVisitor;
 
     public ReturnStatementVisitor(ExpressionVisitor expressionVisitor) {

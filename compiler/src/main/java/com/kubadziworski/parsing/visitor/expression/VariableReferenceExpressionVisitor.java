@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
 import com.kubadziworski.antlr.EnkelParser.VariableReferenceContext;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
 
-public class VariableReferenceExpressionVisitor extends EnkelBaseVisitor<Expression> {
+public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     private final Scope scope;
     private final ExpressionVisitor expressionVisitor;
 

@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.BlockExpression;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class TryCatchExpressionVisitor extends EnkelBaseVisitor<Statement> {
+public class TryCatchExpressionVisitor extends EnkelParserBaseVisitor<Statement> {
 
     private final ExpressionVisitor expressionVisitor;
     private final Scope scope;

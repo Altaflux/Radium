@@ -1,7 +1,7 @@
 package com.kubadziworski.parsing.visitor.expression;
 
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.PrefixExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.SignExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.SuffixExpressionContext;
@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class UnaryExpressionVisitor extends EnkelBaseVisitor<Expression> {
+public class UnaryExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
 
     private final ExpressionVisitor expressionVisitor;
 

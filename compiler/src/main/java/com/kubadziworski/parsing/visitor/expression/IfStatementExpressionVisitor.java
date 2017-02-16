@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
@@ -10,7 +10,7 @@ import com.kubadziworski.domain.node.statement.Statement;
 import org.antlr.v4.runtime.misc.NotNull;
 
 
-public class IfStatementExpressionVisitor extends EnkelBaseVisitor<Statement> {
+public class IfStatementExpressionVisitor extends EnkelParserBaseVisitor<Statement> {
 
     private final ExpressionVisitor expressionVisitor;
 

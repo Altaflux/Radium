@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression.function;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ArgumentListContext;
 import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
@@ -27,7 +27,7 @@ import java.util.List;
 
 import static com.kubadziworski.domain.node.expression.SuperCall.SUPER_IDENTIFIER;
 
-public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
+public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
     private final ExpressionVisitor expressionVisitor;
     private final Scope scope;
 
@@ -44,7 +44,7 @@ public class CallExpressionVisitor extends EnkelBaseVisitor<Call> {
         }
         List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
 
-        if (ctx.SUPER() != null) {
+        if (ctx.ConstructorDelegationCall_super() != null) {
             return createSuperFunctionCall(ctx, functionName, arguments);
         }
 

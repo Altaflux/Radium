@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.*;
 import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
@@ -15,7 +15,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.Collections;
 
-public class ArithmeticExpressionVisitor extends EnkelBaseVisitor<Expression> {
+public class ArithmeticExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     private final ExpressionVisitor expressionVisitor;
 
     public ArithmeticExpressionVisitor(ExpressionVisitor expressionVisitor) {

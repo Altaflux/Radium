@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.VariableDeclarationContext;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
@@ -19,7 +19,7 @@ import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
-public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<VariableDeclaration> {
+public class VariableDeclarationStatementVisitor extends EnkelParserBaseVisitor<VariableDeclaration> {
     private final ExpressionVisitor expressionVisitor;
     private final Scope scope;
 
@@ -35,9 +35,9 @@ public class VariableDeclarationStatementVisitor extends EnkelBaseVisitor<Variab
         Expression expression = expressionCtx.accept(expressionVisitor);
 
         boolean mutable = true;
-        if (ctx.IMMUTABLE() != null) {
+        if (ctx.KEYWORD_val() != null) {
             mutable = false;
-        } else if (ctx.VARIABLE() != null) {
+        } else if (ctx.KEYWORD_var() != null) {
             mutable = true;
         }
 

@@ -2,6 +2,7 @@ package com.kubadziworski.parsing;
 
 import com.kubadziworski.antlr.EnkelLexer;
 import com.kubadziworski.antlr.EnkelParser;
+
 import com.kubadziworski.domain.CompilationData;
 import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.domain.scope.GlobalScope;

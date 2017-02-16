@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ClassDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.domain.ClassDeclaration;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
-public class ClassVisitor extends EnkelBaseVisitor<ClassDeclaration> {
+public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
 
     private final Scope scope;
 

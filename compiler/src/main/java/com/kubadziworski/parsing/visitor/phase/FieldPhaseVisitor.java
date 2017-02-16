@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.phase;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.Scope;
@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class FieldPhaseVisitor extends EnkelBaseVisitor<Scope> {
+class FieldPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
 
     private final Scope scope;
 

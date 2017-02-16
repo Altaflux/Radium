@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Expression;
@@ -24,7 +24,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 
-public class FieldVisitor extends EnkelBaseVisitor<Field> {
+public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
 
     private final Scope scope;
 
@@ -69,7 +69,7 @@ public class FieldVisitor extends EnkelBaseVisitor<Field> {
 
 
         if (ctx.setter() != null) {
-            String fieldName = ctx.setter().ID().getText();
+            String fieldName = ctx.setter().SimpleName().getText();
             FunctionSignature signature = PropertyAccessorsUtil.createSetterForField(field, fieldName);
             Scope functionScope = new Scope(scope, signature);
             functionScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));

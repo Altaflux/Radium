@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ConditionalExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.domain.CompareSign;
@@ -13,7 +13,7 @@ import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
 import org.antlr.v4.runtime.misc.NotNull;
 
-public class ConditionalExpressionVisitor extends EnkelBaseVisitor<ConditionalExpression> {
+public class ConditionalExpressionVisitor extends EnkelParserBaseVisitor<ConditionalExpression> {
     private final ExpressionVisitor expressionVisitor;
 
     public ConditionalExpressionVisitor(ExpressionVisitor expressionVisitor) {

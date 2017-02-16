@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.*;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 /**
  * Created by kuba on 02.04.16.
  */
-public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
+public class ExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
 
     private final ArithmeticExpressionVisitor arithmeticExpressionVisitor;
     private final VariableReferenceExpressionVisitor variableReferenceExpressionVisitor;
@@ -35,7 +35,7 @@ public class ExpressionVisitor extends EnkelBaseVisitor<Expression> {
     public ExpressionVisitor(Scope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
         variableReferenceExpressionVisitor = new VariableReferenceExpressionVisitor(scope, this);
-        valueExpressionVisitor = new ValueExpressionVisitor();
+        valueExpressionVisitor = new ValueExpressionVisitor(this);
         callExpressionVisitor = new CallExpressionVisitor(this, scope);
         conditionalExpressionVisitor = new ConditionalExpressionVisitor(this);
         unaryExpressionVisitor = new UnaryExpressionVisitor(this);

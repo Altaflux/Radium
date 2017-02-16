@@ -1,11 +1,10 @@
 package com.kubadziworski.parsing.visitor.expression.function;
 
 import com.google.common.collect.Lists;
-import com.kubadziworski.antlr.EnkelBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ParameterContext;
 import com.kubadziworski.antlr.EnkelParser.ParameterWithDefaultValueContext;
 import com.kubadziworski.antlr.EnkelParser.ParametersListContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
@@ -17,7 +16,7 @@ import java.util.List;
 /**
  * Created by kuba on 09.05.16.
  */
-public class ParameterExpressionListVisitor extends EnkelBaseVisitor<List<Parameter>> {
+public class ParameterExpressionListVisitor extends EnkelParserBaseVisitor<List<Parameter>> {
 
     private final ExpressionVisitor expressionVisitor;
     private final Scope scope;

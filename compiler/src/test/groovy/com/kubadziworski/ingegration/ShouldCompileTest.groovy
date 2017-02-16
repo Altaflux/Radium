@@ -17,7 +17,8 @@ class ShouldCompileTest extends Specification {
                             HelloWorld {
 
                                 fn start {
-                                    println("hello world!")
+                                    var x = 5;
+                                    println("hello \${x} world!")
                                 }
                             }
 							"""
@@ -122,6 +123,7 @@ class ShouldCompileTest extends Specification {
                                         }
                                         else {
                                             println("TEST FAILED")
+                                            throw new AssertionError("TEST FAILED")
                                         }
                                     }
 
@@ -241,7 +243,7 @@ class ShouldCompileTest extends Specification {
                                  var a:Int = 3
                                  var b:Int = 3
 
-                                 println("Comparing primitive " + a +" and " + b)
+                                 println("Comparing primitive \${a} and \${b}")
 
                                  var result = a == b
                                  assert(expected -> true , actual -> result)
@@ -276,7 +278,7 @@ class ShouldCompileTest extends Specification {
                                  var a:Int = 3
                                  var b:Int = 3
 
-                                 println("Comparing integer " + a +" and " + b)
+                                 println("Comparing integer \${a} and \${b}")
 
 
                                  var result = a == b
@@ -302,7 +304,7 @@ class ShouldCompileTest extends Specification {
                                   var a = 3
                                   var b = 4
 
-                                 println("Comparing primitive " + a +" and " + b)
+                                 println("Comparing primitive \${a} and \${b}")
 
 
                                     var result = a == b
@@ -328,7 +330,7 @@ class ShouldCompileTest extends Specification {
                                   var a = 3
                                   var b = 4
 
-                                  println("Comparing integer " + a +" and " + b)
+                                  println("Comparing integer \${a} and \${b}")
 
                                   var result = a == b
                                   assert(expected -> false , actual -> result)
@@ -356,6 +358,7 @@ class ShouldCompileTest extends Specification {
                                 }
                                 else {
                                     println("TEST FAILED")
+                                    throw new AssertionError("TEST FAILED")
                                 }
                               }
                             }
@@ -416,6 +419,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                   }
                             }
@@ -439,6 +443,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }
@@ -465,6 +470,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }
@@ -507,6 +513,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }
@@ -532,6 +539,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }
@@ -556,6 +564,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }
@@ -611,6 +620,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }
@@ -680,6 +690,7 @@ class ShouldCompileTest extends Specification {
                                         println("OK")
                                     }catch(e:Exception){
                                         println("FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                     try {
                                         throw new RuntimeException()
@@ -687,6 +698,7 @@ class ShouldCompileTest extends Specification {
                                         println("OK")
                                     }catch(e:Exception){
                                         println("FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }finally{
                                         println("finally called OK")
                                     }
@@ -698,6 +710,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }
@@ -717,6 +730,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }
@@ -742,6 +756,7 @@ class ShouldCompileTest extends Specification {
                                         }
                                         else {
                                             println("TEST FAILED")
+                                            throw new AssertionError("TEST FAILED")
                                         }
                                 }
                             }
@@ -768,6 +783,7 @@ class ShouldCompileTest extends Specification {
                                 }
                                 else {
                                     println("TEST FAILED")
+                                    throw new AssertionError("TEST FAILED")
                                 }
                          }
                     }
@@ -801,6 +817,7 @@ class ShouldCompileTest extends Specification {
                                 println("PASS - NullPointerCatch")
                             }catch(e:Exception){
                                 println("FAIL")
+                                throw new AssertionError("TEST FAILED")
                             }
 
                             println(tryResult)
@@ -869,6 +886,7 @@ class ShouldCompileTest extends Specification {
                         }
                         else {
                             println("TEST FAILED")
+                            throw new AssertionError("TEST FAILED")
                         }
                    }
                 }
@@ -911,6 +929,7 @@ class ShouldCompileTest extends Specification {
                             }
                             else {
                                 println("TEST FAILED")
+                                throw new AssertionError("TEST FAILED")
                             }
                     }
                 }
@@ -959,6 +978,7 @@ class ShouldCompileTest extends Specification {
                             }
                             else {
                                 println("TEST FAILED")
+                                throw new AssertionError("TEST FAILED")
                             }
                     }               
                 }
@@ -979,6 +999,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                     else {
                                         println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
                                     }
                                 }
                             }

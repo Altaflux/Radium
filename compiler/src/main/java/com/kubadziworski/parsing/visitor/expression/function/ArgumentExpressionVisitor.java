@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.expression.function;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ArgumentContext;
 import com.kubadziworski.antlr.EnkelParser.NamedArgumentContext;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 /**
  * Created by kuba on 09.05.16.
  */
-public class ArgumentExpressionVisitor extends EnkelBaseVisitor<ArgumentHolder> {
+public class ArgumentExpressionVisitor extends EnkelParserBaseVisitor<ArgumentHolder> {
 
     private final ExpressionVisitor expressionVisitor;
 

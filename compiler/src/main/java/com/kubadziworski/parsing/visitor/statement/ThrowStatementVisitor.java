@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
@@ -12,7 +12,7 @@ import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 
 
-public class ThrowStatementVisitor extends EnkelBaseVisitor<ThrowStatement> {
+public class ThrowStatementVisitor extends EnkelParserBaseVisitor<ThrowStatement> {
 
     private final ExpressionVisitor expressionVisitor;
     private final Type throwableType = ClassTypeFactory.createClassType("java.lang.Throwable");

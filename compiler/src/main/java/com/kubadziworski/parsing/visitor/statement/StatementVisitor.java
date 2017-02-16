@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.*;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 /**
  * Created by kuba on 01.04.16.
  */
-public class StatementVisitor extends EnkelBaseVisitor<Statement> {
+public class StatementVisitor extends EnkelParserBaseVisitor<Statement> {
 
     private final ExpressionVisitor expressionVisitor;
     private final VariableDeclarationStatementVisitor variableDeclarationStatementVisitor;

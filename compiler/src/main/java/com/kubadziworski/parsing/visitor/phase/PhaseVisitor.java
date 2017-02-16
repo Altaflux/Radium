@@ -35,7 +35,7 @@ public class PhaseVisitor {
         String packageDeclaration = "";
         EnkelParser.PackageDeclarationContext declarationContexts = context.packageDeclaration();
         if (declarationContexts != null) {
-            packageDeclaration = declarationContexts.ID().stream().map(ParseTree::getText).collect(Collectors.joining("."));
+            packageDeclaration = declarationContexts.SimpleName().stream().map(ParseTree::getText).collect(Collectors.joining("."));
         }
         JvmConfiguration jvmConfiguration = CompilerConfigInstance.getConfig();
         ImportResolver importResolver = new ImportResolver(context.importDeclaration(), jvmConfiguration.getResolverContainer());

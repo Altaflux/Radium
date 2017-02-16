@@ -1,6 +1,6 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ForConditionsContext;
 import com.kubadziworski.antlr.EnkelParser.ForStatementContext;
 import com.kubadziworski.antlr.EnkelParser.VariableReferenceContext;
@@ -18,7 +18,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 /**
  * Created by kuba on 23.04.16.
  */
-public class ForStatementVisitor extends EnkelBaseVisitor<RangedForStatement> {
+public class ForStatementVisitor extends EnkelParserBaseVisitor<RangedForStatement> {
     private final Scope scope;
     private final ExpressionVisitor expressionVisitor;
 

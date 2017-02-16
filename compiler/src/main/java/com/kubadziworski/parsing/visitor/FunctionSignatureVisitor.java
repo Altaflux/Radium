@@ -1,19 +1,19 @@
 package com.kubadziworski.parsing.visitor;
 
-import com.kubadziworski.antlr.EnkelBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.FunctionDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.ParametersListContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
-import com.kubadziworski.util.TypeResolver;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.function.ParameterExpressionListVisitor;
+import com.kubadziworski.util.TypeResolver;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by kuba on 06.04.16.
  */
-public class FunctionSignatureVisitor extends EnkelBaseVisitor<FunctionSignature> {
+public class FunctionSignatureVisitor extends EnkelParserBaseVisitor<FunctionSignature> {
 
     private final ExpressionVisitor expressionVisitor;
     private final Scope scope;
