@@ -34,7 +34,7 @@ public class BlockStatementVisitor extends EnkelParserBaseVisitor<Block> {
             }
 
             Statement statement = statementContext.accept(statementVisitor);
-            statements.add(statementContext.accept(statementVisitor));
+            statements.add(statement);
             hasReturnCompleted = statement.isReturnComplete();
         }
         return new Block(new RuleContextElementImpl(ctx), newScope, statements);

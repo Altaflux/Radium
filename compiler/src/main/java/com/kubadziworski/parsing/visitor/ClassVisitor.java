@@ -64,7 +64,7 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
                         return new Constructor(function.getFunctionSignature(), block1);
                     }
 
-                    return method.accept(new FunctionVisitor(scope));
+                    return function;
                 })
                 .collect(toList());
         if (!defaultConstructorExists) {
