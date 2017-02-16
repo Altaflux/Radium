@@ -4,10 +4,10 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.intrinsic.AnyType;
-import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
+import com.kubadziworski.util.TypeResolver;
 
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class IfExpression extends ElementImpl implements Expression {
@@ -20,31 +20,18 @@ public class IfExpression extends ElementImpl implements Expression {
         this(null, condition, trueStatement, falseStatement);
     }
 
-    public IfExpression(NodeData element , Expression condition, Expression trueStatement, Expression falseStatement) {
+    public IfExpression(NodeData element, Expression condition, Expression trueStatement, Expression falseStatement) {
         super(element);
         this.condition = condition;
         this.trueStatement = trueStatement;
         this.falseStatement = falseStatement;
 
-        if (!falseStatement.getType().equals(trueStatement.getType())) {
-            throw new RuntimeException("True and false expressions do not match type: " +
-                    trueStatement.getType() + " : " + falseStatement.getType());
-        }
     }
 
     @Override
     public Type getType() {
-        Optional<Type> type = trueStatement.getType().nearestDenominator(falseStatement.getType());
-        if (type.isPresent()) {
-            return type.get();
-        }
-        if (trueStatement.getType().isPrimitive() == falseStatement.getType().isPrimitive()) {
-            throw new ComparisonBetweenDiferentTypesException(trueStatement, falseStatement);
-        }
-        if (trueStatement.getType().isPrimitive() && falseStatement.getType().isPrimitive()) {
-            throw new ComparisonBetweenDiferentTypesException(trueStatement, falseStatement);
-        }
-        return AnyType.INSTANCE;
+        List<Type> allTypes = Arrays.asList(trueStatement.getType(), falseStatement.getType());
+        return TypeResolver.getCommonType(allTypes);
     }
 
     @Override
@@ -56,6 +43,7 @@ public class IfExpression extends ElementImpl implements Expression {
     public boolean isReturnComplete() {
         return (falseStatement.isReturnComplete() && trueStatement.isReturnComplete());
     }
+
     public Expression getCondition() {
         return condition;
     }
