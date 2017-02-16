@@ -10,14 +10,19 @@ import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.TypeResolver;
+import org.antlr.v4.runtime.CommonTokenFactory;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kubadziworski.antlr.EnkelParser.SINGLE_QUOTE_REF;
 import static com.kubadziworski.antlr.EnkelParser.SINGLE_TEXT;
+import static com.kubadziworski.antlr.EnkelParser.SimpleName;
 
 public class ValueExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
 
@@ -38,6 +43,15 @@ public class ValueExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
                 if (parseTree instanceof TerminalNode) {
                     if (((TerminalNode) parseTree).getSymbol().getType() == SINGLE_TEXT) {
                         expressions.add(new Value(DefaultTypes.STRING, parseTree.getText()));
+                    } else if (((TerminalNode) parseTree).getSymbol().getType() == SINGLE_QUOTE_REF) {
+                        Token token = CommonTokenFactory.DEFAULT.create(SimpleName, parseTree.getText().replace("$", ""));
+                        EnkelParser.VariableReferenceContext referenceContext = new EnkelParser.VariableReferenceContext(ctx, 0);
+                        TerminalNodeImpl node = new TerminalNodeImpl(token);
+                        referenceContext.addChild(node);
+                        referenceContext.start = ctx.start;
+                        referenceContext.stop = ctx.stop;
+
+                        expressions.add(referenceContext.accept(expressionVisitor));
                     }
                 } else if (parseTree instanceof EnkelParser.ExpressionContext) {
                     Expression expression = parseTree.accept(expressionVisitor);

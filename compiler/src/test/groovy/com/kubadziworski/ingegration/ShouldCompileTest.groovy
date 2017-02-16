@@ -18,7 +18,7 @@ class ShouldCompileTest extends Specification {
 
                                 fn start {
                                     var x = 5;
-                                    println("hello \${x} world!")
+                                    println("hello \$x world!")
                                 }
                             }
 							"""
