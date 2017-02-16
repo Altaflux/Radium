@@ -330,10 +330,6 @@ public class BaseStatementGenerator implements StatementGenerator {
         expressionGenerator.generate(fieldReference, this);
     }
 
-    public void generateDup(FieldReference fieldReference) {
-        expressionGenerator.generateDup(fieldReference, this);
-    }
-
     @Override
     public void generate(FieldReference fieldReference, StatementGenerator generator) {
         generateLineNumber(fieldReference);
@@ -364,11 +360,6 @@ public class BaseStatementGenerator implements StatementGenerator {
     public Scope getScope() {
         return parent.getScope();
     }
-
-//    public StatementGenerator copy(StatementGenerator generator) {
-//        return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine);
-//    }
-
 
     public StatementGenerator copy(StatementGenerator generator) {
         return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine,

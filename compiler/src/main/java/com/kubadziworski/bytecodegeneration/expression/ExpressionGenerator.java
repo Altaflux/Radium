@@ -109,10 +109,6 @@ public class ExpressionGenerator {
         referenceExpressionGenerator.generate(reference, generator);
     }
 
-    public void generateDup(FieldReference reference, StatementGenerator generator) {
-        referenceExpressionGenerator.generateDup(reference, generator);
-    }
-
     public void generate(LocalVariableReference reference) {
         referenceExpressionGenerator.generate(reference, getScope());
     }
