@@ -276,14 +276,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
         }
     }
 
-    @Override
-    final public void generateDup(FieldReference fieldReference) {
-        if (parent != null) {
-            parent.generateDup(fieldReference);
-        } else {
-            generateDup(fieldReference, this);
-        }
-    }
 
     @Override
     final public void generate(PopExpression popExpression) {
@@ -428,11 +420,6 @@ public class StatementGeneratorFilter implements StatementGenerator {
     @Override
     public void generate(FieldReference fieldReference, StatementGenerator generator) {
         next.generate(fieldReference, generator);
-    }
-
-    @Override
-    public void generateDup(FieldReference fieldReference, StatementGenerator generator) {
-        next.generateDup(fieldReference, generator);
     }
 
     @Override

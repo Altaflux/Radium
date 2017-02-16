@@ -40,9 +40,6 @@ public class FieldReference extends ElementImpl implements Reference, CallableMe
         generator.generate(this);
     }
 
-    public void acceptDup(StatementGenerator generator) {
-        generator.generateDup(this);
-    }
 
     public Expression getOwner() {
         return owner;

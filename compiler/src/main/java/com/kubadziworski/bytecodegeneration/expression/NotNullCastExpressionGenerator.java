@@ -1,7 +1,7 @@
 package com.kubadziworski.bytecodegeneration.expression;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.node.expression.DupExpression;
+import com.kubadziworski.bytecodegeneration.util.AsmUtil;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.NotNullCastExpression;
 import com.kubadziworski.domain.type.BoxableType;
@@ -35,8 +35,8 @@ public class NotNullCastExpressionGenerator {
             return;
         }
 
-        DupExpression dupExpression = new DupExpression(expression, 0);
-        dupExpression.accept(generator);
+        expression.accept(generator);
+        AsmUtil.duplicateStackValue(expression.getType().getAsmType(), methodVisitor, 0);
 
         Label postNullCheck = new Label();
         methodVisitor.visitJumpInsn(IFNONNULL, postNullCheck);

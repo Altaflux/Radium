@@ -9,6 +9,7 @@ public class AsmUtil {
 
     public static void duplicateStackValue(Type type, MethodVisitor methodVisitor, int position) {
         int size = type.getSize();
+
         switch (position) {
             case 0: {
                 if (size == 1) {

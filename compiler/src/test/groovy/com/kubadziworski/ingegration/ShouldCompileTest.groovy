@@ -362,6 +362,8 @@ class ShouldCompileTest extends Specification {
 							"""
 
     private static final unaryExpressionTest = """
+                            import com.kubadziworski.test.unary.ClassWithField;
+                            
                             UnaryExpressions {
 
                                 globalField : Int
@@ -390,9 +392,24 @@ class ShouldCompileTest extends Specification {
                                     var incPrefix = ++globalField
                                     var result2 = incPrefix == globalField
                                     assert(expected -> true , actual -> result2)
-
+                                    
+                                    testJavaFields();
                                 }
-
+                                
+                                fn testJavaFields(){
+                                    println("Testing Java field increment")
+                                    val myObject = new ClassWithField();
+                                    assert(expected -> true , actual -> myObject.nonStatValue == 1)
+                                    val result = myObject.nonStatValue++;
+                                    assert(expected -> true , actual -> result == 1)
+                                    assert(expected -> true , actual -> myObject.nonStatValue == 2)
+                                    
+                                    println("Testing Java static field increment")
+                                    assert(expected -> true , actual -> ClassWithField.statValue == 1)
+                                    val secondResult = ClassWithField.statValue++;
+                                    assert(expected -> true , actual -> secondResult == 1)
+                                    assert(expected -> true , actual -> ClassWithField.statValue == 2)
+                                }
                                 fn assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
                                         println("OK")
@@ -1046,18 +1063,18 @@ class ShouldCompileTest extends Specification {
         myTryStatement                   | "TryStatement.enk"
         fieldInitializing                | "FieldInitializing.enk"
         fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
-        detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
-        throwStatement                | "ThrowStatement.enk"
-        nullValue              | "NullValue.enk"
-        returnUnit             | "ReturnUnit.enk"
-        concreteReturnUnit     | "ConcreteReturnUnit.enk"
-        superCall              | "CallParentClass.enk"
-        typeCoercion           | "TypeCoercion.enk"
-        primitiveFunctions     | "PrimitiveFunctions.enk"
-        innerTry               | "InnerTry.enk"
-        parenthesisExpressions | "ParenthesisExpressions.enk"
-        inlineCode             | "InlineCode.enk"
-        callStaticImports      | "CallStaticImports.enk"
+        detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
+        throwStatement                   | "ThrowStatement.enk"
+        nullValue                        | "NullValue.enk"
+        returnUnit                       | "ReturnUnit.enk"
+        concreteReturnUnit               | "ConcreteReturnUnit.enk"
+        superCall                        | "CallParentClass.enk"
+        typeCoercion                     | "TypeCoercion.enk"
+        primitiveFunctions               | "PrimitiveFunctions.enk"
+        innerTry                         | "InnerTry.enk"
+        parenthesisExpressions           | "ParenthesisExpressions.enk"
+        inlineCode                       | "InlineCode.enk"
+        callStaticImports                | "CallStaticImports.enk"
     }
 
 

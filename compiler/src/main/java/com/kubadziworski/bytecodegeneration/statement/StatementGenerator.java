@@ -101,8 +101,7 @@ public interface StatementGenerator {
 
     void generate(FieldReference fieldReference);
     void generate(FieldReference fieldReference, StatementGenerator generator);
-    void generateDup(FieldReference fieldReference);
-    void generateDup(FieldReference fieldReference,  StatementGenerator generator);
+
     void generate(PopExpression popExpression);
     void generate(PopExpression popExpression, StatementGenerator generator);
 

@@ -33,7 +33,6 @@ public class BaseStatementGenerator implements StatementGenerator {
     public BaseStatementGenerator(StatementGenerator generator, InstructionAdapter methodVisitor) {
         parent = generator;
         expressionGenerator = new ExpressionGenerator(generator, methodVisitor);
-
         variableDeclarationStatementGenerator = new VariableDeclarationStatementGenerator();
         forStatementGenerator = new ForStatementGenerator(methodVisitor);
         blockStatementGenerator = new BlockStatementGenerator(methodVisitor);
@@ -339,12 +338,6 @@ public class BaseStatementGenerator implements StatementGenerator {
     public void generate(FieldReference fieldReference, StatementGenerator generator) {
         generateLineNumber(fieldReference);
         expressionGenerator.generate(fieldReference, generator);
-    }
-
-    @Override
-    public void generateDup(FieldReference fieldReference, StatementGenerator generator) {
-        generateLineNumber(fieldReference);
-        expressionGenerator.generateDup(fieldReference, generator);
     }
 
     public void generate(PopExpression popExpression) {

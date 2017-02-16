@@ -3,4 +3,5 @@
 *.class
 /antlr/target
 /compiler/target
+/radium-maven-plugin/target
 /compiler/src/main/java/test
