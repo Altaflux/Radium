@@ -103,11 +103,35 @@ public class UnaryExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
                 if (unarySign.equals(UnarySign.ADD)) {
                     return expression;
                 }
-                return new Value(new RuleContextElementImpl(ctx), expression.getType(), unarySign.getSign() + ((Value) expression).getValue());
+
+                return new Value(new RuleContextElementImpl(ctx), expression.getType(), negateNumber((Number) ((Value) expression).getValue()));
             }
         }
 
         return new UnaryExpression(new RuleContextElementImpl(ctx), unarySign, expression);
+    }
+
+    private static Number negateNumber(Number number) {
+        if (number instanceof Integer) {
+            return -number.intValue();
+        }
+        if (number instanceof Long) {
+            return -number.longValue();
+        }
+        if (number instanceof Float) {
+            return -number.floatValue();
+        }
+        if (number instanceof Double) {
+            return -number.doubleValue();
+        }
+        if (number instanceof Short) {
+            return -number.shortValue();
+        }
+        if (number instanceof Byte) {
+            return -number.byteValue();
+        }
+
+        throw new RuntimeException("Unrecognized Number type");
     }
 
     private static class ComposedExpression extends ElementImpl implements Expression {

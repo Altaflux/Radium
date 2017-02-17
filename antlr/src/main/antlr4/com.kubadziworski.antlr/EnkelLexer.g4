@@ -15,31 +15,23 @@ LineTerminator
  : [\r\n\u2028\u2029] -> channel(HIDDEN)
  ;
 
-
-IntegerLiteral
-	:	DecimalIntegerLiteral
-	|	HexIntegerLiteral
-	|	OctalIntegerLiteral
-	|	BinaryIntegerLiteral
-	;
-
 fragment
 SingleCharacter
 	:	~['\\]
 	;
-fragment
+
 DecimalIntegerLiteral
 	:	DecimalNumeral IntegerTypeSuffix?
 	;
-fragment
+
 HexIntegerLiteral
 	:	HexNumeral IntegerTypeSuffix?
 	;
-fragment
+
 OctalIntegerLiteral
 	:	OctalNumeral IntegerTypeSuffix?
 	;
-fragment
+
 BinaryIntegerLiteral
 	:	BinaryNumeral IntegerTypeSuffix?
 	;
@@ -141,11 +133,7 @@ OctalDigitOrUnderscore
 	:	OctalDigit
 	|	'_'
 	;
-FloatingPointLiteral
-	:	DecimalFloatingPointLiteral
-	|	HexadecimalFloatingPointLiteral
-	;
-fragment
+
 DecimalFloatingPointLiteral
 	:	Digits '.' Digits  ExponentPart? FloatTypeSuffix?
 	|	'.' Digits ExponentPart? FloatTypeSuffix?
@@ -156,7 +144,7 @@ fragment
 FloatTypeSuffix
 	:	[fFdD]
 	;
-fragment
+
 HexadecimalFloatingPointLiteral
 	:	HexSignificand BinaryExponent FloatTypeSuffix?
 	;
@@ -189,29 +177,6 @@ fragment
 Sign
 	:	[+-]
 	;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////////////////
-
 
 SEMI
     : ';';

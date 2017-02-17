@@ -3,7 +3,6 @@ package com.kubadziworski.bytecodegeneration.expression;
 import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
-import com.kubadziworski.util.TypeResolver;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -20,9 +19,8 @@ public class ValueExpressionGenerator {
             methodVisitor.visitInsn(Opcodes.ACONST_NULL);
 
         } else {
-            String stringValue = value.getValue();
-            Object transformedValue = TypeResolver.getValueFromString(stringValue, type);
-            methodVisitor.visitLdcInsn(transformedValue);
+            Object valueObj = value.getValue();
+            methodVisitor.visitLdcInsn(valueObj);
         }
     }
 }

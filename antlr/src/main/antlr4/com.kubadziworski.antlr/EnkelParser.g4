@@ -124,14 +124,15 @@ primary
 
 variableReference : SimpleName ;
 
+value
+    :  integerLiteral
+    |  floatingPointLiteral
+    | CharacterLiteral
+    | BOOL
+    | NULL
+    | stringLiteral
+    ;
 
-value : IntegerLiteral
-      |	FloatingPointLiteral
-      | CharacterLiteral
-      | BOOL
-      | NULL
-      | stringLiteral
-      ;
 qualifiedName : SimpleName ('.' SimpleName)*;
 
 methodModifiers
@@ -158,217 +159,17 @@ dims
 	:	'[' ']' ('[' ']')*
 	;
 
-eos
- : SEMI
- | EOF
- | {_input.LT(1).getType() == CLOSE_BLOCK}?
- ;
+floatingPointLiteral
+	:	DecimalFloatingPointLiteral
+	|	HexadecimalFloatingPointLiteral
+	;
+integerLiteral
+    :   DecimalIntegerLiteral
+    |	HexIntegerLiteral
+    |	OctalIntegerLiteral
+    |	BinaryIntegerLiteral
+    ;
 stringLiteral
     : SINGLE_QUOTE (SINLE_QUOTE_ESCAPED_CHAR | SINLE_QUOTE_EXPRESSION_START expression CLOSE_BLOCK | SINGLE_QUOTE_REF | ~SINLE_QUOTE_CLOSE)* SINLE_QUOTE_CLOSE
     | TRIPLE_QUOTE (MULTILINE_QUOTE_EXPRESSION_START expression CLOSE_BLOCK | MULTILINE_QUOTE_REF | ~MULTILINE_QUOTE_CLOSE)* MULTILINE_QUOTE_CLOSE
     ;
-
-//OpenBrace                  : '{';
-//CloseBrace                 : '}';
-//
-//
-//
-//IntegerLiteral
-//	:	DecimalIntegerLiteral
-//	|	HexIntegerLiteral
-//	|	OctalIntegerLiteral
-//	|	BinaryIntegerLiteral
-//	;
-//
-//CharacterLiteral
-//	:	'\'' SingleCharacter '\''
-//	;
-//
-//fragment
-//SingleCharacter
-//	:	~['\\]
-//	;
-//fragment
-//DecimalIntegerLiteral
-//	:	DecimalNumeral IntegerTypeSuffix?
-//	;
-//fragment
-//HexIntegerLiteral
-//	:	HexNumeral IntegerTypeSuffix?
-//	;
-//fragment
-//OctalIntegerLiteral
-//	:	OctalNumeral IntegerTypeSuffix?
-//	;
-//fragment
-//BinaryIntegerLiteral
-//	:	BinaryNumeral IntegerTypeSuffix?
-//	;
-//fragment
-//BinaryNumeral
-//	:	'0' [bB] BinaryDigits
-//	;
-//fragment
-//BinaryDigits
-//	:	BinaryDigit (BinaryDigitsAndUnderscores? BinaryDigit)?
-//	;
-//fragment
-//BinaryDigit
-//	:	[01]
-//	;
-//fragment
-//BinaryDigitsAndUnderscores
-//	:	BinaryDigitOrUnderscore+
-//	;
-//fragment
-//BinaryDigitOrUnderscore
-//	:	BinaryDigit
-//	|	'_'
-//	;
-//fragment
-//DecimalNumeral
-//	:	'0'
-//	|	NonZeroDigit (Digits? | Underscores Digits)
-//	;
-//fragment
-//IntegerTypeSuffix
-//	:	[lL]
-//	;
-//fragment
-//DigitsAndUnderscores
-//	:	DigitOrUnderscore+
-//	;
-//fragment
-//DigitOrUnderscore
-//	:	Digit
-//	|	'_'
-//	;
-//fragment
-//Digits
-//	:	Digit (DigitsAndUnderscores? Digit)?
-//	;
-//fragment
-//OctalNumeral
-//	:	'0' Underscores? OctalDigits
-//	;
-//fragment
-//Digit
-//	:	'0'
-//	|	NonZeroDigit
-//	;
-//
-//fragment
-//NonZeroDigit
-//	:	[1-9]
-//	;
-//
-//fragment
-//HexNumeral
-//	:	'0' [xX] HexDigits
-//	;
-//fragment
-//HexDigits
-//	:	HexDigit (HexDigitsAndUnderscores? HexDigit)?
-//	;
-//fragment
-//HexDigitsAndUnderscores
-//	:	HexDigitOrUnderscore+
-//	;
-//
-//fragment
-//HexDigitOrUnderscore
-//	:	HexDigit
-//	|	'_'
-//	;
-//fragment
-//HexDigit
-//	:	[0-9a-fA-F]
-//	;
-//fragment
-//Underscores
-//	:	'_'+
-//	;
-//fragment
-//OctalDigits
-//	:	OctalDigit (OctalDigitsAndUnderscores? OctalDigit)?
-//	;
-//
-//fragment
-//OctalDigit
-//	:	[0-7]
-//	;
-//fragment
-//OctalDigitsAndUnderscores
-//	:	OctalDigitOrUnderscore+
-//	;
-//fragment
-//OctalDigitOrUnderscore
-//	:	OctalDigit
-//	|	'_'
-//	;
-//FloatingPointLiteral
-//	:	DecimalFloatingPointLiteral
-//	|	HexadecimalFloatingPointLiteral
-//	;
-//fragment
-//DecimalFloatingPointLiteral
-//	:	Digits '.' Digits  ExponentPart? FloatTypeSuffix?
-//	|	'.' Digits ExponentPart? FloatTypeSuffix?
-//	|	Digits ExponentPart FloatTypeSuffix?
-//	|	Digits FloatTypeSuffix
-//	;
-//fragment
-//FloatTypeSuffix
-//	:	[fFdD]
-//	;
-//fragment
-//HexadecimalFloatingPointLiteral
-//	:	HexSignificand BinaryExponent FloatTypeSuffix?
-//	;
-//fragment
-//HexSignificand
-//	:	HexNumeral '.'?
-//	|	'0' [xX] HexDigits? '.' HexDigits
-//	;
-//
-//fragment
-//BinaryExponent
-//	:	BinaryExponentIndicator SignedInteger
-//	;
-//fragment
-//BinaryExponentIndicator
-//	:	[pP]
-//	;
-//fragment
-//ExponentPart
-//	:	ExponentIndicator SignedInteger
-//	;
-//
-//fragment
-//ExponentIndicator
-//	:	[eE]
-//	;
-//fragment
-//SignedInteger
-//	:	Sign? Digits
-//	;
-//
-//fragment
-//Sign
-//	:	[+-]
-//	;
-//
-////TOKENS
-//STATIC : 'static' ;
-//THIS : 'this' ;
-//SUPER: 'super' ;
-//VARIABLE : 'var' ;
-//IMMUTABLE : 'val' ;
-//PRINT : 'print' ;
-//EQUALS : '=' ;
-//BOOL : 'true' | 'false' ;
-//NULL : 'null' ;
-//STRING : '"'~('\r' | '\n' | '"')*'"' ;
-//SimpleName : [a-zA-Z0-9]+ ;
-
-

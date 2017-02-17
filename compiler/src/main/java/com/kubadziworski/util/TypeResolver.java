@@ -1,15 +1,14 @@
 package com.kubadziworski.util;
 
-import com.google.common.primitives.*;
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.TypeContext;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.*;
-import com.kubadziworski.domain.type.intrinsic.*;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
+import com.kubadziworski.domain.type.intrinsic.TypeProjection;
+import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,33 +16,15 @@ import java.util.stream.IntStream;
 
 import static com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes.PRIMITIVE_TYPES;
 
-/**
- * Created by kuba on 02.04.16.
- */
+
 public final class TypeResolver {
 
-    private static final Type BOOLEAN_TYPE = PrimitiveTypes.BOOLEAN_TYPE;
-    private static final Type INT_TYPE = PrimitiveTypes.INT_TYPE;
-    private static final Type LONG_TYPE = PrimitiveTypes.LONG_TYPE;
-    private static final Type DOUBLE_TYPE = PrimitiveTypes.DOUBLE_TYPE;
-    private static final Type FLOAT_TYPE = PrimitiveTypes.FLOAT_TYPE;
-    private static final Type CHAR_TYPE = PrimitiveTypes.CHAR_TYPE;
-
-    public static Type getFromTypeContext(TypeContext typeContext) {
-        if (typeContext == null) return new TypeProjection(VoidType.INSTANCE, Type.Nullability.NOT_NULL);
-
-        if (typeContext.nullable != null) {
-            return getFromTypeName(typeContext.simpleName.getText(), Type.Nullability.NULLABLE);
-        }
-        return getFromTypeName(typeContext.simpleName.getText(), Type.Nullability.NOT_NULL);
-    }
 
     public static Type getFromTypeContext(TypeContext typeContext, Scope scope) {
         if (typeContext == null) return VoidType.INSTANCE;
         String typeName = typeContext.simpleName.getText();
 
         Type.Nullability nullability = typeContext.nullable != null ? Type.Nullability.NULLABLE : Type.Nullability.NOT_NULL;
-
         if (typeName.equals("java.lang.String")) return new TypeProjection(DefaultTypes.STRING, nullability);
 
         Optional<? extends Type> builtInType = getBuiltInType(typeName);
@@ -53,17 +34,9 @@ public final class TypeResolver {
         return new TypeProjection(contextType, nullability);
     }
 
-    public static Type getFromTypeName(String typeName, Type.Nullability nullability) {
-
-        if (typeName.equals("java.lang.String")) return new TypeProjection(DefaultTypes.STRING, nullability);
-        Optional<? extends Type> builtInType = getBuiltInType(typeName);
-        if (builtInType.isPresent()) return builtInType.get();
-        return new TypeProjection(ClassTypeFactory.createClassType(typeName), nullability);
-    }
-
 
     //For usage of ReflectionObjectToSignatureMapper
-    public static Type getTypeFromNameWithClazzAlias(Class clazz, Type.Nullability nullability) {
+    static Type getTypeFromNameWithClazzAlias(Class clazz, Type.Nullability nullability) {
         String typeName = clazz.getCanonicalName();
         if (typeName.equals("void")) return VoidType.INSTANCE;
         if (typeName.equals("boolean")) return new TypeProjection(PrimitiveTypes.BOOLEAN_TYPE, nullability);
@@ -92,123 +65,6 @@ public final class TypeResolver {
 
 
         return new TypeProjection(ClassTypeFactory.createClassType(clazz), nullability);
-    }
-
-    public static Type getFromValue(EnkelParser.ValueContext value) {
-        String stringValue = value.getText();
-        if (StringUtils.isEmpty(stringValue)) return UnitType.CONCRETE_INSTANCE;
-
-        if (stringValue.equals("null")) return NullType.INSTANCE;
-
-        if (value.IntegerLiteral() != null) {
-            stringValue = stringValue.replace("_", "");
-            if (stringValue.startsWith("0x") || stringValue.startsWith("0X") || stringValue.startsWith("0")) {
-                if (tryInteger(stringValue) != null) {
-                    return INT_TYPE;
-                }
-            }
-
-            if (stringValue.endsWith("l") || stringValue.endsWith("L")) {
-                return LONG_TYPE;
-            }
-            if (Ints.tryParse(stringValue) != null) {
-                return INT_TYPE;
-            } else if (Longs.tryParse(stringValue) != null) {
-                return LONG_TYPE;
-            }
-        } else if (value.FloatingPointLiteral() != null) {
-            stringValue = stringValue.replace("_", "");
-
-            if (stringValue.startsWith("0x") || stringValue.startsWith("0X") || stringValue.startsWith("0")) {
-                if (tryLongHex(stringValue) != null) {
-                    return LONG_TYPE;
-                }
-            }
-
-            if (stringValue.endsWith("f") || stringValue.endsWith("F")) {
-                return FLOAT_TYPE;
-            }
-            if (Doubles.tryParse(stringValue) != null) {
-                return DOUBLE_TYPE;
-            } else if (Floats.tryParse(stringValue) != null) {
-                return FLOAT_TYPE;
-            }
-
-        } else if (value.BOOL() != null) {
-            return BOOLEAN_TYPE;
-        }
-
-        if (value.CharacterLiteral() != null) {
-            return CHAR_TYPE;
-        }
-
-        return DefaultTypes.STRING;
-    }
-
-
-    public static Object getValueFromString(String stringValue, Type type) {
-
-        if (type.equals(NullType.INSTANCE)) return null;
-
-        if (TypeChecker.isInt(type)) {
-            if (stringValue.startsWith("-")) {
-                String newValue = stringValue.substring(1);
-                return -UnsignedInts.decode(newValue);
-            } else {
-                return UnsignedInts.decode(stringValue);
-            }
-        }
-        if (TypeChecker.isLong(type)) {
-            if (stringValue.endsWith("l") || stringValue.endsWith("L")) {
-                stringValue = stringValue.substring(0, stringValue.length() - 1);
-            }
-            if (stringValue.startsWith("-")) {
-                String newValue = stringValue.substring(1);
-                return -Long.decode(newValue);
-            } else {
-                return UnsignedLongs.decode(stringValue);
-            }
-        }
-
-        if (TypeChecker.isFloat(type)) {
-            if (stringValue.endsWith("f") || stringValue.endsWith("F")) {
-                stringValue = stringValue.substring(0, stringValue.length() - 1);
-            }
-            return Float.valueOf(stringValue);
-        }
-        if (TypeChecker.isDouble(type)) {
-            return Double.valueOf(stringValue);
-        }
-        if (TypeChecker.isBool(type)) {
-            return Boolean.valueOf(stringValue);
-        }
-        if (type == PrimitiveTypes.CHAR_TYPE) {
-            stringValue = StringUtils.removeStart(stringValue, "'");
-            stringValue = StringUtils.removeEnd(stringValue, "'");
-            return stringValue;
-        }
-        if (type == DefaultTypes.STRING) {
-            stringValue = StringUtils.removeStart(stringValue, "\"");
-            stringValue = StringUtils.removeEnd(stringValue, "\"");
-            return stringValue;
-        }
-        throw new AssertionError("Objects not yet implemented!");
-    }
-
-    private static Integer tryInteger(String stringValue) {
-        try {
-            return UnsignedInts.decode(stringValue);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    private static Long tryLongHex(String stringValue) {
-        try {
-            return UnsignedLongs.decode(stringValue);
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
 

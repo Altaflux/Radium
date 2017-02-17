@@ -10,20 +10,20 @@ import com.kubadziworski.domain.type.Type;
  */
 public class Value extends ElementImpl implements Expression {
 
-    private final String value;
+    private final Object value;
     private final Type type;
 
-    public Value(Type type, String value) {
+    public Value(Type type, Object value) {
         this(null, type, value);
     }
 
-    public Value(NodeData element , Type type, String value) {
+    public Value(NodeData element, Type type, Object value) {
         super(element);
         this.type = type;
         this.value = value;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
