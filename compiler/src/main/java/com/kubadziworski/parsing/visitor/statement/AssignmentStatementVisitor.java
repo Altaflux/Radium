@@ -30,7 +30,7 @@ public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement
     public Statement visitAssignment(@NotNull EnkelParser.AssignmentContext ctx) {
         EnkelParser.ExpressionContext expressionCtx = ctx.postExpr;
         Expression expression = expressionCtx.accept(expressionVisitor);
-        String varName = ctx.name().SimpleName().getText();
+        String varName = ctx.name().getText();
         if (ctx.preExp != null) {
             Expression owner = ctx.preExp.accept(expressionVisitor);
             Field field = owner.getType().getField(varName);
