@@ -1,9 +1,6 @@
 package com.kubadziworski.util;
 
-import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Floats;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.UnsignedInts;
+import com.google.common.primitives.*;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.Value;
@@ -42,57 +39,73 @@ public class ValueCtxResolver {
         if (stringValue.equals("null")) return new Value(NullType.INSTANCE, null);
 
         if (value.integerLiteral() != null) {
-            EnkelParser.IntegerLiteralContext integerLiteralContext = value.integerLiteral();
-            if (integerLiteralContext.BinaryIntegerLiteral() != null) {
-                String binValue = integerLiteralContext.BinaryIntegerLiteral().getText();
-                binValue = binValue.toLowerCase().replace("0b", "").replace("_", "");
-                return new Value(INT_TYPE, Integer.parseInt(binValue, 2));
-            }
-            if (integerLiteralContext.HexIntegerLiteral() != null) {
-                String integerVal = stringValue.replace("_", "");
-                Integer integer = tryInteger(integerVal);
-                return new Value(INT_TYPE, integer);
-            }
-            if (stringValue.endsWith("l") || stringValue.endsWith("L")) {
-                return new Value(LONG_TYPE, Long.valueOf(stringValue.replace("_", "").toLowerCase().replace("l", "")));
-            }
-            if (Ints.tryParse(stringValue) != null) {
-                return new Value(INT_TYPE, Ints.tryParse(stringValue.replace("_", "")));
-            }
-            if (Doubles.tryParse(stringValue) != null) {
-                return new Value(DOUBLE_TYPE, Doubles.tryParse(stringValue.replace("_", "")));
-            }
-        } else if (value.floatingPointLiteral() != null) {
+            return handleIntegerValue(value);
 
-            if (value.floatingPointLiteral().DecimalFloatingPointLiteral() != null) {
-                if (stringValue.endsWith("f") || stringValue.endsWith("F")) {
-                    String floatString = stringValue;
-                    floatString = floatString.substring(0, floatString.length() - 1)
-                            .replace("_", "").toLowerCase().replace("f", "");
-                    if (Floats.tryParse(floatString) != null) {
-                        return new Value(FLOAT_TYPE, Floats.tryParse(floatString));
-                    }
-                }
-                String floatString = stringValue;
-                floatString = floatString.substring(0, floatString.length() - 1)
-                        .replace("_", "").toLowerCase();
-                if (Doubles.tryParse(floatString) != null) {
-                    return new Value(DOUBLE_TYPE, Doubles.tryParse(floatString));
-                }
-            }
+        } else if (value.floatingPointLiteral() != null) {
+            return handleFloatValue(value);
 
         } else if (value.BOOL() != null) {
             return new Value(BOOLEAN_TYPE, Boolean.valueOf(stringValue));
         }
         if (value.CharacterLiteral() != null) {
-            String charValue = stringValue;
-            charValue = StringUtils.removeStart(charValue, "'");
-            charValue = StringUtils.removeEnd(charValue, "'");
-            return new Value(CHAR_TYPE, charValue.charAt(0));
+            return handleCharacterValue(value);
         }
         throw new RuntimeException("Unrecognized type: " + stringValue);
     }
 
+    private static Value handleCharacterValue(ValueContext ctx) {
+        String charValue = ctx.getText();
+        charValue = StringUtils.removeStart(charValue, "'");
+        charValue = StringUtils.removeEnd(charValue, "'");
+        return new Value(CHAR_TYPE, charValue.charAt(0));
+    }
+
+    private static Value handleFloatValue(ValueContext ctx) {
+        String stringValue = ctx.getText();
+        if (ctx.floatingPointLiteral().DecimalFloatingPointLiteral() != null) {
+            if (stringValue.endsWith("f") || stringValue.endsWith("F")) {
+                String floatString = stringValue;
+                floatString = floatString.substring(0, floatString.length() - 1)
+                        .replace("_", "").toLowerCase().replace("f", "");
+                if (Floats.tryParse(floatString) != null) {
+                    return new Value(FLOAT_TYPE, Floats.tryParse(floatString));
+                }
+            }
+            String floatString = stringValue;
+            floatString = floatString.substring(0, floatString.length() - 1)
+                    .replace("_", "").toLowerCase();
+            if (Doubles.tryParse(floatString) != null) {
+                return new Value(DOUBLE_TYPE, Doubles.tryParse(floatString));
+            }
+        }
+
+        return new Value(DOUBLE_TYPE, Double.parseDouble(stringValue));
+    }
+
+    private static Value handleIntegerValue(EnkelParser.ValueContext ctx) {
+        String stringValue = ctx.getText();
+        EnkelParser.IntegerLiteralContext integerLiteralContext = ctx.integerLiteral();
+        if (integerLiteralContext.BinaryIntegerLiteral() != null) {
+            String binValue = integerLiteralContext.BinaryIntegerLiteral().getText();
+            binValue = binValue.toLowerCase().replace("0b", "").replace("_", "");
+            return new Value(INT_TYPE, Integer.parseInt(binValue, 2));
+        }
+        if (integerLiteralContext.HexIntegerLiteral() != null) {
+            String integerVal = stringValue.replace("_", "");
+            Integer integer = tryInteger(integerVal);
+            return new Value(INT_TYPE, integer);
+        }
+        if (stringValue.endsWith("l") || stringValue.endsWith("L")) {
+            return new Value(LONG_TYPE, Long.valueOf(stringValue.replace("_", "").toLowerCase().replace("l", "")));
+        }
+        if (Ints.tryParse(stringValue) != null) {
+            return new Value(INT_TYPE, Ints.tryParse(stringValue.replace("_", "")));
+        }
+        if (Longs.tryParse(stringValue) != null) {
+            return new Value(LONG_TYPE, Longs.tryParse(stringValue.replace("_", "")));
+        }
+        return new Value(LONG_TYPE, Long.decode(stringValue.replace("_", "")));
+    }
 
     public static Expression handleStringValue(EnkelParser.ValueContext ctx, ExpressionVisitor expressionVisitor) {
 
@@ -100,9 +113,10 @@ public class ValueCtxResolver {
         for (int x = 0; x < ctx.stringLiteral().children.size(); x++) {
             ParseTree parseTree = ctx.stringLiteral().children.get(x);
             if (parseTree instanceof TerminalNode) {
-                if (((TerminalNode) parseTree).getSymbol().getType() == SINGLE_TEXT) {
+                int symbol = ((TerminalNode) parseTree).getSymbol().getType();
+                if (symbol == SINGLE_TEXT || symbol == MULTILINE_QUOTE_TEXT) {
                     expressions.add(new Value(DefaultTypes.STRING, parseTree.getText()));
-                } else if (((TerminalNode) parseTree).getSymbol().getType() == SINGLE_QUOTE_REF) {
+                } else if (symbol == SINGLE_QUOTE_REF || symbol == MULTILINE_QUOTE_REF) {
                     Token token = CommonTokenFactory.DEFAULT.create(SimpleName, parseTree.getText().replace("$", ""));
                     EnkelParser.VariableReferenceContext referenceContext = new EnkelParser.VariableReferenceContext(ctx, 0);
                     TerminalNodeImpl node = new TerminalNodeImpl(token);

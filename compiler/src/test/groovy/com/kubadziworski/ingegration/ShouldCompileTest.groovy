@@ -17,8 +17,20 @@ class ShouldCompileTest extends Specification {
                             HelloWorld {
 
                                 fn start {
-                                    var x:Boolean = false
+                                    var x:String = "Enkel"
                                     println("hello \$x world!")
+                                    println("hello \${x} world!")
+                                    
+                                    println(\"""
+                                    hello 
+                                    \$x 
+                                    world!
+                                    \""")
+                                    println(\"""
+                                    hello
+                                    \${x}
+                                    world
+                                    \""")
                                 }
                             }
 							"""
