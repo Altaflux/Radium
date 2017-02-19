@@ -344,11 +344,11 @@ SimpleName
 mode InSingleLineString;
 
 SINLE_QUOTE_WHITESPACE
-    : [\t\n\r\f ]+
+    : [\t\r\f ]+
 ;
 
 SINGLE_TEXT
-    : ~('\\' | '"' | '$')+;
+    : ~('\\' | '"'| [\n] | '$')+;
 
 SINLE_QUOTE_CLOSE
     : '"' -> popMode;
