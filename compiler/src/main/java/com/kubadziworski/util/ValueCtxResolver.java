@@ -11,7 +11,7 @@ import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import org.antlr.v4.runtime.CommonTokenFactory;
+import com.kubadziworski.parsing.visitor.statement.RadiumTokenFactory;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -117,7 +117,7 @@ public class ValueCtxResolver {
                 if (symbol == SINGLE_TEXT || symbol == MULTILINE_QUOTE_TEXT) {
                     expressions.add(new Value(DefaultTypes.STRING, parseTree.getText()));
                 } else if (symbol == SINGLE_QUOTE_REF || symbol == MULTILINE_QUOTE_REF) {
-                    Token token = CommonTokenFactory.DEFAULT.create(SimpleName, parseTree.getText().replace("$", ""));
+                    Token token = RadiumTokenFactory.DEFAULT.create(SimpleName, parseTree.getText().replace("$", ""));
                     EnkelParser.VariableReferenceContext referenceContext = new EnkelParser.VariableReferenceContext(ctx, 0);
                     TerminalNodeImpl node = new TerminalNodeImpl(token);
                     referenceContext.addChild(node);

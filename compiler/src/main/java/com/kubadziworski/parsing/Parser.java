@@ -7,6 +7,7 @@ import com.kubadziworski.domain.CompilationData;
 import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.parsing.visitor.phase.PhaseVisitor;
+import com.kubadziworski.parsing.visitor.statement.RadiumTokenFactory;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CharStream;
@@ -45,6 +46,7 @@ public class Parser {
             EnkelLexer lexer = new EnkelLexer(charStream);  //create lexer (pass enk file to it)
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             EnkelParser parser = new EnkelParser(tokenStream);
+            parser.setTokenFactory(RadiumTokenFactory.DEFAULT);
 
             ANTLRErrorListener errorListener = new EnkelTreeWalkErrorListener(); //EnkelTreeWalkErrorListener - handles parse tree visiting error events
             parser.addErrorListener(errorListener);

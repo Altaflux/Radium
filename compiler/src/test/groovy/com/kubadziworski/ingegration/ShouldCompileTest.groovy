@@ -21,16 +21,6 @@ class ShouldCompileTest extends Specification {
                                     println("hello \$x world!")
                                     println("hello \${x} world!")
                                     
-                                    println(\"""
-                                    hello 
-                                    \$x 
-                                    world!
-                                    \""")
-                                    println(\"""
-                                    hello
-                                    \${x}
-                                    world
-                                    \""")
                                 }
                             }
 							"""
@@ -1047,6 +1037,24 @@ class ShouldCompileTest extends Specification {
 							"""
 
 
+    private final static variableEscaping =
+            """
+                            `VariableEscaping` {
+
+                                fn `start` {
+                                    var x:`String` = "Enkel"
+                                    var `y` = `x`
+                                    
+                                    `println`("not \$x reserved")
+                                    `println`("not \${`y`} reserved")
+                                    `println`("not \${y} reserved")
+                                    var `import` = "reservedVarName"
+                                    `println`("not \$import world!")
+                                }
+                            }
+							"""
+
+
     private final static Compiler compiler = new Compiler()
 
     @Unroll
@@ -1100,14 +1108,15 @@ class ShouldCompileTest extends Specification {
         throwStatement                   | "ThrowStatement.enk"
         nullValue                        | "NullValue.enk"
         returnUnit                       | "ReturnUnit.enk"
-        concreteReturnUnit               | "ConcreteReturnUnit.enk"
-        superCall                        | "CallParentClass.enk"
-        typeCoercion                     | "TypeCoercion.enk"
-        primitiveFunctions               | "PrimitiveFunctions.enk"
-        innerTry                         | "InnerTry.enk"
-        parenthesisExpressions           | "ParenthesisExpressions.enk"
-        inlineCode                       | "InlineCode.enk"
-        callStaticImports                | "CallStaticImports.enk"
+        concreteReturnUnit     | "ConcreteReturnUnit.enk"
+        superCall              | "CallParentClass.enk"
+        typeCoercion           | "TypeCoercion.enk"
+        primitiveFunctions     | "PrimitiveFunctions.enk"
+        innerTry               | "InnerTry.enk"
+        parenthesisExpressions | "ParenthesisExpressions.enk"
+        inlineCode             | "InlineCode.enk"
+        callStaticImports      | "CallStaticImports.enk"
+        variableEscaping       | "VariableEscaping.enk"
     }
 
 
