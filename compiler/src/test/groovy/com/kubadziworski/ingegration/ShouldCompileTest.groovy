@@ -388,32 +388,26 @@ class ShouldCompileTest extends Specification {
                                     assert(expected -> true , actual -> result)
 
                                     globalField = 1
-
-//                                    var incSuffix = globalField++
-//                                    var result = incSuffix < globalField
-//                                    assert(expected -> true , actual -> result)
-//
-//                                    globalField = 1
-//                                    var incPrefix = ++globalField
-//                                    var result2 = incPrefix == globalField
-//                                    assert(expected -> true , actual -> result2)
+                                    var incPrefix = ++globalField
+                                    var result2 = incPrefix == globalField
+                                    assert(expected -> true , actual -> result2)
                                     
                                     testJavaFields();
                                 }
                                 
                                 fn testJavaFields(){
-//                                    println("Testing Java field increment")
-//                                    val myObject = new ClassWithField();
-//                                    assert(expected -> true , actual -> myObject.nonStatValue == 1)
-//                                    val result = myObject.nonStatValue++;
-//                                    assert(expected -> true , actual -> result == 1)
-//                                    assert(expected -> true , actual -> myObject.nonStatValue == 2)
-//                                    
-//                                    println("Testing Java static field increment")
-//                                    assert(expected -> true , actual -> ClassWithField.statValue == 1)
-//                                    val secondResult = ClassWithField.statValue++;
-//                                    assert(expected -> true , actual -> secondResult == 1)
-//                                    assert(expected -> true , actual -> ClassWithField.statValue == 2)
+                                    println("Testing Java field increment")
+                                    val myObject = new ClassWithField();
+                                    assert(expected -> true , actual -> myObject.nonStatValue == 1)
+                                    val result = myObject.nonStatValue++;
+                                    assert(expected -> true , actual -> result == 1)
+                                    assert(expected -> true , actual -> myObject.nonStatValue == 2)
+
+                                    println("Testing Java static field increment")
+                                    assert(expected -> true , actual -> ClassWithField.statValue == 1)
+                                    val secondResult = ClassWithField.statValue++;
+                                    assert(expected -> true , actual -> secondResult == 1)
+                                    assert(expected -> true , actual -> ClassWithField.statValue == 2)
                                 }
                                 fn assert(Boolean actual,Boolean expected) {
                                     if (actual == expected) {
@@ -1125,43 +1119,43 @@ class ShouldCompileTest extends Specification {
 
         where:
         code                             | filename
-        helloWorld                       | "HelloWorld.enk"
-        loopsCode                        | "Loops.enk"
-        allTypes                         | "AllPrimitiveTypes.enk"
-        defaultParams                    | "DefaultParamTest.enk"
-        fields                           | "Fields.enk"
-        namedParams                      | "NamedParamsTest.enk"
-        sumCalculator                    | "SumCalculator.enk"
-        defaultConstructor               | "DefaultConstructor.enk"
-        parameterLessConsturctor         | "ParameterLessConstructor.enk"
-        construcotrWithParams            | "ConstructorWithParams.enk"
-        equalityTest                     | "EqualitySyntax.enk"
+//        helloWorld                       | "HelloWorld.enk"
+//        loopsCode                        | "Loops.enk"
+//        allTypes                         | "AllPrimitiveTypes.enk"
+//        defaultParams                    | "DefaultParamTest.enk"
+//        fields                           | "Fields.enk"
+//        namedParams                      | "NamedParamsTest.enk"
+//        sumCalculator                    | "SumCalculator.enk"
+//        defaultConstructor               | "DefaultConstructor.enk"
+//        parameterLessConsturctor         | "ParameterLessConstructor.enk"
+//        construcotrWithParams            | "ConstructorWithParams.enk"
+//        equalityTest                     | "EqualitySyntax.enk"
         unaryExpressionTest              | "UnaryExpressions.enk"
-        globalLocal                      | "GlobalLocal.enk"
-        staticTest                       | "StaticTest.enk"
-        staticFunctionTest               | "StaticFunctionTest.enk"
-        importingTest                    | "ImportingTest.enk"
-        getterSetter                     | "GetterSetter.enk"
-        getterStatement                  | "GetterStatement.enk"
-        functionSingleStatements         | "FunctionSingleStatements.enk"
-        ifExpressions                    | "IfExpression.enk"
-        myTryStatement                   | "TryStatement.enk"
-        fieldInitializing                | "FieldInitializing.enk"
-        fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
-        detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
-        throwStatement                   | "ThrowStatement.enk"
-        nullValue                        | "NullValue.enk"
-        returnUnit             | "ReturnUnit.enk"
-        concreteReturnUnit     | "ConcreteReturnUnit.enk"
-        superCall              | "CallParentClass.enk"
-        typeCoercion           | "TypeCoercion.enk"
-        primitiveFunctions     | "PrimitiveFunctions.enk"
-        innerTry               | "InnerTry.enk"
-        parenthesisExpressions | "ParenthesisExpressions.enk"
-        inlineCode             | "InlineCode.enk"
-        callStaticImports      | "CallStaticImports.enk"
-        variableEscaping       | "VariableEscaping.enk"
-        numericLiterals        | "NumericLiterals.enk"
+//        globalLocal                      | "GlobalLocal.enk"
+//        staticTest                       | "StaticTest.enk"
+//        staticFunctionTest               | "StaticFunctionTest.enk"
+//        importingTest                    | "ImportingTest.enk"
+//        getterSetter                     | "GetterSetter.enk"
+//        getterStatement                  | "GetterStatement.enk"
+//        functionSingleStatements         | "FunctionSingleStatements.enk"
+//        ifExpressions                    | "IfExpression.enk"
+//        myTryStatement                   | "TryStatement.enk"
+//        fieldInitializing                | "FieldInitializing.enk"
+//        fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
+//        detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
+//        throwStatement                   | "ThrowStatement.enk"
+//        nullValue                        | "NullValue.enk"
+//        returnUnit             | "ReturnUnit.enk"
+//        concreteReturnUnit     | "ConcreteReturnUnit.enk"
+//        superCall              | "CallParentClass.enk"
+//        typeCoercion           | "TypeCoercion.enk"
+//        primitiveFunctions     | "PrimitiveFunctions.enk"
+//        innerTry               | "InnerTry.enk"
+//        parenthesisExpressions | "ParenthesisExpressions.enk"
+//        inlineCode             | "InlineCode.enk"
+//        callStaticImports      | "CallStaticImports.enk"
+//        variableEscaping       | "VariableEscaping.enk"
+//        numericLiterals        | "NumericLiterals.enk"
     }
 
 

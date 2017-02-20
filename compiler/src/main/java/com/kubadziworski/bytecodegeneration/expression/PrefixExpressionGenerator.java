@@ -50,7 +50,7 @@ public class PrefixExpressionGenerator {
 
         int operationOpCode = incrementDecrementExpression.getOperator().equals(UnaryOperator.INCREMENT) ? asmType.getOpcode(Opcodes.IADD) : Opcodes.ISUB;
         if (incrementDecrementExpression.isPrefix()) {
-            statementGenerator.generate(new Value(reference.getType(), "1"));
+            statementGenerator.generate(new Value(reference.getType(), 1));
             methodVisitor.visitInsn(operationOpCode);
             AsmUtil.duplicateStackValue(asmType, methodVisitor,
                     (reference instanceof LocalVariableReference || isStaticField) ? 0 : 1);
@@ -58,7 +58,7 @@ public class PrefixExpressionGenerator {
         } else {
             AsmUtil.duplicateStackValue(asmType, methodVisitor,
                     (reference instanceof LocalVariableReference || isStaticField) ? 0 : 1);
-            statementGenerator.generate(new Value(reference.getType(), "1")); //ICONST_1
+            statementGenerator.generate(new Value(reference.getType(), 1)); //ICONST_1
             methodVisitor.visitInsn(operationOpCode);
         }
 

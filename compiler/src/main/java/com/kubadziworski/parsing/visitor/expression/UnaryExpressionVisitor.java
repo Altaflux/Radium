@@ -41,7 +41,7 @@ public class UnaryExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
             FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
             Expression operation;
 
-            List<ArgumentHolder> arguments = Collections.singletonList(new ArgumentHolder(new Value(expression.getType(), "1"), null));
+            List<ArgumentHolder> arguments = Collections.singletonList(new ArgumentHolder(new Value(expression.getType(), 1), null));
             if (operator.equals(UnaryOperator.INCREMENT)) {
 
                 FunctionSignature plusSignature = expression.getType().getMethodCallSignature("plus", arguments);
@@ -70,7 +70,7 @@ public class UnaryExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
             FunctionSignature signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field).get();
             Expression operation;
 
-            List<ArgumentHolder> arguments = Collections.singletonList(new ArgumentHolder(new Value(expression.getType(), "1"), null));
+            List<ArgumentHolder> arguments = Collections.singletonList(new ArgumentHolder(new Value(expression.getType(), 1), null));
             if (operator.equals(UnaryOperator.INCREMENT)) {
                 FunctionSignature plusSignature = expression.getType().getMethodCallSignature("plus", arguments);
                 operation = new FunctionCall(plusSignature, plusSignature.createArgumentList(arguments), expression);
