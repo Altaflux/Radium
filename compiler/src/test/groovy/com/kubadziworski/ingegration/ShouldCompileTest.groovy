@@ -1054,6 +1054,30 @@ class ShouldCompileTest extends Specification {
                             }
 							"""
 
+    private final static numericLiterals =
+            """
+                            NumericLiterals {
+
+                                fn start {
+                                    println(03_4);
+                                    println(0x0E);
+                                    println(0B01_011);
+                                    println(49_37_28);
+                            
+                                    println(034L);
+                                    println(0x0EL);
+                                    println(0B0_10_11L);
+                                    println(49_37_28L);
+                            
+                                    println(2.2250738585072014E-308);
+                                    println(2.22507_385_8507_2014E-308);
+                                    println(2.22_507_38_585);
+                                    println(0x1.fffff_fff_fffffp1023);
+                                    println(0x1.0P-10_74);
+                                    
+                                }
+                            }
+							"""
 
     private final static Compiler compiler = new Compiler()
 
@@ -1107,7 +1131,7 @@ class ShouldCompileTest extends Specification {
         detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
         throwStatement                   | "ThrowStatement.enk"
         nullValue                        | "NullValue.enk"
-        returnUnit                       | "ReturnUnit.enk"
+        returnUnit             | "ReturnUnit.enk"
         concreteReturnUnit     | "ConcreteReturnUnit.enk"
         superCall              | "CallParentClass.enk"
         typeCoercion           | "TypeCoercion.enk"
@@ -1117,6 +1141,7 @@ class ShouldCompileTest extends Specification {
         inlineCode             | "InlineCode.enk"
         callStaticImports      | "CallStaticImports.enk"
         variableEscaping       | "VariableEscaping.enk"
+        numericLiterals        | "NumericLiterals.enk"
     }
 
 

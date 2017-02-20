@@ -1,7 +1,7 @@
 package com.kubadziworski.util;
 
-import com.google.common.primitives.*;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.antlr.ValueHolder;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
@@ -10,6 +10,7 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
+import com.kubadziworski.exception.CompilationException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.statement.RadiumTokenFactory;
 import org.antlr.v4.runtime.Token;
@@ -61,50 +62,13 @@ public class ValueCtxResolver {
     }
 
     private static Value handleFloatValue(ValueContext ctx) {
-        String stringValue = ctx.getText();
-        if (ctx.floatingPointLiteral().DecimalFloatingPointLiteral() != null) {
-            if (stringValue.endsWith("f") || stringValue.endsWith("F")) {
-                String floatString = stringValue;
-                floatString = floatString.substring(0, floatString.length() - 1)
-                        .replace("_", "").toLowerCase().replace("f", "");
-                if (Floats.tryParse(floatString) != null) {
-                    return new Value(FLOAT_TYPE, Floats.tryParse(floatString));
-                }
-            }
-            String floatString = stringValue;
-            floatString = floatString.substring(0, floatString.length() - 1)
-                    .replace("_", "").toLowerCase();
-            if (Doubles.tryParse(floatString) != null) {
-                return new Value(DOUBLE_TYPE, Doubles.tryParse(floatString));
-            }
-        }
-
-        return new Value(DOUBLE_TYPE, Double.parseDouble(stringValue));
+        ValueHolder holder = ctx.floatingPointLiteral().number;
+        return new Value(getValType(holder.type), holder.value);
     }
 
     private static Value handleIntegerValue(EnkelParser.ValueContext ctx) {
-        String stringValue = ctx.getText();
-        EnkelParser.IntegerLiteralContext integerLiteralContext = ctx.integerLiteral();
-        if (integerLiteralContext.BinaryIntegerLiteral() != null) {
-            String binValue = integerLiteralContext.BinaryIntegerLiteral().getText();
-            binValue = binValue.toLowerCase().replace("0b", "").replace("_", "");
-            return new Value(INT_TYPE, Integer.parseInt(binValue, 2));
-        }
-        if (integerLiteralContext.HexIntegerLiteral() != null) {
-            String integerVal = stringValue.replace("_", "");
-            Integer integer = tryInteger(integerVal);
-            return new Value(INT_TYPE, integer);
-        }
-        if (stringValue.endsWith("l") || stringValue.endsWith("L")) {
-            return new Value(LONG_TYPE, Long.valueOf(stringValue.replace("_", "").toLowerCase().replace("l", "")));
-        }
-        if (Ints.tryParse(stringValue) != null) {
-            return new Value(INT_TYPE, Ints.tryParse(stringValue.replace("_", "")));
-        }
-        if (Longs.tryParse(stringValue) != null) {
-            return new Value(LONG_TYPE, Longs.tryParse(stringValue.replace("_", "")));
-        }
-        return new Value(LONG_TYPE, Long.decode(stringValue.replace("_", "")));
+        ValueHolder holder = ctx.integerLiteral().number;
+        return new Value(getValType(holder.type), holder.value);
     }
 
     public static Expression handleStringValue(EnkelParser.ValueContext ctx, ExpressionVisitor expressionVisitor) {
@@ -133,6 +97,27 @@ public class ValueCtxResolver {
         return createStringAddition(expressions);
     }
 
+    private static Type getValType(ValueHolder.ValueType type) {
+        switch (type) {
+            case BOOLEAN:
+                return BOOLEAN_TYPE;
+            case CHAR:
+                return CHAR_TYPE;
+            case DOUBLE:
+                return DOUBLE_TYPE;
+            case INT:
+                return INT_TYPE;
+            case FLOAT:
+                return FLOAT_TYPE;
+            case LONG:
+                return LONG_TYPE;
+            case STRING:
+                return DefaultTypes.STRING;
+            default:
+                throw new CompilationException("Type not eligible as value");
+        }
+    }
+
     private static Expression createStringAddition(List<Expression> expressions) {
         if (expressions.size() == 1) {
             return expressions.get(0);
@@ -146,13 +131,4 @@ public class ValueCtxResolver {
         }
         return addition;
     }
-
-    private static Integer tryInteger(String stringValue) {
-        try {
-            return UnsignedInts.decode(stringValue);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
 }

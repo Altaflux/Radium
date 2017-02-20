@@ -63,7 +63,7 @@ DecimalNumeral
 	;
 fragment
 IntegerTypeSuffix
-	:	[lL]
+	:	[L]
 	;
 fragment
 DigitsAndUnderscores
@@ -142,7 +142,7 @@ DecimalFloatingPointLiteral
 	;
 fragment
 FloatTypeSuffix
-	:	[fFdD]
+	:	[FD]
 	;
 
 HexadecimalFloatingPointLiteral
@@ -346,6 +346,7 @@ mode InSingleLineString;
 SINLE_QUOTE_WHITESPACE
     : [\t\r\f ]+
 ;
+
 
 SINGLE_TEXT
     : ~('\\' | '"'| [\n] | '$')+;
