@@ -1073,8 +1073,28 @@ class ShouldCompileTest extends Specification {
                                     println(2.22507_385_8507_2014E-308);
                                     println(2.22_507_38_585);
                                     println(0x1.fffff_fff_fffffp1023);
-                                    println(0x1.0P-10_74);
+                                    println(0x1.0P-10_74);    
+                                }
+                                  fn upperCast(){
+                                    println("Decimal upper cast")
+                                    println(2_147_483_647)
+                                    println(2_147_483_648)
+                                    println(2_147_483_648L)
                                     
+                                    println("Binary upper cast")
+                                    println(0B1111111111111111111111111111111)
+                                    println(0B10000000000000000000000000000000)
+                                    println(0B10000000000000000000000000000000L)
+                                    
+                                    println("Hexadecimal upper cast")
+                                    println(0x7FFFFFFF)
+                                    println(0x80000000)
+                                    println(0x80000000L)
+                                    
+                                    println("Octal upper cast")
+                                    println(017777777777)
+                                    println(020000000000)
+                                    println(020000000000L)
                                 }
                             }
 							"""
