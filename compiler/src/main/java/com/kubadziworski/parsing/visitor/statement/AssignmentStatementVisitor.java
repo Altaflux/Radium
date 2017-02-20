@@ -1,7 +1,7 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
@@ -15,7 +15,6 @@ import com.kubadziworski.domain.scope.Variable;
 import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement> {
     private final ExpressionVisitor expressionVisitor;
@@ -27,7 +26,7 @@ public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement
     }
 
     @Override
-    public Statement visitAssignment(@NotNull EnkelParser.AssignmentContext ctx) {
+    public Statement visitAssignment(EnkelParser.AssignmentContext ctx) {
         EnkelParser.ExpressionContext expressionCtx = ctx.postExpr;
         Expression expression = expressionCtx.accept(expressionVisitor);
         String varName = ctx.name().getText();

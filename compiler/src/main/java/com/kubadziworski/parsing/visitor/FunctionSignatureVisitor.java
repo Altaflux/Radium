@@ -14,7 +14,6 @@ import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.function.ParameterExpressionListVisitor;
 import com.kubadziworski.util.TypeResolver;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;
@@ -34,7 +33,7 @@ public class FunctionSignatureVisitor extends EnkelParserBaseVisitor<FunctionSig
     }
 
     @Override
-    public FunctionSignature visitFunctionDeclaration(@NotNull FunctionDeclarationContext ctx) {
+    public FunctionSignature visitFunctionDeclaration(FunctionDeclarationContext ctx) {
         String functionName = ctx.functionName().getText();
         Type returnType = TypeResolver.getFromTypeContext(ctx.type(), scope);
 

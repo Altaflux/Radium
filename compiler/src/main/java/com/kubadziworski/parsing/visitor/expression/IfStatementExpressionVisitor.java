@@ -1,13 +1,12 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.IfExpression;
 import com.kubadziworski.domain.node.statement.IfStatement;
 import com.kubadziworski.domain.node.statement.Statement;
-import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class IfStatementExpressionVisitor extends EnkelParserBaseVisitor<Statement> {
@@ -19,7 +18,7 @@ public class IfStatementExpressionVisitor extends EnkelParserBaseVisitor<Stateme
     }
 
     @Override
-    public Statement visitIfExpression(@NotNull EnkelParser.IfExpressionContext ctx) {
+    public Statement visitIfExpression(EnkelParser.IfExpressionContext ctx) {
         EnkelParser.ExpressionContext conditionalExpressionContext = ctx.expression();
         Expression condition = conditionalExpressionContext.accept(expressionVisitor);
 

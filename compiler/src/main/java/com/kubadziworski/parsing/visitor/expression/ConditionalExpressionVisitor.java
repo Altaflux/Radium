@@ -1,8 +1,8 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ConditionalExpressionContext;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
@@ -11,7 +11,6 @@ import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import com.kubadziworski.exception.ComparisonBetweenDiferentTypesException;
-import org.antlr.v4.runtime.misc.NotNull;
 
 public class ConditionalExpressionVisitor extends EnkelParserBaseVisitor<ConditionalExpression> {
     private final ExpressionVisitor expressionVisitor;
@@ -21,7 +20,7 @@ public class ConditionalExpressionVisitor extends EnkelParserBaseVisitor<Conditi
     }
 
     @Override
-    public ConditionalExpression visitConditionalExpression(@NotNull ConditionalExpressionContext ctx) {
+    public ConditionalExpression visitConditionalExpression(ConditionalExpressionContext ctx) {
         ExpressionContext leftExpressionCtx = ctx.expression(0);
         ExpressionContext rightExpressionCtx = ctx.expression(1);
         Expression leftExpression = leftExpressionCtx.accept(expressionVisitor);

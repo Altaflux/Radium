@@ -1,14 +1,13 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.BlockContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.exception.UnreachableStatementException;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ public class BlockStatementVisitor extends EnkelParserBaseVisitor<Block> {
     }
 
     @Override
-    public Block visitBlock(@NotNull BlockContext ctx) {
+    public Block visitBlock(BlockContext ctx) {
         List<EnkelParser.StatementContext> blockStatementsCtx = ctx.blockStatement().statement();
         Scope newScope = new Scope(scope);
         StatementVisitor statementVisitor = new StatementVisitor(newScope);

@@ -1,7 +1,7 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.ThrowStatement;
@@ -9,7 +9,6 @@ import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class ThrowStatementVisitor extends EnkelParserBaseVisitor<ThrowStatement> {
@@ -22,7 +21,7 @@ public class ThrowStatementVisitor extends EnkelParserBaseVisitor<ThrowStatement
     }
 
     @Override
-    public ThrowStatement visitThrowStatement(@NotNull EnkelParser.ThrowStatementContext ctx) {
+    public ThrowStatement visitThrowStatement(EnkelParser.ThrowStatementContext ctx) {
         EnkelParser.ExpressionContext expressionCtx = ctx.expression();
         Expression expression = expressionCtx.accept(expressionVisitor);
 

@@ -1,15 +1,14 @@
 package com.kubadziworski.parsing.visitor.expression.function;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ParameterContext;
 import com.kubadziworski.antlr.EnkelParser.ParameterWithDefaultValueContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.util.TypeResolver;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import org.antlr.v4.runtime.misc.NotNull;
+import com.kubadziworski.util.TypeResolver;
 
 
 /**
@@ -26,14 +25,14 @@ public class ParameterExpressionVisitor extends EnkelParserBaseVisitor<Parameter
     }
 
     @Override
-    public Parameter visitParameter(@NotNull ParameterContext ctx) {
+    public Parameter visitParameter(ParameterContext ctx) {
         String name = ctx.SimpleName().getText();
         Type type = TypeResolver.getFromTypeContext(ctx.type(), scope);
         return new Parameter(name, type, null);
     }
 
     @Override
-    public Parameter visitParameterWithDefaultValue(@NotNull ParameterWithDefaultValueContext ctx) {
+    public Parameter visitParameterWithDefaultValue(ParameterWithDefaultValueContext ctx) {
         String name = ctx.SimpleName().getText();
         Type type = TypeResolver.getFromTypeContext(ctx.type(), scope);
         Expression defaultValue = ctx.defaultValue.accept(expressionVisitor);

@@ -1,8 +1,8 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.*;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Statement;
@@ -10,7 +10,6 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.IfStatementExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.TryCatchExpressionVisitor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 
 /**
@@ -48,12 +47,12 @@ public class StatementVisitor extends EnkelParserBaseVisitor<Statement> {
     }
 
     @Override
-    public Statement visitThrowStatement(@NotNull EnkelParser.ThrowStatementContext ctx) {
+    public Statement visitThrowStatement(EnkelParser.ThrowStatementContext ctx) {
         return throwStatementVisitor.visitThrowStatement(ctx);
     }
 
     @Override
-    public Statement visitTryExpression(@NotNull EnkelParser.TryExpressionContext ctx) {
+    public Statement visitTryExpression(EnkelParser.TryExpressionContext ctx) {
         return tryCatchExpressionVisitor.visitTryExpression(ctx);
     }
 
@@ -68,47 +67,47 @@ public class StatementVisitor extends EnkelParserBaseVisitor<Statement> {
     }
 
     @Override
-    public Statement visitFunctionContent(@NotNull EnkelParser.FunctionContentContext ctx) {
+    public Statement visitFunctionContent(EnkelParser.FunctionContentContext ctx) {
         return functionContentVisitor.visitFunctionContent(ctx);
     }
 
     @Override
-    public Statement visitVariableDeclaration(@NotNull VariableDeclarationContext ctx) {
+    public Statement visitVariableDeclaration(VariableDeclarationContext ctx) {
         return variableDeclarationStatementVisitor.visitVariableDeclaration(ctx);
     }
 
     @Override
-    public Statement visitReturnVoid(@NotNull ReturnVoidContext ctx) {
+    public Statement visitReturnVoid(ReturnVoidContext ctx) {
         return returnStatementVisitor.visitReturnVoid(ctx);
     }
 
     @Override
-    public Statement visitReturnWithValue(@NotNull ReturnWithValueContext ctx) {
+    public Statement visitReturnWithValue(ReturnWithValueContext ctx) {
         return returnStatementVisitor.visitReturnWithValue(ctx);
     }
 
     @Override
-    public Statement visitBlock(@NotNull BlockContext ctx) {
+    public Statement visitBlock(BlockContext ctx) {
         return blockStatementVisitor.visitBlock(ctx);
     }
 
     @Override
-    public Statement visitIfExpression(@NotNull EnkelParser.IfExpressionContext ctx) {
+    public Statement visitIfExpression(EnkelParser.IfExpressionContext ctx) {
         return ifStatementVisitor.visitIfExpression(ctx);
     }
 
     @Override
-    public Expression visitVarReference(@NotNull VarReferenceContext ctx) {
+    public Expression visitVarReference(VarReferenceContext ctx) {
         return expressionVisitor.visitVarReference(ctx);
     }
 
     @Override
-    public Expression visitPrefixExpression(@NotNull EnkelParser.PrefixExpressionContext ctx) {
+    public Expression visitPrefixExpression(EnkelParser.PrefixExpressionContext ctx) {
         return expressionVisitor.visitPrefixExpression(ctx);
     }
 
     @Override
-    public Expression visitSuffixExpression(@NotNull EnkelParser.SuffixExpressionContext ctx) {
+    public Expression visitSuffixExpression(EnkelParser.SuffixExpressionContext ctx) {
         return expressionVisitor.visitSuffixExpression(ctx);
     }
 
@@ -117,52 +116,52 @@ public class StatementVisitor extends EnkelParserBaseVisitor<Statement> {
     }
 
     @Override
-    public Expression visitVariableReference(@NotNull EnkelParser.VariableReferenceContext ctx) {
+    public Expression visitVariableReference(EnkelParser.VariableReferenceContext ctx) {
         return expressionVisitor.visitVariableReference(ctx);
     }
 
     @Override
-    public Expression visitValue(@NotNull ValueContext ctx) {
+    public Expression visitValue(ValueContext ctx) {
         return expressionVisitor.visitValue(ctx);
     }
 
     @Override
-    public Expression visitFunctionCall(@NotNull FunctionCallContext ctx) {
+    public Expression visitFunctionCall(FunctionCallContext ctx) {
         return expressionVisitor.visitFunctionCall(ctx);
     }
 
     @Override
-    public Expression visitConstructorCall(@NotNull ConstructorCallContext ctx) {
+    public Expression visitConstructorCall(ConstructorCallContext ctx) {
         return expressionVisitor.visitConstructorCall(ctx);
     }
 
     @Override
-    public Expression visitSupercall(@NotNull SupercallContext ctx) {
+    public Expression visitSupercall(SupercallContext ctx) {
         return expressionVisitor.visitSupercall(ctx);
     }
 
     @Override
-    public Expression visitBinaryExpression(@NotNull BinaryExpressionContext ctx) {
+    public Expression visitBinaryExpression(BinaryExpressionContext ctx) {
         return expressionVisitor.visitBinaryExpression(ctx);
     }
 
     @Override
-    public ConditionalExpression visitConditionalExpression(@NotNull ConditionalExpressionContext ctx) {
+    public ConditionalExpression visitConditionalExpression(ConditionalExpressionContext ctx) {
         return expressionVisitor.visitConditionalExpression(ctx);
     }
 
     @Override
-    public Statement visitForStatement(@NotNull EnkelParser.ForStatementContext ctx) {
+    public Statement visitForStatement(EnkelParser.ForStatementContext ctx) {
         return forStatementVisitor.visitForStatement(ctx);
     }
 
     @Override
-    public Statement visitAssignment(@NotNull EnkelParser.AssignmentContext ctx) {
+    public Statement visitAssignment(EnkelParser.AssignmentContext ctx) {
         return assignmentStatementVisitor.visitAssignment(ctx);
     }
 
     @Override
-    public Expression visitParenthesisExpression(@NotNull EnkelParser.ParenthesisExpressionContext ctx) {
+    public Expression visitParenthesisExpression(EnkelParser.ParenthesisExpressionContext ctx) {
         return expressionVisitor.visitParenthesisExpression(ctx);
     }
 }

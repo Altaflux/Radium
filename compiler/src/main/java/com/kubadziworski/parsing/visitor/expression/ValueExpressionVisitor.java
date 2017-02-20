@@ -4,7 +4,6 @@ import com.kubadziworski.antlr.EnkelParser.ValueContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.util.ValueCtxResolver;
-import org.antlr.v4.runtime.misc.NotNull;
 
 public class ValueExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
 
@@ -15,7 +14,7 @@ public class ValueExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitValue(@NotNull ValueContext ctx) {
+    public Expression visitValue(ValueContext ctx) {
         if (ctx.stringLiteral() != null) {
             return ValueCtxResolver.handleStringValue(ctx, expressionVisitor);
         }

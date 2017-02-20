@@ -1,7 +1,8 @@
 package com.kubadziworski.parsing.visitor.expression;
 
+import com.kubadziworski.antlr.EnkelParser.BinaryExpressionContext;
+import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
-import com.kubadziworski.antlr.EnkelParser.*;
 import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
@@ -11,7 +12,6 @@ import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.DefaultTypes;
 import com.kubadziworski.domain.type.Type;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.Collections;
 
@@ -23,7 +23,7 @@ public class ArithmeticExpressionVisitor extends EnkelParserBaseVisitor<Expressi
     }
 
     @Override
-    public Expression visitBinaryExpression(@NotNull BinaryExpressionContext ctx) {
+    public Expression visitBinaryExpression(BinaryExpressionContext ctx) {
         ExpressionContext leftExpression = ctx.expression(0);
         ExpressionContext rightExpression = ctx.expression(1);
 

@@ -1,8 +1,8 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
 import com.kubadziworski.antlr.EnkelParser.VariableReferenceContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.Field;
@@ -12,7 +12,6 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ClassNotFoundForNameException;
 import com.kubadziworski.exception.FieldNotFoundException;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
 
@@ -26,7 +25,7 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
     }
 
     @Override
-    public Expression visitVarReference(@NotNull VarReferenceContext ctx) {
+    public Expression visitVarReference(VarReferenceContext ctx) {
         String varName = ctx.variableReference().getText();
         boolean ownerIsExplicit = ctx.owner != null;
         if (ownerIsExplicit) {
@@ -42,7 +41,7 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
     }
 
     @Override
-    public Expression visitVariableReference(@NotNull VariableReferenceContext ctx) {
+    public Expression visitVariableReference(VariableReferenceContext ctx) {
         String varName = ctx.getText();
         return visitReference(ctx, varName, null);
     }
@@ -53,7 +52,7 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
         return new FieldReference(new RuleContextElementImpl(ctx), field, new EmptyExpression(field.getOwner()));
     }
 
-    private Expression visitReference(ParserRuleContext ctx, @NotNull String varName, Expression owner) {
+    private Expression visitReference(ParserRuleContext ctx, String varName, Expression owner) {
 
         if (owner != null) {
             Field field = owner.getType().getField(varName);

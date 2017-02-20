@@ -1,8 +1,8 @@
 package com.kubadziworski.parsing.visitor;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ClassDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.ClassDeclaration;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
@@ -20,7 +20,6 @@ import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.apache.commons.collections4.ListUtils;
 
 import java.lang.reflect.Modifier;
@@ -41,7 +40,7 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
     }
 
     @Override
-    public ClassDeclaration visitClassDeclaration(@NotNull ClassDeclarationContext ctx) {
+    public ClassDeclaration visitClassDeclaration(ClassDeclarationContext ctx) {
 
         List<FunctionContext> methodsCtx = ctx.classBody().function();
 

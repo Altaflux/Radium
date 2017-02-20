@@ -1,8 +1,8 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.*;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.BlockExpression;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
@@ -12,7 +12,6 @@ import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.function.CallExpressionVisitor;
 import com.kubadziworski.parsing.visitor.statement.BlockStatementVisitor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 /**
  * Created by kuba on 02.04.16.
@@ -53,12 +52,12 @@ public class ExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitBlock(@NotNull EnkelParser.BlockContext ctx) {
+    public Expression visitBlock(EnkelParser.BlockContext ctx) {
         return new BlockExpression(new RuleContextElementImpl(ctx), blockStatementVisitor.visitBlock(ctx));
     }
 
     @Override
-    public Expression visitTryExpression(@NotNull EnkelParser.TryExpressionContext ctx) {
+    public Expression visitTryExpression(EnkelParser.TryExpressionContext ctx) {
         Statement statement = tryCatchExpressionVisitor.visitTryExpression(ctx);
         if (!(statement instanceof Expression)) {
             throw new RuntimeException("'TryCatch' not declared as an expression, at least one catch is needed");
@@ -67,7 +66,7 @@ public class ExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitIfExpression(@NotNull EnkelParser.IfExpressionContext ctx) {
+    public Expression visitIfExpression(EnkelParser.IfExpressionContext ctx) {
         Statement statement = ifStatementExpressionVisitor.visitIfExpression(ctx);
         if (!(statement instanceof Expression)) {
             throw new RuntimeException("'If' not declared as an expression, both branches are needed");
@@ -90,59 +89,59 @@ public class ExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     }
 
     @Override
-    public Expression visitPrefixExpression(@NotNull PrefixExpressionContext ctx) {
+    public Expression visitPrefixExpression(PrefixExpressionContext ctx) {
         return unaryExpressionVisitor.visitPrefixExpression(ctx);
     }
 
     @Override
-    public Expression visitSuffixExpression(@NotNull SuffixExpressionContext ctx) {
+    public Expression visitSuffixExpression(SuffixExpressionContext ctx) {
         return unaryExpressionVisitor.visitSuffixExpression(ctx);
     }
 
 
     @Override
-    public Expression visitVarReference(@NotNull VarReferenceContext ctx) {
+    public Expression visitVarReference(VarReferenceContext ctx) {
         return variableReferenceExpressionVisitor.visitVarReference(ctx);
     }
 
     @Override
-    public Expression visitVariableReference(@NotNull EnkelParser.VariableReferenceContext ctx) {
+    public Expression visitVariableReference(EnkelParser.VariableReferenceContext ctx) {
         return variableReferenceExpressionVisitor.visitVariableReference(ctx);
     }
 
     @Override
-    public Expression visitValue(@NotNull ValueContext ctx) {
+    public Expression visitValue(ValueContext ctx) {
         return valueExpressionVisitor.visitValue(ctx);
     }
 
     @Override
-    public Expression visitFunctionCall(@NotNull FunctionCallContext ctx) {
+    public Expression visitFunctionCall(FunctionCallContext ctx) {
 
         return callExpressionVisitor.visitFunctionCall(ctx);
     }
 
     @Override
-    public Expression visitConstructorCall(@NotNull ConstructorCallContext ctx) {
+    public Expression visitConstructorCall(ConstructorCallContext ctx) {
         return callExpressionVisitor.visitConstructorCall(ctx);
     }
 
     @Override
-    public Expression visitSupercall(@NotNull SupercallContext ctx) {
+    public Expression visitSupercall(SupercallContext ctx) {
         return callExpressionVisitor.visitSupercall(ctx);
     }
 
     @Override
-    public Expression visitBinaryExpression(@NotNull BinaryExpressionContext ctx) {
+    public Expression visitBinaryExpression(BinaryExpressionContext ctx) {
         return arithmeticExpressionVisitor.visitBinaryExpression(ctx);
     }
 
     @Override
-    public ConditionalExpression visitConditionalExpression(@NotNull ConditionalExpressionContext ctx) {
+    public ConditionalExpression visitConditionalExpression(ConditionalExpressionContext ctx) {
         return conditionalExpressionVisitor.visitConditionalExpression(ctx);
     }
 
     @Override
-    public Expression visitParenthesisExpression(@NotNull EnkelParser.ParenthesisExpressionContext ctx) {
+    public Expression visitParenthesisExpression(EnkelParser.ParenthesisExpressionContext ctx) {
         return parenthesisExpressionVisitor.visitParenthesisExpression(ctx);
     }
 }

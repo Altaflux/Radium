@@ -1,10 +1,10 @@
 package com.kubadziworski.parsing.visitor.expression.function;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ArgumentListContext;
 import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
 import com.kubadziworski.antlr.EnkelParser.SupercallContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
@@ -19,7 +19,6 @@ import com.kubadziworski.exception.CompilationException;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.FunctionNameEqualClassException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;
@@ -37,7 +36,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
     }
 
     @Override
-    public Call visitFunctionCall(@NotNull FunctionCallContext ctx) {
+    public Call visitFunctionCall(FunctionCallContext ctx) {
         String functionName = ctx.functionName().getText();
         if (functionName.equals(scope.getFullClassName())) {
             throw new FunctionNameEqualClassException(functionName);
@@ -82,7 +81,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
     }
 
     @Override
-    public Call visitConstructorCall(@NotNull ConstructorCallContext ctx) {
+    public Call visitConstructorCall(ConstructorCallContext ctx) {
 
         Type className = scope.resolveClassName(ctx.typeName().getText());
         List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
@@ -91,7 +90,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
     }
 
     @Override
-    public Call visitSupercall(@NotNull SupercallContext ctx) {
+    public Call visitSupercall(SupercallContext ctx) {
         List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
         FunctionSignature signature = scope.getMethodCallSignature(SUPER_IDENTIFIER, arguments);
         return new SuperCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments));

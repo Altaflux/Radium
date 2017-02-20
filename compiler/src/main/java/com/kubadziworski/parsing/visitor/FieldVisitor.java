@@ -1,7 +1,7 @@
 package com.kubadziworski.parsing.visitor;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
@@ -19,7 +19,6 @@ import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import com.kubadziworski.util.TypeResolver;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;
@@ -33,7 +32,7 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
     }
 
     @Override
-    public Field visitField(@NotNull EnkelParser.FieldContext ctx) {
+    public Field visitField(EnkelParser.FieldContext ctx) {
         Type owner = scope.getClassType();
         Type type = TypeResolver.getFromTypeContext(ctx.type(), scope);
         String name = ctx.name().getText();

@@ -1,7 +1,7 @@
 package com.kubadziworski.parsing.visitor.expression;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.BlockExpression;
 import com.kubadziworski.domain.node.expression.Parameter;
@@ -15,7 +15,6 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.parsing.visitor.statement.BlockStatementVisitor;
 import com.kubadziworski.util.TypeResolver;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +30,7 @@ public class TryCatchExpressionVisitor extends EnkelParserBaseVisitor<Statement>
         this.scope = scope;
     }
 
-    public Statement visitTryExpression(@NotNull EnkelParser.TryExpressionContext ctx) {
+    public Statement visitTryExpression(EnkelParser.TryExpressionContext ctx) {
 
         BlockExpression block = (BlockExpression) ctx.block().accept(expressionVisitor);
 

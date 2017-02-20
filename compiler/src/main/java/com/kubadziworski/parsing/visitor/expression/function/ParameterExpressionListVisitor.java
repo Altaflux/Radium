@@ -8,7 +8,6 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class ParameterExpressionListVisitor extends EnkelParserBaseVisitor<List<
     }
 
     @Override
-    public List<Parameter> visitParametersList(@NotNull ParametersListContext ctx) {
+    public List<Parameter> visitParametersList(ParametersListContext ctx) {
         List<ParameterContext> paramsCtx = ctx.parameter();
         ParameterExpressionVisitor parameterExpressionVisitor = new ParameterExpressionVisitor(expressionVisitor, scope);
         List<Parameter> parameters = new ArrayList<>();

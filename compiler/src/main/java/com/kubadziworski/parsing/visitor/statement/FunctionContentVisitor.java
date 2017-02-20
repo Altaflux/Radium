@@ -1,10 +1,9 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Scope;
-import org.antlr.v4.runtime.misc.NotNull;
 
 
 public class FunctionContentVisitor extends EnkelParserBaseVisitor<Statement> {
@@ -16,7 +15,7 @@ public class FunctionContentVisitor extends EnkelParserBaseVisitor<Statement> {
     }
 
     @Override
-    public Statement visitFunctionContent(@NotNull EnkelParser.FunctionContentContext ctx) {
+    public Statement visitFunctionContent(EnkelParser.FunctionContentContext ctx) {
 
         EnkelParser.BlockContext blockContext = ctx.block();
         StatementVisitor visitor = new StatementVisitor(scope);

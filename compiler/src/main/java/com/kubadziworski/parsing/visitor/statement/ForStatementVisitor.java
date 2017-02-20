@@ -1,19 +1,18 @@
 package com.kubadziworski.parsing.visitor.statement;
 
-import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.antlr.EnkelParser.ForConditionsContext;
 import com.kubadziworski.antlr.EnkelParser.ForStatementContext;
 import com.kubadziworski.antlr.EnkelParser.VariableReferenceContext;
+import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.statement.RangedForStatement;
-import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.node.statement.Assignment;
+import com.kubadziworski.domain.node.statement.RangedForStatement;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.node.statement.VariableDeclaration;
+import com.kubadziworski.domain.scope.LocalVariable;
+import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
-import org.antlr.v4.runtime.misc.NotNull;
 
 /**
  * Created by kuba on 23.04.16.
@@ -28,7 +27,7 @@ public class ForStatementVisitor extends EnkelParserBaseVisitor<RangedForStateme
     }
 
     @Override
-    public RangedForStatement visitForStatement(@NotNull ForStatementContext ctx) {
+    public RangedForStatement visitForStatement(ForStatementContext ctx) {
         Scope newScope = new Scope(scope);
         ForConditionsContext forExpressionContext = ctx.forConditions();
         Expression startExpression = forExpressionContext.startExpr.accept(expressionVisitor);

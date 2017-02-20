@@ -7,7 +7,6 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.FunctionGenerator;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.lang.reflect.Modifier;
 
@@ -23,7 +22,7 @@ public class FunctionVisitor extends EnkelParserBaseVisitor<Function> {
     }
 
     @Override
-    public Function visitFunction(@NotNull FunctionContext ctx) {
+    public Function visitFunction(FunctionContext ctx) {
         FunctionSignature signature = ctx.functionDeclaration().accept(new FunctionSignatureVisitor(scope));
 
         Scope scope = new Scope(this.scope, signature);
