@@ -55,10 +55,7 @@ public class ValueCtxResolver {
     }
 
     private static Value handleCharacterValue(ValueContext ctx) {
-        String charValue = ctx.getText();
-        charValue = StringUtils.removeStart(charValue, "'");
-        charValue = StringUtils.removeEnd(charValue, "'");
-        return new Value(CHAR_TYPE, charValue.charAt(0));
+        return new Value(CHAR_TYPE, ctx.getText().charAt(1));
     }
 
     private static Value handleFloatValue(ValueContext ctx) {

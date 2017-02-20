@@ -162,86 +162,24 @@ dims
 
 floatingPointLiteral returns [ValueHolder number]
 	:	DecimalFloatingPointLiteral {
-            String val = $DecimalFloatingPointLiteral.text.replace("_","");
-            boolean toDouble = val.endsWith("D");
-            boolean toFloat = val.endsWith("F");
-            Object finalValue = null;
-            if(toDouble){
-                finalValue = Double.parseDouble(val.replace("D", ""));
-                $number = ValueHolder.of(ValueHolder.ValueType.DOUBLE, finalValue);
-            }else if(toFloat){
-                finalValue = (float) Double.parseDouble(val.replace("F", ""));
-                $number = ValueHolder.of(ValueHolder.ValueType.FLOAT, finalValue);
-            }else {
-                finalValue = Double.parseDouble(val);
-                $number = ValueHolder.of(ValueHolder.ValueType.DOUBLE, finalValue);
-            }
+            $number = LiteralConverter.floatingPointLiteralFromString($DecimalFloatingPointLiteral.text);
         }
 	|	HexadecimalFloatingPointLiteral {
-            String val = $HexadecimalFloatingPointLiteral.text.replace("_","");
-            boolean toDouble = val.endsWith("D");
-            boolean toFloat = val.endsWith("F");
-            Object finalValue = null;
-            if(toDouble){
-                finalValue = Double.parseDouble(val.replace("D", ""));
-                $number = ValueHolder.of(ValueHolder.ValueType.DOUBLE, finalValue);
-            }else if(toFloat){
-                finalValue = (float) Double.parseDouble(val.replace("F", ""));
-                $number = ValueHolder.of(ValueHolder.ValueType.FLOAT, finalValue);
-            }else {
-                finalValue = Double.parseDouble(val);
-                $number = ValueHolder.of(ValueHolder.ValueType.DOUBLE, finalValue);
-            }
+            $number = LiteralConverter.floatingPointLiteralFromString($HexadecimalFloatingPointLiteral.text);
         }
 	;
 integerLiteral returns [ValueHolder number]
     :   DecimalIntegerLiteral {
-            String val = $DecimalIntegerLiteral.text.replace("_","");
-            boolean toLong = val.endsWith("L");
-            Object finalValue = null;
-            if(toLong){
-                finalValue = (long) Integer.parseInt(val.replace("L", ""));
-                $number = ValueHolder.of(ValueHolder.ValueType.LONG, finalValue);
-            }else {
-                finalValue = Integer.parseInt(val);
-                $number = ValueHolder.of(ValueHolder.ValueType.INT, finalValue);
-            }
+            $number = LiteralConverter.decimalIntegerLiteral($DecimalIntegerLiteral.text);
         }
     |	HexIntegerLiteral {
-          String val = $HexIntegerLiteral.text.replace("_","");
-          boolean toLong = val.endsWith("L");
-          Object finalValue = null;
-          if(toLong){
-              finalValue = (long) Integer.decode(val.replace("L", ""));
-              $number = ValueHolder.of(ValueHolder.ValueType.LONG, finalValue);
-          }else {
-              finalValue = Integer.decode(val);
-              $number = ValueHolder.of(ValueHolder.ValueType.INT, finalValue);
-          }
-      }
+            $number = LiteralConverter.hexIntegerLiteral($HexIntegerLiteral.text);
+        }
     |	OctalIntegerLiteral {
-            String val = $OctalIntegerLiteral.text.replace("_","");
-            boolean toLong = val.endsWith("L");
-            Object finalValue = null;
-            if(toLong){
-                finalValue = (long) Integer.parseInt(val.replace("L", ""), 8);
-                $number = ValueHolder.of(ValueHolder.ValueType.LONG, finalValue);
-            }else {
-                finalValue = Integer.parseInt(val, 8);
-                $number = ValueHolder.of(ValueHolder.ValueType.INT, finalValue);
-            }
+            $number = LiteralConverter.octalIntegerLiteral($OctalIntegerLiteral.text);
         }
     |	BinaryIntegerLiteral {
-            String val = $BinaryIntegerLiteral.text.replace("_", "").replaceFirst("0b","").replaceFirst("0B","");
-            boolean toLong = val.endsWith("L");
-            Object finalValue = null;
-            if(toLong){
-                finalValue = (long) Integer.parseInt(val.replace("L", ""), 2);
-                $number = ValueHolder.of(ValueHolder.ValueType.LONG, finalValue);
-            }else {
-                finalValue = Integer.parseInt(val, 2);
-                $number = ValueHolder.of(ValueHolder.ValueType.INT, finalValue);
-            }
+            $number = LiteralConverter.binaryIntegerLiteral($BinaryIntegerLiteral.text);
         }
     ;
 stringLiteral
