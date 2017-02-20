@@ -1,6 +1,7 @@
 package com.kubadziworski.util;
 
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.scope.CallableDescriptor;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.Type;
@@ -72,6 +73,25 @@ public class PropertyAccessorsUtil {
             }
         }
         return Optional.empty();
+    }
+
+
+    public static boolean isFunctionAccessible(CallableDescriptor signature, Type caller) {
+        int functionModifiers = signature.getModifiers();
+        if (Modifier.isPublic(functionModifiers)) {
+            return true;
+        }
+        if (Modifier.isPrivate(functionModifiers) && !signature.getOwner().getName()
+                .equals(caller.getName())) {
+            return false;
+        }
+        if (Modifier.isProtected(functionModifiers)) {
+            if (caller.inheritsFrom(signature.getOwner()) < 0) {
+                return false;
+            }
+        }
+        //Has to be protected
+        return caller.getPackage().equals(signature.getOwner().getPackage());
     }
 
 

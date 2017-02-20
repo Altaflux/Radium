@@ -6,14 +6,19 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.Field;
+import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.AccessException;
 import com.kubadziworski.exception.ClassNotFoundForNameException;
 import com.kubadziworski.exception.FieldNotFoundException;
+import com.kubadziworski.exception.FinalFieldModificationException;
+import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.lang.reflect.Modifier;
+import java.util.Optional;
 
 public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     private final Scope scope;
@@ -73,6 +78,8 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
         }
 
         Field field = scope.getField(varName);
+        validateAccessToField(field);
+
         if (Modifier.isStatic(field.getModifiers())) {
             return new FieldReference(new RuleContextElementImpl(ctx), field, new EmptyExpression(field.getOwner()));
         }
@@ -81,6 +88,20 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         LocalVariableReference thisReference = new LocalVariableReference(new RuleContextElementImpl(ctx), thisVariable);
         return generateFieldReference(ctx, field, thisReference);
+    }
+
+    private void validateAccessToField(Field field) {
+        if (Modifier.isFinal(field.getModifiers())) {
+            throw new FinalFieldModificationException("Cannot modify final field: " + field.getName());
+        }
+        Type classType = scope.getClassType();
+        Optional<FunctionSignature> signatureOpt = PropertyAccessorsUtil.getGetterFunctionSignatureForField(field);
+        boolean accessThruFunction = signatureOpt
+                .map(functionSignature -> !PropertyAccessorsUtil.isFunctionAccessible(functionSignature, classType))
+                .orElse(false);
+        if (!accessThruFunction && !PropertyAccessorsUtil.isFunctionAccessible(field, classType)) {
+            throw new AccessException("Cannot set field: " + field);
+        }
     }
 
     private Expression generateFieldReference(ParserRuleContext ctx, Field field, Expression owner) {

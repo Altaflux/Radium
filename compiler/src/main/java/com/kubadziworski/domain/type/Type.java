@@ -7,6 +7,7 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
 import com.kubadziworski.util.TypeResolver;
+import org.apache.commons.lang3.StringUtils;
 
 
 import java.util.List;
@@ -22,6 +23,16 @@ public interface Type {
     }
 
     String getName();
+
+    default String getPackage() {
+        String clazz = getName();
+        final int i = clazz.lastIndexOf('.');
+        if (i != -1) {
+            return clazz.substring(0, i);
+        } else {
+            return StringUtils.EMPTY;
+        }
+    }
 
     Optional<Type> getSuperType();
 

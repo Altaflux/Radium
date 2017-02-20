@@ -14,11 +14,9 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.exception.ClassNotFoundForNameException;
-import com.kubadziworski.exception.CompilationException;
-import com.kubadziworski.exception.FieldNotFoundException;
-import com.kubadziworski.exception.FunctionNameEqualClassException;
+import com.kubadziworski.exception.*;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
+import com.kubadziworski.util.PropertyAccessorsUtil;
 
 import java.lang.reflect.Modifier;
 import java.util.Collections;
@@ -58,6 +56,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
                     //and simply use the class to call it.
                     //We may need to check if this doesn't causes trouble, else we use a POP after
                     //calling the owner expression, for now lets not optimize...
+                    validateAccessToFunction(signature);
                     return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new PopExpression(owner));
                 }
                 return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), owner);
@@ -86,6 +85,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
         Type className = scope.resolveClassName(ctx.typeName().getText());
         List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
         FunctionSignature signature = className.getConstructorCallSignature(arguments);
+        validateAccessToFunction(signature);
         return new ConstructorCall(new RuleContextElementImpl(ctx), signature, className.getName(), signature.createArgumentList(arguments));
     }
 
@@ -108,6 +108,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
     private Call visitStaticReference(String possibleClass, String functionName, List<ArgumentHolder> arguments) {
         Type classType = scope.resolveClassName(possibleClass);
         FunctionSignature signature = classType.getMethodCallSignature(functionName, arguments);
+        validateAccessToFunction(signature);
         return new FunctionCall(signature, signature.createArgumentList(arguments), classType);
     }
 
@@ -117,5 +118,13 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
             return argumentsListCtx.accept(visitor);
         }
         return Collections.emptyList();
+    }
+
+
+    private void validateAccessToFunction(FunctionSignature functionSignature) {
+        Type classType = scope.getClassType();
+        if (!PropertyAccessorsUtil.isFunctionAccessible(functionSignature, classType)) {
+            throw new AccessException("Cannot call method: " + functionSignature);
+        }
     }
 }

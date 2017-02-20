@@ -8,13 +8,16 @@ import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.scope.Variable;
+import com.kubadziworski.domain.scope.*;
+import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.AccessException;
 import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
+import com.kubadziworski.util.PropertyAccessorsUtil;
+
+import java.lang.reflect.Modifier;
+import java.util.Optional;
 
 public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement> {
     private final ExpressionVisitor expressionVisitor;
@@ -46,13 +49,32 @@ public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement
 
         } else if (scope.isFieldExists(varName)) {
             Field field = scope.getField(varName);
+            if (Modifier.isFinal(field.getModifiers())) {
+                throw new FinalFieldModificationException("Cannot modify final field: " + field.getName());
+            }
+            validateAccessToField(field);
             validateType(expression, field);
-
             return new FieldAssignment(new RuleContextElementImpl(ctx), new LocalVariableReference(scope.getLocalVariable("this"))
                     , field, expression);
         } else {
             throw new RuntimeException("Assignment on un-declared variable: " + varName);
         }
+    }
+
+    private void validateAccessToField(Field field) {
+        if (Modifier.isFinal(field.getModifiers())) {
+            throw new FinalFieldModificationException("Cannot modify final field: " + field.getName());
+        }
+        Type classType = scope.getClassType();
+        Optional<FunctionSignature> signatureOpt = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field);
+        boolean accessThruFunction = signatureOpt
+                .map(functionSignature -> !PropertyAccessorsUtil.isFunctionAccessible(functionSignature, classType))
+                .orElse(false);
+
+        if (!accessThruFunction && !PropertyAccessorsUtil.isFunctionAccessible(field, classType)) {
+            throw new AccessException("Cannot access field: " + field);
+        }
+
     }
 
     private static void validateType(Expression expression, Variable variable) {

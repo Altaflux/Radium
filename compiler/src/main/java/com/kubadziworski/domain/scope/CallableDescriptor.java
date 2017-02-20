@@ -12,6 +12,8 @@ public interface CallableDescriptor {
     Type getOwner();
     String getName();
 
+    int getModifiers();
+
     default List<Parameter> getParameters() {
         return Collections.emptyList();
     }
