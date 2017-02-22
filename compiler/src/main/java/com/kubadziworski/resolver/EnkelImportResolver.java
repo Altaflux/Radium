@@ -1,16 +1,15 @@
 package com.kubadziworski.resolver;
 
 
-import com.kubadziworski.resolver.descriptor.FunctionDescriptor;
-import com.kubadziworski.resolver.descriptor.PropertyDescriptor;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.resolver.descriptor.ClassDescriptor;
 import com.kubadziworski.resolver.descriptor.DeclarationDescriptor;
+import com.kubadziworski.resolver.descriptor.FunctionDescriptor;
+import com.kubadziworski.resolver.descriptor.PropertyDescriptor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,11 +59,11 @@ public class EnkelImportResolver implements ClassPathResolver {
         if ((scope = globalScope.getScopeByClassName(importPackage)) != null) {
             List<DeclarationDescriptor> fields = scope.getFields().values()
                     .stream()
-                    .filter(field -> Modifier.isStatic(field.getModifiers()))
+                    .filter(field -> field.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC))
                     .map(field -> new PropertyDescriptor(field.getName(), field)).collect(Collectors.toList());
             List<DeclarationDescriptor> methods = scope.getFunctionSignatures()
                     .stream()
-                    .filter(function -> Modifier.isStatic(function.getModifiers()))
+                    .filter(function -> function.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC))
                     .map(field -> new FunctionDescriptor(field.getName(), field)).collect(Collectors.toList());
             descriptors.addAll(fields);
             descriptors.addAll(methods);
@@ -86,14 +85,14 @@ public class EnkelImportResolver implements ClassPathResolver {
         if ((scope = globalScope.getScopeByClassName(entity.packageName)) != null) {
             Optional<Field> fieldOptional = scope.getFields().values().stream()
                     .filter(field -> field.getName().equals(entity.clazzName))
-                    .filter(field -> Modifier.isStatic(field.getModifiers()))
+                    .filter(field -> field.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC))
                     .findAny();
             if (fieldOptional.isPresent()) {
                 return Collections.singletonList(new PropertyDescriptor(fieldOptional.get().getName(), fieldOptional.get()));
             }
             return scope.getFunctionSignatures().stream()
                     .filter(functionSignature -> functionSignature.getName().equals(entity.clazzName))
-                    .filter(functionSignature -> Modifier.isStatic(functionSignature.getModifiers()))
+                    .filter(functionSignature -> functionSignature.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC))
                     .map(functionSignature -> new FunctionDescriptor(functionSignature.getName(), functionSignature))
                     .collect(Collectors.toList());
         } else {

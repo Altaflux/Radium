@@ -5,7 +5,6 @@ import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
 import com.kubadziworski.antlr.EnkelParser.SupercallContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
-import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -18,7 +17,6 @@ import com.kubadziworski.exception.*;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
             try {
                 Expression owner = ctx.owner.accept(expressionVisitor);
                 FunctionSignature signature = owner.getType().getMethodCallSignature(functionName, arguments);
-                if (Modifier.isStatic(signature.getModifiers())) {
+                if (signature.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC)) {
                     //If the reference is static we can avoid calling the owning reference
                     //and simply use the class to call it.
                     //We may need to check if this doesn't causes trouble, else we use a POP after
@@ -67,10 +65,10 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
         }
 
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
-        if (scope.getCurrentFunctionSignature().equals(signature) && RadiumModifiers.isInline(signature.getModifiers())) {
+        if (scope.getCurrentFunctionSignature().equals(signature) && signature.getModifiers().contains(com.kubadziworski.domain.Modifier.INLINE)) {
             throw new CompilationException("Inline function '" + signature.getName() + "' cannot be recursive");
         }
-        if (Modifier.isStatic(signature.getModifiers())) {
+        if (signature.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC)) {
             return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), signature.getOwner());
         }
 

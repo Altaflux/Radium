@@ -3,6 +3,8 @@ package com.kubadziworski.bytecodegeneration.expression;
 import com.kubadziworski.bytecodegeneration.intrinsics.IntrinsicMethods;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.CompareSign;
+import com.kubadziworski.domain.Modifier;
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
@@ -10,7 +12,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -70,7 +71,7 @@ public class ConditionalExpressionGenerator {
 
     private Optional<Expression> signature(CompareSign sign, Expression leftExpression, Expression rightExpression) {
         FunctionSignature signature = new FunctionSignature(sign.getSign(), Collections.singletonList(new Parameter("o", rightExpression.getType(), null))
-                , PrimitiveTypes.BOOLEAN_TYPE, Modifier.PUBLIC, leftExpression.getType());
+                , PrimitiveTypes.BOOLEAN_TYPE, Modifiers.empty().with(Modifier.PUBLIC), leftExpression.getType());
         FunctionCall functionCall = new FunctionCall(signature, signature.createArgumentList(Collections.singletonList(new ArgumentHolder(rightExpression, null))),
                 leftExpression);
         return intrinsicMethods.get().intrinsicMethod(functionCall).map(intrinsicMethod -> intrinsicMethod.toExpression(functionCall, methodVisitor));

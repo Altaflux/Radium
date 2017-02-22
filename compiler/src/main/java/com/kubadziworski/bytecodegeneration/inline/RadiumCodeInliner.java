@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.inline;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
+import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.scope.Scope;
@@ -35,10 +36,11 @@ public class RadiumCodeInliner implements CodeInliner {
         Block block = (Block) function.getRootStatement();
         Scope blockScope = block.getScope();
 
-        MethodNode methodNode = new MethodNode(Opcodes.ASM5, function.getFunctionSignature().getModifiers(), function.getName()
+        int modifiers = ModifierTransformer.transform(function.getModifiers());
+        MethodNode methodNode = new MethodNode(Opcodes.ASM5, modifiers, function.getName()
                 , desc, null, null);
 
-        MethodInliner methodInliner = new MethodInliner(function.getFunctionSignature().getModifiers(), desc, methodNode,
+        MethodInliner methodInliner = new MethodInliner(modifiers, desc, methodNode,
                 function.getFunctionSignature().getOwner().getName());
 
         StatementGenerator statementScopeGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodInliner), blockScope);

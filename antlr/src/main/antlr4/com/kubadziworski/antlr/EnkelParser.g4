@@ -15,6 +15,7 @@ importDeclaration
 	:	singleTypeImportDeclaration
 	|	typeImportOnDemandDeclaration
 	;
+
 singleTypeImportDeclaration
 	:	'import' typeName ';'
 	;
@@ -30,16 +31,16 @@ packageDeclaration
 	:   'package' SimpleName ('.' SimpleName)* ';'
 	;
 
-classDeclaration : className  classBody  ;
+classDeclaration : classAccessModifiers? className  classBody  ;
 className : qualifiedName ;
 classBody : '{' (field | function)* '}' ;
-field : fieldModifier* name ':' type ('=' expression)? getter? setter?;
+field : fieldModifier  name ':' type ('=' expression)? getter? setter?;
 
 getter: 'get' '('')' functionContent ;
 setter: 'set' '(' SimpleName ')' block ;
 
-function : 'fn' functionDeclaration functionContent? ;
-functionDeclaration : methodModifiers* functionName '('? parametersList? ')'? (':'(type))? ;
+function :  functionDeclaration functionContent? ;
+functionDeclaration : methodModifier 'fn' functionName '('? parametersList? ')'? (':'(type))? ;
 parametersList:  parameter (',' parameter)*
           |  parameter (',' parameterWithDefaultValue)*
           |  parameterWithDefaultValue (',' parameterWithDefaultValue)* ;
@@ -135,13 +136,21 @@ value
 
 qualifiedName : SimpleName ('.' SimpleName)*;
 
+fieldModifiers
+    : 'static'
+    | 'open'
+    | 'final' ;
 methodModifiers
     : 'static'
-    | 'public'
-    | 'private'
-    | 'inline' ;
+    | 'inline'
+    | 'open'
+    | 'final' ;
 
-fieldModifier : ('public' | 'protected' | 'private') ;
+accessModifiers: 'public' | 'private' | 'protected' ;
+classAccessModifiers :  'public' | 'private' ;
+
+methodModifier : (accessModifiers?  methodModifiers*) | (methodModifiers*  accessModifiers?) | (methodModifiers*  accessModifiers? methodModifiers*) ;
+fieldModifier : (accessModifiers?  fieldModifiers*) | (fieldModifiers*  accessModifiers?) | (fieldModifiers*  accessModifiers? fieldModifiers*) ;
 
 type : simpleName=typeComposition nullable='?'? ;
 

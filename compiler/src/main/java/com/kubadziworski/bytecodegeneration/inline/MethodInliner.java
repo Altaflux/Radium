@@ -1,6 +1,6 @@
 package com.kubadziworski.bytecodegeneration.inline;
 
-import com.kubadziworski.domain.RadiumModifiers;
+import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.DescriptorFactory;
@@ -60,7 +60,7 @@ public class MethodInliner extends LocalVariablesSorter {
             return type.getFunctionSignatures().stream()
                     .filter(functionSignature -> functionSignature.getName().equals(name))
                     .filter(functionSignature -> DescriptorFactory.getMethodDescriptor(functionSignature).equals(desc))
-                    .findFirst().map(functionSignature -> RadiumModifiers.isInline(functionSignature.getModifiers()))
+                    .findFirst().map(functionSignature -> functionSignature.getModifiers().contains(Modifier.INLINE))
                     .orElse(false);
         } catch (Exception e) {
             return false;

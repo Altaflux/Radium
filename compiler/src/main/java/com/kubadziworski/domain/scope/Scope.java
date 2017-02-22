@@ -3,8 +3,9 @@ package com.kubadziworski.domain.scope;
 import com.google.common.collect.Lists;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.MetaData;
+import com.kubadziworski.domain.Modifier;
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
-import com.kubadziworski.resolver.ImportResolver;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
@@ -13,11 +14,11 @@ import com.kubadziworski.exception.FieldNotFoundException;
 import com.kubadziworski.exception.LocalVariableNotFoundException;
 import com.kubadziworski.exception.MethodSignatureNotFoundException;
 import com.kubadziworski.exception.MethodWithNameAlreadyDefinedException;
+import com.kubadziworski.resolver.ImportResolver;
 import com.kubadziworski.util.TypeResolver;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -101,7 +102,7 @@ public class Scope {
 
     public FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         if (identifier.equals("super")) {
-            return new FunctionSignature("super", Collections.emptyList(), VoidType.INSTANCE, Modifier.PUBLIC,
+            return new FunctionSignature("super", Collections.emptyList(), VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC),
                     ClassTypeFactory.createClassType(getSuperClassName()));
         }
 

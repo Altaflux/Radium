@@ -12,8 +12,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.lang.reflect.Modifier;
-
 public class PrefixExpressionGenerator {
 
     private final MethodVisitor methodVisitor;
@@ -35,7 +33,7 @@ public class PrefixExpressionGenerator {
         }
 
         boolean isStaticField = (reference instanceof FieldReference && (((FieldReference) reference).getOwner() instanceof EmptyExpression) &&
-                (Modifier.isStatic(((FieldReference) reference).getField().getModifiers())));
+                (((FieldReference) reference).getField().getModifiers()).contains(com.kubadziworski.domain.Modifier.STATIC));
 
         if (reference instanceof LocalVariableReference || reference instanceof FieldReference && isStaticField) {
             reference.accept(statementGenerator);

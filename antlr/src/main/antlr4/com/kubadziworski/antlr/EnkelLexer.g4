@@ -301,7 +301,8 @@ SET : 'set';
 AccessModifier_private : 'private';
 AccessModifier_protected : 'protected';
 AccessModifier_public : 'public';
-
+Modifier_final : 'final';
+Modifier_open : 'open';
 Modifier_inline : 'inline';
 Modifier_static : 'static';
 Create_New : 'new' ;

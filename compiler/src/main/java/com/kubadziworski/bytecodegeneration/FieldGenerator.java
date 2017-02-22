@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration;
 
+import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
 import com.kubadziworski.domain.scope.Field;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -17,7 +18,7 @@ public class FieldGenerator {
     public void generate(Field field) {
         String name = field.getName();
         String descriptor = field.getType().getAsmType().getDescriptor();
-        FieldVisitor fieldVisitor = cv.visitField(field.getModifiers(), name, descriptor, null, null);
+        FieldVisitor fieldVisitor = cv.visitField(ModifierTransformer.transform(field.getModifiers()), name, descriptor, null, null);
         fieldVisitor.visitEnd();
 
         methodGenerator.generatePropertyAccessor(field.getGetterFunction(), field);

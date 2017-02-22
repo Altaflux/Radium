@@ -2,6 +2,7 @@ package com.kubadziworski.parsing.visitor.statement;
 
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
+import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
@@ -16,7 +17,6 @@ import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 
-import java.lang.reflect.Modifier;
 import java.util.Optional;
 
 public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement> {
@@ -49,7 +49,7 @@ public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement
 
         } else if (scope.isFieldExists(varName)) {
             Field field = scope.getField(varName);
-            if (Modifier.isFinal(field.getModifiers())) {
+            if (field.getModifiers().contains(Modifier.FINAL)) {
                 throw new FinalFieldModificationException("Cannot modify final field: " + field.getName());
             }
             validateAccessToField(field);
@@ -62,7 +62,7 @@ public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement
     }
 
     private void validateAccessToField(Field field) {
-        if (Modifier.isFinal(field.getModifiers())) {
+        if (field.getModifiers().contains(Modifier.FINAL)) {
             throw new FinalFieldModificationException("Cannot modify final field: " + field.getName());
         }
         Type classType = scope.getClassType();

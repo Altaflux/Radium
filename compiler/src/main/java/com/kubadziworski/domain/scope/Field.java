@@ -2,6 +2,7 @@ package com.kubadziworski.domain.scope;
 
 import com.kubadziworski.bytecodegeneration.FieldGenerator;
 import com.kubadziworski.domain.Function;
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.type.Type;
 
@@ -15,13 +16,13 @@ public class Field implements Variable, CallableDescriptor {
     private final String name;
     private final Type owner;
     private final Type type;
-    private final int modifiers;
+    private final Modifiers modifiers;
     private final Expression initialExpression;
 
     private Function getterFunction;
     private Function setterFunction;
 
-    public Field(String name, Type owner, Type type, int modifiers) {
+    public Field(String name, Type owner, Type type, Modifiers modifiers) {
         this.name = name;
         this.type = type;
         this.owner = owner;
@@ -29,7 +30,7 @@ public class Field implements Variable, CallableDescriptor {
         initialExpression = null;
     }
 
-    public Field(String name, Type owner, Type type, Expression initialExpression, int modifiers) {
+    public Field(String name, Type owner, Type type, Expression initialExpression, Modifiers modifiers) {
         this.name = name;
         this.type = type;
         this.owner = owner;
@@ -47,7 +48,7 @@ public class Field implements Variable, CallableDescriptor {
         return name;
     }
 
-    public int getModifiers() {
+    public Modifiers getModifiers() {
         return modifiers;
     }
 

@@ -1,8 +1,11 @@
 package com.kubadziworski.parsing.visitor;
 
+
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.Function;
+import com.kubadziworski.domain.Modifier;
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
@@ -14,14 +17,16 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.exception.WrongModifiersException;
+import com.kubadziworski.exception.CompilationException;
 import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import com.kubadziworski.util.TypeResolver;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
 
@@ -38,32 +43,50 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
         String name = ctx.name().getText();
 
 
-        int modifiers = Modifier.PUBLIC;
-        if (ctx.fieldModifier() != null && ctx.fieldModifier().size() > 1) {
-            throw new WrongModifiersException("Too many modifiers: " + ctx.fieldModifier());
+        Modifiers modifiersSet = new Modifiers(Collections.emptySet());
+        if (ctx.fieldModifier() != null && ctx.fieldModifier().accessModifiers() != null) {
+            switch (ctx.fieldModifier().accessModifiers().getText()) {
+                case "public": {
+                    modifiersSet = modifiersSet.with(Modifier.PUBLIC);
+                    break;
+                }
+                case "protected": {
+                    modifiersSet = modifiersSet.with(Modifier.PUBLIC);
+                    break;
+                }
+                case "private": {
+                    modifiersSet = modifiersSet.with(Modifier.PUBLIC);
+                    break;
+                }
+            }
+        } else {
+            modifiersSet = modifiersSet.with(Modifier.PUBLIC);
         }
+
+        Set<Modifier> mSets = new HashSet<>();
         if (ctx.fieldModifier() != null) {
-            modifiers = ctx.fieldModifier().stream().map(methodModifiersContext -> {
-                if (methodModifiersContext.getText().equals("private")) {
-                    return Modifier.PRIVATE;
+            mSets = ctx.fieldModifier().fieldModifiers().stream().map(methodModifiersContext -> {
+                if (methodModifiersContext.getText().equals("static")) {
+                    return Modifier.STATIC;
                 }
-                if (methodModifiersContext.getText().equals("protected")) {
-                    return Modifier.PROTECTED;
+                if (methodModifiersContext.getText().equals("final")) {
+                    return com.kubadziworski.domain.Modifier.FINAL;
                 }
-                if (methodModifiersContext.getText().equals("public")) {
-                    return Modifier.PUBLIC;
-                }
-                return 0;
-            }).findAny().orElse(Modifier.PUBLIC);
+                throw new CompilationException("");
+            }).collect(Collectors.toSet());
+
+        }
+        for (Modifier md : mSets) {
+            modifiersSet = modifiersSet.with(md);
         }
 
         Field field;
         ExpressionVisitor statementVisitor = new ExpressionVisitor(scope);
         if (ctx.expression() != null) {
             Expression expression = ctx.expression().accept(statementVisitor);
-            field = new Field(name, owner, type, expression, modifiers);
+            field = new Field(name, owner, type, expression, modifiersSet);
         } else {
-            field = new Field(name, owner, type, modifiers);
+            field = new Field(name, owner, type, modifiersSet);
         }
 
 

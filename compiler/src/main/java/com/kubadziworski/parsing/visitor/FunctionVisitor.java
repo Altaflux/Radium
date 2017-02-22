@@ -8,8 +8,6 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.FunctionGenerator;
 
-import java.lang.reflect.Modifier;
-
 /**
  * Created by kuba on 01.04.16.
  */
@@ -26,7 +24,7 @@ public class FunctionVisitor extends EnkelParserBaseVisitor<Function> {
         FunctionSignature signature = ctx.functionDeclaration().accept(new FunctionSignatureVisitor(scope));
 
         Scope scope = new Scope(this.scope, signature);
-        if (!Modifier.isStatic(signature.getModifiers())) {
+        if (!(signature.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC))) {
             scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         }
         FunctionGenerator generator = new FunctionGenerator(scope);

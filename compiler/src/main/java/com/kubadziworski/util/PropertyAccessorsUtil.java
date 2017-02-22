@@ -1,5 +1,7 @@
 package com.kubadziworski.util;
 
+import com.kubadziworski.domain.Modifier;
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.CallableDescriptor;
 import com.kubadziworski.domain.scope.Field;
@@ -9,7 +11,6 @@ import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -20,7 +21,7 @@ public class PropertyAccessorsUtil {
     public static FunctionSignature createSetterForField(Field field, String fieldName) {
         return new FunctionSignature("set" + getPropertyMethodSuffix(field.getName()),
                 Collections.singletonList(new Parameter(fieldName, field.getType(), null)),
-                VoidType.INSTANCE, Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
+                VoidType.INSTANCE, Modifiers.empty().with(com.kubadziworski.domain.Modifier.FINAL).with(com.kubadziworski.domain.Modifier.PUBLIC), field.getOwner());
     }
 
     public static FunctionSignature createSetterForField(Field field) {
@@ -30,18 +31,18 @@ public class PropertyAccessorsUtil {
     public static FunctionSignature createGetterForField(Field field) {
         if (field.getType().equals(PrimitiveTypes.BOOLEAN_TYPE)) {
             return new FunctionSignature("is" + getPropertyMethodSuffix(field.getName()), Collections.emptyList(),
-                    field.getType(), Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
+                    field.getType(), Modifiers.empty().with(com.kubadziworski.domain.Modifier.FINAL).with(com.kubadziworski.domain.Modifier.PUBLIC), field.getOwner());
         }
         return new FunctionSignature("get" + getPropertyMethodSuffix(field.getName()), Collections.emptyList(),
-                field.getType(), Modifier.PUBLIC + Modifier.FINAL, field.getOwner());
+                field.getType(), Modifiers.empty().with(com.kubadziworski.domain.Modifier.FINAL).with(com.kubadziworski.domain.Modifier.PUBLIC), field.getOwner());
     }
 
     public static Optional<FunctionSignature> getSetterFunctionSignatureForField(Field field) {
-        return findSetterForProperty(field, Modifier.isStatic(field.getModifiers()));
+        return findSetterForProperty(field, field.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC));
     }
 
     public static Optional<FunctionSignature> getGetterFunctionSignatureForField(Field field) {
-        return findGetterForProperty(field, Modifier.isStatic(field.getModifiers()));
+        return findGetterForProperty(field, field.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC));
     }
 
 
@@ -65,7 +66,7 @@ public class PropertyAccessorsUtil {
             for (FunctionSignature signature : type.getFunctionSignatures()) {
                 if (signature.getName().equals(prefix + methodSuffix) &&
                         signature.getParameters().size() == numberOfParams &&
-                        (!mustBeStatic || Modifier.isStatic(signature.getModifiers())) &&
+                        (!mustBeStatic || signature.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC)) &&
                         (requiredReturnTypes == null || signature.getReturnType().inheritsFrom(requiredReturnTypes) > -1)) {
 
                     return Optional.of(signature);
@@ -77,20 +78,19 @@ public class PropertyAccessorsUtil {
 
 
     public static boolean isFunctionAccessible(CallableDescriptor signature, Type caller) {
-        int functionModifiers = signature.getModifiers();
-        if (Modifier.isPublic(functionModifiers)) {
+        if (signature.getModifiers().contains(Modifier.PUBLIC)) {
             return true;
         }
-        if (Modifier.isPrivate(functionModifiers) && !signature.getOwner().getName()
+        if (signature.getModifiers().contains(Modifier.PRIVATE) && !signature.getOwner().getName()
                 .equals(caller.getName())) {
             return false;
         }
-        if (Modifier.isProtected(functionModifiers)) {
+        if (signature.getModifiers().contains(Modifier.PROTECTED)) {
             if (caller.inheritsFrom(signature.getOwner()) < 0) {
                 return false;
             }
         }
-        //Has to be protected
+        //Has to be package protected
         return caller.getPackage().equals(signature.getOwner().getPackage());
     }
 

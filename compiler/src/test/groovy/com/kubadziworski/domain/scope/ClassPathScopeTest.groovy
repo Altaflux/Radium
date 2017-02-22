@@ -2,6 +2,8 @@ package com.kubadziworski.domain.scope
 
 import com.kubadziworski.compiler.RadiumArguments
 import com.kubadziworski.configuration.CompilerConfigInstance
+import com.kubadziworski.domain.Modifier
+import com.kubadziworski.domain.Modifiers
 import com.kubadziworski.domain.node.expression.Parameter
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
@@ -11,8 +13,6 @@ import com.kubadziworski.domain.type.intrinsic.TypeProjection
 import com.kubadziworski.domain.type.intrinsic.VoidType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import spock.lang.Specification
-
-import java.lang.reflect.Modifier
 /**
  * Created by kuba on 11.05.16.
  */
@@ -27,7 +27,7 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg0", it, null)
         }
-        def expectedSignature = new FunctionSignature(expectedName, expectedParams, expectedReturnType, Modifier.PUBLIC, type)
+        def expectedSignature = new FunctionSignature(expectedName, expectedParams, expectedReturnType, Modifiers.empty().with(Modifier.PUBLIC), type)
         when:
         ClassPathScope classPathScope = new ClassPathScope();
         def actualSignature = classPathScope.getMethodSignature(type, methodName, args)
@@ -57,7 +57,7 @@ class ClassPathScopeTest extends Specification {
         def expectedParams = expectedParamsTypes.collect {
             new Parameter("arg", it, null)
         }
-        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, VoidType.INSTANCE, Modifier.PUBLIC, new JavaClassType(Class.forName(className)));
+        def expectedSignature = new FunctionSignature(expectedClassName, expectedParams, VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC), new JavaClassType(Class.forName(className)));
         when:
         ClassPathScope classPathScope = new ClassPathScope();
         def actualSignature = classPathScope.getConstructorSignature(new JavaClassType(Class.forName(className)), args)

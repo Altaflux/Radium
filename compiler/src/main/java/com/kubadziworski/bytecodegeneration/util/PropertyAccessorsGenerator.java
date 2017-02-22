@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.util;
 
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
+import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.scope.Field;
@@ -14,7 +15,6 @@ import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -64,7 +64,7 @@ public class PropertyAccessorsGenerator {
         expression.accept(generator);
         castIfNecessary(type, field.getType(), adapter);
 
-        int opCode = Modifier.isStatic(field.getModifiers()) ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD;
+        int opCode = field.getModifiers().contains(Modifier.STATIC) ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD;
         adapter.visitFieldInsn(opCode, field.getOwner().getAsmType().getInternalName(), field.getName(),
                 field.getType().getAsmType().getDescriptor());
     }
@@ -90,7 +90,7 @@ public class PropertyAccessorsGenerator {
         Expression owner = fieldReference.getOwner();
         owner.accept(generator);
 
-        int opCode = Modifier.isStatic(fieldReference.getField().getModifiers()) ? Opcodes.GETSTATIC : Opcodes.GETFIELD;
+        int opCode = fieldReference.getField().getModifiers().contains(Modifier.STATIC) ? Opcodes.GETSTATIC : Opcodes.GETFIELD;
         adapter.visitFieldInsn(opCode, ownerInternalName, field.getName(), descriptor);
     }
 

@@ -1,6 +1,8 @@
 package com.kubadziworski.util;
 
-import com.kubadziworski.domain.RadiumModifiers;
+import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
+import com.kubadziworski.domain.Modifier;
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -34,25 +36,29 @@ public final class ReflectionObjectToSignatureMapper {
         List<Parameter> parameters = getParams(method.getParameters(), method.getName(), org.objectweb.asm.Type.getMethodDescriptor(method), javaClassType);
         Class<?> returnType = method.getReturnType();
         Type owner = ClassTypeFactory.createClassType(method.getDeclaringClass().getName());
-        int mod = method.getModifiers() + isInline(method, javaClassType);
+
+        Modifiers modifiers = ModifierTransformer.transformJvm(method.getModifiers());
+        if (isInline(method, javaClassType)) {
+            modifiers = modifiers.with(Modifier.INLINE);
+        }
         return new FunctionSignature(name, parameters, TypeResolver.getTypeFromNameWithClazzAlias(returnType, getReturnNullability(method, javaClassType)),
-                mod, owner);
+                modifiers, owner);
     }
 
     public static FunctionSignature fromConstructor(Constructor constructor, JavaClassType owner) {
         String name = constructor.getName();
         List<Parameter> parameters = getParams(constructor.getParameters(), "<init>", org.objectweb.asm.Type.getConstructorDescriptor(constructor), owner);
-        return new FunctionSignature(name, parameters, VoidType.INSTANCE, constructor.getModifiers(), owner);
+        return new FunctionSignature(name, parameters, VoidType.INSTANCE, ModifierTransformer.transformJvm(constructor.getModifiers()), owner);
     }
 
     public static Field fromField(java.lang.reflect.Field field, JavaClassType owner) {
         String name = field.getName();
-        return new Field(name, owner, TypeResolver.getTypeFromNameWithClazzAlias(field.getType(), getNullability(field, owner)), field.getModifiers());
+        return new Field(name, owner, TypeResolver.getTypeFromNameWithClazzAlias(field.getType(), getNullability(field, owner)), ModifierTransformer.transformJvm(field.getModifiers()));
     }
 
 
     @SuppressWarnings("unchecked")
-    private static int isInline(Method method, JavaClassType javaClassType) {
+    private static boolean isInline(Method method, JavaClassType javaClassType) {
 
         final String methodDescriptor = org.objectweb.asm.Type.getMethodDescriptor(method);
         ClassNode classNode = javaClassType.getClassNode(true);
@@ -66,10 +72,10 @@ public final class ReflectionObjectToSignatureMapper {
             if (methodNode.invisibleAnnotations != null && ((List<AnnotationNode>) methodNode.invisibleAnnotations)
                     .stream()
                     .anyMatch(annotationNode -> annotationNode.desc.equals(INLINE_DESCRIPTOR))) {
-                return RadiumModifiers.INLINE;
+                return true;
             }
         }
-        return 0;
+        return false;
     }
 
     @SuppressWarnings("unchecked")

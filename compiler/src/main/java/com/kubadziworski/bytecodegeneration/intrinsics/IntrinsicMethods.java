@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.intrinsics;
 
 
 import com.kubadziworski.domain.CompareSign;
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.CallableMember;
@@ -9,7 +10,6 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -62,11 +62,12 @@ public class IntrinsicMethods {
                             equals, type);
 
 
+            Modifiers modifiers = Modifiers.empty().with(com.kubadziworski.domain.Modifier.PUBLIC);
             FunctionSignature primitiveEquals = new FunctionSignature("==", Collections.singletonList(new Parameter("o", type, null)),
-                    PrimitiveTypes.BOOLEAN_TYPE, Modifier.PUBLIC, type);
+                    PrimitiveTypes.BOOLEAN_TYPE, modifiers, type);
             intrinsicMap.registerIntrinsicMethod(primitiveEquals, primitiveComparison, type);
             FunctionSignature primitiveNotEquals = new FunctionSignature("!=", Collections.singletonList(new Parameter("o", type, null)),
-                    PrimitiveTypes.BOOLEAN_TYPE, Modifier.PUBLIC, type);
+                    PrimitiveTypes.BOOLEAN_TYPE, modifiers, type);
             intrinsicMap.registerIntrinsicMethod(primitiveNotEquals, primitiveComparison, type);
 
         });
@@ -107,7 +108,7 @@ public class IntrinsicMethods {
             Stream.of(CompareSign.values()).forEach(compareSign -> {
                 if (!compareSign.equals(CompareSign.EQUAL) && !compareSign.equals(CompareSign.NOT_EQUAL)) {
                     FunctionSignature primitiveCompare = new FunctionSignature(compareSign.getSign(), Collections.singletonList(new Parameter("o", type1, null)),
-                            PrimitiveTypes.BOOLEAN_TYPE, Modifier.PUBLIC, type);
+                            PrimitiveTypes.BOOLEAN_TYPE, Modifiers.empty().with(com.kubadziworski.domain.Modifier.PUBLIC), type);
                     intrinsicMap.registerIntrinsicMethod(primitiveCompare, primitiveComparison, type);
 
                 }

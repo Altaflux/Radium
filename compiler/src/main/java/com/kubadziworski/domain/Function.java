@@ -39,7 +39,7 @@ public class Function {
         return functionSignature.getReturnType();
     }
 
-    public int getModifiers() {
+    public Modifiers getModifiers() {
         return functionSignature.getModifiers();
     }
 

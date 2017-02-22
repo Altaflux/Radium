@@ -460,7 +460,7 @@ class ShouldCompileTest extends Specification {
                                     assert(expected -> true , actual -> 1 == 1);
                                     this.assert(expected -> true , actual -> 1 == 1);
                                 }
-                                fn static assert(Boolean actual,Boolean expected):Unit {
+                                static fn assert(Boolean actual,Boolean expected):Unit {
                                     if (actual == expected) {
                                         println("OK")
                                     }

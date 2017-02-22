@@ -3,6 +3,7 @@ package com.kubadziworski.parsing.visitor.expression;
 import com.kubadziworski.antlr.EnkelParser.VarReferenceContext;
 import com.kubadziworski.antlr.EnkelParser.VariableReferenceContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
+import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.Field;
@@ -17,7 +18,6 @@ import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.lang.reflect.Modifier;
 import java.util.Optional;
 
 public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
@@ -61,7 +61,7 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
 
         if (owner != null) {
             Field field = owner.getType().getField(varName);
-            if (Modifier.isStatic(field.getModifiers())) {
+            if (field.getModifiers().contains(Modifier.STATIC)) {
                 //If the reference is static we can avoid calling the owning reference
                 //and simply use the class to call it.
                 //We may need to check if this doesn't causes trouble, else we use a POP after
@@ -80,7 +80,7 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
         Field field = scope.getField(varName);
         validateAccessToField(field);
 
-        if (Modifier.isStatic(field.getModifiers())) {
+        if (field.getModifiers().contains(Modifier.STATIC)) {
             return new FieldReference(new RuleContextElementImpl(ctx), field, new EmptyExpression(field.getOwner()));
         }
 
@@ -91,7 +91,7 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
     }
 
     private void validateAccessToField(Field field) {
-        if (Modifier.isFinal(field.getModifiers())) {
+        if (field.getModifiers().contains(Modifier.FINAL)) {
             throw new FinalFieldModificationException("Cannot modify final field: " + field.getName());
         }
         Type classType = scope.getClassType();

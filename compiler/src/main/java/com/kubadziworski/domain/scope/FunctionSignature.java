@@ -1,6 +1,7 @@
 package com.kubadziworski.domain.scope;
 
 import com.google.common.collect.Ordering;
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.Parameter;
@@ -9,7 +10,6 @@ import com.kubadziworski.exception.ParameterForNameNotFoundException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import org.objectweb.asm.Opcodes;
 
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -23,10 +23,10 @@ public class FunctionSignature implements CallableDescriptor {
     private final String name;
     private final List<Parameter> parameters;
     private final Type returnType;
-    private final int modifiers;
+    private final Modifiers modifiers;
     private final Type owner;
 
-    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, int modifiers, Type owner) {
+    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, Modifiers modifiers, Type owner) {
         this.name = name;
         this.parameters = parameters;
         this.returnType = returnType;
@@ -144,12 +144,12 @@ public class FunctionSignature implements CallableDescriptor {
     }
 
 
-    public int getModifiers() {
+    public Modifiers getModifiers() {
         return modifiers;
     }
 
     public int getInvokeOpcode() {
-        if (Modifier.isStatic(modifiers)) {
+        if (modifiers.contains(com.kubadziworski.domain.Modifier.STATIC)) {
             return Opcodes.INVOKESTATIC;
         } else {
             return Opcodes.INVOKEVIRTUAL;

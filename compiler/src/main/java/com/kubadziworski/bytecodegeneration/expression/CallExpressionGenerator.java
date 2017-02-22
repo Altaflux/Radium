@@ -3,7 +3,6 @@ package com.kubadziworski.bytecodegeneration.expression;
 import com.google.common.collect.Ordering;
 import com.kubadziworski.bytecodegeneration.intrinsics.IntrinsicMethods;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.RadiumModifiers;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
@@ -108,10 +107,6 @@ public class CallExpressionGenerator {
     private Optional<Expression> callArithmeticExpression(FunctionCall functionCall, StatementGenerator statementGenerator) {
         return intrinsicMethods.get().intrinsicMethod(functionCall).map(intrinsicMethod -> intrinsicMethod.toExpression(functionCall, methodVisitor));
 
-    }
-
-    private static boolean shouldInline(FunctionCall functionCall) {
-        return RadiumModifiers.isInline(functionCall.getSignature().getModifiers());
     }
 
     //TODO I THINK THIS WILL NOT WORK WITH PRECOMPILED RADIUM CLASSES

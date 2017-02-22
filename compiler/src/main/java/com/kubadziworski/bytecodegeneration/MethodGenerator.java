@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
+import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
 import com.kubadziworski.bytecodegeneration.util.PropertyAccessorsGenerator;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
@@ -41,10 +42,7 @@ public class MethodGenerator {
         Block block = (Block) function.getRootStatement();
         Scope scope = block.getScope();
 
-        int mod = function.getModifiers();
-        if (RadiumModifiers.isInline(mod)) {
-            mod = mod - RadiumModifiers.INLINE;
-        }
+        int mod = ModifierTransformer.transform(function.getModifiers());
         MethodVisitor mvs = cv.visitMethod(mod, name, description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
         generateInlineAnnotation(function, mv);
@@ -64,7 +62,7 @@ public class MethodGenerator {
         String description = DescriptorFactory.getMethodDescriptor(function);
         Block block = (Block) function.getRootStatement();
         Scope scope = block.getScope();
-        MethodVisitor mvs = cv.visitMethod(function.getModifiers(), name, description, null, null);
+        MethodVisitor mvs = cv.visitMethod(ModifierTransformer.transform(function.getModifiers()), name, description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
         generateMutabilityAnnotations(function, mv);
 
@@ -82,7 +80,7 @@ public class MethodGenerator {
         Block block = (Block) constructor.getRootStatement();
         Scope scope = block.getScope();
         String description = DescriptorFactory.getMethodDescriptor(constructor);
-        MethodVisitor mvs = cv.visitMethod(constructor.getModifiers(), "<init>", description, null, null);
+        MethodVisitor mvs = cv.visitMethod(ModifierTransformer.transform(constructor.getModifiers()), "<init>", description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
         generateMutabilityAnnotations(constructor, mv);
         mv.visitCode();
@@ -96,7 +94,7 @@ public class MethodGenerator {
     }
 
     private void generateInlineAnnotation(Function function, InstructionAdapter mv) {
-        if (RadiumModifiers.isInline(function.getModifiers())) {
+        if (RadiumModifiers.isInline(ModifierTransformer.transform(function.getModifiers()))) {
             AnnotationVisitor av0 = mv.visitAnnotation("Lradium/internal/InlineOnly;", false);
             av0.visitEnd();
         }

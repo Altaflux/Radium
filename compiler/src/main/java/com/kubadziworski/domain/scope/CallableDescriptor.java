@@ -1,5 +1,6 @@
 package com.kubadziworski.domain.scope;
 
+import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.type.Type;
 
@@ -12,7 +13,7 @@ public interface CallableDescriptor {
     Type getOwner();
     String getName();
 
-    int getModifiers();
+    Modifiers getModifiers();
 
     default List<Parameter> getParameters() {
         return Collections.emptyList();
