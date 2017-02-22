@@ -5,24 +5,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Modifiers {
+
     public static Set<Modifier> ACCESS_MODIFIERS =
             new HashSet<>(Arrays.asList(Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE, Modifier.INTERNAL));
 
+    private static Modifiers EMPTY = new Modifiers(Collections.emptySet());
 
-    public static Modifiers EMPTY = new Modifiers(Collections.emptySet());
+    public Modifiers(Collection<Modifier> modifiers) {
+        this.modifiers = Collections.unmodifiableSet(new HashSet<>(modifiers));
+    }
 
     public static Modifiers empty() {
-        return new Modifiers(Collections.emptySet());
+        return EMPTY;
     }
 
     private Set<Modifier> modifiers;
 
     public Set<Modifier> getModifiers() {
-        return Collections.unmodifiableSet(modifiers);
-    }
-
-    public Modifiers(Collection<Modifier> modifiers) {
-        this.modifiers = new HashSet<>(modifiers);
+        return modifiers;
     }
 
     public Modifiers without(Modifier modifier) {

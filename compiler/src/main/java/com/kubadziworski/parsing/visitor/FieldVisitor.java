@@ -17,14 +17,12 @@ import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.exception.CompilationException;
 import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import com.kubadziworski.util.TypeResolver;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,41 +41,19 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
         String name = ctx.name().getText();
 
 
-        Modifiers modifiersSet = new Modifiers(Collections.emptySet());
-        if (ctx.fieldModifier() != null && ctx.fieldModifier().accessModifiers() != null) {
-            switch (ctx.fieldModifier().accessModifiers().getText()) {
-                case "public": {
-                    modifiersSet = modifiersSet.with(Modifier.PUBLIC);
-                    break;
-                }
-                case "protected": {
-                    modifiersSet = modifiersSet.with(Modifier.PUBLIC);
-                    break;
-                }
-                case "private": {
-                    modifiersSet = modifiersSet.with(Modifier.PUBLIC);
-                    break;
-                }
-            }
-        } else {
-            modifiersSet = modifiersSet.with(Modifier.PUBLIC);
-        }
-
-        Set<Modifier> mSets = new HashSet<>();
+        Modifiers modifiersSet = Modifiers.empty();
         if (ctx.fieldModifier() != null) {
-            mSets = ctx.fieldModifier().fieldModifiers().stream().map(methodModifiersContext -> {
-                if (methodModifiersContext.getText().equals("static")) {
-                    return Modifier.STATIC;
-                }
-                if (methodModifiersContext.getText().equals("final")) {
-                    return com.kubadziworski.domain.Modifier.FINAL;
-                }
-                throw new CompilationException("");
-            }).collect(Collectors.toSet());
-
-        }
-        for (Modifier md : mSets) {
-            modifiersSet = modifiersSet.with(md);
+            Set<Modifier> mSets = ctx.fieldModifier().fieldModifiers().stream()
+                    .map(methodModifiersContext -> Modifier.fromValue(methodModifiersContext.getText())
+                    ).collect(Collectors.toSet());
+            for (Modifier md : mSets) {
+                modifiersSet = modifiersSet.with(md);
+            }
+            if (ctx.fieldModifier().accessModifiers() != null) {
+                modifiersSet = modifiersSet.with(Modifier.fromValue(ctx.fieldModifier().accessModifiers().getText()));
+            } else {
+                modifiersSet = modifiersSet.with(Modifier.PUBLIC);
+            }
         }
 
         Field field;
