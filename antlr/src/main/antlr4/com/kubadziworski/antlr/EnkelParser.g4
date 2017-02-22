@@ -39,14 +39,16 @@ field : fieldModifier  name ':' type ('=' expression)? getter? setter?;
 getter: 'get' '('')' functionContent ;
 setter: 'set' '(' SimpleName ')' block ;
 
+//primaryConstructor: '(' parametersList? ')' ;
+
 function :  functionDeclaration functionContent? ;
 functionDeclaration : methodModifier 'fn' functionName '('? parametersList? ')'? (':'(type))? ;
 parametersList:  parameter (',' parameter)*
           |  parameter (',' parameterWithDefaultValue)*
           |  parameterWithDefaultValue (',' parameterWithDefaultValue)* ;
 functionName : SimpleName ;
-parameter : type SimpleName ;
-parameterWithDefaultValue : type SimpleName '=' defaultValue=expression ;
+parameter :  SimpleName ':' type ;
+parameterWithDefaultValue :  SimpleName ':' type '=' defaultValue=expression ;
 
 functionContent : (block |  ('=' blockStatement)) ;
 

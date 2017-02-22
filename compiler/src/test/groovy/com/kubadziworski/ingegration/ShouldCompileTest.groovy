@@ -34,7 +34,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                 }
 
-                                fn method(Int x) {
+                                fn method(x: Int) {
                                     println(x)
                                 }
                             }
@@ -68,7 +68,7 @@ class ShouldCompileTest extends Specification {
                                     greet("andrew")
                                 }
 
-                                fn greet (String name, String favouriteLanguage="java") {
+                                fn greet (name :String ,  favouriteLanguage : String = "java") {
                                     println("Hello my name is ")
                                     println(name)
                                     println("and my favourite langugage is ")
@@ -96,7 +96,7 @@ class ShouldCompileTest extends Specification {
                                     createRect(x1->25,x2->-25,y1->50,y2->-0xE)
                                 }
 
-                                fn createRect (Int x1,Int y1,Int x2, Int y2) {
+                                fn createRect (x1 :Int , y1: Int, x2: Int, y2:Int) {
                                     println("Created rect with x1=" + x1 + " y1=" + y1 + " x2=" + x2 + " y2=" + y2)
                                 }
                             }
@@ -119,7 +119,7 @@ class ShouldCompileTest extends Specification {
 
                                         assert(secondNum % firstNum == 2, true)
                                     }
-                                    fn assert(Boolean actual,Boolean expected) {
+                                    fn assert(actual: Boolean , expected: Boolean) {
                                         if (actual == expected) {
                                             println("OK")
                                         }
@@ -132,16 +132,16 @@ class ShouldCompileTest extends Specification {
                                     fn fooo(){
                                         bla(3)
                                     }
-                                    fn bla(Int? mip):Int?{
+                                    fn bla(mip: Int?):Int?{
                                         return mip;
                                     }
 
-                                    fn sum (Int x ,Int y):Int {
+                                    fn sum (x:Int ,y:Int):Int {
                                         println(x)
                                         println(y)
                                         return x+y
                                     }
-                                    fn mod(Int x ,Int y):Int {
+                                    fn mod(x:Int, y:Int):Int {
                                         println(x)
                                         println(y)
                                         return x%y
@@ -163,9 +163,9 @@ class ShouldCompileTest extends Specification {
 //                                        fooo(firstNum)
 //                                        //assert(secondNum % firstNum == 2, true)
 //                                    }
-//                                    fn fooo(Int x){
+//                                    fn fooo(x :Int){
 //                                    }
-//                                    fn assert(Boolean actual,Boolean expected) {
+//                                    fn assert(actual: Boolean , expected: Boolean) {
 //                                        if (actual == expected) {
 //                                         //   println("OK")
 //                                        }
@@ -174,7 +174,7 @@ class ShouldCompileTest extends Specification {
 //                                        }
 //                                    }
 //
-//                                    fn sum (Int x ,Int y):Int {
+//                                    fn sum (x:Int, y:Int):Int {
 //                                     //   println(x)
 //                                     //   println(y)
 //                                        return x+y
@@ -196,7 +196,7 @@ class ShouldCompileTest extends Specification {
             """
                             ConstructorWithParams {
 
-                                fn ConstructorWithParams(Int x) {
+                                fn ConstructorWithParams(x:Int) {
                                     println("Hey I am constructor with parameter x = " + x)
                                 }
 
@@ -354,7 +354,7 @@ class ShouldCompileTest extends Specification {
                                   assert(actual -> result, expected -> true )
                               }
 
-                              fn assert(Boolean actual,Boolean expected) {
+                              fn assert(actual: Boolean , expected: Boolean) {
                                 if (actual == expected) {
                                     println("OK")
                                 }
@@ -409,7 +409,7 @@ class ShouldCompileTest extends Specification {
                                     assert(expected -> true , actual -> secondResult == 1)
                                     assert(expected -> true , actual -> ClassWithField.statValue == 2)
                                 }
-                                fn assert(Boolean actual,Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -433,7 +433,7 @@ class ShouldCompileTest extends Specification {
                                     assert(expected -> true , actual -> x == 1);
                                     assert(expected -> true , actual -> this.x == 2);
                                 }
-                                fn assert(Boolean actual,Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -460,7 +460,7 @@ class ShouldCompileTest extends Specification {
                                     assert(expected -> true , actual -> 1 == 1);
                                     this.assert(expected -> true , actual -> 1 == 1);
                                 }
-                                static fn assert(Boolean actual,Boolean expected):Unit {
+                                static fn assert(actual: Boolean , expected: Boolean):Unit {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -503,7 +503,7 @@ class ShouldCompileTest extends Specification {
                                     var result = myField == 5
                                     assert(result, true)
                                 }
-                                fn assert(Boolean actual,Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -529,7 +529,7 @@ class ShouldCompileTest extends Specification {
                                     var result = myField == 5
                                     assert(result, true)
                                 }
-                                fn assert(Boolean actual,Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -551,10 +551,10 @@ class ShouldCompileTest extends Specification {
                                     loggingFunction("OK")
                                 }
 
-                                fn loggingFunction(String stuff) = println(stuff)
+                                fn loggingFunction(stuff: String) = println(stuff)
                                 fn singleIntFunction():Int = 300
 
-                                fn assert(Boolean actual,Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -610,7 +610,7 @@ class ShouldCompileTest extends Specification {
                                     var shouldBeEight = if true 8 else 9
                                     assert(shouldBeEight == 8, true)
                                 }
-                                fn assert(Boolean actual,Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -700,7 +700,7 @@ class ShouldCompileTest extends Specification {
                                     }
                                 }
                             
-                                fn assert(Boolean actual, Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -720,7 +720,7 @@ class ShouldCompileTest extends Specification {
                                     var result = myField == 10
                                     assert(result, true)
                                 }
-                                fn assert(Boolean actual, Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
@@ -746,7 +746,7 @@ class ShouldCompileTest extends Specification {
                                     assert(result, true)
                                 }
                             
-                                fn assert(Boolean actual,Boolean expected) {
+                                fn assert(actual: Boolean , expected: Boolean) {
                                         if (actual == expected) {
                                             println("OK")
                                         }
@@ -773,7 +773,7 @@ class ShouldCompileTest extends Specification {
                                 return false;
                             }
                         }
-                         fn assert(Boolean actual, Boolean expected) {
+                         fn assert(actual: Boolean , expected: Boolean) {
                                 if (actual == expected) {
                                     println("OK")
                                 }
@@ -876,7 +876,7 @@ class ShouldCompileTest extends Specification {
                       return "myToString :: " + super.toString()
                    }
 
-                   fn assert(Boolean actual,Boolean expected) {
+                   fn assert(actual: Boolean , expected: Boolean) {
                         if (actual == expected) {
                             println("OK")
                         }
@@ -919,14 +919,14 @@ class ShouldCompileTest extends Specification {
                        println(2 > 1.toLong())
                     }
                     
-                    fn assert(Boolean actual,Boolean expected) {
-                            if (actual == expected) {
-                                println("OK")
-                            }
-                            else {
-                                println("TEST FAILED")
-                                throw new AssertionError("TEST FAILED")
-                            }
+                    fn assert(actual: Boolean , expected: Boolean) {
+                        if (actual == expected) {
+                            println("OK")
+                        }
+                        else {
+                            println("TEST FAILED")
+                            throw new AssertionError("TEST FAILED")
+                        }
                     }
                 }
             """
@@ -968,7 +968,7 @@ class ShouldCompileTest extends Specification {
                         }
                     }
                     
-                    fn assert(Boolean actual,Boolean expected) {
+                    fn assert(actual: Boolean , expected: Boolean) {
                             if (actual == expected) {
                                 println("OK")
                             }
@@ -989,7 +989,7 @@ class ShouldCompileTest extends Specification {
                                     assert(expected -> true , actual -> sumNoParenthesis == 25);
                                     assert(expected -> true , actual -> sumParenthesis == 70);
                                 }
-                                fn assert(Boolean actual,Boolean expected) {
+                                 fn assert(actual: Boolean , expected: Boolean) {
                                     if (actual == expected) {
                                         println("OK")
                                     }
