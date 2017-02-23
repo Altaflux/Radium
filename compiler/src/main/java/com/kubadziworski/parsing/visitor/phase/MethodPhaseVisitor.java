@@ -21,13 +21,7 @@ class MethodPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
         FunctionSignatureVisitor functionSignatureVisitor = new FunctionSignatureVisitor(scope);
         methodsCtx.stream()
                 .map(method -> method.functionDeclaration().accept(functionSignatureVisitor))
-                .forEach(signature -> {
-                    if (signature.getName().equals(scope.getClassName())) {
-                        scope.addConstructor(signature);
-                    } else {
-                        scope.addSignature(signature);
-                    }
-                });
+                .forEach(scope::addSignature);
 
         return scope;
     }

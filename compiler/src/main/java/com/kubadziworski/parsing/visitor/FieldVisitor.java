@@ -3,15 +3,9 @@ package com.kubadziworski.parsing.visitor;
 
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
-import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.FieldReference;
-import com.kubadziworski.domain.node.expression.LocalVariableReference;
-import com.kubadziworski.domain.node.statement.Block;
-import com.kubadziworski.domain.node.statement.FieldAssignment;
-import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
@@ -22,7 +16,6 @@ import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import com.kubadziworski.util.TypeResolver;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -76,7 +69,7 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
             FunctionGenerator generator = new FunctionGenerator(functionScope);
             field.setSetterFunction(generator.generateFunction(signature, ctx.setter().block(), false));
         } else {
-            field.setSetterFunction(generateSetter(field));
+            field.setSetterFunction(PropertyAccessorsUtil.generateSetter(field, scope));
         }
 
         if (ctx.getter() != null) {
@@ -88,33 +81,11 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
             FunctionGenerator generator = new FunctionGenerator(functionScope);
             field.setGetterFunction(generator.generateFunction(signature, ctx.getter().functionContent(), false));
         } else {
-            field.setGetterFunction(generateGetter(field));
+            field.setGetterFunction(PropertyAccessorsUtil.generateGetter(field, scope));
         }
 
         return field;
     }
 
-    private Function generateGetter(Field field) {
-        FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
-        Scope newScope = new Scope(this.scope);
-        newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-        FieldReference fieldReference = new FieldReference(field, new LocalVariableReference(newScope.getLocalVariable("this")));
-        ReturnStatement returnStatement = new ReturnStatement(fieldReference);
-        Block block = new Block(newScope, Collections.singletonList(returnStatement));
-        return new Function(getter, block);
-    }
 
-    private Function generateSetter(Field field) {
-        FunctionSignature getter = PropertyAccessorsUtil.createSetterForField(field);
-        Scope newScope = new Scope(this.scope);
-        newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-        getter.getParameters()
-                .forEach(param -> newScope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
-        LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
-        LocalVariableReference thisReference = new LocalVariableReference(newScope.getLocalVariable("this"));
-
-        FieldAssignment assignment = new FieldAssignment(thisReference, field, localVariableReference);
-        Block block = new Block(newScope, Collections.singletonList(assignment));
-        return new Function(getter, block);
-    }
 }

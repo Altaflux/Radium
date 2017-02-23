@@ -1,11 +1,15 @@
 package com.kubadziworski.util;
 
+import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
+import com.kubadziworski.domain.node.expression.FieldReference;
+import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Parameter;
-import com.kubadziworski.domain.scope.CallableDescriptor;
-import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.node.statement.Block;
+import com.kubadziworski.domain.node.statement.FieldAssignment;
+import com.kubadziworski.domain.node.statement.ReturnStatement;
+import com.kubadziworski.domain.scope.*;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
@@ -118,5 +122,33 @@ public class PropertyAccessorsUtil {
             return propertyName;
         }
         return StringUtils.capitalize(propertyName);
+    }
+
+
+    public static Function generateGetter(Field field, Scope scope) {
+        FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
+        Scope newScope = new Scope(scope);
+        newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+        FieldReference fieldReference = new FieldReference(field, new LocalVariableReference(newScope.getLocalVariable("this")));
+        ReturnStatement returnStatement = new ReturnStatement(fieldReference);
+        Block block = new Block(newScope, Collections.singletonList(returnStatement));
+        return new Function(getter, block);
+    }
+
+    public static Function generateSetter(Field field, Scope scope) {
+        if (field.getModifiers().contains(Modifier.FINAL)) {
+            return null;
+        }
+        FunctionSignature getter = PropertyAccessorsUtil.createSetterForField(field);
+        Scope newScope = new Scope(scope);
+        newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+        getter.getParameters()
+                .forEach(param -> newScope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
+        LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
+        LocalVariableReference thisReference = new LocalVariableReference(newScope.getLocalVariable("this"));
+
+        FieldAssignment assignment = new FieldAssignment(thisReference, field, localVariableReference);
+        Block block = new Block(newScope, Collections.singletonList(assignment));
+        return new Function(getter, block);
     }
 }

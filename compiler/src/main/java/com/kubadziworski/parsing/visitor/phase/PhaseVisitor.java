@@ -68,6 +68,11 @@ public class PhaseVisitor {
         compilationData.ctx.accept(fieldPhaseVisitor);
     }
 
+    private void processConstructorDeclarations(Holder compilationData) {
+        ConstructorPhaseVisitor constructorPhaseVisitor = new ConstructorPhaseVisitor(compilationData.scope);
+        compilationData.ctx.accept(constructorPhaseVisitor);
+    }
+
     private void processMethodDeclarations(Holder compilationData) {
         MethodPhaseVisitor methodPhaseVisitor = new MethodPhaseVisitor(compilationData.scope);
         compilationData.ctx.accept(methodPhaseVisitor);
@@ -105,6 +110,7 @@ public class PhaseVisitor {
         //Phase 2 resolve all class references of the ImportResolvers of each scope
         parserScopes.stream()
                 .peek(holderOfHolders -> holderOfHolders.value2.forEach(this::processFieldDeclarations))
+                .peek(holderOfHolders -> holderOfHolders.value2.forEach(this::processConstructorDeclarations))
                 .forEach(holderOfHolders -> holderOfHolders.value2.forEach(this::processMethodDeclarations));
 
         //Phase 3 resolve all static methods and field references of the ImportResolvers of each scope

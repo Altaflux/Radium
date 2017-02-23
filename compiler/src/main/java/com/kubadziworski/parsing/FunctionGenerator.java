@@ -28,6 +28,11 @@ public class FunctionGenerator {
     public Function generateFunction(FunctionSignature signature, EnkelParser.FunctionContentContext ctx, boolean isConstructor) {
         addParametersAsLocalVariables(signature);
         Statement statement = getBlock(ctx);
+        return generateFunction(signature, statement, isConstructor);
+    }
+
+    public Function generateFunction(FunctionSignature signature, Statement statement, boolean isConstructor) {
+
 
         if (statement instanceof Block) {
             return generateFunction(signature, (Block) statement, isConstructor);
@@ -86,7 +91,7 @@ public class FunctionGenerator {
         }
     }
 
-    private void addParametersAsLocalVariables(FunctionSignature signature) {
+    public void addParametersAsLocalVariables(FunctionSignature signature) {
         signature.getParameters()
                 .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
     }

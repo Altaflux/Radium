@@ -21,7 +21,11 @@ public class FieldGenerator {
         FieldVisitor fieldVisitor = cv.visitField(ModifierTransformer.transform(field.getModifiers()), name, descriptor, null, null);
         fieldVisitor.visitEnd();
 
-        methodGenerator.generatePropertyAccessor(field.getGetterFunction(), field);
-        methodGenerator.generatePropertyAccessor(field.getSetterFunction(), field);
+        if (field.getGetterFunction() != null) {
+            methodGenerator.generatePropertyAccessor(field.getGetterFunction(), field);
+        }
+        if (field.getSetterFunction() != null) {
+            methodGenerator.generatePropertyAccessor(field.getSetterFunction(), field);
+        }
     }
 }

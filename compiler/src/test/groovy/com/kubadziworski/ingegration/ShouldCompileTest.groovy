@@ -184,8 +184,12 @@ class ShouldCompileTest extends Specification {
 //							"""
     private final static defaultConstructor =
             """
-                            DefaultConstructor {
-
+                            DefaultConstructor(val x:Int = 2) {
+                                
+                                init {
+                                    
+                                    println("HOLA")
+                                }
                                 fn start() {
                                    println("Hey I am 'start' method. I am not static so the default constructor must have been called, even though it is not defined")
                                 }
@@ -194,9 +198,9 @@ class ShouldCompileTest extends Specification {
 
     private final static construcotrWithParams =
             """
-                            ConstructorWithParams {
+                            ConstructorWithParams(x:Int = 2) {
 
-                                fn ConstructorWithParams(x:Int) {
+                                init {
                                     println("Hey I am constructor with parameter x = " + x)
                                 }
 
@@ -213,9 +217,9 @@ class ShouldCompileTest extends Specification {
 
     private final static parameterLessConsturctor =
             """
-                            ParameterLessConstructor {
+                            ParameterLessConstructor() {
 
-                                fn ParameterLessConstructor() {
+                                init {
                                     println("Hey I am constructor without parameters")
                                 }
 

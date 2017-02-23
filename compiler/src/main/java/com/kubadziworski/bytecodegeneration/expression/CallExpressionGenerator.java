@@ -6,7 +6,6 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
@@ -29,7 +28,7 @@ public class CallExpressionGenerator {
 
     public void generate(ConstructorCall constructorCall, Scope scope, StatementGenerator statementGenerator) {
         FunctionSignature signature = constructorCall.getFunctionSignature();
-        String ownerDescriptor = ClassTypeFactory.createClassType(signature.getName()).getAsmType().getInternalName();
+        String ownerDescriptor = signature.getOwner().getAsmType().getInternalName();
         methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
         methodVisitor.visitInsn(Opcodes.DUP);
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(signature);

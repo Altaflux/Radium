@@ -295,6 +295,7 @@ KEYWORD_var : 'var';
 GET : 'get';
 SET : 'set';
 
+InitKeyWord: 'init' ;
 
 
 

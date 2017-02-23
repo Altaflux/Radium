@@ -6,6 +6,7 @@ import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.type.Type;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -60,6 +61,7 @@ public class Field implements Variable, CallableDescriptor {
         generator.generate(this);
     }
 
+    @Nullable
     public Function getGetterFunction() {
         return getterFunction;
     }
@@ -68,6 +70,7 @@ public class Field implements Variable, CallableDescriptor {
         this.getterFunction = getterFunction;
     }
 
+    @Nullable
     public Function getSetterFunction() {
         return setterFunction;
     }

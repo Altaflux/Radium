@@ -1,5 +1,6 @@
 package com.kubadziworski.parsing.visitor;
 
+import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ClassDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
@@ -18,6 +19,8 @@ import com.kubadziworski.domain.type.BuiltInType;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
+import com.kubadziworski.parsing.FunctionGenerator;
+import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import org.apache.commons.collections4.ListUtils;
 
 import java.util.ArrayList;
@@ -48,25 +51,10 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
             //
         }
         boolean defaultConstructorExists = signature != null;
-        addDefaultConstructorSignatureToScope(scope.getFullClassName(), defaultConstructorExists);
-        List<Function> methods = methodsCtx.stream()
-                .map(method -> {
-                    //TODO DONT PROCESS FIELDS IF THIS() exists
-                    Function function = method.accept(new FunctionVisitor(scope));
-                    if (function instanceof Constructor) {
-                        Block block = (Block) function.getRootStatement();
-                        //Check for first statement TODO
-                        Block block1 = new Block(block.getScope(), ListUtils.sum(getFieldsInitializers(block.getScope()), block.getStatements()));
-                        return new Constructor(function.getFunctionSignature(), block1);
-                    }
-
-                    return function;
-                })
+        List<Function> methods = methodsCtx.stream().map(method -> method.accept(new FunctionVisitor(scope)))
                 .collect(toList());
-        if (!defaultConstructorExists) {
-            methods.add(getDefaultConstructor());
-        }
 
+        methods.add(generateInitBlocks(ctx));
         FunctionSignature startSignature = null;
         try {
             startSignature = scope.getClassType().getMethodCallSignature("start", Collections.emptyList());
@@ -74,24 +62,34 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
             //
         }
         boolean startMethodDefined = startSignature != null;
-        if (startMethodDefined) {
+        if (startMethodDefined && defaultConstructorExists) {
             methods.add(getGeneratedMainMethod());
         }
 
         scope.addMethods(methods);
-        return new ClassDeclaration(scope.getClassName(), scope.getMetaData().getPackageName(), new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
+        return new ClassDeclaration(scope.getClassName(), scope.getMetaData().getPackageName(),
+                new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
     }
 
-    private void addDefaultConstructorSignatureToScope(String name, boolean defaultConstructorExists) {
-        if (!defaultConstructorExists) {
-            FunctionSignature constructorSignature = new FunctionSignature(name, Collections.emptyList(), VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC), scope.getClassType());
-            scope.addConstructor(constructorSignature);
+    private Constructor generateInitBlocks(ClassDeclarationContext ctx) {
+        FunctionSignature signature = scope.getConstructorSignatures().get(0);
+        Scope functionScope = new Scope(scope, signature);
+        functionScope.addLocalVariable(new LocalVariable("this", functionScope.getClassType()));
+        StatementVisitor statementVisitor = new StatementVisitor(functionScope);
+        FunctionGenerator functionGenerator = new FunctionGenerator(functionScope);
+        functionGenerator.addParametersAsLocalVariables(signature);
+        if (!ctx.classBody().initBlock().isEmpty()) {
+            EnkelParser.InitBlockContext blockContext = ctx.classBody().initBlock().get(0);
+
+            Block block = (Block) blockContext.block().accept(statementVisitor);
+            Block initializersBlock = new Block(block.getScope(), ListUtils.sum(getFieldsInitializers(block.getScope()), block.getStatements()));
+            return (Constructor) functionGenerator.generateFunction(signature, initializersBlock, true);
         }
+        return getDefaultConstructor(signature);
     }
 
-    private Constructor getDefaultConstructor() {
-        FunctionSignature signature = scope.getClassType().getConstructorCallSignature(Collections.emptyList());
-        Scope constructorScope = new Scope(scope);
+    private Constructor getDefaultConstructor(FunctionSignature signature) {
+        Scope constructorScope = new Scope(scope, signature);
         constructorScope.addLocalVariable(new LocalVariable("this", scope.getClassType(), false));
 
         Block block = new Block(constructorScope, getFieldsInitializers(constructorScope));

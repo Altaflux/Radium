@@ -28,10 +28,6 @@ public class FunctionVisitor extends EnkelParserBaseVisitor<Function> {
             scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         }
         FunctionGenerator generator = new FunctionGenerator(scope);
-        if (signature.getName().equals(scope.getFullClassName())) {
-            return generator.generateFunction(signature, ctx.functionContent(), true);
-        }
-
         return generator.generateFunction(signature, ctx.functionContent(), false);
     }
 

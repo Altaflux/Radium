@@ -31,15 +31,24 @@ packageDeclaration
 	:   'package' SimpleName ('.' SimpleName)* ';'
 	;
 
-classDeclaration : classAccessModifiers? className  classBody  ;
+classDeclaration : classAccessModifiers? className  primaryConstructor? classBody  ;
 className : qualifiedName ;
-classBody : '{' (field | function)* '}' ;
+classBody : '{' (field | function | initBlock)* '}' ;
 field : fieldModifier  name ':' type ('=' expression)? getter? setter?;
 
 getter: 'get' '('')' functionContent ;
 setter: 'set' '(' SimpleName ')' block ;
 
-//primaryConstructor: '(' parametersList? ')' ;
+primaryConstructor: '(' constructorParametersList? ')' ;
+
+initBlock : 'init' block ;
+
+constructorParametersList:  constructorParam (',' constructorParam)*
+          |  constructorParam (',' constructorParameterWithDefaultValue)*
+          |  constructorParameterWithDefaultValue (',' constructorParameterWithDefaultValue)* ;
+
+constructorParam : (accessModifiers? asField=(KEYWORD_var | KEYWORD_val))? parameter ;
+constructorParameterWithDefaultValue : (accessModifiers? asField=(KEYWORD_var | KEYWORD_val))?  parameterWithDefaultValue ;
 
 function :  functionDeclaration functionContent? ;
 functionDeclaration : methodModifier 'fn' functionName '('? parametersList? ')'? (':'(type))? ;
