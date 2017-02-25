@@ -10,6 +10,17 @@ public class Double implements Comparable<Double> {
     private Double() {
     }
 
+
+    @NotNull
+    public Double or(@NotNull Double or) {
+        return null;
+    }
+
+    @NotNull
+    public Double and(@NotNull Double other) {
+        return null;
+    }
+
     @NotNull
     public Int compareTo(@NotNull Int other) {
         return null;

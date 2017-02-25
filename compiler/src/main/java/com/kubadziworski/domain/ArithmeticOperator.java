@@ -12,7 +12,9 @@ public enum ArithmeticOperator {
     SUBTRACT("-", "minus", Opcodes.ISUB),
     DIVIDE("/", "div", Opcodes.IDIV),
     MOD("%", "mod", Opcodes.IREM),
-    MULTIPLY("*", "times", Opcodes.IMUL);
+    MULTIPLY("*", "times", Opcodes.IMUL),
+    BINAND("&", "and", Opcodes.IAND),
+    BINOR("|", "or", Opcodes.IOR);
 
     private final String operator;
     private final String methodName;

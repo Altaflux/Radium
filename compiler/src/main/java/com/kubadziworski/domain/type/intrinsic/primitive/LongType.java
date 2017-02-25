@@ -1,5 +1,6 @@
 package com.kubadziworski.domain.type.intrinsic.primitive;
 
+import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BuiltInType;
@@ -43,5 +44,9 @@ public class LongType extends AbstractPrimitiveType {
     @Override
     public Type getUnBoxedType() {
         return new LongType(true);
+    }
+
+    public Value primitiveDummyValue() {
+        return new Value(PRIMITIVE_TYPE, 0L);
     }
 }

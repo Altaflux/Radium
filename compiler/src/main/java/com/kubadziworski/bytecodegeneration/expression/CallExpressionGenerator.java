@@ -6,15 +6,20 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.type.intrinsic.NullType;
+import com.kubadziworski.domain.type.intrinsic.primitive.AbstractPrimitiveType;
 import com.kubadziworski.exception.BadArgumentsToFunctionCallException;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
+import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CallExpressionGenerator {
 
@@ -79,13 +84,39 @@ public class CallExpressionGenerator {
         if (arguments.size() > parameters.size()) {
             throw new BadArgumentsToFunctionCallException(call);
         }
-        arguments = getSortedArguments(arguments, parameters);
+        arguments = fuseDefaults(arguments, parameters);
         arguments.forEach(argument -> argument.accept(statementGenerator));
-        generateDefaultParameters(call, parameters, arguments, statementGenerator);
     }
 
 
+    private List<Argument> fuseDefaults(List<Argument> arguments, List<Parameter> parameters) {
+        if (arguments.size() == parameters.size()) {
+            return getSortedArguments(arguments, parameters);
+        }
+
+        List<Argument> fusedArguments = IntStream.range(0, parameters.size()).mapToObj(value -> {
+            Parameter parameter = parameters.get(value);
+            boolean argByName = arguments.stream().filter(argument -> argument.getParameterName().isPresent())
+                    .anyMatch(argument -> argument.getParameterName().get().equals(parameter.getName()));
+            if (!argByName) {
+                if (arguments.size() > value && !arguments.get(value).getParameterName().isPresent()) {
+                    Argument def = arguments.get(value);
+                    return new Argument(def.getExpression(), parameter.getName(), def.getReceiverType());
+                } else {
+                    return new Argument(parameter.getDefaultValue().get(), parameter.getName(), parameter.getType());
+                }
+            } else {
+                return arguments.stream().filter(argument -> argument.getParameterName().isPresent())
+                        .filter(argument -> argument.getParameterName().get().equals(parameter.getName()))
+                        .findAny().get();
+            }
+        }).collect(Collectors.toList());
+
+        return getSortedArguments(fusedArguments, parameters);
+    }
+
     private List<Argument> getSortedArguments(List<Argument> arguments, List<Parameter> parameters) {
+
         Comparator<Argument> argumentIndexComparator = (o1, o2) -> {
             if (!o1.getParameterName().isPresent()) return 0;
             return getIndexOfArgument(o1, parameters) - getIndexOfArgument(o2, parameters);
@@ -108,12 +139,17 @@ public class CallExpressionGenerator {
 
     }
 
-    //TODO I THINK THIS WILL NOT WORK WITH PRECOMPILED RADIUM CLASSES
-    private void generateDefaultParameters(Call call, List<Parameter> parameters, List<Argument> arguments, StatementGenerator statementGenerator) {
+
+    private void generateDefaultParameters2(List<Parameter> parameters, List<Argument> arguments, StatementGenerator statementGenerator) {
         for (int i = arguments.size(); i < parameters.size(); i++) {
-            Expression defaultParameter = parameters.get(i).getDefaultValue()
-                    .orElseThrow(() -> new BadArgumentsToFunctionCallException(call));
-            defaultParameter.accept(statementGenerator);
+            Parameter parameter = parameters.get(i);
+            if (PrimitiveTypesWrapperFactory.isPrimitiveType(parameter.getType())) {
+                Value value = ((AbstractPrimitiveType) parameter.getType()).primitiveDummyValue();
+                value.accept(statementGenerator);
+            } else {
+                new Value(NullType.INSTANCE, null).accept(statementGenerator);
+            }
         }
     }
+
 }

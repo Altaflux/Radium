@@ -11,14 +11,14 @@ public class PrimitiveTypesWrapperFactory {
 
     public static void coerce(Type to, Type from, InstructionAdapter v) {
 
-        if(to instanceof TypeProjection){
+        if (to instanceof TypeProjection) {
             to = ((TypeProjection) to).getInternalType();
         }
-        if(from instanceof TypeProjection){
+        if (from instanceof TypeProjection) {
             from = ((TypeProjection) from).getInternalType();
         }
 
-        if(from.equals(NullType.INSTANCE)){
+        if (from.equals(NullType.INSTANCE)) {
             return;
         }
 
@@ -31,7 +31,7 @@ public class PrimitiveTypesWrapperFactory {
             } else if (!((BoxableType) to).isBoxed() && ((BoxableType) from).isBoxed()) {
                 BoxUnboxer.unbox(((BoxableType) from).getUnBoxedType().getAsmType(), v);
                 coerce(to, ((BoxableType) from).getUnBoxedType(), v);
-            }else {
+            } else {
                 v.cast(from.getAsmType(), to.getAsmType());
             }
         } else if (from.isPrimitive() && !to.isPrimitive()) {
@@ -40,5 +40,13 @@ public class PrimitiveTypesWrapperFactory {
         } else {
             v.cast(from.getAsmType(), to.getAsmType());
         }
+    }
+
+
+    public static boolean isPrimitiveType(Type type) {
+        if (type instanceof TypeProjection) {
+            type = ((TypeProjection) type).getInternalType();
+        }
+        return type instanceof BoxableType && !((BoxableType) type).isBoxed();
     }
 }

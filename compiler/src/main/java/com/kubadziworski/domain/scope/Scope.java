@@ -229,6 +229,11 @@ public class Scope {
         return ClassTypeFactory.createClassType(className);
     }
 
+    public Scope cloneWithoutVariables() {
+        Scope scope = new Scope(this);
+        scope.localVariables.clear();
+        return scope;
+    }
 
     @Override
     public String toString() {

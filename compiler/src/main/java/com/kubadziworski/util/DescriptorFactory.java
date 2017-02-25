@@ -27,7 +27,7 @@ public final class DescriptorFactory {
         return getMethodDescriptor(parameters, returnType);
     }
 
-    private static String getMethodDescriptor(Collection<Parameter> parameters, Type returnType) {
+    public static String getMethodDescriptor(Collection<Parameter> parameters, Type returnType) {
         String parametersDescriptor = parameters.stream()
                 .map(parameter -> parameter.getType().getAsmType().getDescriptor())
                 .collect(Collectors.joining("", "(", ")"));

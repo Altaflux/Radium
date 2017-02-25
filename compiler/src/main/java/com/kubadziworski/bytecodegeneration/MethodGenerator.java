@@ -4,33 +4,39 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
 import com.kubadziworski.bytecodegeneration.util.PropertyAccessorsGenerator;
-import com.kubadziworski.domain.Constructor;
-import com.kubadziworski.domain.Function;
-import com.kubadziworski.domain.RadiumModifiers;
-import com.kubadziworski.domain.node.expression.EmptyExpression;
-import com.kubadziworski.domain.node.expression.FieldReference;
-import com.kubadziworski.domain.node.expression.Parameter;
-import com.kubadziworski.domain.node.expression.SuperCall;
-import com.kubadziworski.domain.node.statement.Block;
-import com.kubadziworski.domain.node.statement.FieldAssignment;
-import com.kubadziworski.domain.node.statement.ReturnStatement;
-import com.kubadziworski.domain.node.statement.Statement;
+import com.kubadziworski.domain.*;
+import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.statement.*;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.primitive.AbstractPrimitiveType;
+import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
+import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.util.DescriptorFactory;
+import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
 public class MethodGenerator {
     private final ClassVisitor cv;
+
+    private static Type DEFAULT_MARKER = ClassTypeFactory.createClassType("radium.internal.DefaultConstructorMarker");
+
 
     public MethodGenerator(ClassVisitor cv) {
         this.cv = cv;
@@ -54,8 +60,130 @@ public class MethodGenerator {
         appendReturnIfNotExists(function, block, statementScopeGenerator);
         mv.visitMaxs(-1, -1);
         mv.visitEnd();
+
+        createSyntheticDefaults(function);
     }
 
+
+    private void createSyntheticDefaults(Function function) {
+
+        boolean shouldCreate = function.getParameters().stream().anyMatch(parameter -> parameter.getDefaultValue().isPresent());
+        if (!shouldCreate) {
+            return;
+        }
+        boolean allOptional = function.getParameters().stream().allMatch(parameter -> parameter.getDefaultValue().isPresent());
+
+        if (allOptional) {
+            allEmpty(function);
+        }
+
+        List<Parameter> parameterList = new ArrayList<>(function.getFunctionSignature().getParameters());
+        Parameter bitMask = new Parameter("mask", PrimitiveTypes.INT_TYPE, null);
+        Parameter markerParam = new Parameter("marker", DEFAULT_MARKER, null);
+        parameterList.add(bitMask);
+        parameterList.add(markerParam);
+
+        String description = DescriptorFactory.getMethodDescriptor(parameterList, function.getReturnType());
+        String name = function.getName();
+        int mod = ModifierTransformer.transform(function.getModifiers().with(Modifier.SYNTHETIC));
+        MethodVisitor mvs = cv.visitMethod(mod, name, description, null, null);
+        InstructionAdapter adapter = new InstructionAdapter(mvs);
+        Scope originalScope = ((EnkelType) function.getFunctionSignature().getOwner()).getScope();
+        Scope scope = originalScope.cloneWithoutVariables();
+
+        if (!function.getModifiers().contains(Modifier.STATIC)) {
+            scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
+        }
+
+        FunctionGenerator functionGenerator = new FunctionGenerator(scope);
+        functionGenerator.addParametersAsLocalVariables(function.getFunctionSignature());
+        scope.addLocalVariable(new LocalVariable(bitMask.getName(), bitMask.getType()));
+        scope.addLocalVariable(new LocalVariable(markerParam.getName(), markerParam.getType()));
+
+        StatementGenerator statementScopeGenerator = new StatementGeneratorFilter(adapter, scope);
+
+
+        ArgumentHolder argument = new ArgumentHolder(new LocalVariableReference(scope.getLocalVariable("mask")), null);
+        FunctionSignature signature = PrimitiveTypes.INT_TYPE.getMethodCallSignature(ArithmeticOperator.BINAND.getMethodName(), Collections.singletonList(argument));
+
+        for (int x = 0; x < function.getFunctionSignature().getParameters().size(); x++) {
+            Parameter parameter = function.getFunctionSignature().getParameters().get(x);
+            if (!parameter.getDefaultValue().isPresent()) {
+                continue;
+            }
+
+            Value bitCheckValue = new Value(PrimitiveTypes.INT_TYPE, x);
+            FunctionCall andCompare = new FunctionCall(signature, signature.createArgumentList(Collections.singletonList(argument)), bitCheckValue);
+            Assignment assignment = new Assignment(scope.getLocalVariable(parameter.getName()), parameter.getDefaultValue().get());
+            IfStatement ifStatement = new IfStatement(andCompare, assignment);
+            ifStatement.accept(statementScopeGenerator);
+        }
+
+        List<Argument> functionArguments = function.getFunctionSignature().getParameters().stream()
+                .map(parameter -> new Argument(new LocalVariableReference(scope.getLocalVariable(parameter.getName())), parameter.getName(), parameter.getType()))
+                .collect(Collectors.toList());
+
+        Expression owner = scope.isLocalVariableExists("this") ? new LocalVariableReference(scope.getLocalVariable("this"))
+                : new EmptyExpression(scope.getClassType());
+
+        FunctionCall methodCall = new FunctionCall(function.getFunctionSignature(), functionArguments, owner);
+        ReturnStatement returnStatement = new ReturnStatement(methodCall);
+        returnStatement.accept(statementScopeGenerator);
+
+        adapter.visitMaxs(-1, -1);
+        adapter.visitEnd();
+    }
+
+    private void allEmpty(Function originalFunction) {
+        FunctionSignature originalFunctionSignature = originalFunction.getFunctionSignature();
+//        List<Parameter> parameterList = new ArrayList<>(originalFunction.getFunctionSignature().getParameters());
+
+        String description = DescriptorFactory.getMethodDescriptor(Collections.emptyList(), originalFunctionSignature.getReturnType());
+        String name = originalFunctionSignature.getName();
+        int mod = ModifierTransformer.transform(originalFunctionSignature.getModifiers());
+        MethodVisitor mvs = cv.visitMethod(mod, name, description, null, null);
+        InstructionAdapter adapter = new InstructionAdapter(mvs);
+
+        if (!originalFunctionSignature.getModifiers().contains(Modifier.STATIC)) {
+            adapter.visitVarInsn(Opcodes.ALOAD, 0);
+        }
+
+        int mask = 0;
+        for (int x = 0; x < originalFunctionSignature.getParameters().size(); x++) {
+            Parameter parameter = originalFunctionSignature.getParameters().get(x);
+            mask = mask | (1 << x);
+            if (PrimitiveTypesWrapperFactory.isPrimitiveType(parameter.getType())) {
+                Value value = ((AbstractPrimitiveType) parameter.getType()).primitiveDummyValue();
+                mvs.visitLdcInsn(value.getValue());
+            } else {
+                mvs.visitInsn(Opcodes.ACONST_NULL);
+            }
+        }
+        mvs.visitLdcInsn(mask);
+        mvs.visitInsn(Opcodes.ACONST_NULL);
+
+        FunctionSignature syntheticSign = getDefaultSignature(originalFunctionSignature);
+        String methodDescriptor = DescriptorFactory.getMethodDescriptor(syntheticSign);
+        String ownerDescriptor = syntheticSign.getOwner().getAsmType().getInternalName();
+        mvs.visitMethodInsn(syntheticSign.getInvokeOpcode(), ownerDescriptor, syntheticSign.getName(), methodDescriptor, false);
+
+        int returnOpCode = syntheticSign.getReturnType().getAsmType().getOpcode(Opcodes.IRETURN);
+        mvs.visitInsn(returnOpCode);
+        adapter.visitMaxs(-1, -1);
+        adapter.visitEnd();
+    }
+
+    private static FunctionSignature getDefaultSignature(FunctionSignature functionSignature) {
+
+        List<Parameter> parameterList = new ArrayList<>(functionSignature.getParameters());
+        Parameter bitMask = new Parameter("mask", PrimitiveTypes.INT_TYPE, null);
+        Parameter markerParam = new Parameter("marker", DEFAULT_MARKER, null);
+        parameterList.add(bitMask);
+        parameterList.add(markerParam);
+
+        return new FunctionSignature(functionSignature.getName(), parameterList, functionSignature.getReturnType(),
+                functionSignature.getModifiers(), functionSignature.getOwner());
+    }
 
     public void generatePropertyAccessor(Function function, Field field) {
         String name = function.getName();

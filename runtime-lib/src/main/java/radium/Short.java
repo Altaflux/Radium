@@ -9,6 +9,15 @@ public class Short implements Comparable<Short>{
 
     private Short(){}
 
+    @NotNull
+    public Short or(@NotNull Short or) {
+        return null;
+    }
+
+    @NotNull
+    public Short and(@NotNull Short other) {
+        return null;
+    }
 
     @NotNull
     public Int compareTo(@NotNull Int other) {

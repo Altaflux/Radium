@@ -11,6 +11,17 @@ public class Byte implements Comparable<Byte> {
     }
 
     @NotNull
+    public Byte or(@NotNull Byte or) {
+        return null;
+    }
+
+    @NotNull
+    public Byte and(@NotNull Byte other) {
+        return null;
+    }
+
+
+    @NotNull
     public Int compareTo(@NotNull Int other) {
         return null;
     }

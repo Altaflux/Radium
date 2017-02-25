@@ -27,7 +27,7 @@ public class ArgumentExpressionVisitor extends EnkelParserBaseVisitor<ArgumentHo
     @Override
     public ArgumentHolder visitNamedArgument(NamedArgumentContext ctx) {
         Expression value = ctx.expression().accept(expressionVisitor);
-        return new ArgumentHolder(value, null);
+        return new ArgumentHolder(value, ctx.name().getText());
     }
 
 }

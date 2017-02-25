@@ -108,7 +108,7 @@ public class FunctionSignature implements CallableDescriptor {
             return 0;
         }
         if (arguments.size() != parameters.size()) {
-            if (arguments.size() != nonDefault.size()) {
+            if ((arguments.size() != nonDefault.size() && parameters.size() == 0)) {
                 return -1;
             }
         }
@@ -129,8 +129,7 @@ public class FunctionSignature implements CallableDescriptor {
         return arguments.stream().allMatch(a -> {
             String paramName = a.getParameterName().get();
             return parameters.stream()
-                    .map(Parameter::getName)
-                    .anyMatch(paramName::equals);
+                    .anyMatch(s -> s.getName().equals(paramName) || s.getDefaultValue().isPresent());
         });
     }
 

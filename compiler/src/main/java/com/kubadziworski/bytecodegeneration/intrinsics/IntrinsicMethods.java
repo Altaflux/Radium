@@ -72,6 +72,20 @@ public class IntrinsicMethods {
 
         });
 
+        PrimitiveTypes.NUMERIC_TYPES.forEach(type -> {
+
+            intrinsicMap
+                    .registerIntrinsicMethod(type.getMethodCallSignature("and", Collections.singletonList(
+                            new ArgumentHolder((type), null))),
+                            arithmeticIntrinsicMethod, 0);
+
+            intrinsicMap
+                    .registerIntrinsicMethod(type.getMethodCallSignature("or", Collections.singletonList(
+                            new ArgumentHolder((type), null))),
+                            arithmeticIntrinsicMethod, 0);
+
+        });
+
 
         PrimitiveTypes.NUMERIC_TYPES.forEach(type -> PrimitiveTypes.NUMERIC_TYPES.forEach(type1 -> {
             intrinsicMap

@@ -2,6 +2,7 @@ package com.kubadziworski.bytecodegeneration.util;
 
 
 import com.kubadziworski.domain.Modifiers;
+import org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Modifier;
 
@@ -28,6 +29,9 @@ public class ModifierTransformer {
         if (Modifier.isStatic(modifiers)) {
             jvmModifiers = jvmModifiers.with(com.kubadziworski.domain.Modifier.STATIC);
         }
+        if ((modifiers & Opcodes.ACC_SYNTHETIC) != 0) {
+            jvmModifiers = jvmModifiers.with(com.kubadziworski.domain.Modifier.SYNTHETIC);
+        }
 
         return jvmModifiers;
     }
@@ -52,6 +56,9 @@ public class ModifierTransformer {
                 }
                 case FINAL: {
                     return Modifier.FINAL;
+                }
+                case SYNTHETIC: {
+                    return Opcodes.ACC_SYNTHETIC;
                 }
                 default: {
                     return 0;

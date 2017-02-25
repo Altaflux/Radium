@@ -11,6 +11,16 @@ public class Float implements Comparable<Float> {
     }
 
     @NotNull
+    public Float or(@NotNull Float or) {
+        return null;
+    }
+
+    @NotNull
+    public Float and(@NotNull Float other) {
+        return null;
+    }
+
+    @NotNull
     public Int compareTo(@NotNull Int other) {
         return null;
     }

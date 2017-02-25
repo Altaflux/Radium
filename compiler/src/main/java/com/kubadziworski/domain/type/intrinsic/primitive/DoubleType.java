@@ -1,5 +1,6 @@
 package com.kubadziworski.domain.type.intrinsic.primitive;
 
+import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BuiltInType;
@@ -44,4 +45,7 @@ public class DoubleType extends AbstractPrimitiveType {
         return new DoubleType(true);
     }
 
+    public Value primitiveDummyValue() {
+        return new Value(PRIMITIVE_TYPE, 0D);
+    }
 }

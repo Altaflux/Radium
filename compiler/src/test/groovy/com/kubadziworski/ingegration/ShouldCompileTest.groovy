@@ -20,7 +20,15 @@ class ShouldCompileTest extends Specification {
                                     var x:String = "Enkel"
                                     println("hello \$x world!")
                                     println("hello \${x} world!")
-                                    
+                                    foo(z->"hola")
+                                    foo(z->"hola",y ->"mundo")
+                                     foo(y ->"mundo")
+                                    foo("mez")
+                                }
+                                
+                                fn foo(z:String = "foo" , y:String = "bar" ){
+                                    println(y)
+                                    println(z)
                                 }
                             }
 							"""
@@ -67,7 +75,6 @@ class ShouldCompileTest extends Specification {
                                     greet("kuba","enkel")
                                     greet("andrew")
                                 }
-
                                 fn greet (name :String ,  favouriteLanguage : String = "java") {
                                     println("Hello my name is ")
                                     println(name)

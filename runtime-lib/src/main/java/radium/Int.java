@@ -14,6 +14,11 @@ public class Int implements Comparable<Int> {
     }
 
     @NotNull
+    public Int or(@NotNull Int other) {
+        return null;
+    }
+
+    @NotNull
     public Int compareTo(@NotNull Int other) {
         return null;
     }
@@ -54,10 +59,6 @@ public class Int implements Comparable<Int> {
         return null;
     }
 
-    @NotNull
-    public Int or(@NotNull Int or) {
-        return null;
-    }
     ///////
 
     @NotNull

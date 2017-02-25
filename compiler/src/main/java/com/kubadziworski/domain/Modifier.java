@@ -28,7 +28,9 @@ public enum Modifier {
 
     INLINE("inline"),
 
-    FINAL("final");
+    FINAL("final"),
+
+    SYNTHETIC("synthetic");
 
     private final String str;
 
