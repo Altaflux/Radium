@@ -9,6 +9,7 @@ https://github.com/JakubDziworski/Enkel-JVM-language
 ## Features implemented
 * Unified primitives and boxed classes
 * Default methods similar to the ones of Kotlin
+* Nullable types
 * Method inlining with the "inline" modifier
 * Full numeric literals support
 * Try Catch Finally
