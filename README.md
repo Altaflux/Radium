@@ -6,6 +6,28 @@ Radium is a simple programming language running on the  jvm.
 It is based on the work of Jakub Dziworski
 https://github.com/JakubDziworski/Enkel-JVM-language
 
+## Features implemented
+* Unified primitives and boxed classes
+* Default methods similar to the ones of Kotlin
+* Method inlining with the "inline" modifier
+* Full numeric literals support
+* Try Catch Finally
+* If and Try/Catch statements are expressions
+* Concept of Unit return type
+* Automatic Getters and Setters as well as overriding them
+* Primitives can call functions thru intrinsic methods
+* Equality by == for objects and primitives
+* Escaping language keywords thru Grave Accent
+* Full compatibility with Java
+* Files can have multiple classes declared
+
+### Pending to implement
+* Abstract classes & interfaces
+* Enums
+* Generics
+* Switch Statement
+* Inner classes
+
 ## Compiling and running Radium scripts
 1.Build compiler into executable jar
 
