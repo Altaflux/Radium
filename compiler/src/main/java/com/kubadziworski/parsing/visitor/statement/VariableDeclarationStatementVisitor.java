@@ -80,8 +80,15 @@ public class VariableDeclarationStatementVisitor extends EnkelParserBaseVisitor<
 //        }
 
         Type finalType = new TypeProjection(declarationType, nullability);
+        validateType(varName, expression, finalType);
         LocalVariable localVariable = new LocalVariable(varName, finalType, mutable);
         scope.addLocalVariable(localVariable);
         return new VariableDeclaration(new RuleContextElementImpl(ctx), localVariable, expression);
+    }
+
+    private static void validateType(String target, Expression expression, Type targetType) {
+        if (expression.getType().inheritsFrom(targetType) < 0) {
+            throw new IncompatibleTypesException(target, targetType, expression.getType());
+        }
     }
 }

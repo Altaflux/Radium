@@ -14,7 +14,6 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.AccessException;
 import com.kubadziworski.exception.ClassNotFoundForNameException;
 import com.kubadziworski.exception.FieldNotFoundException;
-import com.kubadziworski.exception.FinalFieldModificationException;
 import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -91,9 +90,6 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
     }
 
     private void validateAccessToField(Field field) {
-        if (field.getModifiers().contains(Modifier.FINAL)) {
-            throw new FinalFieldModificationException("Cannot modify final field: " + field.getName());
-        }
         Type classType = scope.getClassType();
         Optional<FunctionSignature> signatureOpt = PropertyAccessorsUtil.getGetterFunctionSignatureForField(field);
         boolean accessThruFunction = signatureOpt

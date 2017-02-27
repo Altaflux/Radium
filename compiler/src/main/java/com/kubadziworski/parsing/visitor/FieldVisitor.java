@@ -6,11 +6,9 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.*;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
@@ -49,10 +47,15 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
             }
         }
 
+        if (ctx.KEYWORD_val() != null) {
+            modifiersSet = modifiersSet.with(Modifier.FINAL);
+        }
+
         Field field;
         ExpressionVisitor statementVisitor = new ExpressionVisitor(scope);
         if (ctx.expression() != null) {
             Expression expression = ctx.expression().accept(statementVisitor);
+            validateType(expression, type);
             field = new Field(name, owner, type, expression, modifiersSet);
         } else {
             field = new Field(name, owner, type, modifiersSet);
@@ -87,5 +90,10 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
         return field;
     }
 
+    private static void validateType(Expression expression, Type targetType) {
+        if (expression.getType().inheritsFrom(targetType) < 0) {
+            throw new IncompatibleTypesException(targetType.getName(), targetType, expression.getType());
+        }
+    }
 
 }

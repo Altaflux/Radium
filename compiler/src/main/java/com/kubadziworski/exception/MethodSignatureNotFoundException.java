@@ -15,11 +15,11 @@ public class MethodSignatureNotFoundException extends RuntimeException {
 
     public MethodSignatureNotFoundException(Scope scope, String methodName, List<ArgumentHolder> parameterTypes) {
         super("There is no method '" + methodName + "' with parameters " + parameterTypes.stream()
-                .map(ArgumentHolder::getExpression).map(Expression::getType).map(Type::getName).collect(Collectors.toList()) + " for OwnerType: " + scope.getClassType());
+                .map(ArgumentHolder::getExpression).map(Expression::getType).map(Type::readableString).collect(Collectors.toList()) + " for OwnerType: " + scope.getClassType().readableString());
     }
 
     public MethodSignatureNotFoundException(String methodName, List<ArgumentHolder> parameterTypes, Type owner) {
         super("There is no method '" + methodName + "' with parameters " + parameterTypes.stream()
-                .map(ArgumentHolder::getExpression).map(Expression::getType).map(Type::getName).collect(Collectors.toList()) + " for OwnerType: " + owner);
+                .map(ArgumentHolder::getExpression).map(Expression::getType).map(Type::readableString).collect(Collectors.toList()) + " for OwnerType: " + owner.readableString());
     }
 }

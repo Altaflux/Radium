@@ -104,11 +104,10 @@ class ShouldCompileTest extends Specification {
     private final static fields =
             """
                             Fields {
-                                bla : Int
-
+                                var myField : Int
                                 fn start {
-                                    bla = 5
-                                    println(bla)
+                                    myField = 5
+                                    println(myField)
                                 }
                             }
 							"""
@@ -212,8 +211,7 @@ class ShouldCompileTest extends Specification {
                             DefaultConstructor(val x:Int = 2) {
                                 
                                 init {
-                                    
-                                    println("HOLA")
+                                    println("Hello")
                                 }
                                 fn start() {
                                    println("Hey I am 'start' method. I am not static so the default constructor must have been called, even though it is not defined")
@@ -400,7 +398,7 @@ class ShouldCompileTest extends Specification {
                             
                             UnaryExpressions {
 
-                                globalField : Int
+                                var globalField : Int
 
                                 fn start(){
 
@@ -451,7 +449,7 @@ class ShouldCompileTest extends Specification {
                             """
     private static final globalLocal = """
                             GlobalLocal {
-                                x : Int
+                                var x : Int
 
                                 fn start(){
                                     x = 2;
@@ -516,7 +514,7 @@ class ShouldCompileTest extends Specification {
     private final static getterSetter =
             """
                             GetterSetter {
-                                myField : Int
+                                var myField : Int
                                 get(){
                                     println("returning value getter")
                                     println(field)
@@ -546,7 +544,7 @@ class ShouldCompileTest extends Specification {
     private final static getterStatement =
             """
                             GetterStatement {
-                                myField : Int
+                                var myField : Int
                                 get() = field
                                 set(value){
                                     println("setting value")
@@ -652,7 +650,7 @@ class ShouldCompileTest extends Specification {
 							"""
     private static final myTryStatement = """
                             TryStatement {
-                                myTrue : Boolean = true
+                                var myTrue : Boolean = true
                             
                                 fn start(){
                                     process();
@@ -743,7 +741,7 @@ class ShouldCompileTest extends Specification {
     private static final fieldInitializing =
             """
                             FieldInitializing {
-                                myField : Int = 10
+                                val myField : Int = 10
                             
                                 fn start {
                                     var result = myField == 10
@@ -764,7 +762,7 @@ class ShouldCompileTest extends Specification {
     private final static fieldInitializingWithConstructor =
             """
                             FieldInitializingWithConstructor {
-                                myField : Int = 10
+                                val myField : Int = 10
                             
                                 fn FieldInitializingWithConstructor() {
                                     println(myField)
@@ -789,7 +787,7 @@ class ShouldCompileTest extends Specification {
     private static final detectReturnCompleteStatement =
             """
                     DetectReturnCompleteStatement {
-                        myField : Int = 10
+                        val myField : Int = 10
 
                         fn start(){
                             assert(foo(), true);
@@ -961,8 +959,8 @@ class ShouldCompileTest extends Specification {
             """
     private static final innerTry = """
                 InnerTry{
-                    myCondition: Boolean = true
-                    mySecondCondition: Boolean = false
+                    var myCondition: Boolean = true
+                    var mySecondCondition: Boolean = false
                     
                    fn start(){
                         println(testTry())
@@ -1121,7 +1119,24 @@ class ShouldCompileTest extends Specification {
                                 }
                             }
 							"""
+    private static final sendNullToMethod = """
+                        SendNullToMethod {
+                            fn start() {
+                                var nullString: String? = null
+                                method(nullString)
+                                method(null)
+                                var notNull: String = "notNull"
+                                method(notNull)
+                                var nullableNotNull: String? = "nullableNotNull"
+                                method(nullableNotNull)
+                            }
 
+                            fn method(x: String?) {
+                                println(x)
+                            }
+                        }
+
+    """
     private final static Compiler compiler = new Compiler()
 
     @Unroll
@@ -1178,14 +1193,15 @@ class ShouldCompileTest extends Specification {
         returnUnit                       | "ReturnUnit.enk"
         concreteReturnUnit               | "ConcreteReturnUnit.enk"
         superCall                        | "CallParentClass.enk"
-        typeCoercion                     | "TypeCoercion.enk"
-        primitiveFunctions               | "PrimitiveFunctions.enk"
-        innerTry                         | "InnerTry.enk"
-        parenthesisExpressions           | "ParenthesisExpressions.enk"
-        inlineCode                       | "InlineCode.enk"
-        callStaticImports                | "CallStaticImports.enk"
-        variableEscaping                 | "VariableEscaping.enk"
-        numericLiterals                  | "NumericLiterals.enk"
+        typeCoercion           | "TypeCoercion.enk"
+        primitiveFunctions     | "PrimitiveFunctions.enk"
+        innerTry               | "InnerTry.enk"
+        parenthesisExpressions | "ParenthesisExpressions.enk"
+        inlineCode             | "InlineCode.enk"
+        callStaticImports      | "CallStaticImports.enk"
+        variableEscaping       | "VariableEscaping.enk"
+        numericLiterals        | "NumericLiterals.enk"
+        sendNullToMethod       | "SendNullToMethod.enk"
     }
 
 

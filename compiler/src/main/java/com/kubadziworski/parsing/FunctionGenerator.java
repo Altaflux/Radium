@@ -13,6 +13,7 @@ import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
+import com.kubadziworski.exception.MissingReturnStatementException;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import org.apache.commons.collections4.ListUtils;
 
@@ -79,7 +80,7 @@ public class FunctionGenerator {
                 return;
             } else {
                 if (!block.isReturnComplete()) {
-                    throw new RuntimeException("No return specified for method: " + signature.getName() + " with return type: " + signature.getReturnType());
+                    throw new MissingReturnStatementException(signature);
                 }
             }
         }

@@ -29,7 +29,7 @@ public class BlockStatementVisitor extends EnkelParserBaseVisitor<Block> {
         boolean hasReturnCompleted = false;
         for (EnkelParser.StatementContext statementContext : blockStatementsCtx) {
             if (hasReturnCompleted) {
-                throw new UnreachableStatementException(statementContext.start.getLine());
+                throw new UnreachableStatementException(statementContext);
             }
 
             Statement statement = statementContext.accept(statementVisitor);

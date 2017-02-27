@@ -34,7 +34,7 @@ packageDeclaration
 classDeclaration : classAccessModifiers? className  primaryConstructor? classBody  ;
 className : qualifiedName ;
 classBody : '{' (field | function | initBlock)* '}' ;
-field : fieldModifier  name ':' type ('=' expression)? getter? setter?;
+field : fieldModifier isFinal=(KEYWORD_var | KEYWORD_val) name ':' type ('=' expression)? getter? setter?;
 
 getter: 'get' '('')' functionContent ;
 setter: 'set' '(' SimpleName ')' block ;

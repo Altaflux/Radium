@@ -48,6 +48,9 @@ public class VoidType implements Type {
         if (type.getAsmType().equals(VOID)) {
             return 0;
         }
+        if (type.equals(UnitType.CONCRETE_INSTANCE)) {
+            return 0;
+        }
         return -1;
     }
 

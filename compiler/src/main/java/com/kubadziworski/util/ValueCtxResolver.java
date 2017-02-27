@@ -91,6 +91,10 @@ public class ValueCtxResolver {
                 expressions.add(expression);
             }
         }
+        //Case of empty String
+        if (expressions.size() == 0) {
+            return new Value(DefaultTypes.STRING, "");
+        }
         return createStringAddition(expressions);
     }
 

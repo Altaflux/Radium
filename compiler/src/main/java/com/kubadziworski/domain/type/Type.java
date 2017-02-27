@@ -72,6 +72,10 @@ public interface Type {
         return TypeResolver.resolveArity(this, functions).orElseThrow(() -> new MethodSignatureNotFoundException(identifier, arguments, this));
     }
 
+    default String readableString() {
+        return getName() + (isNullable().equals(Nullability.NULLABLE) ? "!" : "");
+    }
+
     default Field getField(String fieldName) {
         List<Field> fields = getFields();
         return fields.stream().filter(field -> field.getName().equals(fieldName))
