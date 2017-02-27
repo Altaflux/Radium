@@ -1,5 +1,7 @@
 package com.kubadziworski.domain.node.expression;
 
+import com.kubadziworski.domain.scope.FunctionSignature;
+
 import java.util.List;
 
 /**
@@ -11,4 +13,6 @@ public interface Call extends Expression {
     String getIdentifier();
 
     int getInvokeOpcode();
+
+    FunctionSignature getFunctionSignature();
 }

@@ -1,9 +1,11 @@
 package com.kubadziworski.util;
 
+import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.type.BoxableType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
+import com.kubadziworski.domain.type.intrinsic.primitive.AbstractPrimitiveType;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 public class PrimitiveTypesWrapperFactory {
@@ -48,5 +50,12 @@ public class PrimitiveTypesWrapperFactory {
             type = ((TypeProjection) type).getInternalType();
         }
         return type instanceof BoxableType && !((BoxableType) type).isBoxed();
+    }
+
+    public static Value primitiveDummyValue(Type type) {
+        if (type instanceof TypeProjection) {
+            type = ((TypeProjection) type).getInternalType();
+        }
+        return ((AbstractPrimitiveType) type).primitiveDummyValue();
     }
 }

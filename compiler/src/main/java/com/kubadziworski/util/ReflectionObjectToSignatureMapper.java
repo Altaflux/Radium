@@ -1,8 +1,11 @@
 package com.kubadziworski.util;
 
 import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
+import com.kubadziworski.domain.ClassMetadata;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
+import com.kubadziworski.domain.node.expression.EmptyExpression;
+import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -23,6 +26,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public final class ReflectionObjectToSignatureMapper {
@@ -104,8 +109,32 @@ public final class ReflectionObjectToSignatureMapper {
     }
 
 
-    @SuppressWarnings("unchecked")
     private static List<Parameter> getParams(java.lang.reflect.Parameter[] parameters, String name, String descriptor, JavaClassType type) {
+        if (!type.classMetadata().isPresent()) {
+            return getParamsThruReflection(parameters, name, descriptor, type);
+        }
+
+        ClassMetadata metadata = type.classMetadata().get();
+        Optional<ClassMetadata.MethodMeta> methodMetadataOpt = metadata.getMethodMetas().stream()
+                .filter(methodMeta -> methodMeta.getName().equals(name) || (name.equals("<init>") && methodMeta.isConstructor())).findAny();
+
+        if (!methodMetadataOpt.isPresent()) {
+            return getParamsThruReflection(parameters, name, descriptor, type);
+        }
+        ClassMetadata.MethodMeta methodMetadata = methodMetadataOpt.get();
+        return IntStream.range(0, methodMetadata.getParams().size()).mapToObj(index -> {
+            ClassMetadata.MethodMeta.ParamMeta paramMeta = methodMetadata.getParams().get(index);
+            Type type1 = TypeResolver.getTypeFromNameWithClazzAlias(parameters[index].getType(),
+                    paramMeta.typeMeta.isNullable() ? Type.Nullability.NULLABLE : Type.Nullability.NOT_NULL);
+            Expression expression = paramMeta.isHasDefault() ? new EmptyExpression(type1) : null;
+            return new Parameter(paramMeta.getName(), type1, expression);
+        }).collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<Parameter> getParamsThruReflection(java.lang.reflect.Parameter[] parameters, String name, String descriptor, JavaClassType type) {
+
+
         Optional<MethodNode> methodNodeOp = ((List<MethodNode>) type.getClassNode(true).methods).stream()
                 .filter(o -> (o.desc.equals(descriptor)))
                 .filter(methodNode -> methodNode.name.equals(name))

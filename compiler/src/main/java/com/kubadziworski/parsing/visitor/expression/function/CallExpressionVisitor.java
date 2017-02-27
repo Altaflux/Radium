@@ -84,7 +84,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
         List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
         FunctionSignature signature = className.getConstructorCallSignature(arguments);
         validateAccessToFunction(signature);
-        return new ConstructorCall(new RuleContextElementImpl(ctx), signature, className.getName(), signature.createArgumentList(arguments));
+        return new ConstructorCall(new RuleContextElementImpl(ctx), signature, className, signature.createArgumentList(arguments));
     }
 
     @Override

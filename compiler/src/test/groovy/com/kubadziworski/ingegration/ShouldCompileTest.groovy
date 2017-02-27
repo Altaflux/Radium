@@ -20,15 +20,6 @@ class ShouldCompileTest extends Specification {
                                     var x:String = "Enkel"
                                     println("hello \$x world!")
                                     println("hello \${x} world!")
-                                    foo(z->"hola")
-                                    foo(z->"hola",y ->"mundo")
-                                     foo(y ->"mundo")
-                                    foo("mez")
-                                }
-                                
-                                fn foo(z:String = "foo" , y:String = "bar" ){
-                                    println(y)
-                                    println(z)
                                 }
                             }
 							"""
@@ -67,7 +58,34 @@ class ShouldCompileTest extends Specification {
                                 }
                             }
 							"""
+    private final static moreDefaultParams =
+            """
+                            MoreDefaultParams {
 
+                                fn start {
+                                    assert(foo(x->"11") == "112")
+                                    assert(foo(x->"11",y ->"22") == "1122")
+                                    assert(foo(y ->"22") == "122")
+                                    assert(foo("11") == "112")
+                                    assert(foo() == "12")
+                                }
+                                
+                                fn foo(x:String = "1" , y:String = "2" ) : String {
+                                    println(x + y); 
+                                    return x + y
+                                }
+                                
+                                fn assert(actual: Boolean) {
+                                    if (actual == true) {
+                                        println("OK")
+                                    }
+                                    else {
+                                        println("TEST FAILED")
+                                        throw new AssertionError("TEST FAILED")
+                                    }
+                                }
+                            }
+							"""
     private final static defaultParams =
             """
                             DefaultParamTest {
@@ -1129,18 +1147,19 @@ class ShouldCompileTest extends Specification {
         method1.invoke(null, arggg) == null;
 
         where:
-        code                             | filename
-        helloWorld                       | "HelloWorld.enk"
-        loopsCode                        | "Loops.enk"
-        allTypes                         | "AllPrimitiveTypes.enk"
-        defaultParams                    | "DefaultParamTest.enk"
-        fields                           | "Fields.enk"
-        namedParams                      | "NamedParamsTest.enk"
-        sumCalculator                    | "SumCalculator.enk"
-        defaultConstructor               | "DefaultConstructor.enk"
-        parameterLessConsturctor         | "ParameterLessConstructor.enk"
-        construcotrWithParams            | "ConstructorWithParams.enk"
-        equalityTest                     | "EqualitySyntax.enk"
+        code                     | filename
+        helloWorld               | "HelloWorld.enk"
+        loopsCode                | "Loops.enk"
+        allTypes                 | "AllPrimitiveTypes.enk"
+        moreDefaultParams        | "MoreDefaultParams.enk"
+        defaultParams            | "DefaultParamTest.enk"
+        fields                   | "Fields.enk"
+        namedParams              | "NamedParamsTest.enk"
+        sumCalculator            | "SumCalculator.enk"
+        defaultConstructor       | "DefaultConstructor.enk"
+        parameterLessConsturctor | "ParameterLessConstructor.enk"
+        construcotrWithParams    | "ConstructorWithParams.enk"
+        equalityTest             | "EqualitySyntax.enk"
         unaryExpressionTest              | "UnaryExpressions.enk"
         globalLocal                      | "GlobalLocal.enk"
         staticTest                       | "StaticTest.enk"

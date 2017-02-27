@@ -4,6 +4,7 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.expression.SuperCall;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
@@ -13,6 +14,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
+import org.apache.commons.collections4.ListUtils;
 
 import java.util.Collections;
 
@@ -51,7 +53,10 @@ public class FunctionGenerator {
 
     private Function generateFunction(FunctionSignature signature, Block block, boolean isConstructor) {
         if (isConstructor) {
-            return new Constructor(signature, block);
+            FunctionSignature superSignature = scope.getMethodCallSignature(SuperCall.SUPER_IDENTIFIER, Collections.emptyList());
+            SuperCall superCall = new SuperCall(superSignature);
+            Block constructorBlock = new Block(block.getScope(), ListUtils.sum(Collections.singletonList(superCall), block.getStatements()));
+            return new Constructor(signature, constructorBlock);
         }
 
         verifyBlockReturn(signature, block);

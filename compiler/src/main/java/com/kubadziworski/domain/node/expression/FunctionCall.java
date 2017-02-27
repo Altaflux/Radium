@@ -67,7 +67,7 @@ public class FunctionCall extends ElementImpl implements Call, CallableMember {
         return owner;
     }
 
-    public FunctionSignature getSignature() {
+    public FunctionSignature getFunctionSignature() {
         return signature;
     }
 

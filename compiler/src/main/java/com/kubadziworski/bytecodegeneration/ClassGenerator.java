@@ -3,7 +3,9 @@ package com.kubadziworski.bytecodegeneration;
 import com.kubadziworski.bytecodegeneration.asm.RadiumClassVisitor;
 import com.kubadziworski.domain.ClassDeclaration;
 import com.kubadziworski.domain.Function;
+import com.kubadziworski.domain.MetaDataBuilder;
 import com.kubadziworski.domain.scope.Field;
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
@@ -17,6 +19,7 @@ public class ClassGenerator {
 
     private static final int CLASS_VERSION = 52;
     private final ClassWriter classWriter;
+    private final MetaDataBuilder metaDataBuilder = new MetaDataBuilder();
 
     public ClassGenerator() {
 
@@ -34,6 +37,9 @@ public class ClassGenerator {
         fields.forEach(f -> f.accept(fieldGenerator));
         MethodGenerator methodGenerator = new MethodGenerator(visitor);
         methods.forEach(f -> f.accept(methodGenerator));
+
+        AnnotationVisitor av0 = classWriter.visitAnnotation("Lradium/internal/Metadata;", true);
+        av0.visit("data", metaDataBuilder.toString(metaDataBuilder.classMetadata(classDeclaration)));
         visitor.visitEnd();
 
         return classWriter;

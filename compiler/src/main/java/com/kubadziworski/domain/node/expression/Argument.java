@@ -14,12 +14,20 @@ public class Argument extends ElementImpl implements Expression {
     private final String parameterName;
     private final Expression expression;
     private final Type receiverType;
-
+    private final boolean defaultValue;
 
     public Argument(Expression expression, String parameterName, Type receiverType) {
         this.parameterName = parameterName;
         this.expression = expression;
         this.receiverType = receiverType;
+        this.defaultValue = false;
+    }
+
+    public Argument(Expression expression, String parameterName, Type receiverType, boolean defaultValue) {
+        this.parameterName = parameterName;
+        this.expression = expression;
+        this.receiverType = receiverType;
+        this.defaultValue = defaultValue;
     }
 
     @Override
@@ -33,6 +41,10 @@ public class Argument extends ElementImpl implements Expression {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public boolean isDefaultValue() {
+        return defaultValue;
     }
 
     @Override

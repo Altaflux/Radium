@@ -25,7 +25,7 @@ public class SuperFunctionCall extends FunctionCall {
 
 
     public Type getOwnerType() {
-        return getSignature().getOwner();
+        return getFunctionSignature().getOwner();
     }
 
 }

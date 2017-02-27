@@ -47,7 +47,7 @@ public class PropertyAccessorsGenerator {
                         assignment.getPreExpression(), field);
             });
             //The parsing visitors should have guaranteed that if this is not possible, at least by direct field access should work
-            if (functionCall.isPresent() && PropertyAccessorsUtil.isFunctionAccessible(functionCall.get().getSignature(), generator.getScope().getClassType())) {
+            if (functionCall.isPresent() && PropertyAccessorsUtil.isFunctionAccessible(functionCall.get().getFunctionSignature(), generator.getScope().getClassType())) {
                 functionCall.get().accept(generator);
                 return;
             }
@@ -77,7 +77,7 @@ public class PropertyAccessorsGenerator {
             Optional<FunctionCall> functionCall = PropertyAccessorsUtil.getGetterFunctionSignatureForField(field)
                     .map(functionSignature -> new PropertyAccessorCall(functionSignature, fieldReference.getOwner(), field));
             //The parsing visitors should have guaranteed that if this is not possible, at least by direct field access should work
-            if (functionCall.isPresent() && PropertyAccessorsUtil.isFunctionAccessible(functionCall.get().getSignature(), generator.getScope().getClassType())) {
+            if (functionCall.isPresent() && PropertyAccessorsUtil.isFunctionAccessible(functionCall.get().getFunctionSignature(), generator.getScope().getClassType())) {
                 functionCall.get().accept(generator);
                 return;
             }

@@ -4,7 +4,6 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import lombok.ToString;
 import org.objectweb.asm.Opcodes;
@@ -22,21 +21,21 @@ public class ConstructorCall extends ElementImpl implements Call {
     private final String identifier;
     private final FunctionSignature functionSignature;
 
-    public ConstructorCall(FunctionSignature functionSignature, String identifier) {
-        this(null, functionSignature, identifier, Collections.emptyList());
+    public ConstructorCall(FunctionSignature functionSignature, Type type) {
+        this(null, functionSignature, type, Collections.emptyList());
     }
 
-    public ConstructorCall(NodeData element, FunctionSignature functionSignature, String identifier) {
-        this(element, functionSignature, identifier, Collections.emptyList());
+    public ConstructorCall(NodeData element, FunctionSignature functionSignature, Type type) {
+        this(element, functionSignature, type, Collections.emptyList());
     }
 
-    public ConstructorCall(FunctionSignature functionSignature, String className, List<Argument> arguments) {
-        this(null, functionSignature, className, arguments);
+    public ConstructorCall(FunctionSignature functionSignature, Type type, List<Argument> arguments) {
+        this(null, functionSignature, type, arguments);
     }
 
-    public ConstructorCall(NodeData element, FunctionSignature functionSignature, String className, List<Argument> arguments) {
+    public ConstructorCall(NodeData element, FunctionSignature functionSignature, Type type, List<Argument> arguments) {
         super(element);
-        this.type = ClassTypeFactory.createClassType(className);
+        this.type = type;
         this.arguments = arguments;
         this.identifier = type.getName();
         this.functionSignature = functionSignature;

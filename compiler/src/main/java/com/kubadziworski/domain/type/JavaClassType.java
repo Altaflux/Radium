@@ -4,6 +4,8 @@ import com.kubadziworski.bytecodegeneration.inline.CodeInliner;
 import com.kubadziworski.bytecodegeneration.inline.JvmCodeInliner;
 import com.kubadziworski.configuration.CompilerConfigInstance;
 import com.kubadziworski.configuration.JvmConfiguration;
+import com.kubadziworski.domain.ClassMetadata;
+import com.kubadziworski.domain.MetaDataBuilder;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
@@ -12,6 +14,7 @@ import com.kubadziworski.util.ReflectionObjectToSignatureMapper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import radium.internal.Metadata;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,19 +24,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+@Metadata(data = "dsjkf")
 public class JavaClassType implements Type {
 
     private final String name;
     private final Class aClass;
     private final org.objectweb.asm.Type asmType;
-    //private static Map<Type, LinkedMap<Class, Class[]>> cachedInheritance = new HashMap<>();
+    private final Metadata metadata;
 
+    private static final Map<JavaClassType, ClassMetadata> typeClassMetadataMap = new HashMap<>();
     private static final Map<JavaClassType, ClassNodeContainer> classNodeCache = new HashMap<>();
 
     public JavaClassType(Class clazz) {
         aClass = clazz;
         name = clazz.getCanonicalName();
         asmType = org.objectweb.asm.Type.getType(clazz);
+        metadata = (Metadata) aClass.getAnnotation(Metadata.class);
     }
 
     @Override
@@ -190,6 +196,24 @@ public class JavaClassType implements Type {
     public ClassNode getClassNode(boolean skipCode) {
         return createClassNode(skipCode);
     }
+
+
+    public Optional<ClassMetadata> classMetadata() {
+        if (typeClassMetadataMap.containsKey(this)) {
+            return Optional.ofNullable(typeClassMetadataMap.get(this));
+        }
+
+        if (metadata != null) {
+            MetaDataBuilder metaDataBuilder = new MetaDataBuilder();
+            ClassMetadata classMetadata = metaDataBuilder.fromString(metadata.data());
+            typeClassMetadataMap.put(this, classMetadata);
+            return Optional.of(classMetadata);
+        } else {
+            typeClassMetadataMap.put(this, null);
+        }
+        return Optional.empty();
+    }
+
 
     private ClassNode createClassNode(boolean skipCode) {
         if (classNodeCache.containsKey(this)) {
