@@ -7,10 +7,107 @@ import spock.lang.Unroll
 
 import java.lang.reflect.Method
 
-/**
- * Created by kuba on 11.05.16.
- */
 class ShouldCompileTest extends Specification {
+
+    private final static Compiler compiler = new Compiler()
+
+    def setup() {
+        new File("target/enkelClasses/").mkdirs()
+    }
+
+    @Unroll
+    "Should Compile and run"() {
+        given:
+        def file = new File("target/enkelClasses/" + filename)
+        FileUtils.writeStringToFile(file, code)
+        compiler.compile("target/enkelClasses/" + filename)
+
+        URL u = new File("target/enkelClasses/").toURI().toURL()
+        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader()
+        Class urlClass = URLClassLoader.class
+        Method method = urlClass.getDeclaredMethod("addURL", URL.class)
+        method.setAccessible(true)
+        method.invoke(urlClassLoader, u) == null
+
+        def name = Class.forName(filename.replace(".enk", ""))
+        def method1 = name.getMethod("main", String[].class)
+
+        expect:
+        Object[] arggg = [[] as String[]]
+        method1.invoke(null, arggg) == null
+
+        where:
+        code                             | filename
+        helloWorld                       | "HelloWorld.enk"
+        loopsCode                        | "Loops.enk"
+        allTypes                         | "AllPrimitiveTypes.enk"
+        moreDefaultParams                | "MoreDefaultParams.enk"
+        defaultParams                    | "DefaultParamTest.enk"
+        fields                           | "Fields.enk"
+        namedParams                      | "NamedParamsTest.enk"
+        sumCalculator                    | "SumCalculator.enk"
+        defaultConstructor               | "DefaultConstructor.enk"
+        parameterLessConsturctor         | "ParameterLessConstructor.enk"
+        construcotrWithParams            | "ConstructorWithParams.enk"
+        equalityTest                     | "EqualitySyntax.enk"
+        unaryExpressionTest              | "UnaryExpressions.enk"
+        globalLocal                      | "GlobalLocal.enk"
+        staticTest                       | "StaticTest.enk"
+        staticFunctionTest               | "StaticFunctionTest.enk"
+        importingTest                    | "ImportingTest.enk"
+        getterSetter                     | "GetterSetter.enk"
+        getterStatement                  | "GetterStatement.enk"
+        functionSingleStatements         | "FunctionSingleStatements.enk"
+        ifExpressions                    | "IfExpression.enk"
+        myTryStatement                   | "TryStatement.enk"
+        fieldInitializing                | "FieldInitializing.enk"
+        fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
+        detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
+        throwStatement                   | "ThrowStatement.enk"
+        nullValue                        | "NullValue.enk"
+        returnUnit                       | "ReturnUnit.enk"
+        concreteReturnUnit               | "ConcreteReturnUnit.enk"
+        superCall                        | "CallParentClass.enk"
+        typeCoercion                     | "TypeCoercion.enk"
+        primitiveFunctions               | "PrimitiveFunctions.enk"
+        innerTry                         | "InnerTry.enk"
+        parenthesisExpressions           | "ParenthesisExpressions.enk"
+        inlineCode                       | "InlineCode.enk"
+        callStaticImports                | "CallStaticImports.enk"
+        variableEscaping                 | "VariableEscaping.enk"
+        numericLiterals                  | "NumericLiterals.enk"
+        sendNullToMethod                 | "SendNullToMethod.enk"
+    }
+
+
+    @Unroll
+    "Should Create Multiple files"() {
+        given:
+        def file = new File("target/enkelClasses/" + filename)
+
+        FileUtils.writeStringToFile(file, code)
+        compiler.compile("target/enkelClasses/" + filename)
+
+        URL u = new File("target/enkelClasses/").toURI().toURL()
+        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader()
+        Class urlClass = URLClassLoader.class
+        Method method = urlClass.getDeclaredMethod("addURL", URL.class)
+        method.setAccessible(true)
+
+        expect:
+        method.invoke(urlClassLoader, u) == null
+
+        for (int i = 0; i < classes.size(); i++) {
+            Class name = Class.forName(classes.get(i))
+            Method method1 = name.getMethod("main", String[].class)
+            Object[] arggg = [[] as String[]]
+            method1.invoke(null, arggg)
+        }
+
+        where:
+        code       | filename           | classes
+        multiFiles | "MultiClasses.enk" | Arrays.asList("SecondClass", "FirstClass")
+    }
 
     private final static helloWorld =
             """
@@ -1137,99 +1234,5 @@ class ShouldCompileTest extends Specification {
                         }
 
     """
-    private final static Compiler compiler = new Compiler()
 
-    @Unroll
-    def "Should Compile and run"() {
-        expect:
-        boolean dirs = new File("target/enkelClasses/").mkdirs()
-        def file = new File("target/enkelClasses/" + filename)
-
-        FileUtils.writeStringToFile(file, code)
-        compiler.compile("target/enkelClasses/" + filename)
-
-        URL u = new File("target/enkelClasses/").toURL();
-        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Class urlClass = URLClassLoader.class;
-        Method method = urlClass.getDeclaredMethod("addURL", URL.class);
-        method.setAccessible(true);
-        method.invoke(urlClassLoader, u) == null;
-
-        def name = Class.forName(filename.replace(".enk", ""))
-        def method1 = name.getMethod("main", String[].class)
-
-        Object[] arggg = [[] as String[]]
-        method1.invoke(null, arggg) == null;
-
-        where:
-        code                     | filename
-        helloWorld               | "HelloWorld.enk"
-        loopsCode                | "Loops.enk"
-        allTypes                 | "AllPrimitiveTypes.enk"
-        moreDefaultParams        | "MoreDefaultParams.enk"
-        defaultParams            | "DefaultParamTest.enk"
-        fields                   | "Fields.enk"
-        namedParams              | "NamedParamsTest.enk"
-        sumCalculator            | "SumCalculator.enk"
-        defaultConstructor       | "DefaultConstructor.enk"
-        parameterLessConsturctor | "ParameterLessConstructor.enk"
-        construcotrWithParams    | "ConstructorWithParams.enk"
-        equalityTest             | "EqualitySyntax.enk"
-        unaryExpressionTest              | "UnaryExpressions.enk"
-        globalLocal                      | "GlobalLocal.enk"
-        staticTest                       | "StaticTest.enk"
-        staticFunctionTest               | "StaticFunctionTest.enk"
-        importingTest                    | "ImportingTest.enk"
-        getterSetter                     | "GetterSetter.enk"
-        getterStatement                  | "GetterStatement.enk"
-        functionSingleStatements         | "FunctionSingleStatements.enk"
-        ifExpressions                    | "IfExpression.enk"
-        myTryStatement                   | "TryStatement.enk"
-        fieldInitializing                | "FieldInitializing.enk"
-        fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
-        detectReturnCompleteStatement    | "DetectReturnCompleteStatement.enk"
-        throwStatement                   | "ThrowStatement.enk"
-        nullValue                        | "NullValue.enk"
-        returnUnit                       | "ReturnUnit.enk"
-        concreteReturnUnit               | "ConcreteReturnUnit.enk"
-        superCall                        | "CallParentClass.enk"
-        typeCoercion           | "TypeCoercion.enk"
-        primitiveFunctions     | "PrimitiveFunctions.enk"
-        innerTry               | "InnerTry.enk"
-        parenthesisExpressions | "ParenthesisExpressions.enk"
-        inlineCode             | "InlineCode.enk"
-        callStaticImports      | "CallStaticImports.enk"
-        variableEscaping       | "VariableEscaping.enk"
-        numericLiterals        | "NumericLiterals.enk"
-        sendNullToMethod       | "SendNullToMethod.enk"
-    }
-
-
-    @Unroll
-    def "Should Create Multiple files"() {
-        expect:
-        boolean dirs = new File("target/enkelClasses/").mkdirs()
-        def file = new File("target/enkelClasses/" + filename)
-
-        FileUtils.writeStringToFile(file, code)
-        compiler.compile("target/enkelClasses/" + filename)
-
-        URL u = new File("target/enkelClasses/").toURL();
-        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Class urlClass = URLClassLoader.class;
-        Method method = urlClass.getDeclaredMethod("addURL", URL.class);
-        method.setAccessible(true);
-        method.invoke(urlClassLoader, u) == null;
-
-        for (int i = 0; i < classes.size(); i++) {
-            Class name = Class.forName(classes.get(i))
-            Method method1 = name.getMethod("main", String[].class)
-            Object[] arggg = [[] as String[]]
-            method1.invoke(null, arggg);
-        }
-
-        where:
-        code       | filename           | classes
-        multiFiles | "MultiClasses.enk" | Arrays.asList("SecondClass", "FirstClass")
-    }
 }

@@ -1,4 +1,4 @@
-package com.kubadziworski.ingegration
+package com.kubadziworski.integration
 
 import com.kubadziworski.compiler.Compiler
 import com.kubadziworski.exception.FinalFieldModificationException
@@ -17,12 +17,14 @@ class ShouldFailTest extends Specification {
     private final static Compiler compiler = new Compiler()
     private static final Logger LOGGER = LoggerFactory.getLogger(ShouldFailTest.class)
 
-    @Unroll
-    def "Should Not Compile"() {
-        expect:
-        boolean dirs = new File("target/enkelClasses/shouldFail/").mkdirs()
-        def file = new File("target/enkelClasses/shouldFail/" + filename)
+    def setup() {
+        new File("target/enkelClasses/shouldFail/").mkdirs()
+    }
 
+    @Unroll
+    "Should Not Compile"() {
+        given:
+        def file = new File("target/enkelClasses/shouldFail/" + filename)
         FileUtils.writeStringToFile(file, code)
         Exception foundException = null
         try {
@@ -31,7 +33,7 @@ class ShouldFailTest extends Specification {
             LOGGER.info("Expected exception caught: \n{} \n{}", e.class.typeName, e.getMessage())
             foundException = e
         }
-        and:
+        expect:
         exception == foundException.class
 
         where:
