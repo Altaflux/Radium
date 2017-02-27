@@ -12,6 +12,8 @@ https://github.com/JakubDziworski/Enkel-JVM-language
 * Nullable types
 * Method inlining with the "inline" modifier
 * Full numeric literals support
+* Operator overloading
+* String interpolation
 * Try Catch Finally
 * If and Try/Catch statements are expressions
 * Concept of Unit return type
