@@ -43,11 +43,12 @@ class ShouldFailTest extends Specification {
         notReturnComplete         | "NotReturnComplete.enk"         | MissingReturnStatementException.class
         unreachableStatement      | "UnreachableStatement.enk"      | UnreachableStatementException.class
         incompatibleLocalVariable | "IncompatibleLocalVariable.enk" | IncompatibleTypesException.class
-        incompatibleField         | "IncompatibleField.enk"         | IncompatibleTypesException.class
-        incompatibleThrow         | "IncompatibleThrow.enk"         | IncompatibleTypesException.class
-        assignNullToNotNullable   | "AssignNullToNotNullable.enk"   | IncompatibleTypesException.class
-        modifyFinalVariable       | "ModifyFinalVariable.enk"       | FinalFieldModificationException.class
-        modifyFinalField          | "ModifyFinalField.enk"          | FinalFieldModificationException.class
+        incompatibleField       | "IncompatibleField.enk"       | IncompatibleTypesException.class
+        incompatibleThrow       | "IncompatibleThrow.enk"       | IncompatibleTypesException.class
+        assignNullToNotNullable | "AssignNullToNotNullable.enk" | IncompatibleTypesException.class
+        modifyFinalVariable     | "ModifyFinalVariable.enk"     | FinalFieldModificationException.class
+        modifyFinalField        | "ModifyFinalField.enk"        | FinalFieldModificationException.class
+        fieldByConstructor      | "FieldByConstructor.enk"      | IncompatibleTypesException.class
     }
 
 
@@ -163,4 +164,11 @@ class ShouldFailTest extends Specification {
                             }
                         }
     """
+
+    private final static fieldByConstructor =
+            """
+                            FieldByConstructor(var myString:String = 2) {
+        
+                            }
+							"""
 }

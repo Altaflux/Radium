@@ -3,6 +3,7 @@ package com.kubadziworski.domain.node.expression;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.exception.IncompatibleTypesException;
 import lombok.ToString;
 
 import java.util.Optional;
@@ -20,6 +21,9 @@ public class Parameter extends ElementImpl implements Expression {
         this.type = type;
         this.name = name;
         this.defaultValue = defaultValue;
+        if (defaultValue != null) {
+            validateType(defaultValue, type);
+        }
     }
 
     public String getName() {
@@ -61,5 +65,9 @@ public class Parameter extends ElementImpl implements Expression {
         return result;
     }
 
-
+    private static void validateType(Expression expression, Type variable) {
+        if (expression.getType().inheritsFrom(variable) < 0) {
+            throw new IncompatibleTypesException(variable.getName(), variable, expression.getType());
+        }
+    }
 }
