@@ -6,7 +6,12 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.scope.*;
+import com.kubadziworski.domain.node.expression.LocalVariableReference;
+import com.kubadziworski.domain.node.statement.FieldAssignment;
+import com.kubadziworski.domain.scope.Field;
+import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.LocalVariable;
+import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.FunctionGenerator;
@@ -56,7 +61,8 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
         if (ctx.expression() != null) {
             Expression expression = ctx.expression().accept(statementVisitor);
             validateType(expression, type);
-            field = new Field(name, owner, type, expression, modifiersSet);
+            field = new Field(name, owner, type, modifiersSet, field1 -> scope ->
+                    new FieldAssignment(new LocalVariableReference(scope.getLocalVariable("this")), field1, expression));
         } else {
             field = new Field(name, owner, type, modifiersSet);
         }

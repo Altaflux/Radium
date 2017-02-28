@@ -5,9 +5,11 @@ import com.kubadziworski.antlr.EnkelParser.ClassDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.*;
-import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.expression.ConstructorCall;
+import com.kubadziworski.domain.node.expression.FunctionCall;
+import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.SuperCall;
 import com.kubadziworski.domain.node.statement.Block;
-import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
@@ -24,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -88,6 +89,8 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
     private Constructor getDefaultConstructor(FunctionSignature signature) {
         Scope constructorScope = new Scope(scope, signature);
         constructorScope.addLocalVariable(new LocalVariable("this", scope.getClassType(), false));
+        FunctionGenerator functionGenerator = new FunctionGenerator(constructorScope);
+        functionGenerator.addParametersAsLocalVariables(signature);
 
         FunctionSignature superSignature = scope.getMethodCallSignature(SuperCall.SUPER_IDENTIFIER, Collections.emptyList());
         SuperCall superCall = new SuperCall(superSignature);
@@ -98,8 +101,7 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
     private List<Statement> getFieldsInitializers(Scope scope) {
         return scope.getFields().values().stream()
                 .filter(stringFieldEntry -> stringFieldEntry.getInitialExpression().isPresent())
-                .map(field -> new FieldAssignment(new LocalVariableReference(scope.getLocalVariable("this")), field,
-                        field.getInitialExpression().get())).collect(Collectors.toList());
+                .map(field -> field.getInitialExpression().get().supply(scope)).collect(toList());
     }
 
     private Function getGeneratedMainMethod() {

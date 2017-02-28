@@ -69,14 +69,15 @@ class ShouldCompileTest extends Specification {
         concreteReturnUnit               | "ConcreteReturnUnit.enk"
         superCall                        | "CallParentClass.enk"
         typeCoercion                     | "TypeCoercion.enk"
-        primitiveFunctions               | "PrimitiveFunctions.enk"
-        innerTry                         | "InnerTry.enk"
-        parenthesisExpressions           | "ParenthesisExpressions.enk"
-        inlineCode                       | "InlineCode.enk"
-        callStaticImports                | "CallStaticImports.enk"
-        variableEscaping                 | "VariableEscaping.enk"
-        numericLiterals                  | "NumericLiterals.enk"
-        sendNullToMethod                 | "SendNullToMethod.enk"
+        primitiveFunctions     | "PrimitiveFunctions.enk"
+        innerTry               | "InnerTry.enk"
+        parenthesisExpressions | "ParenthesisExpressions.enk"
+        inlineCode             | "InlineCode.enk"
+        callStaticImports      | "CallStaticImports.enk"
+        variableEscaping       | "VariableEscaping.enk"
+        numericLiterals        | "NumericLiterals.enk"
+        sendNullToMethod       | "SendNullToMethod.enk"
+        fieldByConstructor     | "FieldByConstructor.enk"
     }
 
 
@@ -108,6 +109,27 @@ class ShouldCompileTest extends Specification {
         code       | filename           | classes
         multiFiles | "MultiClasses.enk" | Arrays.asList("SecondClass", "FirstClass")
     }
+
+
+    private final static fieldByConstructor =
+            """
+                            FieldByConstructor(var myString:String = "hello") {
+                                init {
+                                    println(myString)
+                                    assertTrue(myString == "hello")
+                                    myString = "bar"
+                                }
+                                fn start {
+                                    println(myString)
+                                    assertTrue(myString == "bar")
+                                }
+                                fn assertTrue(shouldBeTrue:Boolean){
+                                    if(!shouldBeTrue){
+                                        throw new AssertionError("TEST FAILED")
+                                    }
+                                }
+                            }
+							"""
 
     private final static helloWorld =
             """

@@ -3,22 +3,21 @@ package com.kubadziworski.domain.scope;
 import com.kubadziworski.bytecodegeneration.FieldGenerator;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.Modifiers;
-import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.parsing.visitor.statement.FieldInitializer;
+import com.kubadziworski.parsing.visitor.statement.FieldInitializerSupplier;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-/**
- * Created by kuba on 13.05.16.
- */
+
 public class Field implements Variable, CallableDescriptor {
 
     private final String name;
     private final Type owner;
     private final Type type;
     private final Modifiers modifiers;
-    private final Expression initialExpression;
+    private final FieldInitializer initialExpression;
 
     private Function getterFunction;
     private Function setterFunction;
@@ -31,12 +30,12 @@ public class Field implements Variable, CallableDescriptor {
         initialExpression = null;
     }
 
-    public Field(String name, Type owner, Type type, Expression initialExpression, Modifiers modifiers) {
+    public Field(String name, Type owner, Type type, Modifiers modifiers, FieldInitializerSupplier initialExpression) {
         this.name = name;
         this.type = type;
         this.owner = owner;
         this.modifiers = modifiers;
-        this.initialExpression = initialExpression;
+        this.initialExpression = initialExpression.get(this);
     }
 
     @Override
@@ -79,7 +78,7 @@ public class Field implements Variable, CallableDescriptor {
         this.setterFunction = setterFunction;
     }
 
-    public Optional<Expression> getInitialExpression() {
+    public Optional<FieldInitializer> getInitialExpression() {
         return Optional.ofNullable(initialExpression);
     }
 

@@ -4,13 +4,17 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
+import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.function.ParameterExpressionVisitor;
+import com.kubadziworski.util.PropertyAccessorsUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
@@ -23,6 +27,8 @@ import java.util.stream.Stream;
 public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
 
     private final Scope scope;
+
+    private static final String INVISIBLE_PARAM = "$";
 
     public ConstructorPhaseVisitor(Scope scope) {
         this.scope = scope;
@@ -50,7 +56,8 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
                 .stream().map(constructorParamContext -> {
                     Parameter parameter = parameterExpressionVisitor.visitParameterWithDefaultValue(constructorParamContext.parameterWithDefaultValue());
                     if (constructorParamContext.asField != null) {
-                        return Pair.of(parameter, buildField(constructorParamContext.accessModifiers(), constructorParamContext.KEYWORD_val() != null, parameter));
+                        Parameter invisibleParam = new Parameter(INVISIBLE_PARAM + parameter.getName(), parameter.getType(), parameter.getDefaultValue().get());
+                        return Pair.of(invisibleParam, buildField(constructorParamContext.accessModifiers(), constructorParamContext.KEYWORD_val() != null, parameter));
                     }
                     return Pair.of(parameter, (Field) null);
                 });
@@ -60,11 +67,9 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
         scope.addConstructor(signature);
 
         parameters.stream().map(Pair::getValue).filter(Objects::nonNull).forEach(field -> {
-            // field.setGetterFunction(PropertyAccessorsUtil.generateGetter(field, scope));
-            // field.setSetterFunction(PropertyAccessorsUtil.generateSetter(field, scope));
-
-            //TODO DISABLED FOR NOW UNTIL DEFAULT METHODS ARE FIXED
-            //scope.addField(field);
+            field.setGetterFunction(PropertyAccessorsUtil.generateGetter(field, scope));
+            field.setSetterFunction(PropertyAccessorsUtil.generateSetter(field, scope));
+            scope.addField(field);
         });
 
         return scope;
@@ -72,7 +77,6 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
 
     private Field buildField(EnkelParser.AccessModifiersContext accessModifiers, boolean finalKey, Parameter parameter) {
         Modifiers modifiersSet = Modifiers.empty();
-
         if (accessModifiers != null) {
             modifiersSet = modifiersSet.with(Modifier.fromValue(accessModifiers.getText()));
         } else {
@@ -83,6 +87,11 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
             modifiersSet = modifiersSet.with(Modifier.FINAL);
         }
 
-        return new Field(parameter.getName(), scope.getClassType(), parameter.getType(), modifiersSet);
+        return new Field(parameter.getName(), scope.getClassType(), parameter.getType(), modifiersSet, field -> scope -> {
+            LocalVariable localVariable = scope.getLocalVariable(INVISIBLE_PARAM + parameter.getName());
+            LocalVariableReference localVariableReference = new LocalVariableReference(localVariable);
+            LocalVariableReference owner = new LocalVariableReference(scope.getLocalVariable("this"));
+            return new FieldAssignment(owner, field, localVariableReference);
+        });
     }
 }
