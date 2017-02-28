@@ -93,8 +93,8 @@ public class ExpressionGenerator {
         ifExpressionGenerator.generate(ifExpression, statementGenerator);
     }
 
-    public void generate(BlockExpression unaryExpression, StatementGenerator generator) {
-        blockStatementGenerator.generate(unaryExpression, false, generator);
+    public void generate(BlockExpression blockExpression, StatementGenerator generator) {
+        blockStatementGenerator.generate(blockExpression, generator);
     }
 
     public void generate(UnaryExpression unaryExpression, StatementGenerator generator) {

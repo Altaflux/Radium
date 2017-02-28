@@ -198,13 +198,13 @@ public class BaseStatementGenerator implements StatementGenerator {
     }
 
     public void generate(Block block) {
-        blockStatementGenerator.generate(block, true, this);
+        blockStatementGenerator.generate(block, this);
     }
 
     @Override
     public void generate(Block block, StatementGenerator generator) {
         generateLineNumber(block);
-        blockStatementGenerator.generate(block, true, generator);
+        blockStatementGenerator.generate(block, generator);
     }
 
     public void generate(RangedForStatement rangedForStatement) {
@@ -323,7 +323,6 @@ public class BaseStatementGenerator implements StatementGenerator {
     public void generate(LocalVariableReference localVariableReference, StatementGenerator generator) {
         generateLineNumber(localVariableReference);
         expressionGenerator.generate(localVariableReference);
-
     }
 
     public void generate(FieldReference fieldReference) {

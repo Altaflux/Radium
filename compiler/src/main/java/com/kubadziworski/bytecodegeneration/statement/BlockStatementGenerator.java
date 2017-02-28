@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
+import com.kubadziworski.domain.node.expression.BlockExpression;
 import com.kubadziworski.domain.node.expression.ConstructorCall;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Block;
@@ -19,11 +20,19 @@ public class BlockStatementGenerator {
     private final MethodVisitor methodVisitor;
 
     public BlockStatementGenerator(MethodVisitor methodVisitor) {
-
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(Block block, boolean asExpression, StatementGenerator next) {
+    public void generate(BlockExpression block, StatementGenerator next) {
+        generate(block.getStatementBlock(), false, next);
+    }
+
+    public void generate(Block block, StatementGenerator next) {
+        generate(block, true, next);
+
+    }
+
+    private void generate(Block block, boolean notExpression, StatementGenerator next) {
         Scope newScope = block.getScope();
         List<Statement> statements = block.getStatements();
 
@@ -33,7 +42,7 @@ public class BlockStatementGenerator {
             stmt.accept(generator);
 
             //Leave alive the last expression
-            if (!asExpression && x == statements.size() - 1) {
+            if (!notExpression && x == statements.size() - 1) {
                 continue;
             }
             if (stmt instanceof Expression) {
@@ -44,10 +53,10 @@ public class BlockStatementGenerator {
                     }
                 }
             }
-
         }
 
     }
+
 
     ///TODO this needs to be done better, maybe by defining a base call site,
     private void visitPop(Type type) {
