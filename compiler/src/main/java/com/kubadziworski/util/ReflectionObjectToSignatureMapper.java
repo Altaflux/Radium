@@ -58,7 +58,11 @@ public final class ReflectionObjectToSignatureMapper {
 
     public static Field fromField(java.lang.reflect.Field field, JavaClassType owner) {
         String name = field.getName();
-        return new Field(name, owner, TypeResolver.getTypeFromNameWithClazzAlias(field.getType(), getNullability(field, owner)), ModifierTransformer.transformJvm(field.getModifiers()));
+        return Field.builder()
+                .name(name)
+                .owner(owner)
+                .type(TypeResolver.getTypeFromNameWithClazzAlias(field.getType(), getNullability(field, owner)))
+                .modifiers(ModifierTransformer.transformJvm(field.getModifiers())).build();
     }
 
 

@@ -5,6 +5,7 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter
 import com.kubadziworski.compiler.RadiumArguments
 import com.kubadziworski.configuration.CompilerConfigInstance
 import com.kubadziworski.domain.MetaData
+import com.kubadziworski.domain.Modifier
 import com.kubadziworski.domain.Modifiers
 import com.kubadziworski.domain.node.expression.FieldReference
 import com.kubadziworski.domain.node.expression.LocalVariableReference
@@ -40,7 +41,8 @@ class ReferenceExpressionGeneratorTest extends Specification {
             StatementGenerator expressionGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodVisitor), scope)
             LocalVariable local = new LocalVariable("this",scope.getClassType())
             scope.addLocalVariable(new LocalVariable("this",scope.getClassType()))
-        def field = new Field(name, owner, type, Modifiers.empty().with(com.kubadziworski.domain.Modifier.PUBLIC))
+
+        def field = Field.builder().name(name).owner(owner).type(type).modifiers(Modifiers.empty().with(Modifier.PUBLIC)).build()
             LocalVariableReference ref = new LocalVariableReference(local)
             def fieldReference = new FieldReference(field, ref)
         when:

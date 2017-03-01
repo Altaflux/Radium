@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.statement
 
+import com.kubadziworski.domain.Modifier
 import com.kubadziworski.domain.Modifiers
 import com.kubadziworski.domain.node.expression.LocalVariableReference
 import com.kubadziworski.domain.node.expression.Value
@@ -45,7 +46,9 @@ class AssignmentStatementGeneratorTest extends Specification {
     def "should generate bytecode for assignment if field for name exists in scope but local variable does not"() {
         given:
         def local = new LocalVariableReference(new LocalVariable("this", new DumbType("dumb")))
-        def field = new Field(varName, variableOwner, variableType, Modifiers.empty().with(com.kubadziworski.domain.Modifier.PUBLIC))
+        def field = Field.builder().name(varName).owner(variableOwner)
+                .type(variableType).modifiers(Modifiers.empty().with(Modifier.PUBLIC)).build()
+
         def assignment = new FieldAssignment(local, field, assignmentExpression)
             MethodVisitor methodVisitor = Mock()
             StatementGenerator expressionGenerator = Mock()

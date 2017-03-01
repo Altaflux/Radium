@@ -6,37 +6,35 @@ import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.parsing.visitor.statement.FieldInitializer;
 import com.kubadziworski.parsing.visitor.statement.FieldInitializerSupplier;
+import lombok.Builder;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
 
+@Builder(toBuilder = true)
 public class Field implements Variable, CallableDescriptor {
 
     private final String name;
     private final Type owner;
     private final Type type;
     private final Modifiers modifiers;
-    private final FieldInitializer initialExpression;
+    private final FieldInitializerSupplier initialExpression;
 
-    private Function getterFunction;
-    private Function setterFunction;
+    private final FieldAccessorSupplier getterFunction;
+    private final FieldAccessorSupplier setterFunction;
 
-    public Field(String name, Type owner, Type type, Modifiers modifiers) {
+    public Field(String name, Type owner, Type type, Modifiers modifiers, FieldInitializerSupplier initialExpression,
+                 FieldAccessorSupplier getterFunction, FieldAccessorSupplier setterFunction) {
         this.name = name;
         this.type = type;
         this.owner = owner;
         this.modifiers = modifiers;
-        initialExpression = null;
+        this.initialExpression = initialExpression;
+        this.getterFunction = getterFunction;
+        this.setterFunction = setterFunction;
     }
 
-    public Field(String name, Type owner, Type type, Modifiers modifiers, FieldInitializerSupplier initialExpression) {
-        this.name = name;
-        this.type = type;
-        this.owner = owner;
-        this.modifiers = modifiers;
-        this.initialExpression = initialExpression.get(this);
-    }
 
     @Override
     public Type getType() {
@@ -62,24 +60,21 @@ public class Field implements Variable, CallableDescriptor {
 
     @Nullable
     public Function getGetterFunction() {
-        return getterFunction;
-    }
-
-    public void setGetterFunction(Function getterFunction) {
-        this.getterFunction = getterFunction;
+        return Optional.ofNullable(getterFunction)
+                .map(fieldInitializerSupplier -> fieldInitializerSupplier.get(this))
+                .orElse(null);
     }
 
     @Nullable
     public Function getSetterFunction() {
-        return setterFunction;
-    }
-
-    public void setSetterFunction(Function setterFunction) {
-        this.setterFunction = setterFunction;
+        return Optional.ofNullable(setterFunction)
+                .map(fieldInitializerSupplier -> fieldInitializerSupplier.get(this))
+                .orElse(null);
     }
 
     public Optional<FieldInitializer> getInitialExpression() {
-        return Optional.ofNullable(initialExpression);
+        return Optional.ofNullable(initialExpression)
+                .map(fieldInitializerSupplier -> fieldInitializerSupplier.get(this));
     }
 
     @Override

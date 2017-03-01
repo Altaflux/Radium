@@ -18,8 +18,9 @@ public class UnitType extends JavaClassType {
     public static final UnitType CONCRETE_INSTANCE = new UnitType();
 
     private static final Expression expression =
-            new FieldReference(new Field("INSTANCE", CONCRETE_INSTANCE, CONCRETE_INSTANCE,
-                    Modifiers.empty().with(Modifier.PUBLIC).with(Modifier.STATIC)),
+            new FieldReference(Field.builder().name("INSTANCE")
+                    .owner(CONCRETE_INSTANCE).type(CONCRETE_INSTANCE)
+                    .modifiers(Modifiers.empty().with(Modifier.PUBLIC).with(Modifier.STATIC)).build(),
                     new EmptyExpression(CONCRETE_INSTANCE));
 
     private UnitType() {

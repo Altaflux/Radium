@@ -66,11 +66,7 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
         FunctionSignature signature = new FunctionSignature(scope.getClassType().getName(), parameterList, VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC), scope.getClassType());
         scope.addConstructor(signature);
 
-        parameters.stream().map(Pair::getValue).filter(Objects::nonNull).forEach(field -> {
-            field.setGetterFunction(PropertyAccessorsUtil.generateGetter(field, scope));
-            field.setSetterFunction(PropertyAccessorsUtil.generateSetter(field, scope));
-            scope.addField(field);
-        });
+        parameters.stream().map(Pair::getValue).filter(Objects::nonNull).forEach(scope::addField);
 
         return scope;
     }
@@ -87,11 +83,18 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
             modifiersSet = modifiersSet.with(Modifier.FINAL);
         }
 
-        return new Field(parameter.getName(), scope.getClassType(), parameter.getType(), modifiersSet, field -> scope -> {
-            LocalVariable localVariable = scope.getLocalVariable(INVISIBLE_PARAM + parameter.getName());
-            LocalVariableReference localVariableReference = new LocalVariableReference(localVariable);
-            LocalVariableReference owner = new LocalVariableReference(scope.getLocalVariable("this"));
-            return new FieldAssignment(owner, field, localVariableReference);
-        });
+        return Field.builder()
+                .name(parameter.getName())
+                .owner(scope.getClassType())
+                .type(parameter.getType())
+                .getterFunction(field -> PropertyAccessorsUtil.generateGetter(field, scope))
+                .setterFunction(field -> PropertyAccessorsUtil.generateSetter(field, scope))
+                .modifiers(modifiersSet)
+                .initialExpression(field -> scope -> {
+                    LocalVariable localVariable = scope.getLocalVariable(INVISIBLE_PARAM + parameter.getName());
+                    LocalVariableReference localVariableReference = new LocalVariableReference(localVariable);
+                    LocalVariableReference owner = new LocalVariableReference(scope.getLocalVariable("this"));
+                    return new FieldAssignment(owner, field, localVariableReference);
+                }).build();
     }
 }
