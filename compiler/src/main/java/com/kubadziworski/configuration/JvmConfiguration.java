@@ -13,8 +13,8 @@ public class JvmConfiguration extends CompilerConfiguration {
     private final ClassLoader classLoader;
 
     public JvmConfiguration(RadiumArguments arguments) {
-        ImportResolverContainerEnum.INSTANCE.initialize(this, arguments);
         this.classLoader = arguments.classLoader;
+        ImportResolverContainerEnum.INSTANCE.initialize(this, arguments);
     }
 
     public ClassLoader getClassLoader() {

@@ -5,11 +5,11 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
 import com.kubadziworski.bytecodegeneration.util.PropertyAccessorsGenerator;
-import com.kubadziworski.bytecodegeneration.util.defaultmethod.DefaultMethodStatementFilter;
 import com.kubadziworski.bytecodegeneration.util.defaultmethod.DefaultMethodHandler;
+import com.kubadziworski.bytecodegeneration.util.defaultmethod.DefaultMethodStatementFilter;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
-import com.kubadziworski.domain.RadiumModifiers;
+import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.Parameter;
@@ -106,8 +106,8 @@ public class MethodGenerator {
     }
 
     private void generateInlineAnnotation(Function function, InstructionAdapter mv) {
-        if (RadiumModifiers.isInline(ModifierTransformer.transform(function.getModifiers()))) {
-            AnnotationVisitor av0 = mv.visitAnnotation("Lradium/internal/InlineOnly;", false);
+        if (function.getModifiers().contains(Modifier.INLINE)) {
+            AnnotationVisitor av0 = mv.visitAnnotation("Lradium/internal/InlineOnly;", true);
             av0.visitEnd();
         }
     }

@@ -55,8 +55,9 @@ public class PhaseVisitor {
         ImportResolver importResolver = enkelParser.value1;
         List<Holder> scopes = enkelParser.value2.stream().map(holderOfClasses -> holderOfClasses)
                 .map(ctx -> {
+
                     String superClass = AnyType.INSTANCE.getName();
-                    return new Holder(ctx.value1, new Scope(new MetaData(ctx.value2, ctx.value3, superClass, Collections.emptyList()),
+                    return new Holder(ctx.value1, new Scope(new MetaData(ctx.value2, ctx.value3, superClass, Collections.emptyList(), enkelParser.value3),
                             importResolver));
                 }).collect(Collectors.toList());
         return new Triple<>(importResolver, scopes, enkelParser.value3);

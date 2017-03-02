@@ -139,6 +139,14 @@ public class MethodInliner extends LocalVariablesSorter {
             return null;
         }
 
+        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+            return null;
+        }
+
+        public void visitLineNumber(int line, Label start) {
+
+        }
+
         public void visitMaxs(int stack, int locals) {
 
         }
