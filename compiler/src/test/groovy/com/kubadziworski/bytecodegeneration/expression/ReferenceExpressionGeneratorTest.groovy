@@ -34,7 +34,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
 
     def "should generate field reference"() {
         given:
-            MetaData metaData = new MetaData("Main", "", "java.lang.Object", Collections.emptyList())
+        MetaData metaData = new MetaData("Main", "", "java.lang.Object", Collections.emptyList(), "Main.enk")
         ResolverContainer container = new ResolverContainer(Arrays.asList(new ClazzImportResolver(ClassLoader.systemClassLoader)))
         Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList(), container))
             MethodVisitor methodVisitor = Mock()
