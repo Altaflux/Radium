@@ -21,11 +21,6 @@ public class BooleanExpression extends ElementImpl implements Expression {
         this.rightExpression = rightExpression;
         this.and = and;
 
-//        if (!leftExpression.getType().equals(PrimitiveTypes.BOOLEAN_TYPE) ||
-//                !rightExpression.equals(PrimitiveTypes.BOOLEAN_TYPE)) {
-//            throw new IncompatibleTypesException("boolean operation", leftExpression.getType(),
-//                    rightExpression.getType());
-//        }
         if (!TypeChecker.isBool(leftExpression.getType()) || !TypeChecker.isBool(rightExpression.getType())) {
             throw new IncompatibleTypesException("boolean operation", leftExpression.getType(),
                     rightExpression.getType());
