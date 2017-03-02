@@ -37,15 +37,15 @@ class ShouldCompileTest extends Specification {
         method1.invoke(null, arggg) == null
 
         where:
-        code                             | filename
-        helloWorld                       | "HelloWorld.enk"
-        loopsCode                        | "Loops.enk"
-        allTypes                         | "AllPrimitiveTypes.enk"
-        moreDefaultParams                | "MoreDefaultParams.enk"
-        defaultParams                    | "DefaultParamTest.enk"
-        fields                           | "Fields.enk"
-        namedParams                      | "NamedParamsTest.enk"
-        sumCalculator                    | "SumCalculator.enk"
+        code                   | filename
+        helloWorld             | "HelloWorld.enk"
+        loopsCode              | "Loops.enk"
+        allTypes               | "AllPrimitiveTypes.enk"
+        moreDefaultParams      | "MoreDefaultParams.enk"
+        defaultParams          | "DefaultParamTest.enk"
+        fields                 | "Fields.enk"
+        namedParams            | "NamedParamsTest.enk"
+        sumCalculator          | "SumCalculator.enk"
         defaultConstructor               | "DefaultConstructor.enk"
         parameterLessConsturctor         | "ParameterLessConstructor.enk"
         construcotrWithParams            | "ConstructorWithParams.enk"
@@ -70,14 +70,16 @@ class ShouldCompileTest extends Specification {
         superCall                        | "CallParentClass.enk"
         typeCoercion                     | "TypeCoercion.enk"
         primitiveFunctions               | "PrimitiveFunctions.enk"
-        innerTry                         | "InnerTry.enk"
-        parenthesisExpressions           | "ParenthesisExpressions.enk"
-        inlineCode                       | "InlineCode.enk"
-        callStaticImports                | "CallStaticImports.enk"
-        variableEscaping                 | "VariableEscaping.enk"
-        numericLiterals                  | "NumericLiterals.enk"
-        sendNullToMethod                 | "SendNullToMethod.enk"
-        fieldByConstructor               | "FieldByConstructor.enk"
+        innerTry               | "InnerTry.enk"
+        parenthesisExpressions | "ParenthesisExpressions.enk"
+        inlineCode             | "InlineCode.enk"
+        callStaticImports      | "CallStaticImports.enk"
+        variableEscaping       | "VariableEscaping.enk"
+        numericLiterals        | "NumericLiterals.enk"
+        sendNullToMethod       | "SendNullToMethod.enk"
+        fieldByConstructor     | "FieldByConstructor.enk"
+        bitWise                | "BitWise.enk"
+        booleanOperator        | "BooleanOperator.enk"
     }
 
 
@@ -110,6 +112,50 @@ class ShouldCompileTest extends Specification {
         multiFiles | "MultiClasses.enk" | Arrays.asList("SecondClass", "FirstClass")
     }
 
+
+    private final static booleanOperator =
+            """
+                            BooleanOperator {
+
+                                fn start {
+                                    val trueVal = true
+                                    val secondTrueVal = true
+                                    val falseVal = false
+                                    
+                                    println(trueVal && secondTrueVal)
+                                    assertTrue(trueVal && secondTrueVal)
+                                    println(falseVal || trueVal)
+                                    assertTrue(falseVal || trueVal)
+                                    
+                                    println(falseVal && trueVal)
+                                    assertTrue(!(falseVal && trueVal))
+                                    println(falseVal || falseVal)
+                                    assertTrue(!(falseVal || falseVal))
+                                }
+                                fn assertTrue(shouldBeTrue:Boolean){
+                                    println(shouldBeTrue)
+                                    if(!shouldBeTrue){
+                                        throw new AssertionError("TEST FAILED")
+                                    }
+                                }
+                            }
+							"""
+
+    private final static bitWise =
+            """
+                            BitWise {
+
+                                fn start {
+                                    assertTrue((2 | 4) == 6)
+                                    assertTrue((9 & 12) == 8)
+                                }
+                                fn assertTrue(shouldBeTrue:Boolean){
+                                    if(!shouldBeTrue){
+                                        throw new AssertionError("TEST FAILED")
+                                    }
+                                }
+                            }
+							"""
 
     private final static fieldByConstructor =
             """

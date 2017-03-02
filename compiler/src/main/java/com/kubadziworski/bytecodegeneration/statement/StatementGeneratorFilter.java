@@ -28,6 +28,17 @@ public class StatementGeneratorFilter implements StatementGenerator {
         this.next = next.copy(this);
     }
 
+
+    @Override
+    final public void generate(BooleanExpression booleanExpression) {
+        if (parent != null) {
+            parent.generate(booleanExpression);
+        } else {
+            generate(booleanExpression, this);
+        }
+    }
+
+
     @Override
     final public void generate(NotNullCastExpression castExpression) {
         if (parent != null) {
@@ -287,6 +298,12 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     /////////////
+
+    @Override
+    public void generate(BooleanExpression booleanExpression, StatementGenerator statementGenerator) {
+        next.generate(booleanExpression, statementGenerator);
+    }
+
     @Override
     public void generate(NotNullCastExpression castExpression, StatementGenerator statementGenerator) {
         next.generate(castExpression, statementGenerator);

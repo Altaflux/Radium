@@ -1,5 +1,6 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
+import com.kubadziworski.bytecodegeneration.expression.BooleanExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
@@ -24,6 +25,7 @@ public class BaseStatementGenerator implements StatementGenerator {
     private final TryCatchStatementGenerator tryCatchStatementGenerator;
     private final ExpressionGenerator expressionGenerator;
     private final ThrowStatementGenerator throwStatementGenerator;
+    private final BooleanExpressionGenerator booleanExpressionGenerator;
 
     private final StatementGenerator parent;
     private final InstructionAdapter methodVisitor;
@@ -41,6 +43,7 @@ public class BaseStatementGenerator implements StatementGenerator {
         assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor);
         tryCatchStatementGenerator = new TryCatchStatementGenerator(methodVisitor);
         throwStatementGenerator = new ThrowStatementGenerator(methodVisitor);
+        this.booleanExpressionGenerator = new BooleanExpressionGenerator(methodVisitor);
         this.methodVisitor = methodVisitor;
     }
 
@@ -57,7 +60,9 @@ public class BaseStatementGenerator implements StatementGenerator {
                                    ForStatementGenerator forStatementGenerator,
                                    AssignmentStatementGenerator assignmentStatementGenerator,
                                    TryCatchStatementGenerator tryCatchStatementGenerator,
-                                   ThrowStatementGenerator throwStatementGenerator, ExpressionGenerator expressionGenerator) {
+                                   ThrowStatementGenerator throwStatementGenerator,
+                                   BooleanExpressionGenerator booleanExpressionGenerator,
+                                   ExpressionGenerator expressionGenerator) {
         parent = generator;
         this.variableDeclarationStatementGenerator = variableDeclarationStatementGenerator;
         this.returnStatementGenerator = returnStatementGenerator;
@@ -68,8 +73,18 @@ public class BaseStatementGenerator implements StatementGenerator {
         this.tryCatchStatementGenerator = tryCatchStatementGenerator;
         this.expressionGenerator = expressionGenerator.copy(generator);
         this.throwStatementGenerator = throwStatementGenerator;
+        this.booleanExpressionGenerator = booleanExpressionGenerator;
         this.methodVisitor = methodVisitor;
         this.lastLine = lastLine;
+    }
+
+    public void generate(BooleanExpression booleanExpression) {
+        booleanExpressionGenerator.generate(booleanExpression, this);
+    }
+
+    public void generate(BooleanExpression booleanExpression, StatementGenerator generator) {
+        generateLineNumber(booleanExpression);
+        booleanExpressionGenerator.generate(booleanExpression, generator);
     }
 
     @Override
@@ -364,7 +379,7 @@ public class BaseStatementGenerator implements StatementGenerator {
         return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine,
                 variableDeclarationStatementGenerator, returnStatementGenerator,
                 ifStatementGenerator, blockStatementGenerator, forStatementGenerator, assignmentStatementGenerator, tryCatchStatementGenerator,
-                throwStatementGenerator, expressionGenerator);
+                throwStatementGenerator, booleanExpressionGenerator, expressionGenerator);
     }
 
     private void generateLineNumber(Statement statement) {

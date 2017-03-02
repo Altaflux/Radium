@@ -105,6 +105,10 @@ public interface StatementGenerator {
     void generate(PopExpression popExpression);
     void generate(PopExpression popExpression, StatementGenerator generator);
 
+    void generate(BooleanExpression booleanExpression);
+
+    void generate(BooleanExpression booleanExpression, StatementGenerator generator);
+
     Scope getScope();
 
 

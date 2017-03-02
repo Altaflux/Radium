@@ -121,6 +121,10 @@ expression
            | expression opType='+' expression #BinaryExpression
            | expression opType='-' expression #BinaryExpression
            | expression opType='%' expression #BinaryExpression
+           | expression cmp='||' expression #BooleanExpression
+           | expression cmp='&&' expression #BooleanExpression
+           | expression opType='|' expression #BinaryExpression
+           | expression opType='&' expression #BinaryExpression
            | expression cmp='>' expression #ConditionalExpression
            | expression cmp='<' expression #ConditionalExpression
            | expression cmp='==' expression #ConditionalExpression

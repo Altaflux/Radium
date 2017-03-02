@@ -245,7 +245,9 @@ Q : '?';
 DA : '!!.';
 
 DISJ : '||';
+BIT_OR: '|';
 CONJ: '&&';
+BIT_AND: '&';
 
 ELVIS : '?:' ;
 LONG_RANGE : '...';
