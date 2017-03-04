@@ -7,6 +7,7 @@ import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.EmptyExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.ClassTypeFactory;
@@ -46,14 +47,15 @@ public final class ReflectionObjectToSignatureMapper {
         if (isInline(method, javaClassType)) {
             modifiers = modifiers.with(Modifier.INLINE);
         }
+        SignatureType signatureType = SignatureType.FUNCTION_CALL;
         return new FunctionSignature(name, parameters, TypeResolver.getTypeFromNameWithClazzAlias(returnType, getReturnNullability(method, javaClassType)),
-                modifiers, owner);
+                modifiers, owner, signatureType);
     }
 
     public static FunctionSignature fromConstructor(Constructor constructor, JavaClassType owner) {
         String name = constructor.getName();
         List<Parameter> parameters = getParams(constructor.getParameters(), "<init>", org.objectweb.asm.Type.getConstructorDescriptor(constructor), owner);
-        return new FunctionSignature(name, parameters, VoidType.INSTANCE, ModifierTransformer.transformJvm(constructor.getModifiers()), owner);
+        return new FunctionSignature(name, parameters, VoidType.INSTANCE, ModifierTransformer.transformJvm(constructor.getModifiers()), owner, SignatureType.CONSTRUCTOR_CALL);
     }
 
     public static Field fromField(java.lang.reflect.Field field, JavaClassType owner) {

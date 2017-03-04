@@ -1,11 +1,7 @@
 package com.kubadziworski.integration
 
 import com.kubadziworski.compiler.Compiler
-import com.kubadziworski.exception.FinalFieldModificationException
-import com.kubadziworski.exception.IncompatibleTypesException
-import com.kubadziworski.exception.MethodSignatureNotFoundException
-import com.kubadziworski.exception.MissingReturnStatementException
-import com.kubadziworski.exception.UnreachableStatementException
+import com.kubadziworski.exception.*
 import org.apache.commons.io.FileUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -43,14 +39,25 @@ class ShouldFailTest extends Specification {
         notReturnComplete         | "NotReturnComplete.enk"         | MissingReturnStatementException.class
         unreachableStatement      | "UnreachableStatement.enk"      | UnreachableStatementException.class
         incompatibleLocalVariable | "IncompatibleLocalVariable.enk" | IncompatibleTypesException.class
-        incompatibleField       | "IncompatibleField.enk"       | IncompatibleTypesException.class
-        incompatibleThrow       | "IncompatibleThrow.enk"       | IncompatibleTypesException.class
-        assignNullToNotNullable | "AssignNullToNotNullable.enk" | IncompatibleTypesException.class
-        modifyFinalVariable     | "ModifyFinalVariable.enk"     | FinalFieldModificationException.class
-        modifyFinalField        | "ModifyFinalField.enk"        | FinalFieldModificationException.class
-        fieldByConstructor      | "FieldByConstructor.enk"      | IncompatibleTypesException.class
+        incompatibleField         | "IncompatibleField.enk"         | IncompatibleTypesException.class
+        incompatibleThrow         | "IncompatibleThrow.enk"         | IncompatibleTypesException.class
+        assignNullToNotNullable   | "AssignNullToNotNullable.enk"   | IncompatibleTypesException.class
+        modifyFinalVariable       | "ModifyFinalVariable.enk"       | FinalFieldModificationException.class
+        modifyFinalField          | "ModifyFinalField.enk"          | FinalFieldModificationException.class
+        fieldByConstructor        | "FieldByConstructor.enk"        | IncompatibleTypesException.class
+        noAccessToMethod          | "NoAccessToMethod.enk"          | AccessException.class
     }
 
+    private static final noAccessToMethod = """
+                        import com.kubadziworski.test.NoAccess;
+                        
+                        NoAccessToMethod {
+                            fn start() {
+                                val obj = new NoAccess();
+                                obj.packagePrivate();
+                            }
+                        }
+    """
 
     private static final sendNullToMethod = """
                         SendNullToMethod {

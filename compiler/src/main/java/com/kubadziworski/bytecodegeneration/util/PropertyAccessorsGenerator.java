@@ -43,8 +43,9 @@ public class PropertyAccessorsGenerator {
             Optional<FunctionSignature> signature = PropertyAccessorsUtil.getSetterFunctionSignatureForField(field);
             Optional<FunctionCall> functionCall = signature.map(functionSignature -> {
                 ArgumentHolder argument = new ArgumentHolder(assignment.getAssignmentExpression(), null);
-                return new PropertyAccessorCall(functionSignature, functionSignature.createArgumentList(Collections.singletonList(argument)),
-                        assignment.getPreExpression(), field);
+                return new FunctionCall(functionSignature, functionSignature.createArgumentList(Collections.singletonList(argument)),
+                        assignment.getPreExpression());
+
             });
             //The parsing visitors should have guaranteed that if this is not possible, at least by direct field access should work
             if (functionCall.isPresent() && PropertyAccessorsUtil.isFunctionAccessible(functionCall.get().getFunctionSignature(), generator.getScope().getClassType())) {
@@ -75,7 +76,7 @@ public class PropertyAccessorsGenerator {
 
         if (useAccessors) {
             Optional<FunctionCall> functionCall = PropertyAccessorsUtil.getGetterFunctionSignatureForField(field)
-                    .map(functionSignature -> new PropertyAccessorCall(functionSignature, fieldReference.getOwner(), field));
+                    .map(functionSignature -> new FunctionCall(functionSignature, Collections.emptyList(), fieldReference.getOwner()));
             //The parsing visitors should have guaranteed that if this is not possible, at least by direct field access should work
             if (functionCall.isPresent() && PropertyAccessorsUtil.isFunctionAccessible(functionCall.get().getFunctionSignature(), generator.getScope().getClassType())) {
                 functionCall.get().accept(generator);

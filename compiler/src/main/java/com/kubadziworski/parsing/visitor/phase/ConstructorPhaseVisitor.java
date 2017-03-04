@@ -6,6 +6,7 @@ import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -38,7 +39,7 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
     public Scope visitClassDeclaration(EnkelParser.ClassDeclarationContext ctx) {
         if (ctx.primaryConstructor() == null || ctx.primaryConstructor().constructorParametersList() == null) {
             scope.addConstructor(new FunctionSignature(scope.getClassType().getName(), Collections.emptyList(),
-                    VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC), scope.getClassType()));
+                    VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC), scope.getClassType(), SignatureType.CONSTRUCTOR_CALL));
             return scope;
         }
 
@@ -63,7 +64,8 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
                 });
         List<Pair<Parameter, Field>> parameters = Stream.concat(normalParameters, defParameters).collect(Collectors.toList());
         List<Parameter> parameterList = parameters.stream().map(Pair::getKey).collect(Collectors.toList());
-        FunctionSignature signature = new FunctionSignature(scope.getClassType().getName(), parameterList, VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC), scope.getClassType());
+        FunctionSignature signature = new FunctionSignature(scope.getClassType().getName(), parameterList, VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC),
+                scope.getClassType(), SignatureType.CONSTRUCTOR_CALL);
         scope.addConstructor(signature);
 
         parameters.stream().map(Pair::getValue).filter(Objects::nonNull).forEach(scope::addField);

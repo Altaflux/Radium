@@ -16,6 +16,7 @@ import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.*;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.PropertyAccessorsUtil;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,19 +58,21 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
                     validateAccessToFunction(signature);
                     return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new PopExpression(owner));
                 }
+                validateAccessToFunction(signature);
                 return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), owner);
             } catch (ClassNotFoundForNameException | FieldNotFoundException e) {
                 String possibleClass = ctx.owner.getText();
-                return visitStaticReference(possibleClass, functionName, arguments);
+                return visitStaticReference(ctx, possibleClass, functionName, arguments);
             }
         }
 
         FunctionSignature signature = scope.getMethodCallSignature(functionName, arguments);
+        validateAccessToFunction(signature);
         if (scope.getCurrentFunctionSignature().equals(signature) && signature.getModifiers().contains(com.kubadziworski.domain.Modifier.INLINE)) {
             throw new CompilationException("Inline function '" + signature.getName() + "' cannot be recursive");
         }
         if (signature.getModifiers().contains(com.kubadziworski.domain.Modifier.STATIC)) {
-            return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), signature.getOwner());
+            return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new EmptyExpression(signature.getOwner()));
         }
 
         Type thisType = new EnkelType(scope.getFullClassName(), scope);
@@ -91,6 +94,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
     public Call visitSupercall(SupercallContext ctx) {
         List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
         FunctionSignature signature = scope.getMethodCallSignature(SUPER_IDENTIFIER, arguments);
+        validateAccessToFunction(signature);
         return new SuperCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments));
     }
 
@@ -99,15 +103,15 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
         FunctionSignature signature = ClassTypeFactory.createClassType(scope.getSuperClassName()).getMethodCallSignature(functionName, arguments);
         Type thisType = new EnkelType(scope.getFullClassName(), scope);
         LocalVariable thisVariable = new LocalVariable("this", thisType);
-
+        validateAccessToFunction(signature);
         return new SuperFunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new LocalVariableReference(thisVariable));
     }
 
-    private Call visitStaticReference(String possibleClass, String functionName, List<ArgumentHolder> arguments) {
+    private Call visitStaticReference(ParserRuleContext ctx, String possibleClass, String functionName, List<ArgumentHolder> arguments) {
         Type classType = scope.resolveClassName(possibleClass);
         FunctionSignature signature = classType.getMethodCallSignature(functionName, arguments);
         validateAccessToFunction(signature);
-        return new FunctionCall(signature, signature.createArgumentList(arguments), classType);
+        return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new EmptyExpression(classType));
     }
 
     private List<ArgumentHolder> getArgumentsForCall(ArgumentListContext argumentsListCtx) {

@@ -6,6 +6,7 @@ import com.kubadziworski.domain.MetaData;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
@@ -103,7 +104,7 @@ public class Scope {
     public FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         if (identifier.equals("super")) {
             return new FunctionSignature("super", Collections.emptyList(), VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC),
-                    ClassTypeFactory.createClassType(getSuperClassName()));
+                    ClassTypeFactory.createClassType(getSuperClassName()), SignatureType.CONSTRUCTOR_CALL);
         }
 
         Map<Integer, List<FunctionSignature>> functions = functionSignatures.stream()

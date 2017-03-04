@@ -5,6 +5,7 @@ import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Argument;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.ParameterForNameNotFoundException;
 import com.kubadziworski.exception.WrongArgumentNameException;
@@ -25,13 +26,24 @@ public class FunctionSignature implements CallableDescriptor {
     private final Type returnType;
     private final Modifiers modifiers;
     private final Type owner;
+    private final SignatureType signatureType;
 
-    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, Modifiers modifiers, Type owner) {
+//    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, Modifiers modifiers, Type owner) {
+//        this.name = name;
+//        this.parameters = parameters;
+//        this.returnType = returnType;
+//        this.modifiers = modifiers;
+//        this.owner = owner;
+//        this.signatureType = null;
+//    }
+
+    public FunctionSignature(String name, List<Parameter> parameters, Type returnType, Modifiers modifiers, Type owner, SignatureType signatureType) {
         this.name = name;
         this.parameters = parameters;
         this.returnType = returnType;
         this.modifiers = modifiers;
         this.owner = owner;
+        this.signatureType = signatureType;
     }
 
     public String getName() {

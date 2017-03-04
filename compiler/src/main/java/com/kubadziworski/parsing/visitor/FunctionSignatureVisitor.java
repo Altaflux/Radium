@@ -6,6 +6,7 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
@@ -64,11 +65,13 @@ public class FunctionSignatureVisitor extends EnkelParserBaseVisitor<FunctionSig
         }
 
         ParametersListContext parametersCtx = ctx.parametersList();
+        SignatureType signatureType = SignatureType.FUNCTION_CALL;
         if (parametersCtx != null) {
+
             List<Parameter> parameters = parametersCtx.accept(new ParameterExpressionListVisitor(expressionVisitor, scope));
-            return new FunctionSignature(functionName, parameters, returnType, modifiersSet, scope.getClassType());
+            return new FunctionSignature(functionName, parameters, returnType, modifiersSet, scope.getClassType(), signatureType);
         }
-        return new FunctionSignature(functionName, Collections.emptyList(), returnType, modifiersSet, scope.getClassType());
+        return new FunctionSignature(functionName, Collections.emptyList(), returnType, modifiersSet, scope.getClassType(), signatureType);
 
     }
 }

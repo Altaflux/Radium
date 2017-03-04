@@ -5,10 +5,8 @@ import com.kubadziworski.antlr.EnkelParser.ClassDeclarationContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.*;
-import com.kubadziworski.domain.node.expression.ConstructorCall;
-import com.kubadziworski.domain.node.expression.FunctionCall;
-import com.kubadziworski.domain.node.expression.Parameter;
-import com.kubadziworski.domain.node.expression.SuperCall;
+import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.FunctionSignature;
@@ -108,12 +106,13 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
         Parameter args = new Parameter("args", BuiltInType.STRING_ARR, null);
         Type owner = scope.getClassType();
         FunctionSignature functionSignature = new FunctionSignature("main", Collections.singletonList(args), VoidType.INSTANCE,
-                Modifiers.empty().with(Modifier.PUBLIC).with(Modifier.STATIC), owner);
+                Modifiers.empty().with(Modifier.PUBLIC).with(Modifier.STATIC), owner, SignatureType.FUNCTION_CALL);
 
         FunctionSignature constructorCallSignature = owner.getConstructorCallSignature(Collections.emptyList());
         ConstructorCall constructorCall = new ConstructorCall(constructorCallSignature, scope.getClassType());
-        FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC), owner);
-        FunctionCall startFunctionCall = new FunctionCall(startFunSignature, Collections.emptyList(), scope.getClassType());
+        FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), VoidType.INSTANCE,
+                Modifiers.empty().with(Modifier.PUBLIC), owner, SignatureType.FUNCTION_CALL);
+        FunctionCall startFunctionCall = new FunctionCall(startFunSignature, Collections.emptyList(), new EmptyExpression(scope.getClassType()));
         Block block = new Block(new Scope(scope), Arrays.asList(constructorCall, startFunctionCall));
         return new Function(functionSignature, block);
     }

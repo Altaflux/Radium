@@ -23,14 +23,6 @@ public class FunctionCall extends ElementImpl implements Call, CallableMember {
         this(null, signature, arguments, owner);
     }
 
-    public FunctionCall(FunctionSignature signature, List<Argument> arguments, Type ownerType) {
-        this(null, signature,arguments, new EmptyExpression(ownerType));
-    }
-
-    public FunctionCall(NodeData element, FunctionSignature signature, List<Argument> arguments, Type ownerType) {
-        this(element, signature,arguments, new EmptyExpression(ownerType));
-    }
-
     public FunctionCall(NodeData element, FunctionSignature signature, List<Argument> arguments, Expression owner) {
         super(element);
         this.type = signature.getReturnType();

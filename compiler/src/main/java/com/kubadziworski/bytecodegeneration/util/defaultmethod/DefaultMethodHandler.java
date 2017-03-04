@@ -10,6 +10,7 @@ import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.IfStatement;
@@ -42,12 +43,12 @@ public class DefaultMethodHandler {
 
     FunctionSignature getDefaultSignature(FunctionSignature signature) {
         return new FunctionSignature(signature.getName() + "$default", getDefaultMethodParameters(signature), signature.getReturnType(),
-                signature.getModifiers(), signature.getOwner());
+                signature.getModifiers(), signature.getOwner(), SignatureType.FUNCTION_CALL);
     }
 
     FunctionSignature getDefaultSignatureForConstructor(FunctionSignature signature) {
         return new FunctionSignature(signature.getName(), getDefaultMethodParameters(signature), signature.getReturnType(),
-                signature.getModifiers(), signature.getOwner());
+                signature.getModifiers(), signature.getOwner(), SignatureType.FUNCTION_CALL);
     }
 
     public void createSyntheticForConstructor(Constructor function, ClassVisitor cv, MethodGenerator methodGenerator) {
@@ -157,7 +158,7 @@ public class DefaultMethodHandler {
     private void createParameterLessConstructor(Constructor constructorFunction, MethodGenerator methodGenerator) {
         FunctionSignature originalFunctionSignature = constructorFunction.getFunctionSignature();
         FunctionSignature thisFunctionSignature = new FunctionSignature(originalFunctionSignature.getName(), Collections.emptyList(), originalFunctionSignature.getReturnType()
-                , originalFunctionSignature.getModifiers(), originalFunctionSignature.getOwner());
+                , originalFunctionSignature.getModifiers(), originalFunctionSignature.getOwner(), SignatureType.FUNCTION_CALL);
 
         Scope originalScope = ((EnkelType) constructorFunction.getFunctionSignature().getOwner()).getScope();
         Scope scope = originalScope.cloneWithoutVariables();

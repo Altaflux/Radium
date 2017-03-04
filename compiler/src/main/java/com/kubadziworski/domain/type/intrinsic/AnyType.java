@@ -4,6 +4,7 @@ package com.kubadziworski.domain.type.intrinsic;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.DefaultTypes;
@@ -27,13 +28,13 @@ public class AnyType implements Type {
         Modifiers modifiers = Modifiers.empty().with(Modifier.PUBLIC);
         Parameter parameter = new Parameter("other", this, null);
         FunctionSignature equalsSignature = new FunctionSignature("equals", Collections.singletonList(parameter),
-                PrimitiveTypes.BOOLEAN_TYPE, modifiers, this);
+                PrimitiveTypes.BOOLEAN_TYPE, modifiers, this, SignatureType.FUNCTION_CALL);
         FunctionSignature constructorSignature = new FunctionSignature("Any", Collections.emptyList(),
-                this, modifiers, this);
+                this, modifiers, this, SignatureType.FUNCTION_CALL);
         FunctionSignature toString = new FunctionSignature("toString", Collections.emptyList(),
-                DefaultTypes.STRING, modifiers, this);
+                DefaultTypes.STRING, modifiers, this, SignatureType.FUNCTION_CALL);
         FunctionSignature hashCode = new FunctionSignature("hashCode", Collections.emptyList(),
-                PrimitiveTypes.INT_TYPE, modifiers, this);
+                PrimitiveTypes.INT_TYPE, modifiers, this, SignatureType.FUNCTION_CALL);
 
         functionSignatures = Arrays.asList(equalsSignature, constructorSignature, toString, hashCode);
     }

@@ -5,6 +5,7 @@ import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.scope.CallableMember;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
@@ -64,10 +65,10 @@ public class IntrinsicMethods {
 
             Modifiers modifiers = Modifiers.empty().with(com.kubadziworski.domain.Modifier.PUBLIC);
             FunctionSignature primitiveEquals = new FunctionSignature("==", Collections.singletonList(new Parameter("o", type, null)),
-                    PrimitiveTypes.BOOLEAN_TYPE, modifiers, type);
+                    PrimitiveTypes.BOOLEAN_TYPE, modifiers, type, SignatureType.FUNCTION_CALL);
             intrinsicMap.registerIntrinsicMethod(primitiveEquals, primitiveComparison, type);
             FunctionSignature primitiveNotEquals = new FunctionSignature("!=", Collections.singletonList(new Parameter("o", type, null)),
-                    PrimitiveTypes.BOOLEAN_TYPE, modifiers, type);
+                    PrimitiveTypes.BOOLEAN_TYPE, modifiers, type, SignatureType.FUNCTION_CALL);
             intrinsicMap.registerIntrinsicMethod(primitiveNotEquals, primitiveComparison, type);
 
         });
@@ -122,7 +123,7 @@ public class IntrinsicMethods {
             Stream.of(CompareSign.values()).forEach(compareSign -> {
                 if (!compareSign.equals(CompareSign.EQUAL) && !compareSign.equals(CompareSign.NOT_EQUAL)) {
                     FunctionSignature primitiveCompare = new FunctionSignature(compareSign.getSign(), Collections.singletonList(new Parameter("o", type1, null)),
-                            PrimitiveTypes.BOOLEAN_TYPE, Modifiers.empty().with(com.kubadziworski.domain.Modifier.PUBLIC), type);
+                            PrimitiveTypes.BOOLEAN_TYPE, Modifiers.empty().with(com.kubadziworski.domain.Modifier.PUBLIC), type, SignatureType.FUNCTION_CALL);
                     intrinsicMap.registerIntrinsicMethod(primitiveCompare, primitiveComparison, type);
 
                 }

@@ -6,6 +6,7 @@ import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.FieldReference;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
@@ -23,9 +24,16 @@ public class PropertyAccessorsUtil {
 
 
     public static FunctionSignature createSetterForField(Field field, String fieldName) {
+        boolean staticField = field.getModifiers().contains(Modifier.STATIC);
+        Modifiers modifiers = Modifiers.empty().with(Modifier.FINAL).with(Modifier.PUBLIC);
+        if (staticField) {
+            modifiers = modifiers.with(Modifier.STATIC);
+        }
+        SignatureType signatureType = SignatureType.FUNCTION_CALL;
+
         return new FunctionSignature("set" + getPropertyMethodSuffix(field.getName()),
                 Collections.singletonList(new Parameter(fieldName, field.getType(), null)),
-                VoidType.INSTANCE, Modifiers.empty().with(com.kubadziworski.domain.Modifier.FINAL).with(com.kubadziworski.domain.Modifier.PUBLIC), field.getOwner());
+                VoidType.INSTANCE, modifiers, field.getOwner(), signatureType);
     }
 
     public static FunctionSignature createSetterForField(Field field) {
@@ -33,12 +41,19 @@ public class PropertyAccessorsUtil {
     }
 
     public static FunctionSignature createGetterForField(Field field) {
+        boolean staticField = field.getModifiers().contains(Modifier.STATIC);
+        Modifiers modifiers = Modifiers.empty().with(Modifier.FINAL).with(Modifier.PUBLIC);
+        if (staticField) {
+            modifiers = modifiers.with(Modifier.STATIC);
+        }
+        SignatureType signatureType = SignatureType.FUNCTION_CALL;
+
         if (field.getType().equals(PrimitiveTypes.BOOLEAN_TYPE)) {
             return new FunctionSignature("is" + getPropertyMethodSuffix(field.getName()), Collections.emptyList(),
-                    field.getType(), Modifiers.empty().with(com.kubadziworski.domain.Modifier.FINAL).with(com.kubadziworski.domain.Modifier.PUBLIC), field.getOwner());
+                    field.getType(), modifiers, field.getOwner(), signatureType);
         }
         return new FunctionSignature("get" + getPropertyMethodSuffix(field.getName()), Collections.emptyList(),
-                field.getType(), Modifiers.empty().with(com.kubadziworski.domain.Modifier.FINAL).with(com.kubadziworski.domain.Modifier.PUBLIC), field.getOwner());
+                field.getType(), modifiers, field.getOwner(), signatureType);
     }
 
     public static Optional<FunctionSignature> getSetterFunctionSignatureForField(Field field) {
