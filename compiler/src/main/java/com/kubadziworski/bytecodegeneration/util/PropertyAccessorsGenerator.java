@@ -4,6 +4,7 @@ package com.kubadziworski.bytecodegeneration.util;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;

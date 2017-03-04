@@ -7,7 +7,7 @@ import com.kubadziworski.domain.ArithmeticOperator;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.ArgumentHolder;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.FunctionCall;
+import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.DefaultTypes;

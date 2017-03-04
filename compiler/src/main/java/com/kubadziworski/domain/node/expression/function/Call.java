@@ -1,5 +1,7 @@
-package com.kubadziworski.domain.node.expression;
+package com.kubadziworski.domain.node.expression.function;
 
+import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.scope.FunctionSignature;
 
 import java.util.List;

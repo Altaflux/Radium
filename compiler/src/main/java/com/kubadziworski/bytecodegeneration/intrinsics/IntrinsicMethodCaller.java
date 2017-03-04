@@ -3,7 +3,7 @@ package com.kubadziworski.bytecodegeneration.intrinsics;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.FunctionCall;
+import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.commons.InstructionAdapter;
 

@@ -4,7 +4,7 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.SuperCall;
+import com.kubadziworski.domain.node.expression.function.SuperCall;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;

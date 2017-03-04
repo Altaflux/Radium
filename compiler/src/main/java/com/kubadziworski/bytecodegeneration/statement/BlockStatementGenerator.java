@@ -1,7 +1,7 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.domain.node.expression.BlockExpression;
-import com.kubadziworski.domain.node.expression.ConstructorCall;
+import com.kubadziworski.domain.node.expression.function.ConstructorCall;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;

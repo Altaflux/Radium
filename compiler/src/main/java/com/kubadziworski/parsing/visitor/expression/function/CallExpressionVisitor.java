@@ -7,6 +7,7 @@ import com.kubadziworski.antlr.EnkelParser.SupercallContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.expression.function.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
@@ -21,7 +22,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.Collections;
 import java.util.List;
 
-import static com.kubadziworski.domain.node.expression.SuperCall.SUPER_IDENTIFIER;
+import static com.kubadziworski.domain.node.expression.function.SuperCall.SUPER_IDENTIFIER;
 
 public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
     private final ExpressionVisitor expressionVisitor;
@@ -98,13 +99,13 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
         return new SuperCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments));
     }
 
-    private SuperFunctionCall createSuperFunctionCall(FunctionCallContext ctx, String functionName, List<ArgumentHolder> arguments) {
+    private FunctionCall createSuperFunctionCall(FunctionCallContext ctx, String functionName, List<ArgumentHolder> arguments) {
 
         FunctionSignature signature = ClassTypeFactory.createClassType(scope.getSuperClassName()).getMethodCallSignature(functionName, arguments);
         Type thisType = new EnkelType(scope.getFullClassName(), scope);
         LocalVariable thisVariable = new LocalVariable("this", thisType);
         validateAccessToFunction(signature);
-        return new SuperFunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new LocalVariableReference(thisVariable));
+        return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new LocalVariableReference(thisVariable), CallType.SUPER_CALL);
     }
 
     private Call visitStaticReference(ParserRuleContext ctx, String possibleClass, String functionName, List<ArgumentHolder> arguments) {

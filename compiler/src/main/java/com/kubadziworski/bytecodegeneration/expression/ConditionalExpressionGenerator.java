@@ -6,6 +6,7 @@ import com.kubadziworski.domain.CompareSign;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;

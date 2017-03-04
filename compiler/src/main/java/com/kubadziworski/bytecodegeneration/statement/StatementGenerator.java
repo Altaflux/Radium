@@ -2,6 +2,9 @@ package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.function.ConstructorCall;
+import com.kubadziworski.domain.node.expression.function.FunctionCall;
+import com.kubadziworski.domain.node.expression.function.SuperCall;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
