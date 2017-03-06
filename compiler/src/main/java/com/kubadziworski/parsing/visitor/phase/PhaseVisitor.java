@@ -55,11 +55,8 @@ public class PhaseVisitor {
     private ImportHolderListPath processClassDeclarations(ResolverContainerFilePath resolverContainerFilePath) {
         ImportResolver importResolver = resolverContainerFilePath.importResolver;
         List<Holder> scopes = resolverContainerFilePath.containers.stream().map(holderOfClasses -> holderOfClasses)
-                .map(ctx -> {
-                    String superClass = AnyType.INSTANCE.getName();
-                    return new Holder(ctx.context, new Scope(new MetaData(ctx.className, ctx.classPackage, superClass,
-                            Collections.emptyList(), resolverContainerFilePath.path), importResolver));
-                }).collect(Collectors.toList());
+                .map(ctx -> new Holder(ctx.context, new Scope(new MetaData(ctx.className, ctx.classPackage, () -> AnyType.INSTANCE,
+                        Collections.emptyList(), resolverContainerFilePath.path), importResolver))).collect(Collectors.toList());
 
         return new ImportHolderListPath(importResolver, scopes, resolverContainerFilePath.path);
     }

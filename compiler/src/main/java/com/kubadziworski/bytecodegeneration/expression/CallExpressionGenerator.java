@@ -27,7 +27,7 @@ public class CallExpressionGenerator {
     public void generate(SuperCall superCall, Scope scope, StatementGenerator statementGenerator) {
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
         generateArguments(superCall.getArguments(), superCall.getFunctionSignature().getParameters(), statementGenerator);
-        String ownerDescriptor = scope.getSuperClassInternalName();
+        String ownerDescriptor = scope.getSuperClassType().getAsmType().getInternalName();
         String methodDescriptor = DescriptorFactory.getMethodDescriptor(superCall.getFunctionSignature());
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
     }

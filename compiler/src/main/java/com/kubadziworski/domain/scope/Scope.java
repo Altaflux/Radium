@@ -104,7 +104,7 @@ public class Scope {
     public FunctionSignature getMethodCallSignature(String identifier, List<ArgumentHolder> arguments) {
         if (identifier.equals("super")) {
             return new FunctionSignature("super", Collections.emptyList(), VoidType.INSTANCE, Modifiers.empty().with(Modifier.PUBLIC),
-                    ClassTypeFactory.createClassType(getSuperClassName()), SignatureType.CONSTRUCTOR_CALL);
+                    getSuperClassType(), SignatureType.CONSTRUCTOR_CALL);
         }
 
         Map<Integer, List<FunctionSignature>> functions = functionSignatures.stream()
@@ -114,7 +114,7 @@ public class Scope {
                 .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier, arguments));
     }
 
-    public String getSuperClassName() {
+    public Type getSuperClassType() {
         return metaData.getSuperClass();
     }
 
@@ -205,9 +205,6 @@ public class Scope {
         return metaData.getClassName();
     }
 
-    public String getSuperClassInternalName() {
-        return ClassTypeFactory.createClassType(getSuperClassName()).getAsmType().getInternalName();
-    }
 
     public MetaData getMetaData() {
         return metaData;

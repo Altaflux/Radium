@@ -11,7 +11,6 @@ import com.kubadziworski.domain.node.expression.function.*;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.*;
@@ -112,7 +111,6 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
 
         @Override
         public Call visitConstructorCall(ConstructorCallContext ctx) {
-
             Type className = scope.resolveClassName(ctx.typeName().getText());
             List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
             FunctionSignature signature = className.getConstructorCallSignature(arguments);
@@ -128,7 +126,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
 
         private FunctionCall createSuperFunctionCall(FunctionCallContext ctx, String functionName, List<ArgumentHolder> arguments) {
 
-            FunctionSignature signature = ClassTypeFactory.createClassType(scope.getSuperClassName()).getMethodCallSignature(functionName, arguments);
+            FunctionSignature signature = scope.getSuperClassType().getMethodCallSignature(functionName, arguments);
             Type thisType = new EnkelType(scope.getFullClassName(), scope);
             LocalVariable thisVariable = new LocalVariable("this", thisType);
             return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new LocalVariableReference(thisVariable), CallType.SUPER_CALL);

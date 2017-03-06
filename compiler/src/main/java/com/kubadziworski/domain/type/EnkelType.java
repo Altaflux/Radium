@@ -36,8 +36,7 @@ public class EnkelType implements Type {
 
     @Override
     public Optional<Type> getSuperType() {
-        return Optional.ofNullable(scope.getSuperClassName())
-                .map(s -> ClassTypeFactory.createClassType(scope.getSuperClassName()));
+        return Optional.of(scope.getSuperClassType());
 
     }
 
