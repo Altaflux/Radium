@@ -29,9 +29,9 @@ public class PhaseVisitor {
         this.globalScope = globalScope;
     }
 
-    private Triple<ImportResolver, List<Triple<EnkelParser.ClassDeclarationContext, String, String>>, String> processClassNames(CompilationData enkelParser) {
+    private ResolverContainerFilePath processClassNames(CompilationData compilationData) {
 
-        EnkelParser.CompilationUnitContext context = enkelParser.getEnkelParser().compilationUnit();
+        EnkelParser.CompilationUnitContext context = compilationData.getEnkelParser().compilationUnit();
         String packageDeclaration = "";
         EnkelParser.PackageDeclarationContext declarationContexts = context.packageDeclaration();
         if (declarationContexts != null) {
@@ -40,27 +40,28 @@ public class PhaseVisitor {
         JvmConfiguration jvmConfiguration = CompilerConfigInstance.getConfig();
         ImportResolver importResolver = new ImportResolver(context.importDeclaration(), jvmConfiguration.getResolverContainer());
         String packageDeclaration2 = packageDeclaration;
-        List<Triple<EnkelParser.ClassDeclarationContext, String, String>> classes = context.classDeclaration().stream().map(ctx -> {
+        List<ClassContextClassNamePackage> classes = context.classDeclaration().stream().map(ctx -> {
             if (StringUtils.isNotEmpty(packageDeclaration2)) {
-                return new Triple<>(ctx, ctx.className().getText(), packageDeclaration2);
+                return new ClassContextClassNamePackage(ctx, ctx.className().getText(), packageDeclaration2);
             } else {
-                return new Triple<>(ctx, ctx.className().getText(), "");
+                return new ClassContextClassNamePackage(ctx, ctx.className().getText(), "");
             }
         }).collect(Collectors.toList());
-        return new Triple<>(importResolver, classes, enkelParser.getFilePath());
+
+
+        return new ResolverContainerFilePath(importResolver, classes, compilationData.getFilePath());
     }
 
-    private Triple<ImportResolver, List<Holder>, String> processClassDeclarations(Triple<ImportResolver, List<Triple<EnkelParser.ClassDeclarationContext, String, String>>,
-            String> enkelParser) {
-        ImportResolver importResolver = enkelParser.value1;
-        List<Holder> scopes = enkelParser.value2.stream().map(holderOfClasses -> holderOfClasses)
+    private ImportHolderListPath processClassDeclarations(ResolverContainerFilePath resolverContainerFilePath) {
+        ImportResolver importResolver = resolverContainerFilePath.importResolver;
+        List<Holder> scopes = resolverContainerFilePath.containers.stream().map(holderOfClasses -> holderOfClasses)
                 .map(ctx -> {
-
                     String superClass = AnyType.INSTANCE.getName();
-                    return new Holder(ctx.value1, new Scope(new MetaData(ctx.value2, ctx.value3, superClass, Collections.emptyList(), enkelParser.value3),
-                            importResolver));
+                    return new Holder(ctx.context, new Scope(new MetaData(ctx.className, ctx.classPackage, superClass,
+                            Collections.emptyList(), resolverContainerFilePath.path), importResolver));
                 }).collect(Collectors.toList());
-        return new Triple<>(importResolver, scopes, enkelParser.value3);
+
+        return new ImportHolderListPath(importResolver, scopes, resolverContainerFilePath.path);
     }
 
 
@@ -79,13 +80,13 @@ public class PhaseVisitor {
         compilationData.ctx.accept(methodPhaseVisitor);
     }
 
-    private CompilationUnit processCompilationUnit(Triple<ImportResolver, List<Holder>, String> compilationData) {
-        List<ClassDeclaration> classDeclaration = compilationData.value2.stream().map(holder -> {
+    private CompilationUnit processCompilationUnit(ImportHolderListPath compilationData) {
+        List<ClassDeclaration> classDeclaration = compilationData.holder.stream().map(holder -> {
             ClassVisitor classVisitor = new ClassVisitor(holder.scope);
             return holder.ctx.accept(classVisitor);
         }).collect(Collectors.toList());
 
-        return new CompilationUnit(classDeclaration, compilationData.value3,
+        return new CompilationUnit(classDeclaration, compilationData.path,
                 classDeclaration.stream().findAny().map(ClassDeclaration::getClassPackage).filter(Objects::nonNull).orElse(""));
 
     }
@@ -93,29 +94,35 @@ public class PhaseVisitor {
     public List<CompilationUnit> processAllClasses(List<CompilationData> enkelParsers) {
 
         //Phase 1, loads to the Global Scope all the names of the Enkel files
-        List<Triple<ImportResolver, List<Triple<EnkelParser.ClassDeclarationContext, String, String>>, String>> ofClasses = enkelParsers.stream()
+        List<ResolverContainerFilePath> ofClasses = enkelParsers.stream()
                 .map(this::processClassNames)
-                .peek(holderOfHolderOfClasses -> holderOfHolderOfClasses.value2
-                        .forEach(holderOfClasses -> globalScope.registerClass(holderOfClasses.value2)))
+                .peek(holderOfHolderOfClasses -> holderOfHolderOfClasses.containers
+                        .forEach(holderOfClasses -> {
+                            if (StringUtils.isNotEmpty(holderOfClasses.classPackage)) {
+                                globalScope.registerClass(holderOfClasses.classPackage + "." + holderOfClasses.className);
+                            } else {
+                                globalScope.registerClass(holderOfClasses.className);
+                            }
+                        }))
                 .collect(Collectors.toList());
 
-        ofClasses.forEach(holderOfHolderOfClasses -> holderOfHolderOfClasses.value1.loadClassImports());
+        ofClasses.forEach(holderOfHolderOfClasses -> holderOfHolderOfClasses.importResolver.loadClassImports());
 
-        List<Triple<ImportResolver, List<Holder>, String>> parserScopes = ofClasses
+        List<ImportHolderListPath> parserScopes = ofClasses
                 .stream()
                 .map(this::processClassDeclarations)
-                .peek(holderOfHolders -> holderOfHolders.value2
+                .peek(holderOfHolders -> holderOfHolders.holder
                         .forEach(holder -> globalScope.addScope(holder.scope.getFullClassName(), holder.scope)))
                 .collect(Collectors.toList());
 
         //Phase 2 resolve all class references of the ImportResolvers of each scope
         parserScopes.stream()
-                .peek(holderOfHolders -> holderOfHolders.value2.forEach(this::processFieldDeclarations))
-                .peek(holderOfHolders -> holderOfHolders.value2.forEach(this::processConstructorDeclarations))
-                .forEach(holderOfHolders -> holderOfHolders.value2.forEach(this::processMethodDeclarations));
+                .peek(holderOfHolders -> holderOfHolders.holder.forEach(this::processFieldDeclarations))
+                .peek(holderOfHolders -> holderOfHolders.holder.forEach(this::processConstructorDeclarations))
+                .forEach(holderOfHolders -> holderOfHolders.holder.forEach(this::processMethodDeclarations));
 
         //Phase 3 resolve all static methods and field references of the ImportResolvers of each scope
-        parserScopes.forEach(holderOfHolders -> holderOfHolders.value1.loadMethodsAndFieldsImports());
+        parserScopes.forEach(holderOfHolders -> holderOfHolders.importResolver.loadMethodsAndFieldsImports());
 
         //Phase 4 process the compilation data, all imports should already be resolved by now.
         return parserScopes.stream()
@@ -124,16 +131,39 @@ public class PhaseVisitor {
 
     }
 
+    private static class ImportHolderListPath {
+        private final ImportResolver importResolver;
+        private final List<Holder> holder;
+        private final String path;
 
-    private class Triple<A, B, C> {
-        private final A value1;
-        private final B value2;
-        private final C value3;
+        ImportHolderListPath(ImportResolver importResolver, List<Holder> holder, String path) {
+            this.importResolver = importResolver;
+            this.holder = holder;
+            this.path = path;
+        }
+    }
 
-        Triple(A value1, B value2, C value3) {
-            this.value1 = value1;
-            this.value2 = value2;
-            this.value3 = value3;
+    private static class ResolverContainerFilePath {
+        private final ImportResolver importResolver;
+        private final List<ClassContextClassNamePackage> containers;
+        private final String path;
+
+        ResolverContainerFilePath(ImportResolver importResolver, List<ClassContextClassNamePackage> containers, String path) {
+            this.importResolver = importResolver;
+            this.containers = containers;
+            this.path = path;
+        }
+    }
+
+    private static class ClassContextClassNamePackage {
+        private final EnkelParser.ClassDeclarationContext context;
+        private final String className;
+        private final String classPackage;
+
+        ClassContextClassNamePackage(EnkelParser.ClassDeclarationContext context, String className, String classPackage) {
+            this.context = context;
+            this.className = className;
+            this.classPackage = classPackage;
         }
     }
 
@@ -146,5 +176,4 @@ public class PhaseVisitor {
             this.scope = scope;
         }
     }
-
 }
