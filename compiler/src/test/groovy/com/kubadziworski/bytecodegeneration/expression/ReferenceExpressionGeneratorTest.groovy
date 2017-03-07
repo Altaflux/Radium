@@ -14,6 +14,7 @@ import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.JavaClassType
+import com.kubadziworski.domain.type.Type
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import com.kubadziworski.resolver.ClazzImportResolver
 import com.kubadziworski.resolver.ImportResolver
@@ -22,6 +23,9 @@ import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.commons.InstructionAdapter
 import spock.lang.Specification
+
+import java.util.function.Supplier
+
 /**
  * Created by kuba on 13.05.16.
  */
@@ -34,7 +38,17 @@ class ReferenceExpressionGeneratorTest extends Specification {
 
     def "should generate field reference"() {
         given:
-        MetaData metaData = new MetaData("Main", "", "java.lang.Object", Collections.emptyList(), "Main.enk")
+        MetaData metaData = new MetaData("Main", "", new Supplier<Type>() {
+            @Override
+            Type get() {
+                return new JavaClassType(java.lang.Object.class)
+            }
+        }, new Supplier<List<Type>>() {
+            @Override
+            List<Type> get() {
+                return Collections.emptyList()
+            }
+        }, "Main.enk")
         ResolverContainer container = new ResolverContainer(Arrays.asList(new ClazzImportResolver(ClassLoader.systemClassLoader)))
         Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList(), container))
             MethodVisitor methodVisitor = Mock()

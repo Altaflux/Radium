@@ -9,6 +9,7 @@ import com.kubadziworski.domain.type.intrinsic.VoidType
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor
 import spock.lang.Specification
+
 /**
  * Created by kuba on 13.05.16.
  */
@@ -16,23 +17,23 @@ class AssignmentStatementVisitorTest extends Specification {
 
     def "should create Assignment Object from antlr generated AssignmentContext object"() {
         given:
-            Scope scope1 = Mock()
-            EnkelParser.AssignmentContext assignmentContext = Mock()
-            EnkelParser.NameContext nameContext = Mock()
-            EnkelParser.ExpressionContext expressionContext = Mock()
-            ExpressionVisitor expressionVisitor = Mock()
+        Scope scope1 = Mock()
+        EnkelParser.AssignmentContext assignmentContext = Mock()
+        EnkelParser.NameContext nameContext = Mock()
+        EnkelParser.ExpressionContext expressionContext = Mock()
+        ExpressionVisitor expressionVisitor = Mock()
         LocalVariable localVariable = new LocalVariable(name, type)
-            assignmentContext.postExpr = expressionContext
+        assignmentContext.postExpr = expressionContext
         when:
-            def assignment = new AssignmentStatementVisitor(expressionVisitor, scope1).visitAssignment(assignmentContext)
+        def assignment = new AssignmentStatementVisitor(expressionVisitor, scope1).visitAssignment(assignmentContext)
         then:
-            1* scope1.isLocalVariableExists(name) >> true
-        1 * scope1.getLocalVariable(name) >> localVariable
-            1* assignmentContext.name() >> nameContext
-            1* nameContext.getText() >> name
-            1* expressionContext.accept(expressionVisitor) >> expression
+        1 * scope1.isLocalVariableExists(name) >> true
+        2 * scope1.getLocalVariable(name) >> localVariable
+        1 * assignmentContext.name() >> nameContext
+        1 * nameContext.getText() >> name
+        1 * expressionContext.accept(expressionVisitor) >> expression
 
-            assignment.assignmentExpression == expression
+        assignment.assignmentExpression == expression
         assignment.variable == localVariable
         where:
         name         | expression                                | type
