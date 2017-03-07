@@ -10,6 +10,8 @@ import com.kubadziworski.domain.CompilationUnit;
 import com.kubadziworski.domain.MetaData;
 import com.kubadziworski.domain.scope.GlobalScope;
 import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.type.ClassTypeFactory;
+import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.parsing.visitor.ClassVisitor;
 import com.kubadziworski.resolver.ImportResolver;
@@ -19,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class PhaseVisitor {
@@ -55,12 +58,30 @@ public class PhaseVisitor {
     private ImportHolderListPath processClassDeclarations(ResolverContainerFilePath resolverContainerFilePath) {
         ImportResolver importResolver = resolverContainerFilePath.importResolver;
         List<Holder> scopes = resolverContainerFilePath.containers.stream().map(holderOfClasses -> holderOfClasses)
-                .map(ctx -> new Holder(ctx.context, new Scope(new MetaData(ctx.className, ctx.classPackage, () -> AnyType.INSTANCE,
-                        Collections.emptyList(), resolverContainerFilePath.path), importResolver))).collect(Collectors.toList());
+                .map(ctx -> new Holder(ctx.context, new Scope(new MetaData(ctx.className, ctx.classPackage, getBaseClass(ctx.context.abstractClassAndInterfaces(),
+                        importResolver), getInterfaces(ctx.context.abstractClassAndInterfaces(), importResolver),
+                        resolverContainerFilePath.path), importResolver))).collect(Collectors.toList());
 
         return new ImportHolderListPath(importResolver, scopes, resolverContainerFilePath.path);
     }
 
+    private Supplier<List<Type>> getInterfaces(EnkelParser.AbstractClassAndInterfacesContext context, ImportResolver resolver) {
+        if (context != null && context.typeName() != null) {
+            return () -> context.typeName().stream()
+                    .map(typeNameContext -> resolver.getClass(typeNameContext.getText())
+                            .orElseGet(() -> ClassTypeFactory.createClassType(typeNameContext.getText())))
+                    .collect(Collectors.toList());
+        }
+        return Collections::emptyList;
+    }
+
+    private Supplier<Type> getBaseClass(EnkelParser.AbstractClassAndInterfacesContext context, ImportResolver resolver) {
+        if (context != null && context.abstractClassInit() != null) {
+            String baseClass = context.abstractClassInit().typeName().getText();
+            return () -> resolver.getClass(baseClass).orElseGet(() -> ClassTypeFactory.createClassType(baseClass));
+        }
+        return () -> AnyType.INSTANCE;
+    }
 
     private void processFieldDeclarations(Holder compilationData) {
         FieldPhaseVisitor fieldPhaseVisitor = new FieldPhaseVisitor(compilationData.scope);

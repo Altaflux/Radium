@@ -5,6 +5,7 @@ import com.kubadziworski.domain.ClassDeclaration;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.MetaDataBuilder;
 import com.kubadziworski.domain.scope.Field;
+import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.EnkelType;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -31,9 +32,11 @@ public class ClassGenerator {
     public ClassWriter generate(ClassDeclaration classDeclaration) {
         String name = classDeclaration.getClassType().getAsmType().getInternalName();
         RadiumClassVisitor visitor = new RadiumClassVisitor(Opcodes.ASM5, classWriter, classDeclaration.getClassType().getAsmType().getClassName());
-        visitor.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, "java/lang/Object", null);
+        Scope scope = ((EnkelType) classDeclaration.getClassType()).getScope();
+        String baseClass = scope.getMetaData().getSuperClass().getAsmType().getInternalName();
+        visitor.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, baseClass, null);
 
-        String fileName = ((EnkelType) classDeclaration.getClassType()).getScope().getMetaData().getFilename();
+        String fileName = scope.getMetaData().getFilename();
         if (fileName.contains(File.separator)) {
             fileName = fileName.substring(fileName.lastIndexOf(File.separatorChar) + 1, fileName.length());
         }

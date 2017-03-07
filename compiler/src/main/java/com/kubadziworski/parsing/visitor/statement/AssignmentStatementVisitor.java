@@ -39,7 +39,7 @@ public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement
             validateType(expression, field);
             return new FieldAssignment(new RuleContextElementImpl(ctx), owner, field, expression);
         }
-        if (scope.isLocalVariableExists(varName)) {
+        if (scope.isLocalVariableExists(varName) && scope.getLocalVariable(varName).isVisible()) {
             LocalVariable localVariable = scope.getLocalVariable(varName);
             validateType(expression, localVariable);
             if (!localVariable.isMutable()) {

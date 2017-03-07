@@ -16,11 +16,17 @@ public class Parameter extends ElementImpl implements Expression {
     private final String name;
     private final Expression defaultValue;
     private final Type type;
+    private final boolean visible;
 
     public Parameter(String name, Type type, Expression defaultValue) {
+        this(name, type, defaultValue, true);
+    }
+
+    public Parameter(String name, Type type, Expression defaultValue, boolean visible) {
         this.type = type;
         this.name = name;
         this.defaultValue = defaultValue;
+        this.visible = visible;
         if (defaultValue != null) {
             validateType(defaultValue, type);
         }
@@ -43,6 +49,10 @@ public class Parameter extends ElementImpl implements Expression {
     @Override
     public Type getType() {
         return type;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 
     @Override

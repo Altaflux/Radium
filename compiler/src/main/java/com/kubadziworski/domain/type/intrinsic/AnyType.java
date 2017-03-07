@@ -30,7 +30,8 @@ public class AnyType implements Type {
         FunctionSignature equalsSignature = new FunctionSignature("equals", Collections.singletonList(parameter),
                 PrimitiveTypes.BOOLEAN_TYPE, modifiers, this, SignatureType.FUNCTION_CALL);
         FunctionSignature constructorSignature = new FunctionSignature("Any", Collections.emptyList(),
-                this, modifiers, this, SignatureType.FUNCTION_CALL);
+                this, modifiers, this, SignatureType.CONSTRUCTOR_CALL);
+
         FunctionSignature toString = new FunctionSignature("toString", Collections.emptyList(),
                 DefaultTypes.STRING, modifiers, this, SignatureType.FUNCTION_CALL);
         FunctionSignature hashCode = new FunctionSignature("hashCode", Collections.emptyList(),
@@ -89,4 +90,11 @@ public class AnyType implements Type {
         return Nullability.NOT_NULL;
     }
 
+    public List<Type> getInterfaces() {
+        return Collections.emptyList();
+    }
+
+    public ClassType getClassType() {
+        return ClassType.CLASS;
+    }
 }

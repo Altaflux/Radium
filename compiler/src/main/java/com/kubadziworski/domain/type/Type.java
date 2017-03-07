@@ -22,6 +22,10 @@ public interface Type {
         NULLABLE, NOT_NULL, UNKNOWN
     }
 
+    enum ClassType {
+        CLASS, INTERFACE
+    }
+
     String getName();
 
     default String getPackage() {
@@ -35,6 +39,10 @@ public interface Type {
     }
 
     Optional<Type> getSuperType();
+
+    List<Type> getInterfaces();
+
+    ClassType getClassType();
 
     List<Field> getFields();
 
@@ -59,7 +67,7 @@ public interface Type {
     default FunctionSignature getConstructorCallSignature(List<ArgumentHolder> arguments) {
         List<FunctionSignature> signatures = getConstructorSignatures();
         Map<Integer, List<FunctionSignature>> functions = signatures.stream()
-                .collect(Collectors.groupingBy(signature -> signature.matches(getName(), arguments)));
+                .collect(Collectors.groupingBy(signature -> signature.matches(signature.getName(), arguments)));
 
         return TypeResolver.resolveArity(this, functions).orElseThrow(() -> new MethodSignatureNotFoundException(getName(), arguments, this));
     }

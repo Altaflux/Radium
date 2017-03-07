@@ -20,6 +20,8 @@ import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.parsing.FunctionGenerator;
+import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
+import com.kubadziworski.parsing.visitor.expression.function.ArgumentExpressionsListVisitor;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import org.apache.commons.collections4.ListUtils;
 
@@ -52,9 +54,9 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
         boolean defaultConstructorExists = signature != null;
         List<Function> methods = methodsCtx.stream().map(method -> method.accept(new FunctionVisitor(scope)))
                 .collect(toList());
-
         methods.add(generateInitBlocks(ctx));
         FunctionSignature startSignature = null;
+
         try {
             startSignature = scope.getClassType().getMethodCallSignature("start", Collections.emptyList());
         } catch (Exception e) {
@@ -70,6 +72,26 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
                 new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
     }
 
+    private Statement generateSuperCall(ClassDeclarationContext classDeclarationContext, FunctionSignature signature) {
+        Scope superScope = new Scope(this.scope, signature);
+        //We do not make local variables invisible in this case
+        signature.getParameters()
+                .forEach(param -> superScope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
+
+        EnkelParser.AbstractClassAndInterfacesContext ctx = classDeclarationContext.abstractClassAndInterfaces();
+        if (ctx != null && ctx.abstractClassInit() != null) {
+            ExpressionVisitor expressionVisitor = new ExpressionVisitor(superScope);
+            EnkelParser.ArgumentListContext listContext = ctx.abstractClassInit().argumentList();
+            ArgumentExpressionsListVisitor visitor = new ArgumentExpressionsListVisitor(expressionVisitor);
+            List<ArgumentHolder> argumentHolders = listContext.accept(visitor);
+            FunctionSignature superSignature = superScope.getSuperClassType().getConstructorCallSignature(argumentHolders);
+            return new SuperCall(superSignature, superSignature.createArgumentList(argumentHolders));
+        } else {
+            FunctionSignature superSignature = superScope.getSuperClassType().getConstructorCallSignature(Collections.emptyList());
+            return new SuperCall(superSignature);
+        }
+    }
+
     private Constructor generateInitBlocks(ClassDeclarationContext ctx) {
         FunctionSignature signature = scope.getConstructorSignatures().get(0);
         Scope functionScope = new Scope(scope, signature);
@@ -77,24 +99,27 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
         StatementVisitor statementVisitor = new StatementVisitor(functionScope);
         FunctionGenerator functionGenerator = new FunctionGenerator(functionScope);
         functionGenerator.addParametersAsLocalVariables(signature);
+
         if (!ctx.classBody().initBlock().isEmpty()) {
             EnkelParser.InitBlockContext blockContext = ctx.classBody().initBlock().get(0);
 
             Block block = (Block) blockContext.block().accept(statementVisitor);
-            Block initializersBlock = new Block(block.getScope(), ListUtils.sum(getFieldsInitializers(block.getScope()), block.getStatements()));
+            Statement superCall = generateSuperCall(ctx, signature);
+            List<Statement> statements = ListUtils.sum(getFieldsInitializers(block.getScope()), block.getStatements());
+            Block initializersBlock = new Block(block.getScope(), ListUtils.sum(Collections.singletonList(superCall), statements));
             return (Constructor) functionGenerator.generateFunction(signature, initializersBlock, true);
         }
-        return getDefaultConstructor(signature);
+        return getDefaultConstructor(signature, ctx);
     }
 
-    private Constructor getDefaultConstructor(FunctionSignature signature) {
+
+    private Constructor getDefaultConstructor(FunctionSignature signature, ClassDeclarationContext ctx) {
         Scope constructorScope = new Scope(scope, signature);
         constructorScope.addLocalVariable(new LocalVariable("this", scope.getClassType(), false));
         FunctionGenerator functionGenerator = new FunctionGenerator(constructorScope);
         functionGenerator.addParametersAsLocalVariables(signature);
 
-        FunctionSignature superSignature = scope.getMethodCallSignature(SuperCall.SUPER_IDENTIFIER, Collections.emptyList());
-        SuperCall superCall = new SuperCall(superSignature);
+        Statement superCall = generateSuperCall(ctx, signature);
         Block block = new Block(constructorScope, ListUtils.sum(Collections.singletonList(superCall), getFieldsInitializers(constructorScope)));
         return new Constructor(signature, block);
     }

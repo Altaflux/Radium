@@ -69,6 +69,15 @@ public final class NullType implements Type {
         return Nullability.NULLABLE;
     }
 
+    public List<Type> getInterfaces() {
+        return Collections.emptyList();
+    }
+
+    public ClassType getClassType() {
+        return ClassType.CLASS;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -37,49 +37,53 @@ class ShouldCompileTest extends Specification {
         method1.invoke(null, arggg) == null
 
         where:
-        code                          | filename
-        helloWorld                    | "HelloWorld.enk"
-        loopsCode                     | "Loops.enk"
-        allTypes                      | "AllPrimitiveTypes.enk"
-        moreDefaultParams             | "MoreDefaultParams.enk"
-        defaultParams                 | "DefaultParamTest.enk"
-        fields                        | "Fields.enk"
-        namedParams                   | "NamedParamsTest.enk"
-        sumCalculator                 | "SumCalculator.enk"
-        defaultConstructor            | "DefaultConstructor.enk"
-        parameterLessConsturctor      | "ParameterLessConstructor.enk"
-        construcotrWithParams         | "ConstructorWithParams.enk"
-        equalityTest                  | "EqualitySyntax.enk"
-        unaryExpressionTest           | "UnaryExpressions.enk"
-        globalLocal                   | "GlobalLocal.enk"
-        staticTest                    | "StaticTest.enk"
-        staticFunctionTest            | "StaticFunctionTest.enk"
-        importingTest                    | "ImportingTest.enk"
-        getterSetter                     | "GetterSetter.enk"
-        getterStatement                  | "GetterStatement.enk"
-        functionSingleStatements         | "FunctionSingleStatements.enk"
-        ifExpressions                    | "IfExpression.enk"
-        myTryStatement                   | "TryStatement.enk"
-        fieldInitializing                | "FieldInitializing.enk"
-        fieldInitializingWithConstructor | "FieldInitializingWithConstructor.enk"
-        detectReturnCompleteStatement | "DetectReturnCompleteStatement.enk"
-        throwStatement                | "ThrowStatement.enk"
-        nullValue                     | "NullValue.enk"
-        returnUnit                    | "ReturnUnit.enk"
-        concreteReturnUnit            | "ConcreteReturnUnit.enk"
-        superCall                     | "CallParentClass.enk"
-        typeCoercion                  | "TypeCoercion.enk"
-        primitiveFunctions            | "PrimitiveFunctions.enk"
-        innerTry                      | "InnerTry.enk"
-        parenthesisExpressions        | "ParenthesisExpressions.enk"
-        inlineCode                    | "InlineCode.enk"
-        callStaticImports             | "CallStaticImports.enk"
-        variableEscaping              | "VariableEscaping.enk"
-        numericLiterals               | "NumericLiterals.enk"
-        sendNullToMethod              | "SendNullToMethod.enk"
-        fieldByConstructor            | "FieldByConstructor.enk"
-        bitWise                       | "BitWise.enk"
-        booleanOperator               | "BooleanOperator.enk"
+        code                                 | filename
+        helloWorld                           | "HelloWorld.enk"
+        loopsCode                            | "Loops.enk"
+        allTypes                             | "AllPrimitiveTypes.enk"
+        moreDefaultParams                    | "MoreDefaultParams.enk"
+        defaultParams                        | "DefaultParamTest.enk"
+        fields                               | "Fields.enk"
+        namedParams                          | "NamedParamsTest.enk"
+        sumCalculator                        | "SumCalculator.enk"
+        defaultConstructor                   | "DefaultConstructor.enk"
+        parameterLessConsturctor             | "ParameterLessConstructor.enk"
+        construcotrWithParams                | "ConstructorWithParams.enk"
+        equalityTest                         | "EqualitySyntax.enk"
+        unaryExpressionTest                  | "UnaryExpressions.enk"
+        globalLocal                          | "GlobalLocal.enk"
+        staticTest                           | "StaticTest.enk"
+        staticFunctionTest                   | "StaticFunctionTest.enk"
+        importingTest                        | "ImportingTest.enk"
+        getterSetter                         | "GetterSetter.enk"
+        getterStatement                      | "GetterStatement.enk"
+        functionSingleStatements             | "FunctionSingleStatements.enk"
+        ifExpressions                        | "IfExpression.enk"
+        myTryStatement                       | "TryStatement.enk"
+        fieldInitializing                    | "FieldInitializing.enk"
+        fieldInitializingWithConstructor     | "FieldInitializingWithConstructor.enk"
+        detectReturnCompleteStatement        | "DetectReturnCompleteStatement.enk"
+        throwStatement                       | "ThrowStatement.enk"
+        nullValue                            | "NullValue.enk"
+        returnUnit                           | "ReturnUnit.enk"
+        concreteReturnUnit                   | "ConcreteReturnUnit.enk"
+        superCall                            | "CallParentClass.enk"
+        typeCoercion                         | "TypeCoercion.enk"
+        primitiveFunctions                   | "PrimitiveFunctions.enk"
+        innerTry                             | "InnerTry.enk"
+        parenthesisExpressions               | "ParenthesisExpressions.enk"
+        inlineCode                           | "InlineCode.enk"
+        callStaticImports                    | "CallStaticImports.enk"
+        variableEscaping                     | "VariableEscaping.enk"
+        numericLiterals                      | "NumericLiterals.enk"
+        sendNullToMethod                     | "SendNullToMethod.enk"
+        fieldByConstructor                   | "FieldByConstructor.enk"
+        bitWise                              | "BitWise.enk"
+        booleanOperator                      | "BooleanOperator.enk"
+        classExtends                         | "ClassExtends.enk"
+        classExtendsConstructor              | "ClassExtendsConstructor.enk"
+        classExtendsConstructorDefParam      | "ClassExtendsConstructorDefParam.enk"
+        classExtendsConstructorDefFieldParam | "ClassExtendsConstructorDefFieldParam.enk"
     }
 
 
@@ -112,7 +116,48 @@ class ShouldCompileTest extends Specification {
         multiFiles | "MultiClasses.enk" | Arrays.asList("SecondClass", "FirstClass")
     }
 
+    private final static classExtends =
+            """
+                            import com.kubadziworski.test.superclass.BaseClass;
+                          
+                            ClassExtends : BaseClass() {
 
+                                fn start {
+                                    foo();
+                                }
+                            }
+							"""
+
+    private final static classExtendsConstructorDefParam =
+            """
+                            import com.kubadziworski.test.superclass.BaseConstructor;
+                          
+                            ClassExtendsConstructorDefParam(x:String = "test") : BaseConstructor(x) {
+                                fn start {
+                                    foo();
+                                }
+                            }
+							"""
+    private final static classExtendsConstructorDefFieldParam =
+            """
+                            import com.kubadziworski.test.superclass.BaseConstructor;
+                          
+                            ClassExtendsConstructorDefFieldParam(val x:String = "test") : BaseConstructor(x) {
+                                fn start {
+                                    foo();
+                                }
+                            }
+							"""
+    private final static classExtendsConstructor =
+            """
+                            import com.kubadziworski.test.superclass.BaseConstructor;
+                          
+                            ClassExtendsConstructor : BaseConstructor("test") {
+                                fn start {
+                                    foo();
+                                }
+                            }
+							"""
     private final static booleanOperator =
             """
                             BooleanOperator {

@@ -62,6 +62,14 @@ public class DumbType implements Type {
         return Nullability.NOT_NULL;
     }
 
+    public List<Type> getInterfaces() {
+        return Collections.emptyList();
+    }
+
+    public ClassType getClassType() {
+        return ClassType.CLASS;
+    }
+
     @Override
     public org.objectweb.asm.Type getAsmType() {
         return org.objectweb.asm.Type.getType("L" + name.replace(".", "/") + ";");

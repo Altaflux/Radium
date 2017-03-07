@@ -158,7 +158,7 @@ public class PropertyAccessorsUtil {
         Scope newScope = new Scope(scope);
         newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         getter.getParameters()
-                .forEach(param -> newScope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
+                .forEach(param -> newScope.addLocalVariable(new LocalVariable(param.getName(), param.getType(), false, param.isVisible())));
         LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
         LocalVariableReference thisReference = new LocalVariableReference(newScope.getLocalVariable("this"));
 

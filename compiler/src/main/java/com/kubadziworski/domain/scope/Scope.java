@@ -110,8 +110,19 @@ public class Scope {
         Map<Integer, List<FunctionSignature>> functions = functionSignatures.stream()
                 .collect(Collectors.groupingBy(signature -> signature.matches(identifier, arguments)));
 
-        return TypeResolver.resolveArity(getClassType(), functions).map(Optional::of).orElseGet(() -> importResolver.getMethod(identifier, arguments))
+        return TypeResolver.resolveArity(getClassType(), functions).map(Optional::of)
+                .orElseGet(() -> importResolver.getMethod(identifier, arguments))
+                .map(Optional::of).orElseGet(() -> getSuperMethods(identifier, arguments))
                 .orElseThrow(() -> new MethodSignatureNotFoundException(this, identifier, arguments));
+
+    }
+
+    private Optional<FunctionSignature> getSuperMethods(String identifier, List<ArgumentHolder> arguments) {
+        try {
+            return getClassType().getSuperType().map(type -> type.getMethodCallSignature(identifier, arguments));
+        } catch (MethodSignatureNotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     public Type getSuperClassType() {

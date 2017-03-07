@@ -85,5 +85,12 @@ public class VoidType implements Type {
         return o instanceof Type && getName().equals(((Type) o).getName());
     }
 
+    public List<Type> getInterfaces() {
+        return Collections.emptyList();
+    }
+
+    public ClassType getClassType() {
+        return ClassType.CLASS;
+    }
 
 }

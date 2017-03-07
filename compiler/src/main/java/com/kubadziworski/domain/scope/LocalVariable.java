@@ -9,15 +9,25 @@ public class LocalVariable implements Variable {
     private final String name;
     private final boolean mutable;
     private Type type;
+    private final boolean visible;
 
     public LocalVariable(String name, Type type) {
         this(name, type, true);
     }
 
     public LocalVariable(String name, Type type, boolean mutable) {
+        this(name, type, mutable, true);
+    }
+
+    public LocalVariable(String name, Type type, boolean mutable, boolean visible) {
         this.type = type;
         this.name = name;
         this.mutable = mutable;
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 
     public boolean isMutable() {

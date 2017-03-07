@@ -22,9 +22,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
-@Metadata(data = "dsjkf")
 public class JavaClassType implements Type {
 
     private final String name;
@@ -71,10 +71,32 @@ public class JavaClassType implements Type {
                 .collect(Collectors.toList());
     }
 
+//    @Override
+//    public int inheritsFrom(Type type) {
+//        int arity = 0;
+//        if (type.getAsmType().getDescriptor().equals(this.getAsmType().getDescriptor())) {
+//            return arity;
+//        }
+//        Class iteratedClass = getTypeClass();
+//        while (iteratedClass != null) {
+//            if (org.objectweb.asm.Type.getDescriptor(iteratedClass).equals(type.getAsmType().getDescriptor())) {
+//                return arity;
+//            } else {
+//                for (Class inter : iteratedClass.getInterfaces()) {
+//                    if (org.objectweb.asm.Type.getDescriptor(inter).equals(type.getAsmType().getDescriptor())) {
+//                        return arity;
+//                    }
+//                }
+//            }
+//            iteratedClass = iteratedClass.getSuperclass();
+//            arity++;
+//        }
+//        return -1;
+//    }
+
     @Override
     public int inheritsFrom(Type type) {
         int arity = 0;
-
         if (type.getAsmType().getDescriptor().equals(this.getAsmType().getDescriptor())) {
             return arity;
         }
@@ -87,6 +109,9 @@ public class JavaClassType implements Type {
                     if (org.objectweb.asm.Type.getDescriptor(inter).equals(type.getAsmType().getDescriptor())) {
                         return arity;
                     }
+//                    else if (type.inheritsFrom(ClassTypeFactory.createClassType(inter)) > -1) {
+//                        return arity;
+//                    }
                 }
             }
             iteratedClass = iteratedClass.getSuperclass();
@@ -94,7 +119,6 @@ public class JavaClassType implements Type {
         }
         return -1;
     }
-
 
     //Possible cache the type inheritance if this starts taking too much time
 
@@ -197,6 +221,13 @@ public class JavaClassType implements Type {
         return createClassNode(skipCode);
     }
 
+    public List<Type> getInterfaces() {
+        return Stream.of(aClass.getInterfaces()).map(ClassTypeFactory::createClassType).collect(Collectors.toList());
+    }
+
+    public ClassType getClassType() {
+        return aClass.isInterface() ? ClassType.INTERFACE : ClassType.CLASS;
+    }
 
     public Optional<ClassMetadata> classMetadata() {
         if (typeClassMetadataMap.containsKey(this)) {

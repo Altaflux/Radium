@@ -57,7 +57,7 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
                 .stream().map(constructorParamContext -> {
                     Parameter parameter = parameterExpressionVisitor.visitParameterWithDefaultValue(constructorParamContext.parameterWithDefaultValue());
                     if (constructorParamContext.asField != null) {
-                        Parameter invisibleParam = new Parameter(INVISIBLE_PARAM + parameter.getName(), parameter.getType(), parameter.getDefaultValue().get());
+                        Parameter invisibleParam = new Parameter(parameter.getName(), parameter.getType(), parameter.getDefaultValue().get(), false);
                         return Pair.of(invisibleParam, buildField(constructorParamContext.accessModifiers(), constructorParamContext.KEYWORD_val() != null, parameter));
                     }
                     return Pair.of(parameter, (Field) null);
@@ -93,7 +93,7 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
                 .setterFunction(field -> PropertyAccessorsUtil.generateSetter(field, scope))
                 .modifiers(modifiersSet)
                 .initialExpression(field -> scope -> {
-                    LocalVariable localVariable = scope.getLocalVariable(INVISIBLE_PARAM + parameter.getName());
+                    LocalVariable localVariable = scope.getLocalVariable(parameter.getName());
                     LocalVariableReference localVariableReference = new LocalVariableReference(localVariable);
                     LocalVariableReference owner = new LocalVariableReference(scope.getLocalVariable("this"));
                     return new FieldAssignment(owner, field, localVariableReference);

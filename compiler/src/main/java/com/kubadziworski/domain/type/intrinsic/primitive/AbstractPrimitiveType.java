@@ -7,6 +7,7 @@ import com.kubadziworski.domain.type.BoxableType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,6 +105,14 @@ public abstract class AbstractPrimitiveType implements Type, BoxableType {
         }
 
         return o instanceof Type && getName().equals(((Type) o).getName());
+    }
+
+    public List<Type> getInterfaces() {
+        return Collections.emptyList();
+    }
+
+    public ClassType getClassType() {
+        return ClassType.CLASS;
     }
 
     @Override

@@ -19,7 +19,7 @@ public class TypeProjection implements Type {
     public TypeProjection(Type type, Nullability nullable) {
         this.nullable = nullable;
 
-        if(type instanceof TypeProjection){
+        if (type instanceof TypeProjection) {
             type = ((TypeProjection) type).getInternalType();
         }
 
@@ -106,17 +106,25 @@ public class TypeProjection implements Type {
         return type.getInliner();
     }
 
+    public List<Type> getInterfaces() {
+        return type.getInterfaces();
+    }
+
+    public ClassType getClassType() {
+        return type.getClassType();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
 
-        if (o instanceof Type ) {
+        if (o instanceof Type) {
             if (nullable.equals(Nullability.NOT_NULL) && ((Type) o).isNullable().equals(Nullability.NULLABLE))
                 return false;
         }
 
-        if(o instanceof TypeProjection){
+        if (o instanceof TypeProjection) {
             o = ((TypeProjection) o).getInternalType();
         }
 

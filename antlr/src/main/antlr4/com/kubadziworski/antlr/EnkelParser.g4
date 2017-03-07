@@ -31,7 +31,7 @@ packageDeclaration
 	:   'package' SimpleName ('.' SimpleName)* ';'
 	;
 
-classDeclaration : classAccessModifiers? className  primaryConstructor? classBody  ;
+classDeclaration : classAccessModifiers? className  primaryConstructor? abstractClassAndInterfaces? classBody  ;
 className : qualifiedName ;
 classBody : '{' (field | function | initBlock)* '}' ;
 field : fieldModifier isFinal=(KEYWORD_var | KEYWORD_val) name ':' type ('=' expression)? getter? setter?;
@@ -40,6 +40,10 @@ getter: 'get' '('')' functionContent ;
 setter: 'set' '(' SimpleName ')' block ;
 
 primaryConstructor: '(' constructorParametersList? ')' ;
+
+abstractClassAndInterfaces : ':' (abstractClassInit (',' typeName)*  | typeName (',' typeName)*) ;
+abstractClassInit :  typeName '(' argumentList ')' ;
+
 
 initBlock : 'init' block ;
 

@@ -73,7 +73,9 @@ public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<E
 
         if (scope.isLocalVariableExists(varName)) {
             LocalVariable variable = scope.getLocalVariable(varName);
-            return new LocalVariableReference(new RuleContextElementImpl(ctx), variable);
+            if (variable.isVisible()) {
+                return new LocalVariableReference(new RuleContextElementImpl(ctx), variable);
+            }
         }
 
         Field field = scope.getField(varName);

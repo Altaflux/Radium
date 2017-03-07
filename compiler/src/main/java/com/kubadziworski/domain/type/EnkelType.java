@@ -37,7 +37,6 @@ public class EnkelType implements Type {
     @Override
     public Optional<Type> getSuperType() {
         return Optional.of(scope.getSuperClassType());
-
     }
 
     @Override
@@ -60,18 +59,25 @@ public class EnkelType implements Type {
     @Override
     public int inheritsFrom(Type type) {
 
-
         int arity = 0;
         if (type.getName().equals(this.getName())) {
             return arity;
         }
 
-        Type type1 = this;
-        while (type1 != null) {
-            if (type1.getName().equals(type.getName())) {
+        Type iteratedClass = this;
+        while (iteratedClass != null) {
+            if (iteratedClass.getName().equals(type.getName())) {
                 return arity;
             }
-            type1 = type1.getSuperType().orElse(null);
+            for (Type interfaceType : getInterfaces()) {
+                if (interfaceType.getName().equals(type.getName())) {
+                    return arity;
+                }
+//                else if (type.inheritsFrom(interfaceType) > -1) {
+//                    return arity;
+//                }
+            }
+            iteratedClass = iteratedClass.getSuperType().orElse(null);
             arity++;
         }
         return -1;
@@ -108,6 +114,13 @@ public class EnkelType implements Type {
         return Nullability.NOT_NULL;
     }
 
+    public List<Type> getInterfaces() {
+        return scope.getMetaData().getInterfaces();
+    }
+
+    public ClassType getClassType() {
+        return ClassType.CLASS;
+    }
 
     public CodeInliner getInliner() {
         return RadiumCodeInliner.INSTANCE;

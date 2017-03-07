@@ -4,7 +4,6 @@ import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.domain.Constructor;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.node.expression.function.SuperCall;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
@@ -15,7 +14,6 @@ import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.exception.MissingReturnStatementException;
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
-import org.apache.commons.collections4.ListUtils;
 
 import java.util.Collections;
 
@@ -54,10 +52,7 @@ public class FunctionGenerator {
 
     private Function generateFunction(FunctionSignature signature, Block block, boolean isConstructor) {
         if (isConstructor) {
-            FunctionSignature superSignature = scope.getMethodCallSignature(SuperCall.SUPER_IDENTIFIER, Collections.emptyList());
-            SuperCall superCall = new SuperCall(superSignature);
-            Block constructorBlock = new Block(block.getScope(), ListUtils.sum(Collections.singletonList(superCall), block.getStatements()));
-            return new Constructor(signature, constructorBlock);
+            return new Constructor(signature, block);
         }
 
         verifyBlockReturn(signature, block);
@@ -99,7 +94,7 @@ public class FunctionGenerator {
 
     public void addParametersAsLocalVariables(FunctionSignature signature) {
         signature.getParameters()
-                .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
+                .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType(), false, param.isVisible())));
     }
 
     private Statement getBlock(EnkelParser.FunctionContentContext functionContentContext) {

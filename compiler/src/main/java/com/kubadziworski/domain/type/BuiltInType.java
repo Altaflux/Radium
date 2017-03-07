@@ -98,6 +98,14 @@ public enum BuiltInType implements Type {
         return org.objectweb.asm.Type.getType(descriptor);
     }
 
+    public List<Type> getInterfaces() {
+        return Collections.emptyList();
+    }
+
+    public ClassType getClassType() {
+        return ClassType.CLASS;
+    }
+
     @Override
     public String toString() {
         return "BuiltInType{" +
@@ -105,6 +113,4 @@ public enum BuiltInType implements Type {
                 ", descriptor='" + descriptor + '\'' +
                 '}';
     }
-
-
 }

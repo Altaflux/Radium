@@ -61,7 +61,7 @@ public class TryCatchExpressionVisitor extends EnkelParserBaseVisitor<Statement>
         Type varType = TypeResolver.getFromTypeContext(context.type(), scope);
 
         Parameter parameter = new Parameter(varName, varType, null);
-        newScope.addLocalVariable(new LocalVariable(varName, varType, true));
+        newScope.addLocalVariable(new LocalVariable(varName, varType, false));
 
         BlockStatementVisitor statementGenerator = new BlockStatementVisitor(newScope);
         Block block = context.block().accept(statementGenerator);
