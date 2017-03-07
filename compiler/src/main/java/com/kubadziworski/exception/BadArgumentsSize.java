@@ -1,6 +1,5 @@
 package com.kubadziworski.exception;
 
-import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParser.ExpressionContext;
 import com.kubadziworski.domain.scope.FunctionSignature;
 

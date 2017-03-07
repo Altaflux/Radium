@@ -7,8 +7,8 @@ import com.kubadziworski.domain.node.expression.Value
 import com.kubadziworski.domain.node.statement.Assignment
 import com.kubadziworski.domain.node.statement.FieldAssignment
 import com.kubadziworski.domain.scope.Field
+import com.kubadziworski.domain.scope.FunctionScope
 import com.kubadziworski.domain.scope.LocalVariable
-import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.DefaultTypes
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes
 import com.kubadziworski.test.DumbType
@@ -28,7 +28,7 @@ class AssignmentStatementGeneratorTest extends Specification {
         def assignment = new Assignment(localVariable, assignmentExpression)
         InstructionAdapter methodVisitor = Mock()
             StatementGenerator expressionGenerator = Mock()
-            Scope scope = Mock()
+            FunctionScope scope = Mock()
         when:
             new AssignmentStatementGenerator(new InstructionAdapter(methodVisitor)).generate(assignment, scope, expressionGenerator)
         then :
@@ -52,7 +52,7 @@ class AssignmentStatementGeneratorTest extends Specification {
         def assignment = new FieldAssignment(local, field, assignmentExpression)
             MethodVisitor methodVisitor = Mock()
             StatementGenerator expressionGenerator = Mock()
-            Scope scope = Mock()
+            FunctionScope scope = Mock()
         when:
             new AssignmentStatementGenerator(new InstructionAdapter(methodVisitor)).generate(assignment, scope, expressionGenerator)
             then :

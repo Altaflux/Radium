@@ -10,8 +10,8 @@ import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.node.statement.TryCatchStatement;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.parsing.visitor.statement.BlockStatementVisitor;
 import com.kubadziworski.util.TypeResolver;
@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 public class TryCatchExpressionVisitor extends EnkelParserBaseVisitor<Statement> {
 
     private final ExpressionVisitor expressionVisitor;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public TryCatchExpressionVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
+    public TryCatchExpressionVisitor(ExpressionVisitor expressionVisitor, FunctionScope scope) {
         this.expressionVisitor = expressionVisitor;
         this.scope = scope;
     }
@@ -56,14 +56,14 @@ public class TryCatchExpressionVisitor extends EnkelParserBaseVisitor<Statement>
 
     private CatchBlock processCatchBlock(EnkelParser.CatchBlockContext context) {
 
-        Scope newScope = new Scope(scope);
+        FunctionScope functionScope = new FunctionScope(scope);
         String varName = context.name().getText();
         Type varType = TypeResolver.getFromTypeContext(context.type(), scope);
 
         Parameter parameter = new Parameter(varName, varType, null);
-        newScope.addLocalVariable(new LocalVariable(varName, varType, false));
+        functionScope.addLocalVariable(new LocalVariable(varName, varType, false));
 
-        BlockStatementVisitor statementGenerator = new BlockStatementVisitor(newScope);
+        BlockStatementVisitor statementGenerator = new BlockStatementVisitor(functionScope);
         Block block = context.block().accept(statementGenerator);
 
         return new CatchBlock(new BlockExpression(new RuleContextElementImpl(context), block), parameter);

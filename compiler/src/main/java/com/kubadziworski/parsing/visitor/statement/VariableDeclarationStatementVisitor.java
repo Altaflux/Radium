@@ -6,8 +6,8 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.VariableDeclaration;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
@@ -20,9 +20,9 @@ import com.kubadziworski.util.TypeResolver;
 
 public class VariableDeclarationStatementVisitor extends EnkelParserBaseVisitor<VariableDeclaration> {
     private final ExpressionVisitor expressionVisitor;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public VariableDeclarationStatementVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
+    public VariableDeclarationStatementVisitor(ExpressionVisitor expressionVisitor, FunctionScope scope) {
         this.expressionVisitor = expressionVisitor;
         this.scope = scope;
     }

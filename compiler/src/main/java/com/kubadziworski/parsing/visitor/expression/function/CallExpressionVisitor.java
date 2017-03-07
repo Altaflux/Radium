@@ -10,10 +10,9 @@ import com.kubadziworski.domain.node.expression.function.Call;
 import com.kubadziworski.domain.node.expression.function.CallType;
 import com.kubadziworski.domain.node.expression.function.ConstructorCall;
 import com.kubadziworski.domain.node.expression.function.FunctionCall;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
-import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.*;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
@@ -26,9 +25,9 @@ import java.util.List;
 public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
 
     private final CallExpressionVisitorImp callExpressionVisitorImp;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public CallExpressionVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
+    public CallExpressionVisitor(ExpressionVisitor expressionVisitor, FunctionScope scope) {
         callExpressionVisitorImp = new CallExpressionVisitorImp(expressionVisitor, scope);
         this.scope = scope;
     }
@@ -50,9 +49,9 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
 
     private static class CallExpressionVisitorImp extends EnkelParserBaseVisitor<Call> {
         private final ExpressionVisitor expressionVisitor;
-        private final Scope scope;
+        private final FunctionScope scope;
 
-        CallExpressionVisitorImp(ExpressionVisitor expressionVisitor, Scope scope) {
+        CallExpressionVisitorImp(ExpressionVisitor expressionVisitor, FunctionScope scope) {
             this.expressionVisitor = expressionVisitor;
             this.scope = scope;
         }
@@ -97,8 +96,7 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
                 return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new EmptyExpression(signature.getOwner()));
             }
 
-            Type thisType = new EnkelType(scope.getFullClassName(), scope);
-            LocalVariable thisVariable = new LocalVariable("this", thisType);
+            LocalVariable thisVariable = new LocalVariable("this", scope.getClassType());
             return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new LocalVariableReference(thisVariable));
         }
 
@@ -113,8 +111,8 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
         private FunctionCall createSuperFunctionCall(FunctionCallContext ctx, String functionName, List<ArgumentHolder> arguments) {
 
             FunctionSignature signature = scope.getSuperClassType().getMethodCallSignature(functionName, arguments);
-            Type thisType = new EnkelType(scope.getFullClassName(), scope);
-            LocalVariable thisVariable = new LocalVariable("this", thisType);
+
+            LocalVariable thisVariable = new LocalVariable("this", scope.getClassType());
             return new FunctionCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments), new LocalVariableReference(thisVariable), CallType.SUPER_CALL);
         }
 

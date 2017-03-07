@@ -3,14 +3,14 @@ package com.kubadziworski.parsing.visitor.statement;
 import com.kubadziworski.antlr.EnkelParser;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 
 
 public class FunctionContentVisitor extends EnkelParserBaseVisitor<Statement> {
 
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public FunctionContentVisitor(Scope scope) {
+    public FunctionContentVisitor(FunctionScope scope) {
         this.scope = scope;
     }
 

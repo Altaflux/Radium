@@ -21,9 +21,9 @@ import java.util.Optional;
 
 public class AssignmentStatementVisitor extends EnkelParserBaseVisitor<Statement> {
     private final ExpressionVisitor expressionVisitor;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public AssignmentStatementVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
+    public AssignmentStatementVisitor(ExpressionVisitor expressionVisitor, FunctionScope scope) {
         this.expressionVisitor = expressionVisitor;
         this.scope = scope;
     }

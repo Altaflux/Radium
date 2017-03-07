@@ -17,6 +17,7 @@ import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.IfStatement;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
@@ -25,7 +26,6 @@ import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
-import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.util.DescriptorFactory;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -66,7 +66,7 @@ public class DefaultMethodHandler {
         InstructionAdapter adapter = new InstructionAdapter(mvs);
 
         StatementGenerator statementGenerator = statementGenerator(function, adapter);
-        Scope scope = statementGenerator.getScope();
+        FunctionScope scope = statementGenerator.getScope();
         Expression owner = scope.isLocalVariableExists("this") ? new LocalVariableReference(scope.getLocalVariable("this"))
                 : new EmptyExpression(scope.getClassType());
         List<Argument> functionArguments = verifyMissingArguments(function, statementGenerator);
@@ -104,7 +104,7 @@ public class DefaultMethodHandler {
         InstructionAdapter adapter = new InstructionAdapter(mvs);
 
         StatementGenerator statementGenerator = statementGenerator(function, adapter);
-        Scope scope = statementGenerator.getScope();
+        FunctionScope scope = statementGenerator.getScope();
         Expression owner = scope.isLocalVariableExists("this") ? new LocalVariableReference(scope.getLocalVariable("this"))
                 : new EmptyExpression(scope.getClassType());
         List<Argument> functionArguments = verifyMissingArguments(function, statementGenerator);
@@ -120,13 +120,17 @@ public class DefaultMethodHandler {
 
     private StatementGenerator statementGenerator(Function function, InstructionAdapter adapter) {
         Scope originalScope = ((EnkelType) function.getFunctionSignature().getOwner()).getScope();
-        Scope scope = originalScope.cloneWithoutVariables();
+        FunctionScope scope = new FunctionScope(originalScope, function.getFunctionSignature());
         if (!function.getModifiers().contains(Modifier.STATIC)) {
             scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         }
+//
+//        FunctionGenerator functionGenerator = new FunctionGenerator(scope);
+//        functionGenerator.addParametersAsLocalVariables(function.getFunctionSignature());
+        function.getFunctionSignature().getParameters()
+                .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType(), false, param.isVisible())));
 
-        FunctionGenerator functionGenerator = new FunctionGenerator(scope);
-        functionGenerator.addParametersAsLocalVariables(function.getFunctionSignature());
+
         Parameter bitMask = new Parameter("mask", PrimitiveTypes.INT_TYPE, null);
         Parameter markerParam = new Parameter("marker", DEFAULT_MARKER, null);
         scope.addLocalVariable(new LocalVariable(bitMask.getName(), bitMask.getType()));
@@ -137,7 +141,7 @@ public class DefaultMethodHandler {
     }
 
     private List<Argument> verifyMissingArguments(Function function, StatementGenerator statementScopeGenerator) {
-        Scope scope = statementScopeGenerator.getScope();
+        FunctionScope scope = statementScopeGenerator.getScope();
         ArgumentHolder argument = new ArgumentHolder(new LocalVariableReference(scope.getLocalVariable("mask")), null);
         FunctionSignature compareSignature = PrimitiveTypes.INT_TYPE.getMethodCallSignature(ArithmeticOperator.BINAND.getMethodName(), Collections.singletonList(argument));
         for (int x = 0; x < function.getFunctionSignature().getParameters().size(); x++) {
@@ -163,7 +167,7 @@ public class DefaultMethodHandler {
                 , originalFunctionSignature.getModifiers(), originalFunctionSignature.getOwner(), SignatureType.FUNCTION_CALL);
 
         Scope originalScope = ((EnkelType) constructorFunction.getFunctionSignature().getOwner()).getScope();
-        Scope scope = originalScope.cloneWithoutVariables();
+        FunctionScope scope = new FunctionScope(originalScope, constructorFunction.getFunctionSignature());
         scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         SuperCall superCall = new SuperCall(originalFunctionSignature);
         Block block = new Block(scope, Collections.singletonList(superCall));

@@ -11,7 +11,7 @@ import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpress
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.*;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -374,7 +374,7 @@ public class BaseStatementGenerator implements StatementGenerator {
     }
 
 
-    public Scope getScope() {
+    public FunctionScope getScope() {
         return parent.getScope();
     }
 

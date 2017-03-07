@@ -5,7 +5,7 @@ import com.kubadziworski.antlr.EnkelParser.ParameterWithDefaultValueContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.Parameter;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.util.TypeResolver;
@@ -17,9 +17,9 @@ import com.kubadziworski.util.TypeResolver;
 public class ParameterExpressionVisitor extends EnkelParserBaseVisitor<Parameter> {
 
     private final ExpressionVisitor expressionVisitor;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public ParameterExpressionVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
+    public ParameterExpressionVisitor(ExpressionVisitor expressionVisitor, FunctionScope scope) {
         this.expressionVisitor = expressionVisitor;
         this.scope = scope;
     }

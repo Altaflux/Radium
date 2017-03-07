@@ -10,25 +10,25 @@ import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.RangedForStatement;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.node.statement.VariableDeclaration;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 
 /**
  * Created by kuba on 23.04.16.
  */
 public class ForStatementVisitor extends EnkelParserBaseVisitor<RangedForStatement> {
-    private final Scope scope;
+    private final FunctionScope scope;
     private final ExpressionVisitor expressionVisitor;
 
-    public ForStatementVisitor(Scope scope) {
+    public ForStatementVisitor(FunctionScope scope) {
         this.scope = scope;
         expressionVisitor = new ExpressionVisitor(this.scope);
     }
 
     @Override
     public RangedForStatement visitForStatement(ForStatementContext ctx) {
-        Scope newScope = new Scope(scope);
+        FunctionScope newScope = new FunctionScope(scope);
         ForConditionsContext forExpressionContext = ctx.forConditions();
         Expression startExpression = forExpressionContext.startExpr.accept(expressionVisitor);
         Expression endExpression = forExpressionContext.endExpr.accept(expressionVisitor);

@@ -2,6 +2,7 @@ package com.kubadziworski.util;
 
 import com.kubadziworski.antlr.EnkelParser.TypeContext;
 import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.*;
@@ -19,6 +20,10 @@ import static com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes.P
 
 public final class TypeResolver {
 
+
+    public static Type getFromTypeContext(TypeContext typeContext, FunctionScope scope) {
+        return getFromTypeContext(typeContext, scope.getScope());
+    }
 
     public static Type getFromTypeContext(TypeContext typeContext, Scope scope) {
         if (typeContext == null) return VoidType.INSTANCE;

@@ -11,7 +11,7 @@ import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.node.expression.function.SuperCall;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 public class ExpressionGenerator {
@@ -157,7 +157,7 @@ public class ExpressionGenerator {
         //do nothing ;)
     }
 
-    public Scope getScope() {
+    public FunctionScope getScope() {
         return generator.getScope();
     }
 

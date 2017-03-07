@@ -10,6 +10,7 @@ import com.kubadziworski.domain.Modifiers
 import com.kubadziworski.domain.node.expression.FieldReference
 import com.kubadziworski.domain.node.expression.LocalVariableReference
 import com.kubadziworski.domain.scope.Field
+import com.kubadziworski.domain.scope.FunctionScope
 import com.kubadziworski.domain.scope.LocalVariable
 import com.kubadziworski.domain.scope.Scope
 import com.kubadziworski.domain.type.DefaultTypes
@@ -51,10 +52,11 @@ class ReferenceExpressionGeneratorTest extends Specification {
         }, "Main.enk")
         ResolverContainer container = new ResolverContainer(Arrays.asList(new ClazzImportResolver(ClassLoader.systemClassLoader)))
         Scope scope = new Scope(metaData, new ImportResolver(Collections.emptyList(), container))
+        FunctionScope functionScope = new FunctionScope(scope, null)
             MethodVisitor methodVisitor = Mock()
-            StatementGenerator expressionGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodVisitor), scope)
+            StatementGenerator expressionGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodVisitor), functionScope)
             LocalVariable local = new LocalVariable("this",scope.getClassType())
-            scope.addLocalVariable(new LocalVariable("this",scope.getClassType()))
+        functionScope.addLocalVariable(new LocalVariable("this",scope.getClassType()))
 
         def field = Field.builder().name(name).owner(owner).type(type).modifiers(Modifiers.empty().with(Modifier.PUBLIC)).build()
             LocalVariableReference ref = new LocalVariableReference(local)
@@ -73,7 +75,7 @@ class ReferenceExpressionGeneratorTest extends Specification {
 
     def "should generate local variable reference"() {
         given:
-            Scope scope = Mock()
+            FunctionScope scope = Mock()
             MethodVisitor methodVisitor = Mock()
             StatementGenerator expressionGenerator = new StatementGeneratorFilter(new InstructionAdapter(methodVisitor), scope)
             def variable = new LocalVariable(name,type)

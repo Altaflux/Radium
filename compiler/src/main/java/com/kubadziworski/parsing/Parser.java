@@ -30,17 +30,14 @@ public class Parser {
 
     public List<CompilationUnit> processAllFiles(List<Pair<String, List<String>>> files) {
 
-        List<CompilationData> compilationDataList = files.stream().map(stringListPair -> {
-            String basePath = stringListPair.getKey();
-            return stringListPair.getValue().stream()
-                    .map(s -> getEnkelParser(basePath, s)).collect(Collectors.toList());
-        }).flatMap(Collection::stream).collect(Collectors.toList());
+        List<CompilationData> compilationDataList = files.stream().map(stringListPair -> stringListPair.getValue().stream()
+                .map(this::getEnkelParser).collect(Collectors.toList())).flatMap(Collection::stream).collect(Collectors.toList());
 
         PhaseVisitor phaseVisitor = new PhaseVisitor(globalScope);
         return phaseVisitor.processAllClasses(compilationDataList);
     }
 
-    private CompilationData getEnkelParser(String basePath, String fileAbsolutePath) {
+    private CompilationData getEnkelParser(String fileAbsolutePath) {
         try {
             CharStream charStream = new ANTLRFileStream(fileAbsolutePath); //fileAbolutePath - file containing first enk code file
             EnkelLexer lexer = new EnkelLexer(charStream);  //create lexer (pass enk file to it)
@@ -50,7 +47,7 @@ public class Parser {
 
             ANTLRErrorListener errorListener = new EnkelTreeWalkErrorListener(); //EnkelTreeWalkErrorListener - handles parse tree visiting error events
             parser.addErrorListener(errorListener);
-            return new CompilationData(basePath, fileAbsolutePath, parser);
+            return new CompilationData(fileAbsolutePath, parser);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

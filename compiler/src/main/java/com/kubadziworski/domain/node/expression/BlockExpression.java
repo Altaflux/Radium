@@ -5,7 +5,7 @@ import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.type.RadiumBuiltIns;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
@@ -39,7 +39,7 @@ public class BlockExpression extends ElementImpl implements Expression {
     }
 
 
-    public Scope getScope() {
+    public FunctionScope getScope() {
         return block.getScope();
     }
 

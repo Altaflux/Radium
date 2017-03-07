@@ -3,8 +3,8 @@ package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.PrimitiveTypesWrapperFactory;
 import org.objectweb.asm.Opcodes;
@@ -22,7 +22,7 @@ public class ReturnStatementGenerator {
         Type type = expression.getType();
         expression.accept(generator);
 
-        Scope scope = generator.getScope();
+        FunctionScope scope = generator.getScope();
         FunctionSignature functionSignature = scope.getCurrentFunctionSignature();
         if (functionSignature != null) {
             Type returnType = functionSignature.getReturnType();

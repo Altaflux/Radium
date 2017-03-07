@@ -2,12 +2,14 @@ package com.kubadziworski.bytecodegeneration.expression;
 
 import com.google.common.collect.Ordering;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
-import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.node.expression.function.ConstructorCall;
 import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.node.expression.function.SuperCall;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.exception.WrongArgumentNameException;
 import com.kubadziworski.util.DescriptorFactory;
 import org.objectweb.asm.Opcodes;
@@ -24,7 +26,7 @@ public class CallExpressionGenerator {
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(SuperCall superCall, Scope scope, StatementGenerator statementGenerator) {
+    public void generate(SuperCall superCall, FunctionScope scope, StatementGenerator statementGenerator) {
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
         generateArguments(superCall.getArguments(), superCall.getFunctionSignature().getParameters(), statementGenerator);
         String ownerDescriptor = scope.getSuperClassType().getAsmType().getInternalName();
@@ -33,7 +35,7 @@ public class CallExpressionGenerator {
     }
 
 
-    public void generate(ConstructorCall constructorCall, Scope scope, StatementGenerator statementGenerator) {
+    public void generate(ConstructorCall constructorCall, FunctionScope scope, StatementGenerator statementGenerator) {
         FunctionSignature signature = constructorCall.getFunctionSignature();
         String ownerDescriptor = signature.getOwner().getAsmType().getInternalName();
         methodVisitor.visitTypeInsn(Opcodes.NEW, ownerDescriptor);
@@ -44,7 +46,7 @@ public class CallExpressionGenerator {
         methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, ownerDescriptor, "<init>", methodDescriptor, false);
     }
 
-    public void generate(FunctionCall functionCall, Scope scope, StatementGenerator statementGenerator) {
+    public void generate(FunctionCall functionCall, FunctionScope scope, StatementGenerator statementGenerator) {
         Expression owner = functionCall.getOwner();
         owner.accept(statementGenerator);
         generateArguments(functionCall.getArguments(), functionCall.getFunctionSignature().getParameters(), statementGenerator);

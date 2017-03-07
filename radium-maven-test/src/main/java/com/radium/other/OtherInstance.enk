@@ -1,0 +1,11 @@
+package com.radium.other;
+
+import com.radium.test.HelloWorld;
+
+public OtherInstance(val myField:String = "HelloWorld") {
+
+    public fn start(){
+        val hello = new HelloWorld()
+        hello.helloWorld(myField)
+    }
+}

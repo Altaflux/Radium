@@ -9,7 +9,7 @@ import com.kubadziworski.domain.node.expression.ConditionalExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.NotNullCastExpression;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.parsing.visitor.expression.function.CallExpressionVisitor;
 import com.kubadziworski.parsing.visitor.statement.BlockStatementVisitor;
 
@@ -32,7 +32,7 @@ public class ExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     private final ParenthesisExpressionVisitor parenthesisExpressionVisitor;
     private final BooleanExpressionVisitor booleanExpressionVisitor;
 
-    public ExpressionVisitor(Scope scope) {
+    public ExpressionVisitor(FunctionScope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
         variableReferenceExpressionVisitor = new VariableReferenceExpressionVisitor(scope, this);
         valueExpressionVisitor = new ValueExpressionVisitor(this);

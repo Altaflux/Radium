@@ -7,9 +7,9 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.exception.MissingReturnStatementException;
@@ -20,9 +20,9 @@ import java.util.Collections;
 
 public class FunctionGenerator {
 
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public FunctionGenerator(Scope scope) {
+    public FunctionGenerator(FunctionScope scope) {
         this.scope = scope;
     }
 
@@ -40,9 +40,9 @@ public class FunctionGenerator {
         }
         if (!signature.getReturnType().equals(VoidType.INSTANCE) && statement instanceof Expression) {
             ReturnStatement returnStatement = new ReturnStatement((Expression) statement);
-            return generateFunction(signature, new Block(new Scope(scope), Collections.singletonList(returnStatement)), isConstructor);
+            return generateFunction(signature, new Block(scope, Collections.singletonList(returnStatement)), isConstructor);
         }
-        return generateFunction(signature, new Block(new Scope(scope), Collections.singletonList(statement)), isConstructor);
+        return generateFunction(signature, new Block(scope, Collections.singletonList(statement)), isConstructor);
     }
 
     public Function generateFunction(FunctionSignature signature, EnkelParser.BlockContext ctx, boolean isConstructor) {

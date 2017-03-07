@@ -6,10 +6,7 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.*;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.AccessException;
 import com.kubadziworski.exception.ClassNotFoundForNameException;
@@ -20,10 +17,10 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.Optional;
 
 public class VariableReferenceExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
-    private final Scope scope;
+    private final FunctionScope scope;
     private final ExpressionVisitor expressionVisitor;
 
-    public VariableReferenceExpressionVisitor(Scope scope, ExpressionVisitor expressionVisitor) {
+    public VariableReferenceExpressionVisitor(FunctionScope scope, ExpressionVisitor expressionVisitor) {
         this.scope = scope;
         this.expressionVisitor = expressionVisitor;
     }

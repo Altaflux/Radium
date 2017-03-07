@@ -9,7 +9,7 @@ import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpress
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.*;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 
@@ -17,15 +17,15 @@ public class StatementGeneratorFilter implements StatementGenerator {
 
     protected final StatementGenerator next;
     private final StatementGenerator parent;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public StatementGeneratorFilter(InstructionAdapter methodVisitor, Scope scope) {
+    public StatementGeneratorFilter(InstructionAdapter methodVisitor, FunctionScope scope) {
         this.parent = null;
         this.scope = scope;
         this.next = new BaseStatementGenerator(this, methodVisitor);
     }
 
-    protected StatementGeneratorFilter(StatementGenerator parent, StatementGenerator next, Scope scope) {
+    protected StatementGeneratorFilter(StatementGenerator parent, StatementGenerator next, FunctionScope scope) {
         this.parent = parent;
         this.scope = scope;
         this.next = next.copy(this);
@@ -448,7 +448,7 @@ public class StatementGeneratorFilter implements StatementGenerator {
     }
 
     @Override
-    public Scope getScope() {
+    public FunctionScope getScope() {
         if (parent != null) {
             return parent.getScope();
         }

@@ -18,7 +18,7 @@ import com.kubadziworski.domain.node.statement.FieldAssignment;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.util.DescriptorFactory;
 import org.objectweb.asm.AnnotationVisitor;
@@ -42,7 +42,7 @@ public class MethodGenerator {
         String name = function.getName();
         String description = DescriptorFactory.getMethodDescriptor(function);
         Block block = (Block) function.getRootStatement();
-        Scope scope = block.getScope();
+        FunctionScope scope = block.getScope();
 
         int mod = ModifierTransformer.transform(function.getModifiers());
         MethodVisitor mvs = cv.visitMethod(mod, name, description, null, null);
@@ -69,7 +69,7 @@ public class MethodGenerator {
         String name = function.getName();
         String description = DescriptorFactory.getMethodDescriptor(function);
         Block block = (Block) function.getRootStatement();
-        Scope scope = block.getScope();
+        FunctionScope scope = block.getScope();
         MethodVisitor mvs = cv.visitMethod(ModifierTransformer.transform(function.getModifiers()), name, description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
         generateMutabilityAnnotations(function, mv);
@@ -86,7 +86,7 @@ public class MethodGenerator {
 
     public void generate(Constructor constructor) {
         Block block = (Block) constructor.getRootStatement();
-        Scope scope = block.getScope();
+        FunctionScope scope = block.getScope();
         String description = DescriptorFactory.getMethodDescriptor(constructor);
         MethodVisitor mvs = cv.visitMethod(ModifierTransformer.transform(constructor.getModifiers()), "<init>", description, null, null);
         InstructionAdapter mv = new InstructionAdapter(mvs);
@@ -151,7 +151,7 @@ public class MethodGenerator {
         private final Field field;
         private final InstructionAdapter adapter;
 
-        private AccessorInterceptorFilter(Field field, InstructionAdapter adapter, StatementGenerator parent, StatementGenerator next, Scope scope) {
+        private AccessorInterceptorFilter(Field field, InstructionAdapter adapter, StatementGenerator parent, StatementGenerator next, FunctionScope scope) {
             super(parent, next, scope);
             this.field = field;
             this.adapter = adapter;

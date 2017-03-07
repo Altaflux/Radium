@@ -2,12 +2,14 @@ package com.kubadziworski.bytecodegeneration.util.defaultmethod;
 
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
-import com.kubadziworski.domain.node.expression.*;
+import com.kubadziworski.domain.node.expression.Argument;
+import com.kubadziworski.domain.node.expression.Parameter;
+import com.kubadziworski.domain.node.expression.Value;
 import com.kubadziworski.domain.node.expression.function.ConstructorCall;
 import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.node.expression.function.SuperCall;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
@@ -27,7 +29,7 @@ public class DefaultMethodStatementFilter extends StatementGeneratorFilter {
     private final DefaultMethodHandler methodHandler = new DefaultMethodHandler();
     private static Type DEFAULT_MARKER = ClassTypeFactory.createClassType("radium.internal.DefaultConstructorMarker");
 
-    public DefaultMethodStatementFilter(InstructionAdapter adapter, StatementGenerator parent, StatementGenerator next, Scope scope) {
+    public DefaultMethodStatementFilter(InstructionAdapter adapter, StatementGenerator parent, StatementGenerator next, FunctionScope scope) {
         super(parent, next, scope);
         this.adapter = adapter;
     }

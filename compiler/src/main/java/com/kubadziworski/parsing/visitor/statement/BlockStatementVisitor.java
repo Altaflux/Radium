@@ -6,23 +6,23 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.exception.UnreachableStatementException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlockStatementVisitor extends EnkelParserBaseVisitor<Block> {
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public BlockStatementVisitor(Scope scope) {
+    public BlockStatementVisitor(FunctionScope scope) {
         this.scope = scope;
     }
 
     @Override
     public Block visitBlock(BlockContext ctx) {
         List<EnkelParser.StatementContext> blockStatementsCtx = ctx.blockStatement().statement();
-        Scope newScope = new Scope(scope);
+        FunctionScope newScope = new FunctionScope(scope);
         StatementVisitor statementVisitor = new StatementVisitor(newScope);
 
         List<Statement> statements = new ArrayList<>();

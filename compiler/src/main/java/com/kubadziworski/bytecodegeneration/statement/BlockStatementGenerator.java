@@ -1,11 +1,11 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.domain.node.expression.BlockExpression;
-import com.kubadziworski.domain.node.expression.function.ConstructorCall;
 import com.kubadziworski.domain.node.expression.Expression;
+import com.kubadziworski.domain.node.expression.function.ConstructorCall;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.type.RadiumBuiltIns;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.NullType;
@@ -33,7 +33,7 @@ public class BlockStatementGenerator {
     }
 
     private void generate(Block block, boolean notExpression, StatementGenerator next) {
-        Scope newScope = block.getScope();
+        FunctionScope newScope = block.getScope();
         List<Statement> statements = block.getStatements();
 
         StatementGenerator generator = new StatementGeneratorFilter(null, next, newScope);

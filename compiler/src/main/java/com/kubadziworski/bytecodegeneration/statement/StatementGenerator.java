@@ -1,7 +1,7 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.arthimetic.*;
+import com.kubadziworski.domain.node.expression.arthimetic.Addition;
 import com.kubadziworski.domain.node.expression.function.ConstructorCall;
 import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.node.expression.function.SuperCall;
@@ -9,7 +9,7 @@ import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpress
 import com.kubadziworski.domain.node.expression.prefix.UnaryExpression;
 import com.kubadziworski.domain.node.expression.trycatch.TryCatchExpression;
 import com.kubadziworski.domain.node.statement.*;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 
 public interface StatementGenerator {
 
@@ -112,7 +112,7 @@ public interface StatementGenerator {
 
     void generate(BooleanExpression booleanExpression, StatementGenerator generator);
 
-    Scope getScope();
+    FunctionScope getScope();
 
 
     StatementGenerator copy(StatementGenerator generator);

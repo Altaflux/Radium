@@ -6,7 +6,7 @@ import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.expression.ConditionalExpression;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Statement;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.IfStatementExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.TryCatchExpressionVisitor;
@@ -28,7 +28,7 @@ public class StatementVisitor extends EnkelParserBaseVisitor<Statement> {
     private final ThrowStatementVisitor throwStatementVisitor;
     private final TryCatchExpressionVisitor tryCatchExpressionVisitor;
 
-    public StatementVisitor(Scope scope) {
+    public StatementVisitor(FunctionScope scope) {
         expressionVisitor = new ExpressionVisitor(scope);
         variableDeclarationStatementVisitor = new VariableDeclarationStatementVisitor(expressionVisitor, scope);
         returnStatementVisitor = new ReturnStatementVisitor(expressionVisitor);

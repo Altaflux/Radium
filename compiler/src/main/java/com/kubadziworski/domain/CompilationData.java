@@ -5,13 +5,11 @@ import com.kubadziworski.antlr.EnkelParser;
 public class CompilationData {
 
     private final String filePath;
-    private final String basePath;
     private final EnkelParser enkelParser;
 
-    public CompilationData(String basePath, String filePath, EnkelParser enkelParser) {
+    public CompilationData(String filePath, EnkelParser enkelParser) {
         this.filePath = filePath;
         this.enkelParser = enkelParser;
-        this.basePath = basePath;
     }
 
     public String getFilePath() {
@@ -22,7 +20,4 @@ public class CompilationData {
         return enkelParser;
     }
 
-    public String getBasePath() {
-        return basePath;
-    }
 }

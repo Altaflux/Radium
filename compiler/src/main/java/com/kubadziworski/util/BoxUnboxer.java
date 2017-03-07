@@ -3,9 +3,7 @@ package com.kubadziworski.util;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
-/**
- * Created by plozano on 11/22/2016.
- */
+
 public class BoxUnboxer {
 
     private static final String NULLABLE_BYTE_TYPE_NAME = "java/lang/Byte";

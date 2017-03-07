@@ -142,7 +142,7 @@ public class PropertyAccessorsUtil {
 
     public static Function generateGetter(Field field, Scope scope) {
         FunctionSignature getter = PropertyAccessorsUtil.createGetterForField(field);
-        Scope newScope = new Scope(scope);
+        FunctionScope newScope = new FunctionScope(scope, getter);
         newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         FieldReference fieldReference = new FieldReference(field, new LocalVariableReference(newScope.getLocalVariable("this")));
         ReturnStatement returnStatement = new ReturnStatement(fieldReference);
@@ -154,16 +154,16 @@ public class PropertyAccessorsUtil {
         if (field.getModifiers().contains(Modifier.FINAL)) {
             return null;
         }
-        FunctionSignature getter = PropertyAccessorsUtil.createSetterForField(field);
-        Scope newScope = new Scope(scope);
+        FunctionSignature setter = PropertyAccessorsUtil.createSetterForField(field);
+        FunctionScope newScope = new FunctionScope(scope, setter);
         newScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
-        getter.getParameters()
+        setter.getParameters()
                 .forEach(param -> newScope.addLocalVariable(new LocalVariable(param.getName(), param.getType(), false, param.isVisible())));
         LocalVariableReference localVariableReference = new LocalVariableReference(new LocalVariable(field.getName(), field.getType()));
         LocalVariableReference thisReference = new LocalVariableReference(newScope.getLocalVariable("this"));
 
         FieldAssignment assignment = new FieldAssignment(thisReference, field, localVariableReference);
         Block block = new Block(newScope, Collections.singletonList(assignment));
-        return new Function(getter, block);
+        return new Function(setter, block);
     }
 }

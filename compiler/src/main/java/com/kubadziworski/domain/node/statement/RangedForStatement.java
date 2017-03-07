@@ -4,7 +4,7 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
 import com.kubadziworski.domain.node.expression.Expression;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.UnsupportedRangedLoopTypes;
 import com.kubadziworski.util.TypeChecker;
@@ -18,9 +18,9 @@ public class RangedForStatement extends ElementImpl implements Statement {
     private final Expression endExpression;
     private final Statement statement;
     private final String iteratorVarName;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public RangedForStatement(NodeData element, Statement iteratorVariable, Expression startExpression, Expression endExpression, Statement statement, String iteratorVarName, Scope scope) {
+    public RangedForStatement(NodeData element, Statement iteratorVariable, Expression startExpression, Expression endExpression, Statement statement, String iteratorVarName, FunctionScope scope) {
         super(element);
         this.scope = scope;
         Type startExpressionType = startExpression.getType();
@@ -36,7 +36,7 @@ public class RangedForStatement extends ElementImpl implements Statement {
         this.iteratorVarName = iteratorVarName;
     }
 
-    public RangedForStatement(Statement iteratorVariable, Expression startExpression, Expression endExpression, Statement statement, String iteratorVarName, Scope scope) {
+    public RangedForStatement(Statement iteratorVariable, Expression startExpression, Expression endExpression, Statement statement, String iteratorVarName, FunctionScope scope) {
         this(null, iteratorVariable, startExpression, endExpression,statement, iteratorVarName, scope);
     }
 
@@ -65,7 +65,7 @@ public class RangedForStatement extends ElementImpl implements Statement {
         generator.generate(this);
     }
 
-    public Scope getScope() {
+    public FunctionScope getScope() {
         return scope;
     }
 

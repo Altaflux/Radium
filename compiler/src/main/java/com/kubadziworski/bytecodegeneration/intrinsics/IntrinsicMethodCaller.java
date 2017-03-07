@@ -4,7 +4,7 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.function.FunctionCall;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ public class IntrinsicMethodCaller extends StatementGeneratorFilter {
     private static ThreadLocal<IntrinsicMethods> intrinsicMethods = ThreadLocal.withInitial(IntrinsicMethods::new);
     private final InstructionAdapter adapter;
 
-    public IntrinsicMethodCaller(InstructionAdapter adapter, StatementGenerator parent, StatementGenerator next, Scope scope) {
+    public IntrinsicMethodCaller(InstructionAdapter adapter, StatementGenerator parent, StatementGenerator next, FunctionScope scope) {
         super(parent, next, scope);
         this.adapter = adapter;
     }

@@ -67,7 +67,7 @@ public class ArgumentsCompiler {
         bytecode.forEach(generatedClassHolder -> {
             try {
                 String className = generatedClassHolder.getName();
-                String outputPath = compilationUnit.getClassPackage().replace(".", "/") + "/";
+                String outputPath = compilationUnit.getClassPackage().replace(".", File.separator) + File.separator;
                 Path paths = Files.createDirectories(Paths.get(arguments.outputDirectory, outputPath));
                 File compileFile = new File(paths.toFile(), className + ".class");
                 LOGGER.info("Finished Compiling. Saving bytecode to '{}'.", compileFile.getAbsolutePath());

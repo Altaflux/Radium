@@ -3,7 +3,7 @@ package com.kubadziworski.domain.node.statement;
 import com.kubadziworski.bytecodegeneration.statement.StatementGenerator;
 import com.kubadziworski.domain.node.ElementImpl;
 import com.kubadziworski.domain.node.NodeData;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,19 +13,19 @@ import java.util.List;
  */
 public class Block extends ElementImpl implements Statement {
     private final List<Statement> statements;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public Block(NodeData element, Scope scope, List<Statement> statements) {
+    public Block(NodeData element, FunctionScope scope, List<Statement> statements) {
         super(element);
         this.scope = scope;
         this.statements = statements;
     }
 
-    public Block(Scope scope, List<Statement> statements) {
+    public Block(FunctionScope scope, List<Statement> statements) {
         this(null, scope, statements);
     }
 
-    public static Block empty(Scope scope) {
+    public static Block empty(FunctionScope scope) {
         return new Block(scope, Collections.emptyList());
     }
 
@@ -43,7 +43,7 @@ public class Block extends ElementImpl implements Statement {
         generator.generate(this);
     }
 
-    public Scope getScope() {
+    public FunctionScope getScope() {
         return scope;
     }
 

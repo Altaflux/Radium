@@ -7,6 +7,7 @@ import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.node.expression.function.SignatureType;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.Type;
@@ -22,17 +23,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Created by kuba on 06.04.16.
- */
-public class FunctionSignatureVisitor extends EnkelParserBaseVisitor<FunctionSignature> {
 
+public class FunctionSignatureVisitor extends EnkelParserBaseVisitor<FunctionSignature> {
     private final ExpressionVisitor expressionVisitor;
-    private final Scope scope;
+    private final FunctionScope scope;
 
     public FunctionSignatureVisitor(Scope scope) {
-        this.expressionVisitor = new ExpressionVisitor(scope);
-        this.scope = scope;
+        this.scope = new FunctionScope(scope, null);
+        this.expressionVisitor = new ExpressionVisitor(this.scope);
+
     }
 
     @Override

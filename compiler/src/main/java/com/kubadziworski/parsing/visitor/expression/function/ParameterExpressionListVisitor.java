@@ -6,7 +6,7 @@ import com.kubadziworski.antlr.EnkelParser.ParameterWithDefaultValueContext;
 import com.kubadziworski.antlr.EnkelParser.ParametersListContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.expression.Parameter;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 
 import java.util.ArrayList;
@@ -18,9 +18,9 @@ import java.util.List;
 public class ParameterExpressionListVisitor extends EnkelParserBaseVisitor<List<Parameter>> {
 
     private final ExpressionVisitor expressionVisitor;
-    private final Scope scope;
+    private final FunctionScope scope;
 
-    public ParameterExpressionListVisitor(ExpressionVisitor expressionVisitor, Scope scope) {
+    public ParameterExpressionListVisitor(ExpressionVisitor expressionVisitor, FunctionScope scope) {
         this.expressionVisitor = expressionVisitor;
         this.scope = scope;
     }

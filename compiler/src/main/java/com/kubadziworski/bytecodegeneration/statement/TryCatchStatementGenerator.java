@@ -7,8 +7,8 @@ import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.ReturnStatement;
 import com.kubadziworski.domain.node.statement.Statement;
 import com.kubadziworski.domain.node.statement.TryCatchStatement;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.ClassTypeFactory;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
@@ -72,7 +72,7 @@ public class TryCatchStatementGenerator {
                 .map(catchBlock -> {
                     Label catchStartLabel = new Label();
                     methodVisitor.visitLabel(catchStartLabel);
-                    Scope catchBlockScope = catchBlock.getBlock().getScope();
+                    FunctionScope catchBlockScope = catchBlock.getBlock().getScope();
                     methodVisitor.visitVarInsn(ASTORE, catchBlockScope.getLocalVariableIndex(catchBlock.getParameter().getName()));
 
                     List<LabelPack> labelPacks = new ArrayList<>();
@@ -109,7 +109,7 @@ public class TryCatchStatementGenerator {
             methodVisitor.visitLabel(finalLabel);
 
 
-            Scope catchBlockScope = finalBlock.getScope();
+            FunctionScope catchBlockScope = finalBlock.getScope();
             catchBlockScope.addLocalVariable(new LocalVariable(FINALLY_THROWABLE_NAME, ClassTypeFactory.createClassType("java.lang.Throwable"), true));
             methodVisitor.visitVarInsn(ASTORE, catchBlockScope.getLocalVariableIndex(FINALLY_THROWABLE_NAME));
             finalBlock.accept(statementGenerator);
@@ -134,7 +134,7 @@ public class TryCatchStatementGenerator {
         private final Block finalBlock;
         private final AtomicInteger atomicInteger = new AtomicInteger(0);
 
-        TryCatchFilter(Block finalBlock, Label startLabel, StatementGenerator parent, StatementGenerator next, Scope scope) {
+        TryCatchFilter(Block finalBlock, Label startLabel, StatementGenerator parent, StatementGenerator next, FunctionScope scope) {
             super(parent, next, scope);
             this.startLabel.set(startLabel);
             labelPacks = new ArrayList<>();
@@ -142,7 +142,7 @@ public class TryCatchStatementGenerator {
         }
 
         private TryCatchFilter(Block finalBlock, List<LabelPack> labelPacks, AtomicReference<Label> startLabel,
-                               StatementGenerator parent, StatementGenerator next, Scope scope) {
+                               StatementGenerator parent, StatementGenerator next, FunctionScope scope) {
             super(parent, next, scope);
             this.startLabel = startLabel;
             this.labelPacks = labelPacks;

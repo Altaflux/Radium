@@ -12,6 +12,7 @@ import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.node.expression.function.SuperCall;
 import com.kubadziworski.domain.node.statement.Block;
 import com.kubadziworski.domain.node.statement.Statement;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
@@ -73,7 +74,7 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
     }
 
     private Statement generateSuperCall(ClassDeclarationContext classDeclarationContext, FunctionSignature signature) {
-        Scope superScope = new Scope(this.scope, signature);
+        FunctionScope superScope = new FunctionScope(this.scope, signature);
         //We do not make local variables invisible in this case
         signature.getParameters()
                 .forEach(param -> superScope.addLocalVariable(new LocalVariable(param.getName(), param.getType())));
@@ -94,7 +95,7 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
 
     private Constructor generateInitBlocks(ClassDeclarationContext ctx) {
         FunctionSignature signature = scope.getConstructorSignatures().get(0);
-        Scope functionScope = new Scope(scope, signature);
+        FunctionScope functionScope = new FunctionScope(scope,signature);
         functionScope.addLocalVariable(new LocalVariable("this", functionScope.getClassType()));
         StatementVisitor statementVisitor = new StatementVisitor(functionScope);
         FunctionGenerator functionGenerator = new FunctionGenerator(functionScope);
@@ -114,7 +115,7 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
 
 
     private Constructor getDefaultConstructor(FunctionSignature signature, ClassDeclarationContext ctx) {
-        Scope constructorScope = new Scope(scope, signature);
+        FunctionScope constructorScope = new FunctionScope(scope, signature);
         constructorScope.addLocalVariable(new LocalVariable("this", scope.getClassType(), false));
         FunctionGenerator functionGenerator = new FunctionGenerator(constructorScope);
         functionGenerator.addParametersAsLocalVariables(signature);
@@ -124,8 +125,8 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
         return new Constructor(signature, block);
     }
 
-    private List<Statement> getFieldsInitializers(Scope scope) {
-        return scope.getFields().values().stream()
+    private List<Statement> getFieldsInitializers(FunctionScope scope) {
+        return scope.getScope().getFields().values().stream()
                 .filter(stringFieldEntry -> stringFieldEntry.getInitialExpression().isPresent())
                 .map(field -> field.getInitialExpression().get().supply(scope)).collect(toList());
     }
@@ -141,7 +142,7 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
         FunctionSignature startFunSignature = new FunctionSignature("start", Collections.emptyList(), VoidType.INSTANCE,
                 Modifiers.empty().with(Modifier.PUBLIC), owner, SignatureType.FUNCTION_CALL);
         FunctionCall startFunctionCall = new FunctionCall(startFunSignature, Collections.emptyList(), new EmptyExpression(scope.getClassType()));
-        Block block = new Block(new Scope(scope), Arrays.asList(constructorCall, startFunctionCall));
+        Block block = new Block(new FunctionScope(scope, functionSignature), Arrays.asList(constructorCall, startFunctionCall));
         return new Function(functionSignature, block);
     }
 

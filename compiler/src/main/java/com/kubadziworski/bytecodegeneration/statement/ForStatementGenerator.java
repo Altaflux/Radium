@@ -6,8 +6,8 @@ import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.statement.RangedForStatement;
 import com.kubadziworski.domain.node.statement.Statement;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -21,7 +21,7 @@ public class ForStatementGenerator {
 
     public void generate(RangedForStatement rangedForStatement, StatementGenerator generatord) {
 
-        Scope newScope = rangedForStatement.getScope();
+        FunctionScope newScope = rangedForStatement.getScope();
         StatementGenerator nGenerator = new StatementGeneratorFilter(null, generatord, newScope);
 
         Statement iterator = rangedForStatement.getIteratorVariableStatement();

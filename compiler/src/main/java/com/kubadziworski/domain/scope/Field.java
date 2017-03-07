@@ -8,7 +8,6 @@ import com.kubadziworski.parsing.visitor.statement.FieldInitializer;
 import com.kubadziworski.parsing.visitor.statement.FieldInitializerSupplier;
 import lombok.Builder;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 
@@ -58,18 +57,15 @@ public class Field implements Variable, CallableDescriptor {
         generator.generate(this);
     }
 
-    @Nullable
-    public Function getGetterFunction() {
+
+    public Optional<Function> getGetterFunction() {
         return Optional.ofNullable(getterFunction)
-                .map(fieldInitializerSupplier -> fieldInitializerSupplier.get(this))
-                .orElse(null);
+                .map(fieldInitializerSupplier -> fieldInitializerSupplier.get(this));
     }
 
-    @Nullable
-    public Function getSetterFunction() {
+    public Optional<Function> getSetterFunction() {
         return Optional.ofNullable(setterFunction)
-                .map(fieldInitializerSupplier -> fieldInitializerSupplier.get(this))
-                .orElse(null);
+                .map(fieldInitializerSupplier -> fieldInitializerSupplier.get(this));
     }
 
     public Optional<FieldInitializer> getInitialExpression() {

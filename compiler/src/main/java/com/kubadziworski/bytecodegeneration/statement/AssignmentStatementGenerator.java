@@ -4,7 +4,7 @@ import com.kubadziworski.bytecodegeneration.util.PropertyAccessorsGenerator;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.statement.Assignment;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.Variable;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
@@ -21,7 +21,7 @@ public class AssignmentStatementGenerator {
         this.methodVisitor = methodVisitor;
     }
 
-    public void generate(Assignment assignment, Scope scope, StatementGenerator generator) {
+    public void generate(Assignment assignment, FunctionScope scope, StatementGenerator generator) {
         Variable variable = assignment.getVariable();
         Expression expression = assignment.getAssignmentExpression();
         Type type = expression.getType();
@@ -35,7 +35,7 @@ public class AssignmentStatementGenerator {
         methodVisitor.store(index, variable.getType().getAsmType());
     }
 
-    public void generate(FieldAssignment assignment, Scope scope, StatementGenerator generator) {
+    public void generate(FieldAssignment assignment, FunctionScope scope, StatementGenerator generator) {
         PropertyAccessorsGenerator.generate(assignment, generator, methodVisitor);
     }
 

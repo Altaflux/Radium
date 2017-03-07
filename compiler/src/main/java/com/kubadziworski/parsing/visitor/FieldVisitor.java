@@ -8,10 +8,7 @@ import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.node.expression.Expression;
 import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
-import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.*;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.exception.IncompatibleTypesException;
 import com.kubadziworski.parsing.FunctionGenerator;
@@ -40,8 +37,8 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
         Modifiers modifiersSet = Modifiers.empty();
         if (ctx.fieldModifier() != null) {
             Set<Modifier> mSets = ctx.fieldModifier().fieldModifiers().stream()
-                    .map(methodModifiersContext -> Modifier.fromValue(methodModifiersContext.getText())
-                    ).collect(Collectors.toSet());
+                    .map(methodModifiersContext -> Modifier.fromValue(methodModifiersContext.getText()))
+                    .collect(Collectors.toSet());
             for (Modifier md : mSets) {
                 modifiersSet = modifiersSet.with(md);
             }
@@ -59,7 +56,8 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
 
         Field.FieldBuilder fieldBuilder = Field.builder()
                 .name(name).owner(owner).type(type).modifiers(modifiersSet);
-        ExpressionVisitor statementVisitor = new ExpressionVisitor(scope);
+        FunctionScope getterScope = new FunctionScope(scope, null);
+        ExpressionVisitor statementVisitor = new ExpressionVisitor(getterScope);
         if (ctx.expression() != null) {
             Expression expression = ctx.expression().accept(statementVisitor);
             validateType(expression, type);
@@ -71,11 +69,10 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
 
 
         if (ctx.setter() != null) {
-
             fieldBuilder.setterFunction(field -> {
                 String fieldName = ctx.setter().SimpleName().getText();
                 FunctionSignature signature = PropertyAccessorsUtil.createSetterForField(field, fieldName);
-                Scope functionScope = new Scope(scope, signature);
+                FunctionScope functionScope = new FunctionScope(scope, signature);
                 functionScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
                 functionScope.addField("field", field);
 
@@ -90,7 +87,7 @@ public class FieldVisitor extends EnkelParserBaseVisitor<Field> {
         if (ctx.getter() != null) {
             fieldBuilder.getterFunction(field -> {
                 FunctionSignature signature = PropertyAccessorsUtil.createGetterForField(field);
-                Scope functionScope = new Scope(scope, signature);
+                FunctionScope functionScope = new FunctionScope(scope, signature);
                 functionScope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
                 functionScope.addField("field", field);
 

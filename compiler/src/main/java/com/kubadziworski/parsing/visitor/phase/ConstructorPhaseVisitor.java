@@ -8,10 +8,7 @@ import com.kubadziworski.domain.node.expression.LocalVariableReference;
 import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
-import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.FunctionSignature;
-import com.kubadziworski.domain.scope.LocalVariable;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.*;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 import com.kubadziworski.parsing.visitor.expression.function.ParameterExpressionVisitor;
@@ -29,8 +26,6 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
 
     private final Scope scope;
 
-    private static final String INVISIBLE_PARAM = "$";
-
     public ConstructorPhaseVisitor(Scope scope) {
         this.scope = scope;
     }
@@ -43,7 +38,8 @@ public class ConstructorPhaseVisitor extends EnkelParserBaseVisitor<Scope> {
             return scope;
         }
 
-        ParameterExpressionVisitor parameterExpressionVisitor = new ParameterExpressionVisitor(new ExpressionVisitor(scope), scope);
+        FunctionScope functionScope = new FunctionScope(scope, null);
+        ParameterExpressionVisitor parameterExpressionVisitor = new ParameterExpressionVisitor(new ExpressionVisitor(functionScope), functionScope);
         Stream<Pair<Parameter, Field>> normalParameters = ctx.primaryConstructor().constructorParametersList().constructorParam()
                 .stream().map(constructorParamContext -> {
                     Parameter parameter = parameterExpressionVisitor.visitParameter(constructorParamContext.parameter());

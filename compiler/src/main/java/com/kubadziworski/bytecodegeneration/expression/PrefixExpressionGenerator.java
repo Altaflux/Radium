@@ -7,7 +7,7 @@ import com.kubadziworski.domain.UnaryOperator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.prefix.IncrementDecrementExpression;
 import com.kubadziworski.domain.node.statement.FieldAssignment;
-import com.kubadziworski.domain.scope.Scope;
+import com.kubadziworski.domain.scope.FunctionScope;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -22,7 +22,7 @@ public class PrefixExpressionGenerator {
     }
 
 
-    public void generate(IncrementDecrementExpression incrementDecrementExpression, Scope scope, StatementGenerator statementGenerator) {
+    public void generate(IncrementDecrementExpression incrementDecrementExpression, FunctionScope scope, StatementGenerator statementGenerator) {
         Reference reference = incrementDecrementExpression.getReference(); //x
         Type asmType = reference.getType().getAsmType();
 
@@ -76,7 +76,7 @@ public class PrefixExpressionGenerator {
     }
 
 
-    private void incLocalVariable(IncrementDecrementExpression incrementDecrementExpression, StatementGenerator generator, Scope scope) {
+    private void incLocalVariable(IncrementDecrementExpression incrementDecrementExpression, StatementGenerator generator, FunctionScope scope) {
         Reference reference = incrementDecrementExpression.getReference();
         int varIndex = scope.getLocalVariableIndex(reference.getName());
         int incremental = incrementDecrementExpression.getOperator().equals(UnaryOperator.INCREMENT) ? 1 : -1;

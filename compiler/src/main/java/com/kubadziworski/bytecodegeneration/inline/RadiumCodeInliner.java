@@ -5,6 +5,7 @@ import com.kubadziworski.bytecodegeneration.statement.StatementGeneratorFilter;
 import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.node.statement.Block;
+import com.kubadziworski.domain.scope.FunctionScope;
 import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
@@ -34,7 +35,7 @@ public class RadiumCodeInliner implements CodeInliner {
                 .findFirst().orElseThrow(() -> new CompilationException("Could not find method: " + name));
 
         Block block = (Block) function.getRootStatement();
-        Scope blockScope = block.getScope();
+        FunctionScope blockScope = block.getScope();
 
         int modifiers = ModifierTransformer.transform(function.getModifiers());
         MethodNode methodNode = new MethodNode(Opcodes.ASM5, modifiers, function.getName()
