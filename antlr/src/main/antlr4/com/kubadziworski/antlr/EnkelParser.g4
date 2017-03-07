@@ -106,7 +106,6 @@ expression
            | ConstructorDelegationCall_super '.' functionName '(' argumentList ')' #FunctionCall
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
            | functionName '(' argumentList ')' #FunctionCall
-           | superCall=ConstructorDelegationCall_super '('argumentList ')' #Supercall
            | newCall='new' typeName '('argumentList ')' #ConstructorCall
            | variableReference #VarReference
            | owner=expression '.' variableReference  #VarReference

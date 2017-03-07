@@ -136,11 +136,6 @@ public class StatementVisitor extends EnkelParserBaseVisitor<Statement> {
     }
 
     @Override
-    public Expression visitSupercall(SupercallContext ctx) {
-        return expressionVisitor.visitSupercall(ctx);
-    }
-
-    @Override
     public Expression visitBinaryExpression(BinaryExpressionContext ctx) {
         return expressionVisitor.visitBinaryExpression(ctx);
     }

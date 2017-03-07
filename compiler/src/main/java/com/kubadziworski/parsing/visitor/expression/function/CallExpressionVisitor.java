@@ -3,11 +3,13 @@ package com.kubadziworski.parsing.visitor.expression.function;
 import com.kubadziworski.antlr.EnkelParser.ArgumentListContext;
 import com.kubadziworski.antlr.EnkelParser.ConstructorCallContext;
 import com.kubadziworski.antlr.EnkelParser.FunctionCallContext;
-import com.kubadziworski.antlr.EnkelParser.SupercallContext;
 import com.kubadziworski.antlr.EnkelParserBaseVisitor;
 import com.kubadziworski.domain.node.RuleContextElementImpl;
 import com.kubadziworski.domain.node.expression.*;
-import com.kubadziworski.domain.node.expression.function.*;
+import com.kubadziworski.domain.node.expression.function.Call;
+import com.kubadziworski.domain.node.expression.function.CallType;
+import com.kubadziworski.domain.node.expression.function.ConstructorCall;
+import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.scope.LocalVariable;
 import com.kubadziworski.domain.scope.Scope;
@@ -20,8 +22,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Collections;
 import java.util.List;
-
-import static com.kubadziworski.domain.node.expression.function.SuperCall.SUPER_IDENTIFIER;
 
 public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
 
@@ -43,13 +43,6 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
     @Override
     public Call visitConstructorCall(ConstructorCallContext ctx) {
         Call call = callExpressionVisitorImp.visitConstructorCall(ctx);
-        validateAccessToFunction(call.getFunctionSignature());
-        return call;
-    }
-
-    @Override
-    public Call visitSupercall(SupercallContext ctx) {
-        Call call = callExpressionVisitorImp.visitSupercall(ctx);
         validateAccessToFunction(call.getFunctionSignature());
         return call;
     }
@@ -115,13 +108,6 @@ public class CallExpressionVisitor extends EnkelParserBaseVisitor<Call> {
             List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
             FunctionSignature signature = className.getConstructorCallSignature(arguments);
             return new ConstructorCall(new RuleContextElementImpl(ctx), signature, className, signature.createArgumentList(arguments));
-        }
-
-        @Override
-        public Call visitSupercall(SupercallContext ctx) {
-            List<ArgumentHolder> arguments = getArgumentsForCall(ctx.argumentList());
-            FunctionSignature signature = scope.getMethodCallSignature(SUPER_IDENTIFIER, arguments);
-            return new SuperCall(new RuleContextElementImpl(ctx), signature, signature.createArgumentList(arguments));
         }
 
         private FunctionCall createSuperFunctionCall(FunctionCallContext ctx, String functionName, List<ArgumentHolder> arguments) {
