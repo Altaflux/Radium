@@ -95,7 +95,7 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
 
     private Constructor generateInitBlocks(ClassDeclarationContext ctx) {
         FunctionSignature signature = scope.getConstructorSignatures().get(0);
-        FunctionScope functionScope = new FunctionScope(scope,signature);
+        FunctionScope functionScope = new FunctionScope(scope, signature);
         functionScope.addLocalVariable(new LocalVariable("this", functionScope.getClassType()));
         StatementVisitor statementVisitor = new StatementVisitor(functionScope);
         FunctionGenerator functionGenerator = new FunctionGenerator(functionScope);

@@ -41,12 +41,9 @@ class ShouldCompileTest extends Specification {
         helloWorld                           | "HelloWorld.enk"
         loopsCode                            | "Loops.enk"
         allTypes                             | "AllPrimitiveTypes.enk"
-        moreDefaultParams                    | "MoreDefaultParams.enk"
-        defaultParams                        | "DefaultParamTest.enk"
         fields                               | "Fields.enk"
         namedParams                          | "NamedParamsTest.enk"
         sumCalculator                        | "SumCalculator.enk"
-        defaultConstructor                   | "DefaultConstructor.enk"
         parameterLessConsturctor             | "ParameterLessConstructor.enk"
         construcotrWithParams                | "ConstructorWithParams.enk"
         equalityTest                         | "EqualitySyntax.enk"
@@ -80,84 +77,8 @@ class ShouldCompileTest extends Specification {
         fieldByConstructor                   | "FieldByConstructor.enk"
         bitWise                              | "BitWise.enk"
         booleanOperator                      | "BooleanOperator.enk"
-        classExtends                         | "ClassExtends.enk"
-        classExtendsConstructor              | "ClassExtendsConstructor.enk"
-        classExtendsConstructorDefParam      | "ClassExtendsConstructorDefParam.enk"
-        classExtendsConstructorDefFieldParam | "ClassExtendsConstructorDefFieldParam.enk"
     }
 
-
-    @Unroll
-    "Should Create Multiple files"() {
-        given:
-        def file = new File("target/enkelClasses/" + filename)
-
-        FileUtils.writeStringToFile(file, code)
-        compiler.compile("target/enkelClasses/" + filename)
-
-        URL u = new File("target/enkelClasses/").toURI().toURL()
-        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader()
-        Class urlClass = URLClassLoader.class
-        Method method = urlClass.getDeclaredMethod("addURL", URL.class)
-        method.setAccessible(true)
-
-        expect:
-        method.invoke(urlClassLoader, u) == null
-
-        for (int i = 0; i < classes.size(); i++) {
-            Class name = Class.forName(classes.get(i))
-            Method method1 = name.getMethod("main", String[].class)
-            Object[] arggg = [[] as String[]]
-            method1.invoke(null, arggg)
-        }
-
-        where:
-        code       | filename           | classes
-        multiFiles | "MultiClasses.enk" | Arrays.asList("SecondClass", "FirstClass")
-    }
-
-    private final static classExtends =
-            """
-                            import com.kubadziworski.test.superclass.BaseClass;
-                          
-                            ClassExtends : BaseClass() {
-
-                                fn start {
-                                    foo();
-                                }
-                            }
-							"""
-
-    private final static classExtendsConstructorDefParam =
-            """
-                            import com.kubadziworski.test.superclass.BaseConstructor;
-                          
-                            ClassExtendsConstructorDefParam(x:String = "test") : BaseConstructor(x) {
-                                fn start {
-                                    foo();
-                                }
-                            }
-							"""
-    private final static classExtendsConstructorDefFieldParam =
-            """
-                            import com.kubadziworski.test.superclass.BaseConstructor;
-                          
-                            ClassExtendsConstructorDefFieldParam(val x:String = "test") : BaseConstructor(x) {
-                                fn start {
-                                    foo();
-                                }
-                            }
-							"""
-    private final static classExtendsConstructor =
-            """
-                            import com.kubadziworski.test.superclass.BaseConstructor;
-                          
-                            ClassExtendsConstructor : BaseConstructor("test") {
-                                fn start {
-                                    foo();
-                                }
-                            }
-							"""
     private final static booleanOperator =
             """
                             BooleanOperator {
@@ -268,49 +189,7 @@ class ShouldCompileTest extends Specification {
                                 }
                             }
 							"""
-    private final static moreDefaultParams =
-            """
-                            MoreDefaultParams {
 
-                                fn start {
-                                    assert(foo(x->"11") == "112")
-                                    assert(foo(x->"11",y ->"22") == "1122")
-                                    assert(foo(y ->"22") == "122")
-                                    assert(foo("11") == "112")
-                                    assert(foo() == "12")
-                                }
-                                
-                                fn foo(x:String = "1" , y:String = "2" ) : String {
-                                    println(x + y); 
-                                    return x + y
-                                }
-                                
-                                fn assert(actual: Boolean) {
-                                    if (actual == true) {
-                                        println("OK")
-                                    }
-                                    else {
-                                        println("TEST FAILED")
-                                        throw new AssertionError("TEST FAILED")
-                                    }
-                                }
-                            }
-							"""
-    private final static defaultParams =
-            """
-                            DefaultParamTest {
-                                fn start() {
-                                    greet("kuba","enkel")
-                                    greet("andrew")
-                                }
-                                fn greet (name :String ,  favouriteLanguage : String = "java") {
-                                    println("Hello my name is ")
-                                    println(name)
-                                    println("and my favourite langugage is ")
-                                    println(favouriteLanguage)
-                                }
-                            }
-    						"""
     private final static fields =
             """
                             Fields {
@@ -416,18 +295,7 @@ class ShouldCompileTest extends Specification {
 //
 //                            }
 //							"""
-    private final static defaultConstructor =
-            """
-                            DefaultConstructor(val x:Int = 2) {
-                                
-                                init {
-                                    println("Hello")
-                                }
-                                fn start() {
-                                   println("Hey I am 'start' method. I am not static so the default constructor must have been called, even though it is not defined")
-                                }
-                            }
-							"""
+
 
     private final static construcotrWithParams =
             """
@@ -803,20 +671,6 @@ class ShouldCompileTest extends Specification {
                             }
 							"""
 
-    private final static multiFiles =
-            """
-                            FirstClass {
-                                fn start {
-                                    println("Hello First Class")
-                                }
-
-                            }
-                            SecondClass {
-                                fn start {
-                                   println("Hello Second Class")
-                                }
-                            }
-							"""
     private final static ifExpressions =
             """
                             IfExpression {

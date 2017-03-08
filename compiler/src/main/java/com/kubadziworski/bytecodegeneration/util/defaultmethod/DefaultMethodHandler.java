@@ -26,6 +26,7 @@ import com.kubadziworski.domain.type.EnkelType;
 import com.kubadziworski.domain.type.Type;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
+import com.kubadziworski.parsing.FunctionGenerator;
 import com.kubadziworski.util.DescriptorFactory;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -124,11 +125,9 @@ public class DefaultMethodHandler {
         if (!function.getModifiers().contains(Modifier.STATIC)) {
             scope.addLocalVariable(new LocalVariable("this", scope.getClassType()));
         }
-//
-//        FunctionGenerator functionGenerator = new FunctionGenerator(scope);
-//        functionGenerator.addParametersAsLocalVariables(function.getFunctionSignature());
-        function.getFunctionSignature().getParameters()
-                .forEach(param -> scope.addLocalVariable(new LocalVariable(param.getName(), param.getType(), false, param.isVisible())));
+
+        FunctionGenerator functionGenerator = new FunctionGenerator(scope);
+        functionGenerator.addParametersAsLocalVariables(function.getFunctionSignature());
 
 
         Parameter bitMask = new Parameter("mask", PrimitiveTypes.INT_TYPE, null);
