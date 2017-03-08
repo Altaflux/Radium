@@ -50,7 +50,7 @@ class InterfaceAndExtendsTest extends Specification {
             """
                             import com.kubadziworski.test.superclass.BaseClass;
                           
-                            ClassExtends : BaseClass() {
+                            class ClassExtends : BaseClass() {
 
                                 fn start {
                                     foo();
@@ -62,7 +62,7 @@ class InterfaceAndExtendsTest extends Specification {
             """
                             import com.kubadziworski.test.superclass.BaseConstructor;
                           
-                            ClassExtendsConstructorDefParam(x:String = "test") : BaseConstructor(x) {
+                            class ClassExtendsConstructorDefParam(x:String = "test") : BaseConstructor(x) {
                                 fn start {
                                     foo();
                                 }
@@ -72,7 +72,7 @@ class InterfaceAndExtendsTest extends Specification {
             """
                             import com.kubadziworski.test.superclass.BaseConstructor;
                           
-                            ClassExtendsConstructorDefFieldParam(val x:String = "test") : BaseConstructor(x) {
+                            class ClassExtendsConstructorDefFieldParam(val x:String = "test") : BaseConstructor(x) {
                                 fn start {
                                     foo();
                                 }
@@ -82,7 +82,7 @@ class InterfaceAndExtendsTest extends Specification {
             """
                             import com.kubadziworski.test.superclass.BaseConstructor;
                           
-                            ClassExtendsConstructor : BaseConstructor("test") {
+                            class ClassExtendsConstructor : BaseConstructor("test") {
                                 fn start {
                                     foo();
                                 }

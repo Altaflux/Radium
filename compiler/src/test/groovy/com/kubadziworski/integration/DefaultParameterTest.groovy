@@ -46,7 +46,7 @@ class DefaultParameterTest extends Specification {
 
     private final static moreDefaultParams =
             """
-                            MoreDefaultParams {
+                            class MoreDefaultParams {
 
                                 fn start {
                                     assert(foo(x->"11") == "112")
@@ -74,7 +74,7 @@ class DefaultParameterTest extends Specification {
 							"""
     private final static defaultParams =
             """
-                            DefaultParamTest {
+                            class DefaultParamTest {
                                 fn start() {
                                     greet("kuba","enkel")
                                     greet("andrew")
@@ -90,7 +90,7 @@ class DefaultParameterTest extends Specification {
 
     private final static defaultConstructor =
             """
-                            DefaultConstructor(val x:Int = 2) {
+                            class DefaultConstructor(val x:Int = 2) {
                                 
                                 init {
                                     println("Hello init x: \$x")

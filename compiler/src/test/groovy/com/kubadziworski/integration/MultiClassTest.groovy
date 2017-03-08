@@ -47,13 +47,13 @@ class MultiClassTest  extends Specification {
 
     private final static multiFiles =
             """
-                            FirstClass {
+                            class FirstClass {
                                 fn start {
                                     println("Hello First Class")
                                 }
 
                             }
-                            SecondClass {
+                            class SecondClass {
                                 fn start {
                                    println("Hello Second Class")
                                 }

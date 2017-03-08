@@ -81,7 +81,7 @@ class ShouldCompileTest extends Specification {
 
     private final static booleanOperator =
             """
-                            BooleanOperator {
+                            class BooleanOperator {
 
                                 fn start {
                                     val trueVal = true
@@ -109,7 +109,7 @@ class ShouldCompileTest extends Specification {
 
     private final static bitWise =
             """
-                            BitWise {
+                            class BitWise {
 
                                 fn start {
                                     assertTrue((2 | 4) == 6)
@@ -125,7 +125,7 @@ class ShouldCompileTest extends Specification {
 
     private final static fieldByConstructor =
             """
-                            FieldByConstructor(var myString:String = "hello") {
+                            class FieldByConstructor(var myString:String = "hello") {
                                 init {
                                     println(myString)
                                     assertTrue(myString == "hello")
@@ -145,7 +145,7 @@ class ShouldCompileTest extends Specification {
 
     private final static helloWorld =
             """
-                            HelloWorld {
+                            class HelloWorld {
 
                                 fn start {
                                     var x:String = "Enkel"
@@ -157,7 +157,7 @@ class ShouldCompileTest extends Specification {
 
     private final static loopsCode =
             """
-                            Loops {
+                            class Loops {
                                 fn start() {
                                     for i from 3 to 1 {
                                         method(i)
@@ -172,7 +172,7 @@ class ShouldCompileTest extends Specification {
 
     private final static allTypes =
             """
-                            AllPrimitiveTypes {
+                            class AllPrimitiveTypes {
                                 fn start() {
                                     var stringVar = "str"
                                     var booleanVar = false
@@ -192,7 +192,7 @@ class ShouldCompileTest extends Specification {
 
     private final static fields =
             """
-                            Fields {
+                            class Fields {
                                 var myField : Int
                                 fn start {
                                     myField = 5
@@ -203,7 +203,7 @@ class ShouldCompileTest extends Specification {
 
     private final static namedParams =
             """
-                            NamedParamsTest {
+                            class NamedParamsTest {
 
                                 fn start {
                                     createRect(x1->25,x2->-25,y1->50,y2->-0xE)
@@ -217,7 +217,7 @@ class ShouldCompileTest extends Specification {
 
     private final static sumCalculator =
             """
-                                SumCalculator {
+                                class SumCalculator {
                                     fn start() {
                                         var expected = 8
                                         var firstNum:Int = 3
@@ -299,7 +299,7 @@ class ShouldCompileTest extends Specification {
 
     private final static construcotrWithParams =
             """
-                            ConstructorWithParams(x:Int = 2) {
+                            class ConstructorWithParams(x:Int = 2) {
 
                                 init {
                                     println("Hey I am constructor with parameter x = " + x)
@@ -318,7 +318,7 @@ class ShouldCompileTest extends Specification {
 
     private final static parameterLessConsturctor =
             """
-                            ParameterLessConstructor() {
+                            class ParameterLessConstructor() {
 
                                 init {
                                     println("Hey I am constructor without parameters")
@@ -336,7 +336,7 @@ class ShouldCompileTest extends Specification {
 
     private static final equalityTest =
             """
-                            EqualitySyntax {
+                            class EqualitySyntax {
 
                              fn start {
                                    objectComparisonTest()
@@ -474,7 +474,7 @@ class ShouldCompileTest extends Specification {
     private static final unaryExpressionTest = """
                             import com.kubadziworski.test.unary.ClassWithField;
                             
-                            UnaryExpressions {
+                            class UnaryExpressions {
 
                                 var globalField : Int
 
@@ -526,7 +526,7 @@ class ShouldCompileTest extends Specification {
                             }
                             """
     private static final globalLocal = """
-                            GlobalLocal {
+                            class GlobalLocal {
                                 var x : Int
 
                                 fn start(){
@@ -550,7 +550,7 @@ class ShouldCompileTest extends Specification {
                             }
 						"""
     private static final staticTest = """
-                            StaticTest {
+                            class StaticTest {
 
                                 fn start(){
                                     println(java.lang.System.out.hashCode());
@@ -559,7 +559,7 @@ class ShouldCompileTest extends Specification {
                             }
 						"""
     private static final staticFunctionTest = """
-                            StaticFunctionTest {
+                            class StaticFunctionTest {
 
                                 fn start(){
                                     assert(expected -> true , actual -> 1 == 1);
@@ -578,7 +578,7 @@ class ShouldCompileTest extends Specification {
 						"""
     private static final importingTest = """
                             import com.kubadziworski.test.statics.ImportMethods.*;
-                            ImportingTest {
+                            class ImportingTest {
 
                                 fn start(){
                                     execute("hello");
@@ -591,7 +591,7 @@ class ShouldCompileTest extends Specification {
 						"""
     private final static getterSetter =
             """
-                            GetterSetter {
+                            class GetterSetter {
                                 var myField : Int
                                 get(){
                                     println("returning value getter")
@@ -621,7 +621,7 @@ class ShouldCompileTest extends Specification {
 							"""
     private final static getterStatement =
             """
-                            GetterStatement {
+                            class GetterStatement {
                                 var myField : Int
                                 get() = field
                                 set(value){
@@ -648,7 +648,7 @@ class ShouldCompileTest extends Specification {
 
     private final static functionSingleStatements =
             """
-                            FunctionSingleStatements {
+                            class FunctionSingleStatements {
 
                                 fn start {
                                     println(singleIntFunction())
@@ -673,7 +673,7 @@ class ShouldCompileTest extends Specification {
 
     private final static ifExpressions =
             """
-                            IfExpression {
+                            class IfExpression {
                             
                                 fn start {
                                     var shouldBeFive = if(true){
@@ -713,7 +713,7 @@ class ShouldCompileTest extends Specification {
                             }
 							"""
     private static final myTryStatement = """
-                            TryStatement {
+                            class TryStatement {
                                 var myTrue : Boolean = true
                             
                                 fn start(){
@@ -804,7 +804,7 @@ class ShouldCompileTest extends Specification {
 						"""
     private static final fieldInitializing =
             """
-                            FieldInitializing {
+                            class FieldInitializing {
                                 val myField : Int = 10
                             
                                 fn start {
@@ -825,7 +825,7 @@ class ShouldCompileTest extends Specification {
 
     private final static fieldInitializingWithConstructor =
             """
-                            FieldInitializingWithConstructor {
+                            class FieldInitializingWithConstructor {
                                 val myField : Int = 10
                             
                                 fn FieldInitializingWithConstructor() {
@@ -850,7 +850,7 @@ class ShouldCompileTest extends Specification {
             """
     private static final detectReturnCompleteStatement =
             """
-                    DetectReturnCompleteStatement {
+                    class DetectReturnCompleteStatement {
                         val myField : Int = 10
 
                         fn start(){
@@ -878,7 +878,7 @@ class ShouldCompileTest extends Specification {
 
     private static final throwStatement =
             """
-                    ThrowStatement {
+                    class ThrowStatement {
 
                         fn start(){
                             try {
@@ -893,7 +893,7 @@ class ShouldCompileTest extends Specification {
 
     private static final nullValue =
             """
-                    NullValue {
+                    class NullValue {
                         fn start(){
                             var nullableString:String? = null
                             println(nullableString)
@@ -914,7 +914,7 @@ class ShouldCompileTest extends Specification {
 
     private static final returnUnit =
             """
-                ReturnUnit {
+                class ReturnUnit {
 
                     fn start{
                         var x = voidMethod();
@@ -939,7 +939,7 @@ class ShouldCompileTest extends Specification {
             """
     private static final concreteReturnUnit =
             """
-                ConcreteReturnUnit {
+                class ConcreteReturnUnit {
 
                     fn start{
                         var x = nullableUnit();
@@ -954,7 +954,7 @@ class ShouldCompileTest extends Specification {
                 }
             """
     private static final superCall = """
-               CallParentClass {
+               class CallParentClass {
 
                    fn start(){
                         println(toString());
@@ -981,7 +981,7 @@ class ShouldCompileTest extends Specification {
 
     private static final typeCoercion = """
                 import com.kubadziworski.test.coercion.TypeCoercionTest;
-                TypeCoercion {
+                class TypeCoercion {
 
                     fn start(){
                         var typeCoercionTest = new TypeCoercionTest();
@@ -996,7 +996,7 @@ class ShouldCompileTest extends Specification {
             """
 
     private static final primitiveFunctions = """
-                PrimitiveFunctions {
+                class PrimitiveFunctions {
 
                     fn start(){
 
@@ -1022,7 +1022,7 @@ class ShouldCompileTest extends Specification {
                 }
             """
     private static final innerTry = """
-                InnerTry{
+                class InnerTry{
                     var myCondition: Boolean = true
                     var mySecondCondition: Boolean = false
                     
@@ -1071,7 +1071,7 @@ class ShouldCompileTest extends Specification {
                 }
             """
     private static final parenthesisExpressions = """
-                            ParenthesisExpressions {
+                            class ParenthesisExpressions {
 
                                 fn start(){
                                     val sumNoParenthesis = 5 + 2 * 10;
@@ -1094,7 +1094,7 @@ class ShouldCompileTest extends Specification {
     private final static inlineCode =
             """
                             import com.kubadziworski.test.minline.InlinedClass;
-                            InlineCode {
+                            class InlineCode {
 
                                 fn start {
                                     var x = new InlinedClass();
@@ -1107,7 +1107,7 @@ class ShouldCompileTest extends Specification {
     private final static callStaticImports =
             """
                             import com.kubadziworski.test.statics.*;
-                            CallStaticImports {
+                            class CallStaticImports {
 
                                 fn start {
                                     var x = new ClassWithStatics();
@@ -1124,7 +1124,7 @@ class ShouldCompileTest extends Specification {
 
     private final static variableEscaping =
             """
-                            `VariableEscaping` {
+                            class `VariableEscaping` {
 
                                 fn `start` {
                                     var x:`String` = "Enkel"
@@ -1141,7 +1141,7 @@ class ShouldCompileTest extends Specification {
 
     private final static numericLiterals =
             """
-                            NumericLiterals {
+                            class NumericLiterals {
 
                                 fn start {
                                     println(03_4);
@@ -1184,7 +1184,7 @@ class ShouldCompileTest extends Specification {
                             }
 							"""
     private static final sendNullToMethod = """
-                        SendNullToMethod {
+                        class SendNullToMethod {
                             fn start() {
                                 var nullString: String? = null
                                 method(nullString)

@@ -26,10 +26,8 @@ import com.kubadziworski.parsing.visitor.expression.function.ArgumentExpressions
 import com.kubadziworski.parsing.visitor.statement.StatementVisitor;
 import org.apache.commons.collections4.ListUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -68,9 +66,24 @@ public class ClassVisitor extends EnkelParserBaseVisitor<ClassDeclaration> {
             methods.add(getGeneratedMainMethod());
         }
 
+        Modifiers modifiersSet = Modifiers.empty();
+        if (ctx.classModifier() != null) {
+            Set<Modifier> mSets = ctx.classModifier().classModifiers().stream()
+                    .map(methodModifiersContext -> Modifier.fromValue(methodModifiersContext.getText()))
+                    .collect(Collectors.toSet());
+            for (Modifier md : mSets) {
+                modifiersSet = modifiersSet.with(md);
+            }
+            if (ctx.classModifier().classAccessModifiers() != null) {
+                modifiersSet = modifiersSet.with(Modifier.fromValue(ctx.classModifier().classAccessModifiers().getText()));
+            } else {
+                modifiersSet = modifiersSet.with(Modifier.PUBLIC);
+            }
+        }
+
         scope.addMethods(methods);
         return new ClassDeclaration(scope.getClassName(), scope.getMetaData().getPackageName(),
-                new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods);
+                new EnkelType(scope.getFullClassName(), scope), new ArrayList<>(scope.getFields().values()), methods, modifiersSet);
     }
 
     private Statement generateSuperCall(ClassDeclarationContext classDeclarationContext, FunctionSignature signature) {

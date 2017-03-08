@@ -1,6 +1,7 @@
 package com.kubadziworski.bytecodegeneration;
 
 import com.kubadziworski.bytecodegeneration.asm.RadiumClassVisitor;
+import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
 import com.kubadziworski.domain.ClassDeclaration;
 import com.kubadziworski.domain.Function;
 import com.kubadziworski.domain.MetaDataBuilder;
@@ -34,7 +35,8 @@ public class ClassGenerator {
         RadiumClassVisitor visitor = new RadiumClassVisitor(Opcodes.ASM5, classWriter, classDeclaration.getClassType().getAsmType().getClassName());
         Scope scope = ((EnkelType) classDeclaration.getClassType()).getScope();
         String baseClass = scope.getMetaData().getSuperClass().getAsmType().getInternalName();
-        visitor.visit(CLASS_VERSION, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, name, null, baseClass, null);
+        int access = ModifierTransformer.transform(classDeclaration.getModifiers()) + +Opcodes.ACC_SUPER;
+        visitor.visit(CLASS_VERSION, access, name, null, baseClass, null);
 
         String fileName = scope.getMetaData().getFilename();
         if (fileName.contains(File.separator)) {

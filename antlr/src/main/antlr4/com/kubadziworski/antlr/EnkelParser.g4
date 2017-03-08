@@ -31,7 +31,7 @@ packageDeclaration
 	:   'package' SimpleName ('.' SimpleName)* ';'
 	;
 
-classDeclaration : classAccessModifiers? className  primaryConstructor? abstractClassAndInterfaces? classBody  ;
+classDeclaration : classModifier 'class' className  primaryConstructor? abstractClassAndInterfaces? classBody  ;
 className : qualifiedName ;
 classBody : '{' (field | function | initBlock)* '}' ;
 field : fieldModifier isFinal=(KEYWORD_var | KEYWORD_val) name ':' type ('=' expression)? getter? setter?;
@@ -157,18 +157,23 @@ qualifiedName : SimpleName ('.' SimpleName)*;
 fieldModifiers
     : 'static'
     | 'open'
-    | 'final' ;
+    | 'final'
+    | 'abstract';
 methodModifiers
     : 'static'
     | 'inline'
     | 'open'
-    | 'final' ;
+    | 'final'
+    | 'abstract';
+
+classModifiers: 'abstract' ;
 
 accessModifiers: 'public' | 'private' | 'protected' ;
 classAccessModifiers :  'public' | 'private' ;
 
 methodModifier : (accessModifiers?  methodModifiers*) | (methodModifiers*  accessModifiers?) | (methodModifiers*  accessModifiers? methodModifiers*) ;
 fieldModifier : (accessModifiers?  fieldModifiers*) | (fieldModifiers*  accessModifiers?) | (fieldModifiers*  accessModifiers? fieldModifiers*) ;
+classModifier : (classAccessModifiers?  classModifiers*) | (classModifiers*  classAccessModifiers?) | (classModifiers*  classAccessModifiers? classModifiers*) ;
 
 type : simpleName=typeComposition nullable='?'? ;
 

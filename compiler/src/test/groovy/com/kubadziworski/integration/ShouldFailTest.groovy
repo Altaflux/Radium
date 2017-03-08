@@ -51,7 +51,7 @@ class ShouldFailTest extends Specification {
     private static final noAccessToMethod = """
                         import com.kubadziworski.test.NoAccess;
                         
-                        NoAccessToMethod {
+                        class NoAccessToMethod {
                             fn start() {
                                 val obj = new NoAccess();
                                 obj.packagePrivate();
@@ -60,7 +60,7 @@ class ShouldFailTest extends Specification {
     """
 
     private static final sendNullToMethod = """
-                        SendNullToMethod {
+                        class SendNullToMethod {
                             fn start() {
                                 var nullString: String? = null
                                 method(nullString)
@@ -75,7 +75,7 @@ class ShouldFailTest extends Specification {
     private static final callFunctionOfNullable = """
                         import com.kubadziworski.test.SimpleObject;
                         
-                        CallFunctionOfNullable {
+                        class CallFunctionOfNullable {
                             fn start() {
                                 var nullObject: SimpleObject? = null
                                 nullObject.foo();
@@ -83,7 +83,7 @@ class ShouldFailTest extends Specification {
                         }
     """
     private static final notReturnComplete = """
-                        NotReturnComplete {
+                        class NotReturnComplete {
                             fn start() {
                                 method()
                             }
@@ -97,7 +97,7 @@ class ShouldFailTest extends Specification {
     """
 
     private static final unreachableStatement = """
-                        UnreachableStatement {
+                        class UnreachableStatement {
                             fn start() {
                                 method()
                             }
@@ -114,14 +114,14 @@ class ShouldFailTest extends Specification {
     """
 
     private static final incompatibleLocalVariable = """
-                        IncompatibleLocalVariable {
+                        class IncompatibleLocalVariable {
                             fn start() {
                                 var myString: String = 2;
                             }
                         }
     """
     private static final incompatibleField = """
-                        IncompatibleField {
+                        class IncompatibleField {
                             val myField : Int = "Foo"
                             fn start() {
                                
@@ -132,7 +132,7 @@ class ShouldFailTest extends Specification {
     private static final incompatibleThrow = """
                         import com.kubadziworski.test.SimpleObject;
                         
-                        IncompatibleThrow {
+                        class IncompatibleThrow {
                             var myField : Int = "Foo"
                             fn start() {
                                method();
@@ -145,7 +145,7 @@ class ShouldFailTest extends Specification {
 
     private static final assignNullToNotNullable = """
 
-                        AssignNullToNotNullable {
+                        class AssignNullToNotNullable {
                             fn start() {
                                var myString:String = null
                             }
@@ -154,7 +154,7 @@ class ShouldFailTest extends Specification {
 
     private static final modifyFinalVariable = """
 
-                        ModifyFinalVariable {
+                        class ModifyFinalVariable {
                             fn start() {
                                val myString:String = "String"
                                myString = "error"
@@ -163,7 +163,7 @@ class ShouldFailTest extends Specification {
     """
 
     private static final modifyFinalField = """
-                        ModifyFinalField {
+                        class ModifyFinalField {
                             val myField : String = "Foo"
                         
                             fn start() {
@@ -172,9 +172,9 @@ class ShouldFailTest extends Specification {
                         }
     """
 
-    private final static fieldByConstructor =
-            """
-                            FieldByConstructor(var myString:String = 2) {
+    private final static fieldByConstructor = """
+
+                            class FieldByConstructor(var myString:String = 2) {
         
                             }
 							"""

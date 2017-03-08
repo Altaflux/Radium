@@ -308,6 +308,7 @@ Modifier_final : 'final';
 Modifier_open : 'open';
 Modifier_inline : 'inline';
 Modifier_static : 'static';
+Modifier_abstract : 'abstract';
 Create_New : 'new' ;
 
 For_Loop_From : 'from' ;
@@ -324,6 +325,7 @@ ConstructorDelegationCall_this: 'this';
 ConstructorDelegationCall_super: 'super';
 
 Declaration_interface: 'interface';
+Declaration_class: 'class';
 
 Declaration_fun: 'fn';
 

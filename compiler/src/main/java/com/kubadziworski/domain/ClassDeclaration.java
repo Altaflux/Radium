@@ -17,13 +17,15 @@ public class ClassDeclaration {
     private final List<Function> methods;
     private final Type classType;
     private final String classPackage;
+    private final Modifiers modifiers;
 
-    public ClassDeclaration(String name, String classPackage, Type classType, List<Field> fields, List<Function> methods) {
+    public ClassDeclaration(String name, String classPackage, Type classType, List<Field> fields, List<Function> methods, Modifiers modifiers) {
         this.name = name;
         this.fields = fields;
         this.methods = methods;
         this.classType = classType;
         this.classPackage = classPackage;
+        this.modifiers = modifiers;
     }
 
     public String getName() {
@@ -44,5 +46,9 @@ public class ClassDeclaration {
 
     public String getClassPackage() {
         return classPackage;
+    }
+
+    public Modifiers getModifiers() {
+        return modifiers;
     }
 }
