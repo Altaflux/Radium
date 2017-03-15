@@ -73,9 +73,10 @@ public class EnkelType implements Type {
                 if (interfaceType.getName().equals(type.getName())) {
                     return arity;
                 }
-//                else if (type.inheritsFrom(interfaceType) > -1) {
-//                    return arity;
-//                }
+                //TODO this is not fully correct but it is enough for now
+                else if (interfaceType.inheritsFrom(type) > -1) {
+                    return arity;
+                }
             }
             iteratedClass = iteratedClass.getSuperType().orElse(null);
             arity++;
@@ -94,6 +95,13 @@ public class EnkelType implements Type {
             if (type1.getName().equals(type.getName())) {
                 return Optional.of(type1);
             }
+
+            for (Type interfaceType : getInterfaces()) {
+                if (interfaceType.getName().equals(type.getName())) {
+                    return Optional.of(interfaceType);
+                }
+            }
+
             type1 = type1.getSuperType().orElse(null);
         }
         return Optional.empty();

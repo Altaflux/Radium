@@ -81,7 +81,7 @@ public interface Type {
     }
 
     default String readableString() {
-        return getName() + (isNullable().equals(Nullability.NULLABLE) ? "!" : "");
+        return getName() + (isNullable().equals(Nullability.NULLABLE) ? "?" : "");
     }
 
     default Field getField(String fieldName) {
