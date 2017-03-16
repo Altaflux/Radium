@@ -1,6 +1,6 @@
 package com.radium.test;
 
-public HelloWorld {
+public class HelloWorld {
     public fn helloWorld(myString:String){
         println("Hello World")
     }
