@@ -10,6 +10,7 @@ import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
+import com.kubadziworski.exception.AmbiguousCallException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -95,12 +96,12 @@ public final class TypeResolver {
 
         if (signatures.size() > 1) {
             if (owner == null) {
-                throw new RuntimeException("Arity issue");
+                throw new AmbiguousCallException(signatures);
             }
             return signatures.stream().reduce((functionSignature, functionSignature2) -> {
                 boolean sameArguments = compareArguments(functionSignature.getParameters(), functionSignature2.getParameters());
                 if (!sameArguments) {
-                    throw new RuntimeException("Arity issue");
+                    throw new AmbiguousCallException(Arrays.asList(functionSignature, functionSignature2));
                 }
                 int arity1 = owner.inheritsFrom(functionSignature.getOwner());
                 int arity2 = owner.inheritsFrom(functionSignature2.getOwner());
