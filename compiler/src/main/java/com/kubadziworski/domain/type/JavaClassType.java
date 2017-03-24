@@ -108,7 +108,6 @@ public class JavaClassType implements Type {
                 for (Class inter : iteratedClass.getInterfaces()) {
                     if (org.objectweb.asm.Type.getDescriptor(inter).equals(type.getAsmType().getDescriptor())) {
                         return arity;
-                        //TODO this is not fully correct but it is enough for now
                     } else if (ClassTypeFactory.createClassType(inter).inheritsFrom(type) > -1) {
                         return arity;
                     }

@@ -144,8 +144,8 @@ primary
 variableReference : SimpleName ;
 
 value
-    :  integerLiteral
-    |  floatingPointLiteral
+    : integerLiteral
+    | floatingPointLiteral
     | CharacterLiteral
     | BOOL
     | NULL
