@@ -268,6 +268,7 @@ OP_PLUS : '+';
 OP_MUNUS : '-';
 
 OP_IN : 'in';
+OP_OUT : 'out';
 OP_NOT_IN: '!in';
 OP_IS : 'is';
 OP_NOT_IS: '!is';

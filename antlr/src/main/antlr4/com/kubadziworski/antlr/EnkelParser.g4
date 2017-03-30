@@ -31,7 +31,7 @@ packageDeclaration
 	:   'package' SimpleName ('.' SimpleName)* ';'
 	;
 
-classDeclaration : classModifier 'class' className  primaryConstructor? abstractClassAndInterfaces? classBody  ;
+classDeclaration : classModifier 'class' className typeParameters? primaryConstructor? abstractClassAndInterfaces? classBody  ;
 className : qualifiedName ;
 classBody : '{' (field | function | initBlock)* '}' ;
 field : fieldModifier isFinal=(KEYWORD_var | KEYWORD_val) name ':' type ('=' expression)? getter? setter?;
@@ -41,7 +41,7 @@ setter: 'set' '(' SimpleName ')' block ;
 
 primaryConstructor: '(' constructorParametersList? ')' ;
 
-abstractClassAndInterfaces : ':' (abstractClassInit (',' typeName)*  | typeName (',' typeName)*) ;
+abstractClassAndInterfaces : ':' (abstractClassInit (',' userType)*  | userType (',' userType)*) ;
 abstractClassInit :  typeName '(' argumentList ')' ;
 
 
@@ -106,7 +106,7 @@ expression
            | ConstructorDelegationCall_super '.' functionName '(' argumentList ')' #FunctionCall
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
            | functionName '(' argumentList ')' #FunctionCall
-           | newCall='new' typeName '('argumentList ')' #ConstructorCall
+           | newCall='new' type '('argumentList ')' #ConstructorCall
            | variableReference #VarReference
            | owner=expression '.' variableReference  #VarReference
            | expression '!!' #NotNullCastExpression
@@ -175,21 +175,52 @@ methodModifier : (accessModifiers?  methodModifiers*) | (methodModifiers*  acces
 fieldModifier : (accessModifiers?  fieldModifiers*) | (fieldModifiers*  accessModifiers?) | (fieldModifiers*  accessModifiers? fieldModifiers*) ;
 classModifier : (classAccessModifiers?  classModifiers*) | (classModifiers*  classAccessModifiers?) | (classModifiers*  classAccessModifiers? classModifiers*) ;
 
-type : simpleName=typeComposition nullable='?'? ;
+type : typeReference ;
 
-typeComposition : referenceType
-	;
-referenceType
-	:	typeName
-	|	arrayType
-	;
+typeParameters
+  : '<' typeParameter (',' typeParameter)* '>'
+  ;
+typeParameter
+  : varianceAnnotation? SimpleName (':' userType)?
+  ;
 
-arrayType
-	:	typeName dims
-	;
-dims
-	:	'[' ']' ('[' ']')*
-	;
+userType
+  : simpleUserType
+  ;
+simpleUserType
+  : typeName ('<' simpleUserType_typeParam (',' simpleUserType_typeParam)* '>')?
+  ;
+simpleUserType_typeParam
+  : ('*' | (optionalProjection type))
+  ;
+
+optionalProjection
+  : varianceAnnotation?
+  ;
+
+varianceAnnotation
+  : 'in'
+  | 'out'
+  ;
+
+typeReference:
+    userType
+    | typeReference '?' ;
+
+
+//typeComposition : referenceType
+//	;
+//referenceType
+//	:	typeName
+//	|	arrayType
+//	;
+
+//arrayType
+//	:	typeName dims
+//	;
+//dims
+//	:	'[' ']' ('[' ']')*
+//	;
 
 
 floatingPointLiteral returns [ValueHolder number]
