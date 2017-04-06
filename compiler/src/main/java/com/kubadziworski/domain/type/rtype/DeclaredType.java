@@ -1,27 +1,25 @@
 package com.kubadziworski.domain.type.rtype;
 
 import com.kubadziworski.domain.Modifiers;
-import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.RField;
+import com.kubadziworski.domain.scope.RFunctionSignature;
 
 import java.util.List;
 
-/**
- * Created by plozano on 3/29/2017.
- */
+
 public interface DeclaredType extends ComponentType {
 
-    List<RType> getSuperTypes();
+    List<TypeReference> getSuperTypes();
 
     Modifiers getModifiers();
 
     String getPackageName();
 
-    List<Field> getFields();
+    List<RField> getFields();
 
-    List<FunctionSignature> getFunctionSignatures();
+    List<RFunctionSignature> getFunctionSignatures();
 
-    List<FunctionSignature> getConstructorSignatures();
+    List<RFunctionSignature> getConstructorSignatures();
 
 
 }

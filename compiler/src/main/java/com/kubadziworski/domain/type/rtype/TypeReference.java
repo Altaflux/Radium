@@ -7,5 +7,8 @@ public interface TypeReference {
 
     RType getType();
 
+    String getQualifiedName();
 
+
+    String getSimpleName();
 }
