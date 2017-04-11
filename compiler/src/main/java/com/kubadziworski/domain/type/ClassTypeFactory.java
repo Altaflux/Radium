@@ -5,6 +5,7 @@ import com.kubadziworski.domain.scope.Scope;
 import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.UnitType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
+import com.kubadziworski.domain.type.rtype.RType;
 import com.kubadziworski.exception.ClassNotFoundForNameException;
 
 import java.util.Collections;
@@ -43,6 +44,11 @@ public class ClassTypeFactory {
         synchronized (ClassTypeFactory.class) {
             ClassTypeFactory.globalScope = globalScope;
         }
+    }
+
+    //TODO
+    public static RType createClassType2(String name) {
+        return null;
     }
 
     public static Type createClassType(String name) {

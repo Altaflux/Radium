@@ -1,28 +1,23 @@
-package com.kubadziworski.domain.scope;
-
-import com.kubadziworski.domain.Modifiers;
-import com.kubadziworski.domain.type.rtype.TypeReference;
-import lombok.Builder;
+package com.kubadziworski.domain.types;
 
 /**
- * Created by plozano on 4/5/2017.
+ * Created by plozano on 4/10/2017.
  */
-@Builder(toBuilder = true)
 public class RField implements RVariable {
 
     private final String name;
-    private final TypeReference owner;
+    private final RType owner;
     private final TypeReference type;
     private final Modifiers modifiers;
 
-    public RField(String name, TypeReference owner, TypeReference type, Modifiers modifiers) {
+    public RField(String name, RType owner, TypeReference type, Modifiers modifiers) {
         this.name = name;
         this.owner = owner;
         this.type = type;
         this.modifiers = modifiers;
     }
 
-    public TypeReference getOwner() {
+    public RType getOwner() {
         return owner;
     }
 

@@ -10,6 +10,8 @@ import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.TypeProjection;
 import com.kubadziworski.domain.type.intrinsic.VoidType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
+import com.kubadziworski.domain.type.rtype.RType;
+import com.kubadziworski.domain.type.rtype.TypeReference;
 import com.kubadziworski.exception.AmbiguousCallException;
 
 import java.util.*;
@@ -40,6 +42,9 @@ public final class TypeResolver {
         return new TypeProjection(contextType, nullability);
     }
 
+   public static TypeReference getTypeFromNameWithClazzAlias2(Class clazz, Type.Nullability nullability) {
+        return null;
+    }
 
     //For usage of ReflectionObjectToSignatureMapper
     static Type getTypeFromNameWithClazzAlias(Class clazz, Type.Nullability nullability) {

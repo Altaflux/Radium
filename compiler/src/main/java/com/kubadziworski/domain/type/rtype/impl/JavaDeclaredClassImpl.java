@@ -5,9 +5,9 @@ import com.kubadziworski.configuration.JvmConfiguration;
 import com.kubadziworski.domain.Modifiers;
 import com.kubadziworski.domain.scope.RField;
 import com.kubadziworski.domain.scope.RFunctionSignature;
+import com.kubadziworski.domain.type.rtype.JavaDeclaredClass;
 import com.kubadziworski.domain.type.rtype.TypeReference;
 import com.kubadziworski.exception.CompilationException;
-import com.kubadziworski.util.RReflectionObjectToSignatureMapper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -17,15 +17,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * Created by plozano on 4/5/2017.
- */
-public class JavaDeclaredClass extends DeclaredTypeImpl {
+
+public class JavaDeclaredClassImpl extends DeclaredTypeImpl implements JavaDeclaredClass {
     private final Class clazz;
 
-    public JavaDeclaredClass(Class clazz) {
+    public JavaDeclaredClassImpl(Class clazz) {
         this.clazz = clazz;
     }
 
@@ -52,9 +49,10 @@ public class JavaDeclaredClass extends DeclaredTypeImpl {
             Collections.addAll(result, iteratedClass.getDeclaredFields());
             iteratedClass = iteratedClass.getSuperclass();
         }
-        return result.stream()
-                .map(field -> RReflectionObjectToSignatureMapper.fromField(field, this))
-                .collect(Collectors.toList());
+//        return result.stream()
+//                .map(field -> RReflectionObjectToSignatureMapper.fromField(field, this))
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -77,6 +75,7 @@ public class JavaDeclaredClass extends DeclaredTypeImpl {
         return clazz.getSimpleName();
     }
 
+    @Override
     public ClassNode getClassNode(boolean skipCode) {
         return createClassNode(skipCode);
     }

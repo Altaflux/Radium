@@ -18,6 +18,7 @@
         <module>runtime-lib</module>
         <module>radium-maven-plugin</module>
         <module>radium-maven-test</module>
+        <module>radium-domain</module>
     </modules>
 
     <dependencyManagement>

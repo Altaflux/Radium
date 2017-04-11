@@ -3,17 +3,14 @@ package com.kubadziworski.util;
 import com.kubadziworski.bytecodegeneration.util.ModifierTransformer;
 import com.kubadziworski.domain.Modifier;
 import com.kubadziworski.domain.Modifiers;
-import com.kubadziworski.domain.node.expression.Parameter;
 import com.kubadziworski.domain.node.expression.RParameter;
 import com.kubadziworski.domain.node.expression.function.SignatureType;
-import com.kubadziworski.domain.scope.Field;
-import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.scope.RField;
 import com.kubadziworski.domain.scope.RFunctionSignature;
 import com.kubadziworski.domain.type.ClassTypeFactory;
-import com.kubadziworski.domain.type.JavaClassType;
 import com.kubadziworski.domain.type.Type;
-import com.kubadziworski.domain.type.intrinsic.VoidType;
-import com.kubadziworski.domain.type.rtype.impl.JavaDeclaredClass;
+import com.kubadziworski.domain.type.rtype.JavaDeclaredClass;
+import com.kubadziworski.domain.type.rtype.RType;
 import com.kubadziworski.domain.type.rtype.impl.TypeReferenceImpl;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -38,33 +35,33 @@ public class RReflectionObjectToSignatureMapper {
     private static final String NULLABLE_DESCRIPTOR = org.objectweb.asm.Type.getDescriptor(Nullable.class);
     private static final String INLINE_DESCRIPTOR = org.objectweb.asm.Type.getDescriptor(InlineOnly.class);
 
-    public static FunctionSignature fromMethod(Method method, JavaDeclaredClass javaClassType) {
+    public static RFunctionSignature fromMethod(Method method, JavaDeclaredClass javaClassType) {
         String name = method.getName();
-        List<Parameter> parameters = getParams(method.getParameters(), method.getName(), org.objectweb.asm.Type.getMethodDescriptor(method), javaClassType);
+        List<RParameter> parameters = getParams(method.getParameters(), method.getName(), org.objectweb.asm.Type.getMethodDescriptor(method), javaClassType);
         Class<?> returnType = method.getReturnType();
-        Type owner = ClassTypeFactory.createClassType(method.getDeclaringClass().getName());
+        RType owner = ClassTypeFactory.createClassType2(method.getDeclaringClass().getName());
 
         Modifiers modifiers = ModifierTransformer.transformJvm(method.getModifiers());
         if (isInline(method, javaClassType)) {
             modifiers = modifiers.with(Modifier.INLINE);
         }
         SignatureType signatureType = SignatureType.FUNCTION_CALL;
-        return new FunctionSignature(name, parameters, TypeResolver.getTypeFromNameWithClazzAlias(returnType, getReturnNullability(method, javaClassType)),
-                modifiers, owner, signatureType);
+        return new RFunctionSignature(name, parameters, TypeResolver.getTypeFromNameWithClazzAlias2(returnType, getReturnNullability(method, javaClassType)),
+                modifiers, new TypeReferenceImpl(owner));
     }
 
     public static RFunctionSignature fromConstructor(Constructor constructor, JavaDeclaredClass owner) {
         String name = constructor.getName();
         List<RParameter> parameters = getParams(constructor.getParameters(), "<init>", org.objectweb.asm.Type.getConstructorDescriptor(constructor), owner);
-        return new RFunctionSignature(name, parameters, VoidType.INSTANCE, ModifierTransformer.transformJvm(constructor.getModifiers()), new TypeReferenceImpl(owner));
+        return new RFunctionSignature(name, parameters, null, ModifierTransformer.transformJvm(constructor.getModifiers()), new TypeReferenceImpl(owner));
     }
 
-    public static Field fromField(java.lang.reflect.Field field, JavaDeclaredClass owner) {
+    public static RField fromField(java.lang.reflect.Field field, JavaDeclaredClass owner) {
         String name = field.getName();
-        return Field.builder()
+        return RField.builder()
                 .name(name)
-                .owner(owner)
-                .type(TypeResolver.getTypeFromNameWithClazzAlias(field.getType(), getNullability(field, owner)))
+                .owner(new TypeReferenceImpl(owner))
+                .type(TypeResolver.getTypeFromNameWithClazzAlias2(field.getType(), getNullability(field, owner)))
                 .modifiers(ModifierTransformer.transformJvm(field.getModifiers())).build();
     }
 
@@ -91,7 +88,7 @@ public class RReflectionObjectToSignatureMapper {
     }
 
     @SuppressWarnings("unchecked")
-    private static Type.Nullability getNullability(java.lang.reflect.Field field, JavaClassType javaClassType) {
+    private static Type.Nullability getNullability(java.lang.reflect.Field field, JavaDeclaredClass javaClassType) {
         if (field.getType().isPrimitive()) {
             return Type.Nullability.NOT_NULL;
         }
@@ -131,12 +128,12 @@ public class RReflectionObjectToSignatureMapper {
 
         MethodNode methodNode = methodNodeOp.orElseThrow(() -> new RuntimeException("Could not find method: " + name + "-" + descriptor));
 
-        List<Parameter> parameterList = new ArrayList<>();
+        List<RParameter> parameterList = new ArrayList<>();
         for (int x = 0; x < parameters.length; x++) {
             java.lang.reflect.Parameter parameter = parameters[x];
             if (parameter.getType().isPrimitive()) {
                 RParameter parameter1 = new RParameter(parameter.getName(),
-                        TypeResolver.getTypeFromNameWithClazzAlias(parameter.getType(), Type.Nullability.NOT_NULL), null);
+                        TypeResolver.getTypeFromNameWithClazzAlias2(parameter.getType(), Type.Nullability.NOT_NULL), null);
                 parameterList.add(parameter1);
             } else {
                 if (methodNode.invisibleParameterAnnotations != null) {
@@ -145,12 +142,12 @@ public class RReflectionObjectToSignatureMapper {
                             .anyMatch(annotationNode -> annotationNode.desc.equals(NOT_NULL_DESCRIPTOR));
                     boolean nullable = ((List<AnnotationNode>) methodNode.invisibleParameterAnnotations[x]).stream()
                             .anyMatch(annotationNode -> annotationNode.desc.equals(NULLABLE_DESCRIPTOR));
-                    Parameter parameter1 = new Parameter(parameter.getName(),
-                            TypeResolver.getTypeFromNameWithClazzAlias(parameter.getType(), getNullability(notNull, nullable)), null);
+                    RParameter parameter1 = new RParameter(parameter.getName(),
+                            TypeResolver.getTypeFromNameWithClazzAlias2(parameter.getType(), getNullability(notNull, nullable)), null);
                     parameterList.add(parameter1);
                 } else {
-                    Parameter parameter1 = new Parameter(parameter.getName(),
-                            TypeResolver.getTypeFromNameWithClazzAlias(parameter.getType(), Type.Nullability.NOT_NULL), null);
+                    RParameter parameter1 = new RParameter(parameter.getName(),
+                            TypeResolver.getTypeFromNameWithClazzAlias2(parameter.getType(), Type.Nullability.NOT_NULL), null);
                     parameterList.add(parameter1);
                 }
             }

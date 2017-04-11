@@ -23,7 +23,7 @@ public interface Type {
     }
 
     enum ClassType {
-        CLASS, INTERFACE
+        CLASS, INTERFACE, ENUM
     }
 
     String getName();
