@@ -5,6 +5,5 @@ package com.kubadziworski.domain.types;
  */
 public interface InnerTypeReference extends ParameterizedTypeReference {
 
-
     ParameterizedTypeReference getOuter();
 }

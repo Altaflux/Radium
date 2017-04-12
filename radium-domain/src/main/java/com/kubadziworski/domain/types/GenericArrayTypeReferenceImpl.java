@@ -4,17 +4,15 @@ package com.kubadziworski.domain.types;
  * Created by pablo.lozano on 4/11/2017.
  */
 public class GenericArrayTypeReferenceImpl implements GenericArrayTypeReference {
+    private final TypeReference typeReference;
 
     public GenericArrayTypeReferenceImpl(TypeReference typeReference) {
         this.typeReference = typeReference;
     }
 
-    private final TypeReference typeReference;
-
-
     @Override
     public String getQualifiedName() {
-        return typeReference.getQualifiedName();
+        return typeReference.getQualifiedName() + "[]";
     }
 
     @Override
@@ -27,7 +25,7 @@ public class GenericArrayTypeReferenceImpl implements GenericArrayTypeReference 
 
     @Override
     public String getSimpleName() {
-        return typeReference.getSimpleName();
+        return typeReference.getSimpleName() + "[]";
     }
 
     @Override

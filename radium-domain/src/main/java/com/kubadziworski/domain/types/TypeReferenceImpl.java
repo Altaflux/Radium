@@ -5,6 +5,10 @@ package com.kubadziworski.domain.types;
  */
 public abstract class TypeReferenceImpl implements TypeReference {
 
+    public RType getType() {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public String getIdentifier() {
         RType type = getType();

@@ -5,6 +5,7 @@ package com.kubadziworski.domain.types;
  */
 public interface TypeReference {
 
+
     RType getType();
 
     String getQualifiedName();

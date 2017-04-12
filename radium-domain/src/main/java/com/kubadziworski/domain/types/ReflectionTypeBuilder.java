@@ -2,9 +2,11 @@ package com.kubadziworski.domain.types;
 
 import com.kubadziworski.domain.types.builder.MemberBuilder;
 import com.kubadziworski.domain.types.builder.ModifierTransformer;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -174,29 +176,87 @@ public class ReflectionTypeBuilder {
         return null;
     }
 
-    //TODO
-    TypeReference createTypeReference(Type type) {
+
+    private TypeReference createTypeReference(Type type) {
         if (type instanceof GenericArrayType) {
             GenericArrayType arrayType = (GenericArrayType) type;
             Type componentType = arrayType.getGenericComponentType();
             return createArrayTypeReference(componentType);
-        }else if (type instanceof ParameterizedType) {
+        } else if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type ownerType = parameterizedType.getOwnerType();
             if (ownerType instanceof ParameterizedType) {
                 TypeReference ownerTypeReference = createTypeReference(ownerType);
 
                 if (ownerTypeReference instanceof ParameterizedTypeReference) {
+                    Pair<RType, List<TypeReference>> pair = enhanceTypeReference(parameterizedType);
+                    return new InnerTypeReferenceImpl(pair.getLeft(), pair.getRight(), (ParameterizedTypeReference) ownerTypeReference);
+                } else {
+                    Pair<RType, List<TypeReference>> pair = enhanceTypeReference(parameterizedType);
+                    return new ParameterizedTypeReferenceImpl(pair.getLeft(), pair.getRight());
+                }
+            } else {
+                Pair<RType, List<TypeReference>> pair = enhanceTypeReference(parameterizedType);
+                return new ParameterizedTypeReferenceImpl(pair.getLeft(), pair.getRight());
+            }
+        } else if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
+            Class<?> arrayType = (Class<?>) type;
+            Type componentType = arrayType.getComponentType();
+            return createArrayTypeReference(componentType);
+        } else {
+            return new ParameterizedTypeReferenceImpl(createProxy(type), Collections.emptyList());
+        }
+    }
+
+    private Pair<RType, List<TypeReference>> enhanceTypeReference(ParameterizedType parameterizedType) {
+
+        RType type = createProxy(parameterizedType.getRawType());
+        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+
+        List<TypeReference> arguments = new ArrayList<>();
+        if (actualTypeArguments.length != 0) {
+            for (Type actualTypeArgument : actualTypeArguments) {
+                TypeReference argument = createTypeArgument(actualTypeArgument);
+                arguments.add(argument);
+            }
+        }
+
+        return Pair.of(type, arguments);
+    }
+
+    TypeReference createTypeArgument(Type actualTypeArgument) {
+        if (actualTypeArgument instanceof WildcardType) {
+            WildcardType wildcardType = (WildcardType) actualTypeArgument;
+            List<MemberBuilder<Constraint, ConstraintOwner>> constraints = new ArrayList<>();
+            Type[] upperBounds = wildcardType.getUpperBounds();
+            if (upperBounds.length != 0) {
+                for (Type boundType : upperBounds) {
+                    TypeReference upperBoundType = createTypeReference(boundType);
+                    constraints.add(owner -> new UpperBoundConstraintImpl(upperBoundType, owner));
 
                 }
             }
+            Type[] lowerBounds = wildcardType.getUpperBounds();
+            if (lowerBounds.length != 0) {
+                for (Type boundType : lowerBounds) {
+                    TypeReference upperBoundType = createTypeReference(boundType);
+                    constraints.add(owner -> new LowerBoundConstraintImpl(upperBoundType, owner));
+
+                }
+            }
+            return new WildcardTypeReferenceImpl(constraints);
+        } else {
+            return createTypeReference(actualTypeArgument);
+
         }
-        return null;
+    }
+
+    private RType createProxy(Type type) {
+        throw new UnsupportedOperationException("TODO");
     }
 
     protected TypeReference createArrayTypeReference(Type componentType) {
         TypeReference componentTypeReference = createTypeReference(componentType);
-        GenericArrayTypeReferenceImpl result = new GenericArrayTypeReferenceImpl(componentTypeReference);
-        return result;
+        return new GenericArrayTypeReferenceImpl(componentTypeReference);
     }
 }

@@ -1,9 +1,6 @@
 package com.kubadziworski.domain.types.builder;
 
-import com.kubadziworski.domain.types.RType;
-
-
-public interface MemberBuilder<T, Owner extends RType> {
+public interface MemberBuilder<T, Owner> {
 
     T build(Owner owner);
 }

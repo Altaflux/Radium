@@ -8,12 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class GenericTypeImpl implements GenericType {
+public class GenericTypeImpl extends DeclaredTypeImpl implements GenericType {
 
-    private final String simpleName;
-    private final String packageName;
-    private final List<TypeReference> superTypes;
-    private final Modifiers modifiers;
     private final List<RField> rFields;
     private final List<RFunctionSignature> rFunctionSignatures;
     private final List<RFunctionSignature> rConstructorSignatures;
@@ -24,10 +20,7 @@ public class GenericTypeImpl implements GenericType {
                            Modifiers modifiers, List<MemberBuilder<RField, RType>> fieldBuilder,
                            List<MemberBuilder<RFunctionSignature, RType>> functionBuilder, List<MemberBuilder<RFunctionSignature, RType>> constructorBuilder,
                            List<TypeParameter> typeParameters) {
-        this.simpleName = simpleName;
-        this.packageName = packageName;
-        this.superTypes = superTypes;
-        this.modifiers = modifiers;
+        super(simpleName, packageName, modifiers, superTypes);
         this.typeParameters = typeParameters;
         this.rFields = fieldBuilder.stream().map(rFieldMemberBuilder -> rFieldMemberBuilder.build(this))
                 .collect(Collectors.toList());
@@ -35,34 +28,6 @@ public class GenericTypeImpl implements GenericType {
                 .collect(Collectors.toList());
         this.rFunctionSignatures = functionBuilder.stream().map(rFieldMemberBuilder -> rFieldMemberBuilder.build(this))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getQualifiedName() {
-        if(packageName != null && packageName.length() != 0) {
-            return packageName + "." + simpleName;
-        }
-        return simpleName;
-    }
-
-    @Override
-    public String getSimpleName() {
-        return simpleName;
-    }
-
-    @Override
-    public List<TypeReference> getSuperTypes() {
-        return superTypes;
-    }
-
-    @Override
-    public Modifiers getModifiers() {
-        return modifiers;
-    }
-
-    @Override
-    public String getPackageName() {
-        return packageName;
     }
 
     @Override
