@@ -5,7 +5,7 @@ package com.kubadziworski.domain.types;
  */
 public interface Constraint {
 
-    RType getType();
+    TypeReference getType();
 
     ConstraintOwner getOwner();
 

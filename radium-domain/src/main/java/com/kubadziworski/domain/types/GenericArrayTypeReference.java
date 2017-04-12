@@ -8,4 +8,6 @@ public interface GenericArrayTypeReference extends TypeReference {
     TypeReference getComponentType();
 
     ArrayType getType();
+
+    int getDimensions();
 }

@@ -9,6 +9,7 @@ public interface TypeReference {
 
     String getQualifiedName();
 
+    String getIdentifier();
 
     String getSimpleName();
 }

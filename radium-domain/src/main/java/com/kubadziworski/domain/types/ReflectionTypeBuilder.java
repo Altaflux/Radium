@@ -16,37 +16,40 @@ public class ReflectionTypeBuilder {
 
 
     GenericType toJvmType(Class aClass) {
+
+        if (aClass.isSynthetic() || aClass.isAnonymousClass()) {
+            throw new IllegalStateException("Cannot create type for anonymous or synthetic classes");
+        }
+
         GenericTypeImpl.GenericTypeImplBuilder builder = GenericTypeImpl.builder();
         builder.packageName(aClass.getPackage().getName())
                 .simpleName(aClass.getSimpleName())
                 .superTypes(getSuperTypes(aClass))
                 .functionBuilder(fromMethods(aClass))
                 .constructorBuilder(fromConstructors(aClass))
+                .typeParameters(setTypeParameters(aClass))
                 .fieldBuilder(Stream.of(aClass.getDeclaredFields()).map(this::fromField).collect(Collectors.toList()))
                 .modifiers(ModifierTransformer.transformJvm(aClass.getModifiers()));
 
         return builder.build();
     }
 
-    MemberBuilder<RField> fromField(Field field) {
-        return new MemberBuilder<RField>() {
-            @Override
-            public RField build(RType owner) {
-                String name = field.getName();
-                TypeReference typeReference = createTypeReference(field.getGenericType());
-                Modifiers modifiers = ModifierTransformer.transformJvm(field.getModifiers());
-                return new RField(name, owner, typeReference, modifiers);
+    MemberBuilder<RField, RType> fromField(Field field) {
+        return owner -> {
+            String name = field.getName();
+            TypeReference typeReference = createTypeReference(field.getGenericType());
+            Modifiers modifiers = ModifierTransformer.transformJvm(field.getModifiers());
+            return new RField(name, owner, typeReference, modifiers);
 
-            }
         };
     }
 
-    List<MemberBuilder<RFunctionSignature>> fromMethods(Class clazz) {
+    List<MemberBuilder<RFunctionSignature, RType>> fromMethods(Class clazz) {
         return Stream.of(clazz.getDeclaredMethods())
                 .filter(method -> !method.isSynthetic()).map(this::fromMethod).collect(Collectors.toList());
     }
 
-    MemberBuilder<RFunctionSignature> fromMethod(Method method) {
+    MemberBuilder<RFunctionSignature, RType> fromMethod(Method method) {
         String name = method.getName();
         Modifiers modifiers = ModifierTransformer.transformJvm(method.getModifiers());
 
@@ -58,7 +61,7 @@ public class ReflectionTypeBuilder {
         }
         TypeReference returnTypeReference = createTypeReference(returnType);
         java.lang.reflect.Parameter[] parameters = method.getParameters();
-        Type[] genericParameterTypes = null;
+        Type[] genericParameterTypes;
         try {
             genericParameterTypes = method.getGenericParameterTypes();
         } catch (GenericSignatureFormatError | MalformedParameterizedTypeException error) {
@@ -74,20 +77,15 @@ public class ReflectionTypeBuilder {
             rParameters.add(rParameter);
         }
 
-        return new MemberBuilder<RFunctionSignature>() {
-            @Override
-            public RFunctionSignature build(RType owner) {
-                return new RFunctionSignature(name, rParameters, returnTypeReference, modifiers, owner);
-            }
-        };
+        return owner -> new RFunctionSignature(name, rParameters, returnTypeReference, modifiers, owner);
     }
 
-    List<MemberBuilder<RFunctionSignature>> fromConstructors(Class clazz) {
+    List<MemberBuilder<RFunctionSignature, RType>> fromConstructors(Class clazz) {
         return Stream.of(clazz.getConstructors())
                 .filter(method -> !method.isSynthetic()).map(this::fromConstructor).collect(Collectors.toList());
     }
 
-    MemberBuilder<RFunctionSignature> fromConstructor(Constructor method) {
+    MemberBuilder<RFunctionSignature, RType> fromConstructor(Constructor method) {
         String name = method.getName();
         Modifiers modifiers = ModifierTransformer.transformJvm(method.getModifiers());
 
@@ -111,12 +109,35 @@ public class ReflectionTypeBuilder {
             rParameters.add(rParameter);
         }
 
-        return new MemberBuilder<RFunctionSignature>() {
-            @Override
-            public RFunctionSignature build(RType owner) {
-                return new RFunctionSignature(name, rParameters, returnTypeReference, modifiers, owner);
+        return owner -> new RFunctionSignature(name, rParameters, returnTypeReference, modifiers, owner);
+    }
+
+
+    List<TypeParameter> setTypeParameters(Class clazz) {
+        List<TypeParameter> jvmTypeParameters = new ArrayList<>();
+        try {
+            TypeVariable<?>[] typeParameters = clazz.getTypeParameters();
+            if (typeParameters.length != 0) {
+                for (TypeVariable<?> variable : typeParameters) {
+                    jvmTypeParameters.add(createTypeParameter(variable));
+                }
             }
-        };
+        } catch (GenericSignatureFormatError | MalformedParameterizedTypeException error) {
+
+        }
+        return jvmTypeParameters;
+    }
+
+    protected TypeParameter createTypeParameter(TypeVariable<?> variable) {
+
+        List<MemberBuilder<Constraint, TypeParameter>> constraints = new ArrayList<>();
+        Type[] bounds = variable.getBounds();
+        if (bounds.length != 0) {
+            for (Type bound : variable.getBounds()) {
+                constraints.add(owner -> new UpperBoundConstraintImpl(createTypeReference(bound), owner));
+            }
+        }
+        return new TypeParameterImpl(variable.getName(), constraints);
     }
 
     List<TypeReference> getSuperTypes(Class clazz) {
@@ -152,8 +173,30 @@ public class ReflectionTypeBuilder {
     TypeReference voidReference() {
         return null;
     }
+
     //TODO
-    TypeReference createTypeReference(Type aClass) {
+    TypeReference createTypeReference(Type type) {
+        if (type instanceof GenericArrayType) {
+            GenericArrayType arrayType = (GenericArrayType) type;
+            Type componentType = arrayType.getGenericComponentType();
+            return createArrayTypeReference(componentType);
+        }else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type ownerType = parameterizedType.getOwnerType();
+            if (ownerType instanceof ParameterizedType) {
+                TypeReference ownerTypeReference = createTypeReference(ownerType);
+
+                if (ownerTypeReference instanceof ParameterizedTypeReference) {
+
+                }
+            }
+        }
         return null;
+    }
+
+    protected TypeReference createArrayTypeReference(Type componentType) {
+        TypeReference componentTypeReference = createTypeReference(componentType);
+        GenericArrayTypeReferenceImpl result = new GenericArrayTypeReferenceImpl(componentTypeReference);
+        return result;
     }
 }

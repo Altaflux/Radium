@@ -5,4 +5,5 @@ package com.kubadziworski.domain.types;
  */
 public interface ComponentType extends RType {
 
+    ArrayType getArrayType();
 }

@@ -2,6 +2,7 @@ package com.kubadziworski.domain.types;
 
 import com.kubadziworski.domain.types.builder.MemberBuilder;
 import lombok.Builder;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,8 +21,8 @@ public class GenericTypeImpl implements GenericType {
 
     @Builder
     public GenericTypeImpl(String simpleName, String packageName, List<TypeReference> superTypes,
-                           Modifiers modifiers, List<MemberBuilder<RField>> fieldBuilder,
-                           List<MemberBuilder<RFunctionSignature>> functionBuilder, List<MemberBuilder<RFunctionSignature>> constructorBuilder,
+                           Modifiers modifiers, List<MemberBuilder<RField, RType>> fieldBuilder,
+                           List<MemberBuilder<RFunctionSignature, RType>> functionBuilder, List<MemberBuilder<RFunctionSignature, RType>> constructorBuilder,
                            List<TypeParameter> typeParameters) {
         this.simpleName = simpleName;
         this.packageName = packageName;
@@ -82,5 +83,11 @@ public class GenericTypeImpl implements GenericType {
     @Override
     public List<TypeParameter> getTypeParameters() {
         return typeParameters;
+    }
+
+    @Override
+    public ArrayType getArrayType() {
+        //TODO
+        throw new NotImplementedException("TODO");
     }
 }
