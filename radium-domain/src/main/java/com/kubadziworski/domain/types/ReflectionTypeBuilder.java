@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,16 +71,23 @@ public class ReflectionTypeBuilder {
             genericParameterTypes = method.getParameterTypes();
         }
 
-
-        List<RParameter> rParameters = new ArrayList<>();
+        List<MemberBuilder<RParameter, RFunctionSignature>> rParameters = new ArrayList<>();
         for (int x = 0; x < parameters.length; x++) {
             String paramName = parameters[x].getName();
-            TypeReference typeReference = createTypeReference(genericParameterTypes[x]);
-            RParameter rParameter = new RParameter(paramName, typeReference, null);
-            rParameters.add(rParameter);
-        }
+            Type paramType = genericParameterTypes[x];
 
-        return owner -> new RFunctionSignature(name, rParameters, returnTypeReference, modifiers, owner);
+            rParameters.add(rFunctionSignature -> {
+                TypeReference argType;
+                if (isLocal(paramType, method)) {
+                    argType = createLocalTypeReference(paramType, rFunctionSignature, method);
+                } else {
+                    argType = createTypeReference(paramType);
+                }
+                return new RParameter(paramName, argType, null);
+            });
+        }
+        List<TypeParameter> typeParameters = enhanceGenericDeclaration(method);
+        return owner -> new RFunctionSignature(name, rParameters, returnTypeReference, modifiers, owner, typeParameters);
     }
 
     List<MemberBuilder<RFunctionSignature, RType>> fromConstructors(Class clazz) {
@@ -90,11 +98,8 @@ public class ReflectionTypeBuilder {
     MemberBuilder<RFunctionSignature, RType> fromConstructor(Constructor method) {
         String name = method.getName();
         Modifiers modifiers = ModifierTransformer.transformJvm(method.getModifiers());
-
         TypeReference returnTypeReference = voidReference();
-
         java.lang.reflect.Parameter[] parameters = method.getParameters();
-
         Type[] genericParameterTypes;
         try {
             genericParameterTypes = method.getGenericParameterTypes();
@@ -103,15 +108,24 @@ public class ReflectionTypeBuilder {
         }
 
 
-        List<RParameter> rParameters = new ArrayList<>();
+        List<MemberBuilder<RParameter, RFunctionSignature>> rParameters = new ArrayList<>();
         for (int x = 0; x < parameters.length; x++) {
             String paramName = parameters[x].getName();
-            TypeReference typeReference = createTypeReference(genericParameterTypes[x]);
-            RParameter rParameter = new RParameter(paramName, typeReference, null);
-            rParameters.add(rParameter);
+            Type paramType = genericParameterTypes[x];
+
+            rParameters.add(rFunctionSignature -> {
+                TypeReference argType;
+                if (isLocal(paramType, method)) {
+                    argType = createLocalTypeReference(paramType, rFunctionSignature, method);
+                } else {
+                    argType = createTypeReference(paramType);
+                }
+                return new RParameter(paramName, argType, null);
+            });
         }
 
-        return owner -> new RFunctionSignature(name, rParameters, returnTypeReference, modifiers, owner);
+        List<TypeParameter> typeParameters = enhanceGenericDeclaration(method);
+        return owner -> new RFunctionSignature(name, rParameters, returnTypeReference, modifiers, owner, typeParameters);
     }
 
 
@@ -208,6 +222,15 @@ public class ReflectionTypeBuilder {
         }
     }
 
+    protected List<TypeParameter> enhanceGenericDeclaration(GenericDeclaration declaration) {
+        TypeVariable<?>[] typeParameters = declaration.getTypeParameters();
+        List<TypeParameter> jvmTypeParameters = new ArrayList<>();
+        for (TypeVariable<?> variable : typeParameters) {
+            jvmTypeParameters.add(createTypeParameter(variable));
+        }
+        return jvmTypeParameters;
+    }
+
     private Pair<RType, List<TypeReference>> enhanceTypeReference(ParameterizedType parameterizedType) {
 
         RType type = createProxy(parameterizedType.getRawType());
@@ -249,6 +272,36 @@ public class ReflectionTypeBuilder {
             return createTypeReference(actualTypeArgument);
 
         }
+    }
+
+    protected TypeReference createLocalTypeReference(Type type, TypeParameterDeclarator container,
+                                                     GenericDeclaration member) {
+        if (type instanceof GenericArrayType) {
+            GenericArrayType arrayType = (GenericArrayType) type;
+            Type componentType = arrayType.getGenericComponentType();
+            return createLocalArrayTypeReference(componentType, container, member);
+        } else if (type instanceof TypeVariable<?>) {
+            TypeVariable<?> typeVariable = (TypeVariable<?>) type;
+            int idx = Arrays.asList(member.getTypeParameters()).indexOf(typeVariable);
+            return new ParameterizedTypeReferenceImpl(container.getTypeParameters().get(idx), Collections.emptyList());
+        }
+        throw new IllegalArgumentException(type.toString());
+    }
+
+    protected TypeReference createLocalArrayTypeReference(Type componentType, TypeParameterDeclarator container,
+                                                          GenericDeclaration member) {
+        TypeReference componentTypeReference = createLocalTypeReference(componentType, container, member);
+        GenericArrayTypeReference result = new GenericArrayTypeReferenceImpl(componentTypeReference);
+        return result;
+    }
+
+    private boolean isLocal(Type parameterType, GenericDeclaration member) {
+        if (parameterType instanceof TypeVariable<?>) {
+            return member.equals(((TypeVariable<?>) parameterType).getGenericDeclaration());
+        } else if (parameterType instanceof GenericArrayType) {
+            return isLocal(((GenericArrayType) parameterType).getGenericComponentType(), member);
+        }
+        return false;
     }
 
     private RType createProxy(Type type) {
