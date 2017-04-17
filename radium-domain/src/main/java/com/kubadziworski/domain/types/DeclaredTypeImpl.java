@@ -1,11 +1,9 @@
 package com.kubadziworski.domain.types;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import java.util.List;
 
 
-public abstract class DeclaredTypeImpl implements DeclaredType {
+public abstract class DeclaredTypeImpl extends ComponentTypeImpl implements DeclaredType {
 
     protected final Modifiers modifiers;
     protected final String simpleName;
@@ -47,9 +45,4 @@ public abstract class DeclaredTypeImpl implements DeclaredType {
         return packageName;
     }
 
-    @Override
-    public ArrayType getArrayType() {
-        //TODO
-        throw new NotImplementedException("TODO");
-    }
 }

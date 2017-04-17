@@ -35,9 +35,12 @@ public class GenericArrayTypeReferenceImpl implements GenericArrayTypeReference 
 
     @Override
     public ArrayType getType() {
-        TypeReference typeReference = getComponentType();
-        if (typeReference instanceof ComponentType) {
-            return ((ComponentType) typeReference).getArrayType();
+        TypeReference componentTypeReference = getComponentType();
+        if (componentTypeReference != null) {
+            RType componentType = componentTypeReference.getType().unwrap();
+            if (componentType instanceof ComponentType) {
+                return ((ComponentType) componentType).getArrayType();
+            }
         }
         return null;
     }

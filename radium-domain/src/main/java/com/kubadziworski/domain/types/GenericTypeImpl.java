@@ -2,7 +2,6 @@ package com.kubadziworski.domain.types;
 
 import com.kubadziworski.domain.types.builder.MemberBuilder;
 import lombok.Builder;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,9 +49,4 @@ public class GenericTypeImpl extends DeclaredTypeImpl implements GenericType {
         return typeParameters;
     }
 
-    @Override
-    public ArrayType getArrayType() {
-        //TODO
-        throw new NotImplementedException("TODO");
-    }
 }

@@ -6,10 +6,8 @@ import lombok.Builder;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by pablo.lozano on 4/11/2017.
- */
-public class TypeParameterImpl implements TypeParameter {
+
+public class TypeParameterImpl extends ComponentTypeImpl implements TypeParameter {
 
     private final String simpleName;
     private final List<Constraint> constraints;
@@ -27,12 +25,6 @@ public class TypeParameterImpl implements TypeParameter {
         return simpleName;
     }
 
-
-    @Override
-    public ArrayType getArrayType(){
-        //TODO
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public String getSimpleName() {
