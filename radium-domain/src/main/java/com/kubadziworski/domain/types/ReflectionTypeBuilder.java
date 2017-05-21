@@ -305,6 +305,7 @@ public class ReflectionTypeBuilder {
     }
 
     private RType createProxy(Type type) {
+
         throw new UnsupportedOperationException("TODO");
     }
 

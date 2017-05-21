@@ -1,9 +1,8 @@
 package com.kubadziworski.domain.types;
 
-/**
- * Created by pablo.lozano on 4/11/2017.
- */
+
 public class GenericArrayTypeReferenceImpl implements GenericArrayTypeReference {
+
     private final TypeReference typeReference;
 
     public GenericArrayTypeReferenceImpl(TypeReference typeReference) {
