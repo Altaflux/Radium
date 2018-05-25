@@ -47,7 +47,19 @@ class ShouldFailTest extends Specification {
         fieldByConstructor        | "FieldByConstructor.enk"        | IncompatibleTypesException.class
         noAccessToMethod          | "NoAccessToMethod.enk"          | AccessException.class
         interfaceArity            | "InterfaceArity.enk"            | AmbiguousCallException.class
+        finalParameterVariable    | "FinalParameterVariable.enk"    | FinalFieldModificationException.class
     }
+
+    private static final finalParameterVariable = """
+
+                        class InterfaceArity {
+                            fn fooBar(x:Int = 2) {
+                                x = 3
+                                StringArity.foo("")
+                            }
+
+                        }
+    """
 
     private static final interfaceArity = """
                         import com.kubadziworski.test.arity.StringArity;
