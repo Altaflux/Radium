@@ -765,18 +765,17 @@ class ShouldCompileTest extends Specification {
                                     println(finReturn())
                                 }
                             
-                                fn finReturn() : Int{
+                                fn finReturn(): Int {
                             
                                     try{
                                         return throwingMethod();
-                                    }catch(e: Exception){
+                                    } catch(e: Exception){
                                         return 2
-                                    }finally {
+                                    } finally {
                                         if(myTrue){
                                             return 1
                                         }
                                     }
-                            
                                 }
                             
                                 fn throwingMethod() : Int{
