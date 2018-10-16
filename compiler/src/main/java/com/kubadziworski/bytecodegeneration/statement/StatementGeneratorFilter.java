@@ -300,11 +300,25 @@ public class StatementGeneratorFilter implements StatementGenerator {
         }
     }
 
+    @Override
+    public void generate(ElvisExpression elvisExpression) {
+        if (parent != null) {
+            parent.generate(elvisExpression);
+        } else {
+            generate(elvisExpression, this);
+        }
+    }
     /////////////
 
     @Override
     public void generate(BooleanExpression booleanExpression, StatementGenerator statementGenerator) {
         next.generate(booleanExpression, statementGenerator);
+    }
+
+
+    @Override
+    public void generate(ElvisExpression elvisExpression, StatementGenerator generator) {
+        next.generate(elvisExpression, generator);
     }
 
     @Override

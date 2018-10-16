@@ -31,6 +31,7 @@ public class ExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     private final NotNullCastExpressionVisitor notNullCastExpressionVisitor;
     private final ParenthesisExpressionVisitor parenthesisExpressionVisitor;
     private final BooleanExpressionVisitor booleanExpressionVisitor;
+    private final ElvisExpressionVisitor elvisExpressionVisitor;
 
     public ExpressionVisitor(FunctionScope scope) {
         arithmeticExpressionVisitor = new ArithmeticExpressionVisitor(this);
@@ -46,6 +47,7 @@ public class ExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
         notNullCastExpressionVisitor = new NotNullCastExpressionVisitor(this);
         parenthesisExpressionVisitor = new ParenthesisExpressionVisitor(this);
         booleanExpressionVisitor = new BooleanExpressionVisitor(this);
+        elvisExpressionVisitor = new ElvisExpressionVisitor(this);
     }
 
     @Override
@@ -144,5 +146,10 @@ public class ExpressionVisitor extends EnkelParserBaseVisitor<Expression> {
     @Override
     public Expression visitBooleanExpression(EnkelParser.BooleanExpressionContext ctx) {
         return booleanExpressionVisitor.visitBooleanExpression(ctx);
+    }
+
+    @Override
+    public Expression visitElvisExpression(EnkelParser.ElvisExpressionContext ctx) {
+        return elvisExpressionVisitor.visitElvisExpression(ctx);
     }
 }

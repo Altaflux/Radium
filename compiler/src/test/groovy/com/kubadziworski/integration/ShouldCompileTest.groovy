@@ -77,7 +77,48 @@ class ShouldCompileTest extends Specification {
         fieldByConstructor                   | "FieldByConstructor.enk"
         bitWise                              | "BitWise.enk"
         booleanOperator                      | "BooleanOperator.enk"
+        elvisExpression                      | "ElvisExpression.enk"
+        nullableCallingEquals                | "NullableCallingEquals.enk"
     }
+
+    private final static elvisExpression =
+            """
+                            class ElvisExpression {
+
+                                fn start {
+                                    assertTrue(input(null) == "wasNull")
+                                    assertTrue(input("aString") == "aString")
+                                }
+                                fn input(a: Any?): Any {
+                                    return a ?: "wasNull"
+                                }
+                                fn assertTrue(shouldBeTrue:Boolean){
+                                    println(shouldBeTrue)
+                                    if(!shouldBeTrue){
+                                        throw new AssertionError("TEST FAILED")
+                                    }
+                                }
+                            }
+							"""
+    private final static nullableCallingEquals =
+            """
+                            class NullableCallingEquals {
+
+                                fn start {
+                                   assertTrue(input(null) == null);
+                                   assertTrue(input("foo") != null);
+                                }
+                                fn input(a: Any?): Any? {
+                                    return a
+                                }
+                                fn assertTrue(shouldBeTrue:Boolean){
+                                    println(shouldBeTrue)
+                                    if(!shouldBeTrue){
+                                        throw new AssertionError("TEST FAILED")
+                                    }
+                                }
+                            }
+							"""
 
     private final static booleanOperator =
             """

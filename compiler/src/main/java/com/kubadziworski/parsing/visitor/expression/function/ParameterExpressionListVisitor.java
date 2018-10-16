@@ -11,6 +11,7 @@ import com.kubadziworski.parsing.visitor.expression.ExpressionVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by kuba on 09.05.16.
@@ -31,12 +32,12 @@ public class ParameterExpressionListVisitor extends EnkelParserBaseVisitor<List<
         ParameterExpressionVisitor parameterExpressionVisitor = new ParameterExpressionVisitor(expressionVisitor, scope);
         List<Parameter> parameters = new ArrayList<>();
         if(paramsCtx != null) {
-            List<Parameter> params = Lists.transform(paramsCtx, p -> p.accept(parameterExpressionVisitor));
+            List<Parameter> params = paramsCtx.stream().map(p -> p.accept(parameterExpressionVisitor)).collect(Collectors.toList());
             parameters.addAll(params);
         }
         List<ParameterWithDefaultValueContext> paramsWithDefaultValueCtx = ctx.parameterWithDefaultValue();
         if(paramsWithDefaultValueCtx != null) {
-            List<Parameter> params = Lists.transform(paramsWithDefaultValueCtx, p -> p.accept(parameterExpressionVisitor));
+            List<Parameter> params = paramsWithDefaultValueCtx.stream().map(p -> p.accept(parameterExpressionVisitor)).collect(Collectors.toList());
             parameters.addAll(params);
         }
         return parameters;

@@ -30,6 +30,7 @@ public class ExpressionGenerator {
     private final IfStatementGenerator ifExpressionGenerator;
     private final ArgumentStatementGenerator argumentStatementGenerator;
     private final NotNullCastExpressionGenerator notNullCastExpressionGenerator;
+    private final ElvisExpressionGenerator elvisExpressionGenerator;
 
     private final StatementGenerator generator;
 
@@ -48,6 +49,7 @@ public class ExpressionGenerator {
         ifExpressionGenerator = new IfStatementGenerator(methodVisitor);
         argumentStatementGenerator = new ArgumentStatementGenerator(methodVisitor);
         notNullCastExpressionGenerator = new NotNullCastExpressionGenerator(methodVisitor);
+        elvisExpressionGenerator = new ElvisExpressionGenerator(methodVisitor);
         this.generator = generator;
     }
 
@@ -65,7 +67,8 @@ public class ExpressionGenerator {
                                 BlockStatementGenerator blockStatementGenerator,
                                 IfStatementGenerator ifExpressionGenerator,
                                 ArgumentStatementGenerator argumentStatementGenerator,
-                                NotNullCastExpressionGenerator notNullCastExpressionGenerator) {
+                                NotNullCastExpressionGenerator notNullCastExpressionGenerator,
+                                ElvisExpressionGenerator elvisExpressionGenerator) {
         this.generator = generator;
         this.referenceExpressionGenerator = referenceExpressionGenerator;
         this.valueExpressionGenerator = valueExpressionGenerator;
@@ -81,7 +84,7 @@ public class ExpressionGenerator {
         this.ifExpressionGenerator = ifExpressionGenerator;
         this.argumentStatementGenerator = argumentStatementGenerator;
         this.notNullCastExpressionGenerator = notNullCastExpressionGenerator;
-
+        this.elvisExpressionGenerator = elvisExpressionGenerator;
     }
 
     public void generate(NotNullCastExpression castExpression, StatementGenerator statementGenerator) {
@@ -165,6 +168,6 @@ public class ExpressionGenerator {
     public ExpressionGenerator copy(StatementGenerator generator) {
         return new ExpressionGenerator(generator, referenceExpressionGenerator, valueExpressionGenerator, callExpressionGenerator, arithmeticExpressionGenerator, conditionalExpressionGenerator, parameterExpressionGenerator,
                 prefixExpressionGenerator, popExpressionGenerator, dupExpressionGenerator, unaryExpressionGenerator, blockStatementGenerator, ifExpressionGenerator, argumentStatementGenerator,
-                notNullCastExpressionGenerator);
+                notNullCastExpressionGenerator, elvisExpressionGenerator);
     }
 }

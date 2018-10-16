@@ -1,6 +1,7 @@
 package com.kubadziworski.bytecodegeneration.util;
 
 
+import com.kubadziworski.domain.type.intrinsic.NullType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -33,6 +34,25 @@ public class AsmUtil {
                 } else if (size == 2) {
                     methodVisitor.visitInsn(Opcodes.DUP2_X2);
                 }
+                break;
+            }
+        }
+    }
+
+    public static void popStackValue(com.kubadziworski.domain.type.Type type, MethodVisitor methodVisitor) {
+
+        if (type.equals(NullType.INSTANCE)) {
+            methodVisitor.visitInsn(Opcodes.POP);
+            return;
+        }
+
+        switch (type.getAsmType().getSize()) {
+            case 1: {
+                methodVisitor.visitInsn(Opcodes.POP);
+                break;
+            }
+            case 2: {
+                methodVisitor.visitInsn(Opcodes.POP2);
                 break;
             }
         }

@@ -5,7 +5,9 @@ import com.kubadziworski.domain.scope.Field;
 import com.kubadziworski.domain.scope.FunctionSignature;
 import com.kubadziworski.domain.type.BoxableType;
 import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.util.CommonFunctionSignatures;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +58,7 @@ public class TypeProjection implements Type {
     @Override
     public List<FunctionSignature> getFunctionSignatures() {
         if (nullable.equals(Nullability.NULLABLE)) {
-            return Collections.emptyList();
+            return Arrays.asList(CommonFunctionSignatures.equalsSignature, CommonFunctionSignatures.toString);
         }
         return type.getFunctionSignatures();
     }

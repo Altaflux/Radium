@@ -1,6 +1,7 @@
 package com.kubadziworski.bytecodegeneration.statement;
 
 import com.kubadziworski.bytecodegeneration.expression.BooleanExpressionGenerator;
+import com.kubadziworski.bytecodegeneration.expression.ElvisExpressionGenerator;
 import com.kubadziworski.bytecodegeneration.expression.ExpressionGenerator;
 import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.arthimetic.Addition;
@@ -29,6 +30,7 @@ public class BaseStatementGenerator implements StatementGenerator {
     private final ExpressionGenerator expressionGenerator;
     private final ThrowStatementGenerator throwStatementGenerator;
     private final BooleanExpressionGenerator booleanExpressionGenerator;
+    private final ElvisExpressionGenerator elvisExpressionGenerator;
 
     private final StatementGenerator parent;
     private final InstructionAdapter methodVisitor;
@@ -46,7 +48,8 @@ public class BaseStatementGenerator implements StatementGenerator {
         assignmentStatementGenerator = new AssignmentStatementGenerator(methodVisitor);
         tryCatchStatementGenerator = new TryCatchStatementGenerator(methodVisitor);
         throwStatementGenerator = new ThrowStatementGenerator(methodVisitor);
-        this.booleanExpressionGenerator = new BooleanExpressionGenerator(methodVisitor);
+        booleanExpressionGenerator = new BooleanExpressionGenerator(methodVisitor);
+        elvisExpressionGenerator = new ElvisExpressionGenerator(methodVisitor);
         this.methodVisitor = methodVisitor;
     }
 
@@ -65,6 +68,7 @@ public class BaseStatementGenerator implements StatementGenerator {
                                    TryCatchStatementGenerator tryCatchStatementGenerator,
                                    ThrowStatementGenerator throwStatementGenerator,
                                    BooleanExpressionGenerator booleanExpressionGenerator,
+                                   ElvisExpressionGenerator elvisExpressionGenerator,
                                    ExpressionGenerator expressionGenerator) {
         parent = generator;
         this.variableDeclarationStatementGenerator = variableDeclarationStatementGenerator;
@@ -77,6 +81,7 @@ public class BaseStatementGenerator implements StatementGenerator {
         this.expressionGenerator = expressionGenerator.copy(generator);
         this.throwStatementGenerator = throwStatementGenerator;
         this.booleanExpressionGenerator = booleanExpressionGenerator;
+        this.elvisExpressionGenerator = elvisExpressionGenerator;
         this.methodVisitor = methodVisitor;
         this.lastLine = lastLine;
     }
@@ -88,6 +93,16 @@ public class BaseStatementGenerator implements StatementGenerator {
     public void generate(BooleanExpression booleanExpression, StatementGenerator generator) {
         generateLineNumber(booleanExpression);
         booleanExpressionGenerator.generate(booleanExpression, generator);
+    }
+
+    @Override
+    public void generate(ElvisExpression elvisExpression) {
+        elvisExpressionGenerator.generate(elvisExpression, this);
+    }
+
+    @Override
+    public void generate(ElvisExpression elvisExpression, StatementGenerator generator) {
+        elvisExpressionGenerator.generate(elvisExpression, generator);
     }
 
     @Override
@@ -382,7 +397,7 @@ public class BaseStatementGenerator implements StatementGenerator {
         return new BaseStatementGenerator(generator, this.methodVisitor, this.lastLine,
                 variableDeclarationStatementGenerator, returnStatementGenerator,
                 ifStatementGenerator, blockStatementGenerator, forStatementGenerator, assignmentStatementGenerator, tryCatchStatementGenerator,
-                throwStatementGenerator, booleanExpressionGenerator, expressionGenerator);
+                throwStatementGenerator, booleanExpressionGenerator, elvisExpressionGenerator, expressionGenerator);
     }
 
     private void generateLineNumber(Statement statement) {

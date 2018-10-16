@@ -106,7 +106,7 @@ expression
            | ConstructorDelegationCall_super '.' functionName '(' argumentList ')' #FunctionCall
            | owner=expression '.' functionName '(' argumentList ')' #FunctionCall
            | functionName '(' argumentList ')' #FunctionCall
-           | newCall='new' typeName '('argumentList ')' #ConstructorCall
+           | newCall='new' typeName '(' argumentList ')' #ConstructorCall
            | variableReference #VarReference
            | owner=expression '.' variableReference  #VarReference
            | expression '!!' #NotNullCastExpression
@@ -134,6 +134,7 @@ expression
            | expression cmp='!=' expression #ConditionalExpression
            | expression cmp='>=' expression #ConditionalExpression
            | expression cmp='<=' expression #ConditionalExpression
+           | expression cmp='?:' expression #ElvisExpression
            ;
 primary
     : '('expression')' #ParenthesisExpression

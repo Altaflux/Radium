@@ -9,11 +9,16 @@ import com.kubadziworski.domain.node.expression.*;
 import com.kubadziworski.domain.node.expression.function.FunctionCall;
 import com.kubadziworski.domain.node.expression.function.SignatureType;
 import com.kubadziworski.domain.scope.FunctionSignature;
+import com.kubadziworski.domain.type.JavaClassType;
+import com.kubadziworski.domain.type.Type;
+import com.kubadziworski.domain.type.intrinsic.AnyType;
 import com.kubadziworski.domain.type.intrinsic.primitive.PrimitiveTypes;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
+import radium.jvm.internal.Intrinsics;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -22,6 +27,10 @@ public class ConditionalExpressionGenerator {
     private final InstructionAdapter methodVisitor;
     private static ThreadLocal<IntrinsicMethods> intrinsicMethods = ThreadLocal.withInitial(IntrinsicMethods::new);
 
+    private static final FunctionSignature NULLABLE_EQUALS = new FunctionSignature("areEqual",
+            Arrays.asList(new Parameter("o", AnyType.INSTANCE, null), new Parameter("o", AnyType.INSTANCE, null)), PrimitiveTypes.BOOLEAN_TYPE,
+            Modifiers.empty().with(Modifier.PUBLIC).with(Modifier.STATIC),
+            new JavaClassType(Intrinsics.class), SignatureType.FUNCTION_CALL);
 
     public ConditionalExpressionGenerator(InstructionAdapter methodVisitor) {
         this.methodVisitor = methodVisitor;
@@ -54,9 +63,17 @@ public class ConditionalExpressionGenerator {
         switch (compareSign) {
             case EQUAL:
             case NOT_EQUAL:
-                FunctionSignature equalsSignature = leftExpression.getType().getMethodCallSignature("equals", Collections.singletonList(new ArgumentHolder(rightExpression, null)));
-                FunctionCall equalsCall = new FunctionCall(equalsSignature, equalsSignature.createArgumentList(Collections.singletonList(new ArgumentHolder(rightExpression, null))), leftExpression);
-                equalsCall.accept(statementGenerator);
+                if (leftExpression.getType().isNullable().equals(Type.Nullability.NULLABLE)) {
+                    FunctionCall functionCall = new FunctionCall(NULLABLE_EQUALS,
+                            NULLABLE_EQUALS.createArgumentList(Arrays.asList(new ArgumentHolder(rightExpression, null), new ArgumentHolder(leftExpression, null))),
+                            new EmptyExpression(new JavaClassType(Intrinsics.class)));
+
+                    functionCall.accept(statementGenerator);
+                } else {
+                    FunctionSignature equalsSignature = leftExpression.getType().getMethodCallSignature("equals", Collections.singletonList(new ArgumentHolder(rightExpression, null)));
+                    FunctionCall equalsCall = new FunctionCall(equalsSignature, equalsSignature.createArgumentList(Collections.singletonList(new ArgumentHolder(rightExpression, null))), leftExpression);
+                    equalsCall.accept(statementGenerator);
+                }
                 methodVisitor.visitInsn(Opcodes.ICONST_1);
                 methodVisitor.visitInsn(Opcodes.IXOR);
                 break;

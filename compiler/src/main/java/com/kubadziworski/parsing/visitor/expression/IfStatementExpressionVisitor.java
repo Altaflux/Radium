@@ -39,6 +39,4 @@ public class IfStatementExpressionVisitor extends EnkelParserBaseVisitor<Stateme
             return ctx.expression().accept(expressionVisitor);
         }
     }
-
-
 }
